@@ -16,6 +16,12 @@ export default function AdminPage() {
   const { isAuthenticated, isLoading, logout, user } = useAuth();
   const [activeTab, setActiveTab] = useState<string>('categories');
 
+  const handleTabChange = (value: string | null) => {
+    if (value) {
+      setActiveTab(value);
+    }
+  };
+
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push('/login');
@@ -62,7 +68,7 @@ export default function AdminPage() {
 
       {/* Main Content */}
       <Container size="xl" py="xl">
-        <Tabs value={activeTab} onChange={setActiveTab} className={classes.tabs}>
+        <Tabs value={activeTab} onChange={handleTabChange} className={classes.tabs}>
           <Tabs.List className={classes.tabsList}>
             <Tabs.Tab value="categories" className={classes.tab}>
               Categorías

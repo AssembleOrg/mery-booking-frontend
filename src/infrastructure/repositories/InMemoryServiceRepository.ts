@@ -6,20 +6,26 @@ export class InMemoryServiceRepository implements ServiceRepository {
     {
       id: '1',
       name: 'Cosmetic Tattoo',
-      description: 'Servicios de tatuaje cosmético profesional',
       slug: 'cosmetic-tattoo',
+      price: 0,
+      priceBook: 0,
+      duration: 60,
     },
     {
       id: '2',
       name: 'Estilismo de Cejas',
-      description: 'Diseño y estilismo profesional de cejas',
       slug: 'eyebrow-styling',
+      price: 0,
+      priceBook: 0,
+      duration: 60,
     },
     {
       id: '3',
       name: 'Paramedical Tattoo',
-      description: 'Tatuaje paramédico especializado',
       slug: 'paramedical-tattoo',
+      price: 0,
+      priceBook: 0,
+      duration: 60,
     },
   ];
 

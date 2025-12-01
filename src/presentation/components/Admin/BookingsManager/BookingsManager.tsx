@@ -136,8 +136,10 @@ export function BookingsManager() {
 
     try {
       setIsLoading(true);
-      const startDateStr = formatDateToString(startDate);
-      const endDateStr = formatDateToString(endDate);
+      const startDateObj = startDate instanceof Date ? startDate : new Date(startDate);
+      const endDateObj = endDate instanceof Date ? endDate : new Date(endDate);
+      const startDateStr = formatDateToString(startDateObj);
+      const endDateStr = formatDateToString(endDateObj);
 
       const bookingsData = await BookingService.getOccupiedTimeSlots({
         startDate: startDateStr,
