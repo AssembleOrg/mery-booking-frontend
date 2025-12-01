@@ -1,0 +1,141 @@
+.container {
+  background: rgba(255, 255, 255, 0.98);
+  padding: 2rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.title {
+  letter-spacing: 0.03em;
+  line-height: 1.6;
+  color: #495057;
+}
+
+.calendarWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.day {
+  font-family: var(--font-poppins-extralight), sans-serif;
+  font-weight: 200;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.day:hover {
+  background-color: rgba(249, 187, 196, 0.2);
+}
+
+.day[data-selected] {
+  background-color: #f9bbc4 !important;
+  color: white !important;
+}
+
+.day[data-selected]:hover {
+  background-color: #f7a3af !important;
+}
+
+.timeSlotsGrid {
+  max-width: 100%;
+}
+
+.timeSlot {
+  padding: 0.75rem 0.5rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  text-align: center;
+  font-family: var(--font-poppins-extralight), sans-serif;
+  font-weight: 200;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background-color: white;
+  color: #495057;
+  white-space: nowrap;
+}
+
+.timeSlot:hover {
+  border-color: #f9bbc4;
+  background-color: rgba(249, 187, 196, 0.1);
+  transform: translateY(-1px);
+}
+
+.timeSlotSelected {
+  background-color: #f9bbc4;
+  border-color: #f9bbc4;
+  color: white;
+}
+
+.timeSlotSelected:hover {
+  background-color: #f7a3af;
+  border-color: #f7a3af;
+}
+
+.continueButton {
+  background-color: #f9bbc4;
+  color: white;
+  height: 50px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  letter-spacing: 0.08em;
+  font-weight: 300;
+}
+
+.continueButton:hover {
+  background-color: white;
+  color: #f9bbc4;
+  border-color: #f9bbc4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249, 187, 196, 0.3);
+}
+
+.backButton {
+  color: #f9bbc4;
+  border-color: #f9bbc4;
+  height: 50px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  letter-spacing: 0.08em;
+  font-weight: 300;
+}
+
+.backButton:hover {
+  background-color: rgba(249, 187, 196, 0.1);
+  border-color: #f7a3af;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem 1rem;
+  }
+
+  .timeSlot {
+    padding: 0.625rem 0.375rem;
+    font-size: 0.8rem;
+  }
+
+  .continueButton,
+  .backButton {
+    height: 48px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .timeSlot {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.75rem;
+  }
+}
+

@@ -1,0 +1,90 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title {
+  font-family: var(--font-avant-garde), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #2c2c2c;
+  letter-spacing: 0.05em;
+}
+
+.createButton {
+  font-family: var(--font-avant-garde), sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.tableContainer {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.table {
+  font-family: var(--font-avant-garde), sans-serif;
+}
+
+.table :global(thead tr th) {
+  background-color: #f9bbc4;
+  color: white;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  padding: 1rem;
+}
+
+.table :global(tbody tr td) {
+  padding: 0.875rem 1rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.modalTitle {
+  font-family: var(--font-avant-garde), sans-serif;
+  font-weight: 500;
+  font-size: 1.25rem;
+  color: #2c2c2c;
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .createButton {
+    width: 100%;
+  }
+
+  .tableContainer {
+    overflow-x: auto;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions button {
+    width: 100%;
+  }
+
+  .modalActions {
+    flex-direction: column;
+  }
+}
+

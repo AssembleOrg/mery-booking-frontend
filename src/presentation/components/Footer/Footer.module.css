@@ -1,0 +1,50 @@
+.footer {
+  background-color: #ffffff;
+  border-top: 1px solid #f0f0f0;
+}
+
+.warningBar {
+  background-color: #f9bbc4;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.socialIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #f9f9f9;
+  color: #333;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.socialIcon:hover {
+  background-color: #f9bbc4;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(249, 187, 196, 0.3);
+}
+
+.footerLogo {
+  width: auto;
+  height: 70px;
+  object-fit: contain;
+}
+
+@media (min-width: 768px) {
+  .footerLogo {
+    height: 85px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .footerLogo {
+    height: 95px;
+  }
+}
+

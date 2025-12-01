@@ -1,0 +1,298 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title {
+  font-family: var(--font-avant-garde), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #2c2c2c;
+  letter-spacing: 0.05em;
+}
+
+.filtersContainer {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.dateInput {
+  flex: 1;
+  min-width: 150px;
+}
+
+.filterSelect {
+  flex: 1;
+  min-width: 200px;
+}
+
+.calendarContainer {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.calendarGrid {
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+}
+
+.calendarHeader {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+  gap: 1px;
+  background: #e9ecef;
+  border-bottom: 2px solid #e9ecef;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.dayHeader {
+  background: #f9bbc4;
+  padding: 0.75rem;
+  text-align: center;
+  color: white;
+}
+
+.timeColumn {
+  background: #f8f9fa;
+  padding: 0.75rem;
+  text-align: center;
+  border-right: 2px solid #e9ecef;
+  min-width: 80px;
+  position: sticky;
+  left: 0;
+  z-index: 5;
+}
+
+.calendarRow {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+  gap: 1px;
+  background: #e9ecef;
+  min-height: 80px;
+}
+
+.calendarCell {
+  background: white;
+  padding: 0.25rem;
+  min-height: 80px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-right: 1px solid #e9ecef;
+}
+
+.bookingCard {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.monthCalendar {
+  width: 100%;
+}
+
+.monthHeader {
+  padding: 1rem;
+  text-align: center;
+  text-transform: capitalize;
+  margin-bottom: 1rem;
+}
+
+.weekDaysHeader {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: #e9ecef;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.weekDayHeader {
+  background: #f9bbc4;
+  padding: 0.75rem;
+  text-align: center;
+  color: white;
+  font-weight: 500;
+}
+
+.monthGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: #e9ecef;
+  border: 1px solid #e9ecef;
+}
+
+.monthDayCell {
+  background: white;
+  min-height: 120px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.otherMonthDay {
+  background: #f8f9fa;
+  opacity: 0.6;
+}
+
+.todayCell {
+  background: #fff9e6;
+  border: 2px solid #f9bbc4;
+}
+
+.dayNumber {
+  text-align: right;
+  margin-bottom: 0.25rem;
+}
+
+.monthBookingCard {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 0.25rem;
+}
+
+.monthBookingCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dayCalendar {
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+}
+
+.dayCalendarHeader {
+  display: grid;
+  grid-template-columns: 80px repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1px;
+  background: #e9ecef;
+  border-bottom: 2px solid #e9ecef;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.employeeHeader {
+  background: #f9bbc4;
+  padding: 0.75rem;
+  text-align: center;
+  color: white;
+}
+
+.dayCalendarBody {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.dayCalendarRow {
+  display: grid;
+  grid-template-columns: 80px repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1px;
+  background: #e9ecef;
+  min-height: 80px;
+  position: relative;
+}
+
+.dayCalendarCell {
+  background: white;
+  padding: 0.25rem;
+  min-height: 80px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-right: 1px solid #e9ecef;
+}
+
+.currentTimeLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #ff0000;
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 0 0 4px rgba(255, 0, 0, 0.5);
+}
+
+.currentTimeIndicator {
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid #ff0000;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  filter: drop-shadow(0 0 2px rgba(255, 0, 0, 0.5));
+}
+
+.bookingCard {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.bookingCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.listContainer {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.listContainer :global(.mantine-Table-thead tr th) {
+  background-color: #f9bbc4;
+  color: white;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  padding: 1rem;
+}
+
+.listContainer :global(.mantine-Table-tbody tr td) {
+  padding: 0.875rem 1rem;
+}
+
+@media (max-width: 768px) {
+  .calendarHeader,
+  .calendarRow {
+    grid-template-columns: 60px repeat(7, minmax(100px, 1fr));
+  }
+
+  .timeColumn {
+    min-width: 60px;
+    padding: 0.5rem;
+  }
+
+  .dayHeader {
+    padding: 0.5rem;
+  }
+
+  .calendarCell {
+    min-height: 60px;
+  }
+
+  .filtersContainer {
+    overflow-x: auto;
+  }
+}
+

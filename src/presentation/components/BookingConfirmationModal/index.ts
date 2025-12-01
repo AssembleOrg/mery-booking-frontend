@@ -1,0 +1,2 @@
+export { BookingConfirmationModal } from './BookingConfirmationModal';
+

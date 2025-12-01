@@ -1,0 +1,2 @@
+export { BookingsManager } from './BookingsManager';
+

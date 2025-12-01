@@ -1,0 +1,112 @@
+.formContainer {
+  background: rgba(255, 255, 255, 0.98);
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.formTitle {
+  letter-spacing: 0.03em;
+  line-height: 1.6;
+}
+
+.fieldLabel {
+  letter-spacing: 0.02em;
+}
+
+.selectInput {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  font-family: var(--font-poppins-extralight), sans-serif;
+  font-weight: 200;
+}
+
+.selectInput:focus {
+  border-color: #f9bbc4;
+  box-shadow: 0 0 0 3px rgba(249, 187, 196, 0.1);
+}
+
+.selectDropdown {
+  border: 2px solid #f9bbc4;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 0;
+  font-family: var(--font-poppins-extralight), sans-serif;
+  font-weight: 200;
+}
+
+/* Opciones dentro del dropdown */
+.selectDropdown :global(.mantine-Select-option) {
+  font-family: var(--font-poppins-extralight), sans-serif;
+  font-weight: 200;
+  padding: 0.75rem 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.selectDropdown :global(.mantine-Select-option:hover) {
+  background-color: rgba(249, 187, 196, 0.1);
+}
+
+.submitButton {
+  background-color: #f9bbc4;
+  color: white;
+  height: 50px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  letter-spacing: 0.08em;
+}
+
+.submitButton:hover {
+  background-color: white;
+  color: #f9bbc4;
+  border-color: #f9bbc4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249, 187, 196, 0.3);
+}
+
+.submitButton:active {
+  transform: translateY(0);
+}
+
+.submitButton:disabled {
+  background-color: #e9ecef;
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .formContainer {
+    padding: 2rem 1.5rem;
+    border-radius: 12px;
+  }
+
+  .selectInput {
+    font-size: 0.9rem;
+    font-family: var(--font-poppins-extralight), sans-serif;
+  }
+
+  .selectDropdown {
+    font-family: var(--font-poppins-extralight), sans-serif;
+  }
+
+  .submitButton {
+    height: 48px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .formContainer {
+    padding: 1.5rem 1rem;
+  }
+}
+

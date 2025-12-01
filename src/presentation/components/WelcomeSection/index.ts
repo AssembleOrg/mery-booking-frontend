@@ -1,0 +1,2 @@
+export { WelcomeSection } from './WelcomeSection';
+

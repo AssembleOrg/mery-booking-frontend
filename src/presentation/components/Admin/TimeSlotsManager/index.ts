@@ -1,0 +1,2 @@
+export { TimeSlotsManager } from './TimeSlotsManager';
+

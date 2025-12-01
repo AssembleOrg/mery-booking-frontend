@@ -1,0 +1,126 @@
+.modalContent {
+  background: white;
+  border-radius: 16px;
+  padding: 0;
+}
+
+.modalHeader {
+  padding: 0;
+  margin: 0;
+}
+
+.modalBody {
+  padding: 2rem;
+}
+
+.serviceHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.serviceImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f9f9f9;
+  padding: 1rem;
+}
+
+.bookingDetails {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.professionalBadge {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fbbf24;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #495057;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.input {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  font-family: var(--font-avant-garde), sans-serif;
+}
+
+.input:focus {
+  border-color: #f9bbc4;
+}
+
+.input::placeholder {
+  color: #adb5bd;
+}
+
+.pricingSummary {
+  background: #fef5f7;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.totalRow {
+  padding: 0.5rem 0;
+  border-top: 1px solid #f9bbc4;
+  border-bottom: 1px solid #f9bbc4;
+  margin: 0.5rem 0;
+}
+
+.cancelButton {
+  border: 2px solid #dee2e6;
+  color: #495057;
+  transition: all 0.3s ease;
+}
+
+.cancelButton:hover {
+  background-color: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.confirmButton {
+  background-color: #f9bbc4;
+  color: white;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  letter-spacing: 0.05em;
+}
+
+.confirmButton:hover {
+  background-color: white;
+  color: #f9bbc4;
+  border-color: #f9bbc4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249, 187, 196, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modalBody {
+    padding: 1.5rem;
+  }
+
+  .bookingDetails {
+    padding: 0.75rem;
+  }
+
+  .serviceImage {
+    width: 60px;
+    height: 60px;
+  }
+}
+

@@ -1,0 +1,125 @@
+.pageWrapper {
+  min-height: 100vh;
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0%,
+    #fff5f7 50%,
+    #ffffff 100%
+  );
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.adminHeader {
+  background: linear-gradient(135deg, #f9bbc4 0%, #f58b9a 100%);
+  padding: 2rem 0;
+  box-shadow: 0 4px 12px rgba(249, 187, 196, 0.2);
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.welcomeText {
+  font-family: var(--font-avant-garde), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: white;
+  letter-spacing: 0.05em;
+}
+
+.roleText {
+  font-family: var(--font-avant-garde), sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 0.25rem;
+}
+
+.logoutButton {
+  border-color: white;
+  color: white;
+  font-family: var(--font-avant-garde), sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.logoutButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: white;
+}
+
+.tabs {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.tabsList {
+  border-bottom: 2px solid #f0f0f0;
+  padding: 0 1rem;
+  background: #fafafa;
+}
+
+.tab {
+  font-family: var(--font-avant-garde), sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  padding: 1rem 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.tab[data-active] {
+  color: #f9bbc4;
+  border-bottom-color: #f9bbc4;
+}
+
+.tab:hover {
+  background-color: rgba(249, 187, 196, 0.05);
+}
+
+.tabContent {
+  padding: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .adminHeader {
+    padding: 1.5rem 0;
+  }
+
+  .headerContent {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .logoutButton {
+    width: 100%;
+  }
+
+  .welcomeText {
+    font-size: 1.25rem;
+  }
+
+  .tabsList {
+    padding: 0;
+  }
+
+  .tab {
+    font-size: 0.9rem;
+    padding: 0.875rem 1rem;
+  }
+
+  .tabContent {
+    padding: 1rem;
+  }
+}
+

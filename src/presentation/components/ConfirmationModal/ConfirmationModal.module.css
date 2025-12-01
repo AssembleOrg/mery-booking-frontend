@@ -1,0 +1,33 @@
+.modalTitle {
+  font-family: var(--font-avant-garde), sans-serif;
+  font-weight: 500;
+  font-size: 1.25rem;
+  color: #2c2c2c;
+}
+
+.modalHeader {
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modalContent {
+  padding: 1.5rem;
+}
+
+.input :global(.mantine-TextInput-input) {
+  font-family: var(--font-avant-garde), sans-serif;
+  font-size: 0.95rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .actions {
+    flex-direction: column;
+  }
+}
+

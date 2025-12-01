@@ -1,0 +1,35 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: white;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.logo {
+  width: auto;
+  height: 55px;
+  object-fit: contain;
+}
+
+.menuButton {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.menuButton:hover {
+  opacity: 0.7;
+}
+
+@media (min-width: 768px) {
+  .logo {
+    height: 70px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .logo {
+    height: 75px;
+  }
+}
+

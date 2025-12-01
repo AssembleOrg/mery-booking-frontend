@@ -1,36 +1,136 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mery García - Portal de Reservas Online
 
-## Getting Started
+Portal de reservas online para servicios de Cosmetic Tattoo, Estilismo de Cejas y Paramedical Tattoo.
 
-First, run the development server:
+## 🏗️ Arquitectura
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Este proyecto está construido siguiendo los principios de **Clean Architecture**, con una separación clara de responsabilidades:
+
+```
+src/
+├── domain/              # Entidades y lógica de negocio
+│   ├── entities/       # Modelos de dominio
+│   └── repositories/   # Interfaces de repositorios
+├── application/         # Casos de uso
+│   └── use-cases/      # Lógica de aplicación
+├── infrastructure/      # Implementaciones concretas
+│   └── repositories/   # Implementaciones de repositorios
+└── presentation/        # Capa de presentación (UI)
+    ├── components/     # Componentes React
+    ├── layouts/        # Layouts de página
+    └── providers/      # Context providers
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Tecnologías
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Next.js 16** - Framework React con App Router
+- **React 19** - Biblioteca UI
+- **Mantine 8** - Biblioteca de componentes UI
+- **TypeScript** - Tipado estático
+- **pnpm** - Gestor de paquetes
+- **Clean Architecture** - Patrón de arquitectura
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📱 Diseño
 
-## Learn More
+- **Mobile First** - Diseño prioritario para dispositivos móviles
+- **Fully Responsive** - Adaptado para todos los dispositivos (móvil, tablet, desktop)
+- **Tipografía**: AvantGarde-BookTh (con diferentes pesos)
 
-To learn more about Next.js, take a look at the following resources:
+## 🎨 Características
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Diseño moderno y limpio
+- Animaciones suaves
+- Tema personalizado con colores rosados/pasteles
+- Componentes reutilizables
+- Separación de concerns según Clean Architecture
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📦 Instalación
 
-## Deploy on Vercel
+```bash
+# Instalar dependencias
+pnpm install
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Ejecutar en modo desarrollo
+pnpm dev
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Compilar para producción
+pnpm build
+
+# Ejecutar en producción
+pnpm start
+```
+
+## 🔤 Configuración de Fuentes
+
+Para usar la tipografía personalizada **AvantGarde-BookTh**:
+
+1. Obtén el archivo de fuente en formato `.woff2`
+2. Colócalo en `/public/fonts/AvantGarde-BookTh.woff2`
+3. Actualiza el archivo `src/app/layout.tsx` descomentando la configuración de `localFont`
+
+El proyecto funciona con una fuente de sistema por defecto hasta que agregues la fuente personalizada.
+
+## 🎯 Path Aliases
+
+El proyecto usa path aliases para imports más limpios:
+
+```typescript
+// Alias disponibles:
+@/*              // src/*
+~/*              // src/*
+@/domain/*       // src/domain/*
+@/application/*  // src/application/*
+@/infrastructure/* // src/infrastructure/*
+@/presentation/* // src/presentation/*
+```
+
+Ejemplo:
+```typescript
+import { Header } from '@/presentation/components';
+import { Service } from '@/domain/entities';
+```
+
+## 📂 Estructura de Componentes
+
+Los componentes siguen una estructura modular con barrel files:
+
+```
+components/
+├── Header/
+│   ├── Header.tsx         # Componente
+│   ├── Header.module.css  # Estilos
+│   └── index.ts          # Barrel file
+└── index.ts              # Barrel file principal
+```
+
+## 🌐 Servicios Disponibles
+
+1. **Cosmetic Tattoo** - Tatuaje cosmético profesional
+2. **Estilismo de Cejas** - Diseño y estilismo de cejas
+3. **Paramedical Tattoo** - Tatuaje paramédico especializado
+
+## 🔄 Próximos Pasos
+
+- [ ] Agregar navegación entre servicios
+- [ ] Implementar sistema de reservas
+- [ ] Integrar con backend/API
+- [ ] Agregar autenticación de usuarios
+- [ ] Implementar calendario de disponibilidad
+- [ ] Agregar galería de trabajos realizados
+
+## 📝 Notas
+
+- El proyecto usa `pnpm` como gestor de paquetes
+- Todos los componentes usan TypeScript estricto
+- Los estilos usan CSS Modules para evitar conflictos
+- La arquitectura permite fácil escalabilidad y testing
+
+## 👤 Autor
+
+**Mery García**
+- Cosmetic Tattoo Professional
+- Portal de Reservas Online
+
+---
+
+Desarrollado con ❤️ usando Next.js y Clean Architecture
