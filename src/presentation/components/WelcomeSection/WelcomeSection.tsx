@@ -56,7 +56,7 @@ export function WelcomeSection() {
           <Stack w="100%" maw={600} gap="md">
             <Button
               component="a"
-              href="/cosmetic-tattoo"
+              href="/tattoo-cosmetico"
               size="lg"
               radius="md"
               fullWidth

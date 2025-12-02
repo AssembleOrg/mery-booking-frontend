@@ -3,6 +3,7 @@
 import { Box, Burger, Container, Flex, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Image from 'next/image';
+import Link from 'next/link';
 import { MenuModal } from '@/presentation/components';
 import classes from './Header.module.css';
 
@@ -14,14 +15,17 @@ export function Header() {
       <Box component="header" className={classes.header}>
         <Container size="xl">
           <Flex justify="space-between" align="center" h={{ base: 90, sm: 100 }}>
-            <Image
-              src="/logo_cosetic_tattoo.svg"
-              alt="Mery García Cosmetic Tattoo"
-              width={200}
-              height={70}
-              priority
-              className={classes.logo}
-            />
+            <Link href="/" style={{ textDecoration: 'none' }}>
+              <Image
+                src="/logo_cosetic_tattoo.svg"
+                alt="Mery García Cosmetic Tattoo"
+                width={200}
+                height={70}
+                priority
+                className={classes.logo}
+                style={{ cursor: 'pointer' }}
+              />
+            </Link>
 
             <Flex
               align="center"

@@ -6,7 +6,7 @@ export class InMemoryServiceRepository implements ServiceRepository {
     {
       id: '1',
       name: 'Cosmetic Tattoo',
-      slug: 'cosmetic-tattoo',
+      slug: 'tattoo-cosmetico',
       price: 0,
       priceBook: 0,
       duration: 60,

@@ -1,0 +1,500 @@
+.pageWrapper {
+  min-height: calc(100vh - 100px);
+  background-color: #ffffff;
+}
+
+/* Hero Section */
+.heroSection {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  overflow: hidden;
+}
+
+.heroImage {
+  object-fit: cover;
+  object-position: center 50%;
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.25) 0%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding-left: 2rem;
+}
+
+.heroTitle {
+  font-family: var(--font-avant-garde-buttons), sans-serif;
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1.5rem;
+}
+
+/* Sub Menu Navigation */
+.subMenuNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.subMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.7rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  text-transform: uppercase;
+}
+
+.subMenuItem:hover {
+  color: #f9bbc4;
+}
+
+.subMenuIcon {
+  font-size: 0.6rem;
+  opacity: 0.7;
+}
+
+/* Content Section */
+.contentSection {
+  background-color: #ffffff;
+}
+
+/* Service Block */
+.serviceBlock {
+  padding: 3rem 0;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.serviceBlock:last-of-type {
+  border-bottom: none;
+}
+
+.serviceLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (min-width: 769px) {
+  .serviceLayout {
+    flex-direction: row;
+    gap: 3rem;
+    align-items: flex-start;
+  }
+}
+
+.serviceImageWrapper {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 1 / 1;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (min-width: 769px) {
+  .serviceImageWrapper {
+    width: 280px;
+  }
+}
+
+.serviceImage {
+  object-fit: cover;
+  filter: grayscale(100%);
+}
+
+.serviceContent {
+  flex: 1;
+}
+
+.serviceTitle {
+  font-family: var(--font-avant-garde-buttons), sans-serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: #c9a77c;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.serviceSubtitle {
+  color: #c9a77c;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  font-weight: 400;
+}
+
+.serviceSubtitleQuestion {
+  color: #5a5a5a;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.serviceDescription {
+  font-family: var(--font-avant-garde-buttons), sans-serif;
+  color: #333333;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: justify;
+  margin-bottom: 1.5rem;
+}
+
+.serviceHighlight {
+  color: #c9a77c;
+}
+
+/* Buttons */
+.ctaButton {
+  background-color: #f9bbc4;
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  margin-right: 0.75rem;
+}
+
+.ctaButton:hover {
+  background-color: #f5a3af;
+}
+
+.ctaButtonSecondary {
+  background-color: transparent;
+  color: #f9bbc4;
+  border: 1px solid #f9bbc4;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  margin-right: 0.75rem;
+}
+
+.ctaButtonSecondary:hover {
+  background-color: #f9bbc4;
+  color: #ffffff;
+}
+
+.buttonsWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Options Section */
+.optionsSection {
+  margin-top: 2rem;
+}
+
+.optionsTitle {
+  color: #c9a77c;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+  font-weight: 300;
+}
+
+/* Accordion Items */
+.accordionWrapper {
+  border: 1px solid #e8e8e8;
+  border-radius: 0;
+}
+
+.accordionItem {
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.accordionItem:last-child {
+  border-bottom: none;
+}
+
+.accordionControl {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.accordionControl:hover {
+  background-color: #fafafa;
+}
+
+.accordionChevron {
+  color: #c9a77c;
+  margin-right: 0.75rem;
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.accordionChevronOpen {
+  transform: rotate(90deg);
+}
+
+.accordionLabel {
+  color: #c9a77c;
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.accordionPanel {
+  padding: 1rem 1.25rem 1.5rem 1.25rem;
+  background-color: #ffffff;
+  border-top: 1px solid #e8e8e8;
+}
+
+/* Accordion Panel Content */
+.accordionPanelContent {
+  width: 100%;
+}
+
+.panelDescription {
+  font-family: var(--font-avant-garde-buttons), sans-serif;
+  color: #333333;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+.panelPrice {
+  font-family: var(--font-avant-garde-buttons), sans-serif;
+  color: #c9a77c;
+  font-size: 14px;
+  margin-bottom: 1rem;
+}
+
+.priceValue {
+  color: #e67e22;
+  font-weight: 500;
+}
+
+.depositValue {
+  color: #2ecc71;
+  font-weight: 500;
+}
+
+.panelCuotas {
+  font-family: var(--font-avant-garde-buttons), sans-serif;
+  color: #333333;
+  font-size: 13px;
+  margin-bottom: 1.5rem;
+}
+
+/* Booking Card (Consulta) */
+.bookingCard {
+  background: linear-gradient(135deg, #fff5f7 0%, #fce9ed 100%);
+  border-right: 4px solid #f9bbc4;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  max-width: 500px;
+}
+
+.bookingLabel {
+  font-family: var(--font-avant-garde-buttons), sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 0.5rem;
+}
+
+.bookingSelect {
+  margin-bottom: 1rem;
+}
+
+.continueButton {
+  background-color: #f9bbc4;
+  color: #ffffff;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+.continueButton:hover {
+  background-color: #f5a3af;
+}
+
+/* Calendar Card */
+.calendarCard {
+  background: linear-gradient(135deg, #fff5f7 0%, #fce9ed 100%);
+  border-right: 4px solid #f9bbc4;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  max-width: 700px;
+}
+
+/* Empty Booking Card (Last Minute) */
+.emptyBookingCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  background-color: #fafafa;
+  border-radius: 8px;
+}
+
+.emptyBookingText {
+  font-family: var(--font-avant-garde-buttons), sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+  text-align: center;
+  margin-top: 1rem;
+  max-width: 400px;
+}
+
+.promoText {
+  font-family: var(--font-avant-garde-buttons), sans-serif;
+  color: #e67e22;
+  font-size: 13px;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.footerNote {
+  font-family: var(--font-avant-garde-buttons), sans-serif;
+  color: #c9a77c;
+  font-size: 12px;
+  font-style: italic;
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
+/* Special Section - Clientes Exterior */
+.specialSection {
+  padding: 3rem 0;
+}
+
+.specialImageWrapper {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 320px;
+  position: relative;
+}
+
+@media (min-width: 769px) {
+  .specialImageWrapper {
+    width: 320px;
+  }
+}
+
+.specialImage {
+  width: 100%;
+  height: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .heroSection {
+    height: 280px;
+  }
+
+  .heroContent {
+    padding-left: 1rem;
+  }
+
+  .heroTitle {
+    font-size: 1.35rem;
+    letter-spacing: 0.12em;
+  }
+
+  .subMenuNav {
+    gap: 0.4rem 1rem;
+  }
+
+  .subMenuItem {
+    font-size: 0.6rem;
+  }
+
+  .serviceBlock {
+    padding: 2rem 0;
+  }
+
+  /* Ocultar imagen en mobile */
+  .serviceImageWrapper {
+    display: none;
+  }
+
+  .serviceTitle {
+    font-size: 1.15rem;
+  }
+
+  .bookingCard,
+  .calendarCard {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroSection {
+    height: 240px;
+  }
+
+  .heroTitle {
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+  }
+
+  .subMenuItem {
+    font-size: 0.55rem;
+  }
+
+  .serviceBlock {
+    padding: 1.5rem 0;
+  }
+
+  .serviceTitle {
+    font-size: 1rem;
+  }
+
+  .serviceDescription {
+    font-size: 0.8rem;
+  }
+}
+

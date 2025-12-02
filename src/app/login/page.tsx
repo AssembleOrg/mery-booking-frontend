@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Container, Paper, TextInput, PasswordInput, Button, Title, Text, Box, Stack } from '@mantine/core';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/presentation/contexts';
@@ -59,14 +60,32 @@ export default function LoginPage() {
     <Box className={classes.pageWrapper}>
       <Container size="xs" className={classes.container}>
         <Box className={classes.logoContainer}>
-          <Image
-            src="/logo_cosetic_tattoo.svg"
-            alt="Mery García"
-            width={200}
-            height={70}
-            priority
-            className={classes.logo}
-          />
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <Image
+              src="/logo_cosetic_tattoo.svg"
+              alt="Mery García"
+              width={200}
+              height={70}
+              priority
+              className={classes.logo}
+              style={{ cursor: 'pointer' }}
+            />
+          </Link>
+        </Box>
+        
+        <Box style={{ marginBottom: '1rem', textAlign: 'center' }}>
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <Button
+              variant="subtle"
+              size="sm"
+              style={{
+                color: '#6b6b6b',
+                fontFamily: 'var(--font-avant-garde), sans-serif',
+              }}
+            >
+              ← Volver al inicio
+            </Button>
+          </Link>
         </Box>
 
         <Paper shadow="xl" p="xl" radius="lg" className={classes.paper}>
