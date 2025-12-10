@@ -1,4 +1,5 @@
 import apiClient from './apiClient';
+import publicApiClient from './publicApiClient';
 
 export interface ServiceEntity {
   id: string;
@@ -50,6 +51,22 @@ interface BackendResponse<T> {
   success: boolean;
   message: string;
   timestamp: string;
+}
+
+// Tipo para respuesta pública - ahora incluye todos los campos necesarios
+export interface PublicServiceResponse {
+  id: string;
+  name: string;
+  description: string | null;
+  categoryId: string;
+  showOnSite: boolean;
+  duration: number;
+  price: number;
+  minQuantity: number;
+  maxQuantity: number;
+  urlImage: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export class ServiceService {
@@ -106,6 +123,17 @@ export class ServiceService {
 
   static async delete(id: string): Promise<void> {
     await apiClient.delete(`${this.BASE_PATH}/${id}`);
+  }
+
+  // Método público (sin autenticación) - categoryId es obligatorio
+  static async getAllPublic(categoryId: string): Promise<PublicServiceResponse[]> {
+    const params = new URLSearchParams();
+    params.append('categoryId', categoryId);
+
+    const response = await publicApiClient.get<BackendResponse<PublicServiceResponse[]>>(
+      `${this.BASE_PATH}/public?${params.toString()}`
+    );
+    return response.data.data;
   }
 }
 

@@ -4,6 +4,7 @@ import { MantineProvider, createTheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { ReactNode } from 'react';
 import { AuthProvider } from '@/presentation/contexts';
+import { QueryProvider } from './QueryProvider';
 
 const theme = createTheme({
   fontFamily: 'var(--font-avant-garde), sans-serif',
@@ -33,12 +34,14 @@ export function MantineProviderWrapper({
   children,
 }: MantineProviderWrapperProps) {
   return (
-    <MantineProvider theme={theme}>
-      <Notifications position="top-right" zIndex={1000} />
-      <AuthProvider>
-        {children}
-      </AuthProvider>
-    </MantineProvider>
+    <QueryProvider>
+      <MantineProvider theme={theme}>
+        <Notifications position="top-right" zIndex={1000} />
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </MantineProvider>
+    </QueryProvider>
   );
 }
 

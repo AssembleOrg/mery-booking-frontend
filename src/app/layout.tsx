@@ -49,6 +49,7 @@ export default function RootLayout({
       <body 
         className={`${avantGardeMedium.variable} ${avantGardeButtons.variable} ${poppinsExtraLight.variable}`} 
         style={{ margin: 0 }}
+        suppressHydrationWarning
       >
         <MantineProviderWrapper>{children}</MantineProviderWrapper>
       </body>

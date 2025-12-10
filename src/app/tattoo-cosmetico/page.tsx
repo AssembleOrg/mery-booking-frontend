@@ -1,10 +1,16 @@
 'use client';
 
 import { Box, Container, Text, Collapse, Select, Button } from '@mantine/core';
-import { Header, Footer, DateTimeSelector } from '@/presentation/components';
+import { Header, Footer, DateTimeSelector, BookingConfirmationModal } from '@/presentation/components';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
+import { useAvailability, useServices, useEmployees, useCreateClient, useCreateBooking } from '@/presentation/hooks';
+import { CategoryService, type Category, type ServiceEntity, type Employee } from '@/infrastructure/http';
+import { useAuth } from '@/presentation/contexts';
+import { Client } from '@/domain/entities';
+import dayjs from 'dayjs';
 import classes from './page.module.css';
 
 // Tipos de contenido del acordeón
@@ -31,6 +37,9 @@ interface ServiceOption {
   footerNote?: string;
   footerNote2?: string;
   cuotasText?: string;
+  serviceId?: string; // ID del servicio en el backend
+  employeeId?: string; // ID del empleado en el backend
+  serviceDuration?: number; // Duración del servicio en minutos
 }
 
 interface AccordionItemProps {
@@ -40,8 +49,237 @@ interface AccordionItemProps {
 }
 
 // Componente para el contenido de Consulta (con selector de profesional)
-function ConsultaContent({ option }: { option: ServiceOption }) {
-  const [selectedProfessional, setSelectedProfessional] = useState<string | null>(null);
+function ConsultaContent({ 
+  option, 
+  staffConsultasId,
+  services = [],
+  employees = []
+}: { 
+  option: ServiceOption; 
+  staffConsultasId?: string;
+  services?: ServiceEntity[];
+  employees?: Employee[];
+}) {
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [opened, { open, close }] = useDisclosure(false);
+  
+  // ID hardcodeado de "Staff Consultas" como fallback
+  const STAFF_CONSULTAS_ID = '2d283dc6-6940-46fc-9166-eb6b17b8cc0f';
+  
+  // Usar el ID proporcionado o el hardcodeado como fallback
+  const effectiveStaffConsultasId = staffConsultasId || STAFF_CONSULTAS_ID;
+
+  // Hooks para crear cliente y reserva
+  const createClientMutation = useCreateClient();
+  const createBookingMutation = useCreateBooking();
+
+  // Buscar el servicio actual
+  const currentService = option.serviceId 
+    ? services.find(s => s.id === option.serviceId)
+    : null;
+
+  // Buscar el empleado actual
+  const currentEmployee = effectiveStaffConsultasId
+    ? employees.find(e => e.id === effectiveStaffConsultasId)
+    : null;
+
+  const handleDateTimeSelect = (date: Date, time: string) => {
+    setSelectedDate(date);
+    setSelectedTime(time);
+    open(); // Abrir modal de confirmación
+  };
+
+  const handleConfirmBooking = async (clientData: Client) => {
+    if (!option.serviceId || !selectedDate || !selectedTime || !currentService) return;
+
+    if (!effectiveStaffConsultasId) {
+      return;
+    }
+
+    try {
+      // 1. Crear cliente primero (usando endpoint público si no está autenticado)
+      if (!clientData.dni) {
+        throw new Error('El DNI es requerido para completar la reserva');
+      }
+      
+      const client = await createClientMutation.mutateAsync({
+        fullName: `${clientData.name} ${clientData.surname}`,
+        email: clientData.email,
+        phone: clientData.mobile,
+        dni: clientData.dni,
+      } as any);
+
+      // 2. Crear reserva
+      const dateString = dayjs(selectedDate).format('YYYY-MM-DD');
+      await createBookingMutation.mutateAsync({
+        clientId: client.id,
+        employeeId: effectiveStaffConsultasId,
+        serviceId: currentService.id,
+        date: dateString,
+        startTime: selectedTime,
+        quantity: 1,
+        paid: false,
+        notes: clientData.notes,
+      });
+
+      close();
+      
+      // Resetear estado
+      setShowCalendar(false);
+      setSelectedDate(null);
+      setSelectedTime(null);
+    } catch (error) {
+      // Los errores ya se manejan en los hooks con notificaciones
+      console.error('Error al crear reserva:', error);
+    }
+  };
+
+  const handleBack = () => {
+    setShowCalendar(false);
+  };
+
+  const handleContinue = () => {
+    console.log('Continuar clicked - staffConsultasId:', effectiveStaffConsultasId, 'serviceId:', option.serviceId);
+    // Permitir continuar aunque staffConsultasId sea undefined temporalmente
+    // El hook useAvailability manejará el caso cuando no hay employeeId
+    if (option.serviceId) {
+      setShowCalendar(true);
+    } else {
+      console.warn('Falta serviceId - serviceId:', option.serviceId);
+    }
+  };
+
+  // Calcular rango de fechas (hoy hasta 3 meses)
+  const minDate = useMemo(() => dayjs().format('YYYY-MM-DD'), []);
+  const maxDate = useMemo(() => dayjs().add(3, 'months').format('YYYY-MM-DD'), []);
+
+  // Verificar disponibilidad si tenemos serviceId y employeeId
+  // Solo ejecutar cuando showCalendar es true y tenemos todos los parámetros
+  const employeeIdForAvailability = showCalendar && effectiveStaffConsultasId ? effectiveStaffConsultasId : null;
+  const serviceIdForAvailability = showCalendar && option.serviceId ? option.serviceId : null;
+  const minDateForAvailability = showCalendar ? minDate : null;
+  const maxDateForAvailability = showCalendar ? maxDate : null;
+
+  const { data: availability, isLoading: isLoadingAvailability, error: availabilityError } = useAvailability(
+    employeeIdForAvailability,
+    serviceIdForAvailability,
+    minDateForAvailability,
+    maxDateForAvailability
+  );
+
+  // Debug: Log cuando cambian los parámetros
+  useEffect(() => {
+    if (showCalendar) {
+      console.log('Availability hook params:', {
+        employeeId: employeeIdForAvailability,
+        serviceId: serviceIdForAvailability,
+        minDate: minDateForAvailability,
+        maxDate: maxDateForAvailability,
+      });
+    }
+  }, [showCalendar, employeeIdForAvailability, serviceIdForAvailability, minDateForAvailability, maxDateForAvailability]);
+
+  // Debug: Log errores
+  useEffect(() => {
+    if (availabilityError) {
+      console.error('Availability error:', availabilityError);
+    }
+  }, [availabilityError]);
+
+  // Verificar si hay disponibilidad
+  const hasAvailability = useMemo(() => {
+    if (!showCalendar || !option.serviceId || !staffConsultasId) {
+      return false;
+    }
+    if (!availability) {
+      return false;
+    }
+    // Verificar si hay al menos un día con slots disponibles
+    return availability.availability.some(day => {
+      if (!day.hasActiveTimeSlots) return false;
+      return day.slots.some(slot => slot.available);
+    });
+  }, [availability, option.serviceId, staffConsultasId, showCalendar]);
+
+  if (showCalendar) {
+    return (
+      <Box className={classes.accordionPanelContent}>
+        <Text className={classes.panelDescription}>
+          {option.description}
+        </Text>
+        {option.extraDescription && (
+          <Text className={classes.panelDescription}>
+            {option.extraDescription}
+          </Text>
+        )}
+        <Text className={classes.panelPrice}>
+          {option.priceLabel} <span className={classes.priceValue}>{option.priceValue}</span>
+        </Text>
+
+        {/* Mostrar mensaje de no disponibilidad si no hay slots disponibles */}
+        {!isLoadingAvailability && !hasAvailability ? (
+          <Box className={classes.emptyBookingCard}>
+            <Image
+              src="/am-empty-booking.svg"
+              alt="No hay citas disponibles"
+              width={100}
+              height={100}
+            />
+            <Text className={classes.emptyBookingText}>
+              Actualmente no hay citas disponible. Ingresa periódicamente para verificar nuevas disponibilidades
+            </Text>
+          </Box>
+        ) : (
+          <Box className={classes.calendarCard}>
+            <DateTimeSelector
+              serviceDuration={option.serviceDuration ?? 60}
+              employeeId={staffConsultasId ?? null}
+              serviceId={option.serviceId ?? null}
+              onSelectDateTime={handleDateTimeSelect}
+              onBack={handleBack}
+              showBackButton={true}
+            />
+          </Box>
+        )}
+
+        {option.footerNote && (
+          <Text className={classes.footerNote}>{option.footerNote}</Text>
+        )}
+        {option.footerNote2 && (
+          <Text className={classes.footerNote}>{option.footerNote2}</Text>
+        )}
+
+        {/* Modal de Confirmación */}
+        {currentService && selectedDate && selectedTime && (
+          <BookingConfirmationModal
+            opened={opened}
+            onClose={close}
+            service={{
+              id: currentService.id,
+              name: currentService.name,
+              slug: currentService.name.toLowerCase().replace(/\s+/g, '-'),
+              price: Number(currentService.price),
+              priceBook: Number(currentService.price),
+              duration: currentService.duration,
+              image: currentService.urlImage || '/desk.svg',
+            }}
+            professional={currentEmployee ? {
+              id: currentEmployee.id,
+              name: currentEmployee.fullName,
+              available: true,
+              services: [],
+            } : null}
+            date={selectedDate}
+            time={selectedTime}
+            location="Mery García Office"
+            onConfirm={handleConfirmBooking}
+          />
+        )}
+      </Box>
+    );
+  }
 
   return (
     <Box className={classes.accordionPanelContent}>
@@ -59,18 +297,23 @@ function ConsultaContent({ option }: { option: ServiceOption }) {
 
       <Box className={classes.bookingCard}>
         <Text className={classes.bookingLabel}>Profesional:</Text>
-        <Select
-          placeholder="Cualquier profesional"
-          data={[
-            { value: 'any', label: 'Cualquier profesional' },
-            { value: 'mery', label: 'Mery Garcia' },
-            { value: 'staff', label: 'Staff MG' },
-          ]}
-          value={selectedProfessional}
-          onChange={setSelectedProfessional}
-          className={classes.bookingSelect}
-        />
-        <Button className={classes.continueButton}>
+        {effectiveStaffConsultasId ? (
+          <Select
+            data={[
+              { value: effectiveStaffConsultasId, label: 'Staff Consultas' },
+            ]}
+            value={effectiveStaffConsultasId}
+            readOnly={true}
+            className={classes.bookingSelect}
+          />
+        ) : (
+          <Text style={{ padding: '0.5rem', color: '#666' }}>Staff Consultas</Text>
+        )}
+        <Button 
+          className={classes.continueButton}
+          onClick={handleContinue}
+          // disabled={!staffConsultasId || !option.serviceId}
+        >
           Continuar
         </Button>
       </Box>
@@ -81,22 +324,170 @@ function ConsultaContent({ option }: { option: ServiceOption }) {
       {option.footerNote2 && (
         <Text className={classes.footerNote}>{option.footerNote2}</Text>
       )}
+
+      {/* Modal de Confirmación */}
+      {currentService && selectedDate && selectedTime && (
+        <BookingConfirmationModal
+          opened={opened}
+          onClose={close}
+          service={{
+            id: currentService.id,
+            name: currentService.name,
+            slug: currentService.name.toLowerCase().replace(/\s+/g, '-'),
+            price: Number(currentService.price),
+            priceBook: Number(currentService.price),
+            duration: currentService.duration,
+            image: currentService.urlImage || '/desk.svg',
+          }}
+          professional={currentEmployee ? {
+            id: currentEmployee.id,
+            name: currentEmployee.fullName,
+            available: true,
+            services: [],
+          } : null}
+          date={selectedDate}
+          time={selectedTime}
+          location="Mery García Office"
+          onConfirm={handleConfirmBooking}
+        />
+      )}
     </Box>
   );
 }
 
 // Componente para el contenido de Sesiones (con calendario)
-function SesionCalendarioContent({ option }: { option: ServiceOption }) {
+function SesionCalendarioContent({ 
+  option, 
+  meryGarciaId,
+  services = [],
+  employees = []
+}: { 
+  option: ServiceOption; 
+  meryGarciaId?: string;
+  services?: ServiceEntity[];
+  employees?: Employee[];
+}) {
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [opened, { open, close }] = useDisclosure(false);
+
+  // Hooks para crear cliente y reserva
+  const createClientMutation = useCreateClient();
+  const createBookingMutation = useCreateBooking();
+
+  // Buscar el servicio actual
+  const currentService = option.serviceId 
+    ? services.find(s => s.id === option.serviceId)
+    : null;
+
+  // Buscar el empleado actual (Mery Garcia)
+  const currentEmployee = meryGarciaId
+    ? employees.find(e => e.id === meryGarciaId)
+    : null;
+
+  // Usar meryGarciaId o option.employeeId como fallback
+  const effectiveEmployeeId = meryGarciaId || option.employeeId;
+
   const handleDateTimeSelect = (date: Date, time: string) => {
-    // Aquí se manejará la selección de fecha y hora
-    console.log('Fecha seleccionada:', date, 'Hora:', time);
-    // TODO: Implementar lógica de reserva
+    setSelectedDate(date);
+    setSelectedTime(time);
+    open(); // Abrir modal de confirmación
+  };
+
+  const handleConfirmBooking = async (clientData: Client) => {
+    if (!option.serviceId || !selectedDate || !selectedTime || !currentService || !effectiveEmployeeId) return;
+
+    try {
+      // 1. Crear cliente primero (usando endpoint público si no está autenticado)
+      if (!clientData.dni) {
+        throw new Error('El DNI es requerido para completar la reserva');
+      }
+      
+      const client = await createClientMutation.mutateAsync({
+        fullName: `${clientData.name} ${clientData.surname}`,
+        email: clientData.email,
+        phone: clientData.mobile,
+        dni: clientData.dni,
+      } as any);
+
+      // 2. Crear reserva
+      const dateString = dayjs(selectedDate).format('YYYY-MM-DD');
+      await createBookingMutation.mutateAsync({
+        clientId: client.id,
+        employeeId: effectiveEmployeeId,
+        serviceId: currentService.id,
+        date: dateString,
+        startTime: selectedTime,
+        quantity: 1,
+        paid: false,
+        notes: clientData.notes,
+      });
+
+      close();
+      
+      // Resetear estado
+      setShowCalendar(false);
+      setSelectedDate(null);
+      setSelectedTime(null);
+    } catch (error) {
+      // Los errores ya se manejan en los hooks con notificaciones
+      console.error('Error al crear reserva:', error);
+    }
+  };
+
+  const handleContinue = () => {
+    // Permitir continuar incluso si no hay serviceId (para mostrar SVG de "no hay turnos")
+    // Solo necesitamos employeeId para continuar
+    if (effectiveEmployeeId) {
+      setShowCalendar(true);
+    }
   };
 
   const handleBack = () => {
-    // TODO: Implementar lógica de volver atrás
-    console.log('Volver atrás');
+    setShowCalendar(false);
+    setSelectedDate(null);
+    setSelectedTime(null);
   };
+
+  // Calcular rango de fechas (hoy hasta 3 meses)
+  const minDate = useMemo(() => dayjs().format('YYYY-MM-DD'), []);
+  const maxDate = useMemo(() => dayjs().add(3, 'months').format('YYYY-MM-DD'), []);
+
+  // Usar meryGarciaId si está disponible, sino usar option.employeeId
+  const employeeId = meryGarciaId || option.employeeId;
+
+  // Verificar disponibilidad solo cuando showCalendar es true y tenemos serviceId y employeeId
+  const employeeIdForAvailability = showCalendar && employeeId ? employeeId : null;
+  const serviceIdForAvailability = showCalendar && option.serviceId ? option.serviceId : null;
+  const minDateForAvailability = showCalendar ? minDate : null;
+  const maxDateForAvailability = showCalendar ? maxDate : null;
+
+  const { data: availability, isLoading: isLoadingAvailability, error: availabilityError } = useAvailability(
+    employeeIdForAvailability,
+    serviceIdForAvailability,
+    minDateForAvailability,
+    maxDateForAvailability
+  );
+
+  // Verificar si hay disponibilidad
+  const hasAvailability = useMemo(() => {
+    // Si no hay serviceId, no hay disponibilidad (mostrar SVG)
+    if (!option.serviceId) {
+      return false;
+    }
+    if (!showCalendar || !employeeId) {
+      return false;
+    }
+    if (!availability) {
+      return false;
+    }
+    // Verificar si hay al menos un día con slots disponibles
+    return availability.availability.some(day => {
+      if (!day.hasActiveTimeSlots) return false;
+      return day.slots.some(slot => slot.available);
+    });
+  }, [availability, option.serviceId, employeeId, showCalendar]);
 
   return (
     <Box className={classes.accordionPanelContent}>
@@ -116,17 +507,91 @@ function SesionCalendarioContent({ option }: { option: ServiceOption }) {
         <Text className={classes.panelCuotas}>{option.cuotasText}</Text>
       )}
 
-      <Box className={classes.calendarCard}>
-        <DateTimeSelector
-          serviceDuration={60}
-          onSelectDateTime={handleDateTimeSelect}
-          onBack={handleBack}
-          showBackButton={true}
-        />
-      </Box>
+      {!showCalendar ? (
+        <>
+          {/* Mostrar profesional seleccionado (Mery Garcia) - no editable */}
+          <Box className={classes.bookingCard}>
+            <Text className={classes.bookingLabel}>Profesional:</Text>
+            {meryGarciaId ? (
+              <Select
+                data={[
+                  { value: meryGarciaId, label: 'Mery Garcia' },
+                ]}
+                value={meryGarciaId}
+                readOnly={true}
+                className={classes.bookingSelect}
+              />
+            ) : (
+              <Text style={{ padding: '0.5rem', color: '#333' }}>Mery Garcia</Text>
+            )}
+            <Button 
+              className={classes.continueButton}
+              onClick={handleContinue}
+              disabled={!effectiveEmployeeId}
+            >
+              Continuar
+            </Button>
+          </Box>
+        </>
+      ) : (
+        <>
+          {/* Mostrar mensaje de no disponibilidad si no hay slots disponibles */}
+          {!isLoadingAvailability && !hasAvailability ? (
+            <Box className={classes.emptyBookingCard}>
+              <Image
+                src="/am-empty-booking.svg"
+                alt="No hay citas disponibles"
+                width={100}
+                height={100}
+              />
+              <Text className={classes.emptyBookingText}>
+                Actualmente no hay citas disponible. Ingresa periódicamente para verificar nuevas disponibilidades
+              </Text>
+            </Box>
+          ) : (
+            <Box className={classes.calendarCard}>
+              <DateTimeSelector
+                serviceDuration={option.serviceDuration ?? 60}
+                employeeId={employeeId ?? null}
+                serviceId={option.serviceId ?? null}
+                onSelectDateTime={handleDateTimeSelect}
+                onBack={handleBack}
+                showBackButton={true}
+              />
+            </Box>
+          )}
+        </>
+      )}
 
       {option.promoText && (
         <Text className={classes.promoText}>{option.promoText}</Text>
+      )}
+
+      {/* Modal de Confirmación */}
+      {currentService && selectedDate && selectedTime && (
+        <BookingConfirmationModal
+          opened={opened}
+          onClose={close}
+          service={{
+            id: currentService.id,
+            name: currentService.name,
+            slug: currentService.name.toLowerCase().replace(/\s+/g, '-'),
+            price: Number(currentService.price),
+            priceBook: Number(currentService.price),
+            duration: currentService.duration,
+            image: currentService.urlImage || '/desk.svg',
+          }}
+          professional={currentEmployee ? {
+            id: currentEmployee.id,
+            name: currentEmployee.fullName,
+            available: true,
+            services: [],
+          } : null}
+          date={selectedDate}
+          time={selectedTime}
+          location="Mery García Office"
+          onConfirm={handleConfirmBooking}
+        />
       )}
     </Box>
   );
@@ -167,16 +632,23 @@ function LastMinuteContent({ option }: { option: ServiceOption }) {
   );
 }
 
-function AccordionItem({ option, isOpen, onToggle }: AccordionItemProps) {
+interface AccordionItemWithIdsProps extends AccordionItemProps {
+  staffConsultasId?: string;
+  meryGarciaId?: string;
+  services?: ServiceEntity[];
+  employees?: Employee[];
+}
+
+function AccordionItem({ option, isOpen, onToggle, staffConsultasId, meryGarciaId, services, employees }: AccordionItemWithIdsProps) {
   const renderContent = () => {
     switch (option.contentType) {
       case 'consulta-sin-trabajo':
       case 'consulta-con-trabajo':
-        return <ConsultaContent option={option} />;
+        return <ConsultaContent option={option} staffConsultasId={staffConsultasId} services={services} employees={employees} />;
       case 'sesion-calendario':
       case 'retoque-calendario':
       case 'mantenimiento-calendario':
-        return <SesionCalendarioContent option={option} />;
+        return <SesionCalendarioContent option={option} meryGarciaId={meryGarciaId} services={services} employees={employees} />;
       case 'last-minute':
         return <LastMinuteContent option={option} />;
       default:
@@ -204,9 +676,13 @@ function AccordionItem({ option, isOpen, onToggle }: AccordionItemProps) {
 
 interface ServiceAccordionProps {
   options: ServiceOption[];
+  staffConsultasId?: string;
+  meryGarciaId?: string;
+  services?: ServiceEntity[];
+  employees?: Employee[];
 }
 
-function ServiceAccordion({ options }: ServiceAccordionProps) {
+function ServiceAccordion({ options, staffConsultasId, meryGarciaId, services, employees }: ServiceAccordionProps) {
   const [openId, setOpenId] = useState<string | null>(null);
 
   const handleToggle = (id: string) => {
@@ -221,6 +697,10 @@ function ServiceAccordion({ options }: ServiceAccordionProps) {
           option={option}
           isOpen={openId === option.id}
           onToggle={() => handleToggle(option.id)}
+          staffConsultasId={staffConsultasId}
+          meryGarciaId={meryGarciaId}
+          services={services}
+          employees={employees}
         />
       ))}
     </Box>
@@ -444,7 +924,279 @@ const lashesLineOptions: ServiceOption[] = [
   },
 ];
 
+// Mapeo de nombres de servicios estáticos a nombres en el backend
+// Basado en los servicios reales del backend
+const SERVICE_NAME_MAPPING: Record<string, string[]> = {
+  'nanoblading': [
+    'nanoblading by mery garcia',
+    'nanoblading',
+    'nano blading',
+    'nano-blading'
+  ],
+  'lip-blush': [
+    'lip blush',
+    'lipblush',
+    'lip-blush'
+  ],
+  'lip-camouflage': [
+    'lip camouflage',
+    'lipcamouflage',
+    'lip-camouflage'
+  ],
+  'lashes-line': [
+    'lashes line',
+    'lashesline',
+    'lashes-line'
+  ],
+};
+
+// Mapeo de nombres de empleados estáticos a nombres en el backend
+const EMPLOYEE_NAME_MAPPING: Record<string, string[]> = {
+  'mery-garcia': ['mery garcia', 'mery', 'garcia'],
+  'staff-mg': ['staff', 'staff mg', 'staffmg'],
+};
+
+// Función para encontrar servicio por nombre y tipo (búsqueda flexible)
+function findServiceByName(services: ServiceEntity[], serviceKey: string, optionType?: string): ServiceEntity | null {
+  const searchTerms = SERVICE_NAME_MAPPING[serviceKey] || [serviceKey.toLowerCase()];
+  
+  // Filtrar servicios visibles primero
+  const visibleServices = services.filter(s => s.showOnSite);
+  
+  // Si hay un tipo de opción específico, buscar coincidencias más precisas
+  if (optionType) {
+    const optionTypeLower = optionType.toLowerCase();
+    
+    for (const service of visibleServices) {
+      const serviceNameLower = service.name.toLowerCase();
+      
+      // Verificar que coincida con el término de búsqueda base
+      const matchesBase = searchTerms.some(term => serviceNameLower.includes(term));
+      
+      if (matchesBase) {
+        // Buscar coincidencias específicas según el tipo de opción
+        if (optionTypeLower.includes('consulta') || optionTypeLower.includes('previa')) {
+          if (serviceNameLower.includes('consulta')) {
+            return service;
+          }
+        } else if (optionTypeLower.includes('1ª sesión') || optionTypeLower.includes('1° sesión') || optionTypeLower.includes('sesion-calendario')) {
+          if (serviceNameLower.includes('1° sesión') || serviceNameLower.includes('1ª sesión')) {
+            return service;
+          }
+        } else if (optionTypeLower.includes('2ª sesión') || optionTypeLower.includes('2° sesión') || optionTypeLower.includes('retoque')) {
+          if (serviceNameLower.includes('2° sesión') || serviceNameLower.includes('2ª sesión') || serviceNameLower.includes('retoque')) {
+            return service;
+          }
+        } else if (optionTypeLower.includes('mantenimiento')) {
+          if (serviceNameLower.includes('mantenimiento')) {
+            return service;
+          }
+        }
+      }
+    }
+  }
+  
+  // Si no hay tipo específico o no se encontró coincidencia, buscar cualquier servicio que coincida
+  for (const service of visibleServices) {
+    const serviceNameLower = service.name.toLowerCase();
+    for (const term of searchTerms) {
+      if (serviceNameLower.includes(term)) {
+        // Priorizar servicios que no sean "Last Minute" o "Consulta"
+        if (!serviceNameLower.includes('last minute') && !serviceNameLower.includes('consulta')) {
+          return service;
+        }
+      }
+    }
+  }
+  
+  // Si no se encontró, intentar con cualquier servicio visible que coincida
+  for (const service of visibleServices) {
+    const serviceNameLower = service.name.toLowerCase();
+    for (const term of searchTerms) {
+      if (serviceNameLower.includes(term)) {
+        return service;
+      }
+    }
+  }
+  
+  return null;
+}
+
+// Función para encontrar empleado por nombre (búsqueda flexible)
+function findEmployeeByName(employees: Employee[], employeeKey: string): Employee | null {
+  const searchTerms = EMPLOYEE_NAME_MAPPING[employeeKey] || [employeeKey.toLowerCase()];
+  
+  for (const employee of employees) {
+    const employeeNameLower = employee.fullName.toLowerCase();
+    for (const term of searchTerms) {
+      if (employeeNameLower.includes(term)) {
+        return employee;
+      }
+    }
+  }
+  
+  return null;
+}
+
 export default function TattooCosmeticoPage() {
+  const { isAuthenticated } = useAuth();
+  
+  // ID hardcodeado de la categoría "Tattoo Cosmético"
+  const TATTOO_COSMETICO_CATEGORY_ID = '9a39b2f8-0d4a-4bca-bc93-b4b5d6cf2d11';
+  
+  // ID hardcodeado de "Staff Consultas"
+  const STAFF_CONSULTAS_ID = '2d283dc6-6940-46fc-9166-eb6b17b8cc0f';
+
+  // Inicializar con el ID hardcodeado para que los hooks se ejecuten inmediatamente
+  const [cosmeticTattooCategoryId, setCosmeticTattooCategoryId] = useState<string>(TATTOO_COSMETICO_CATEGORY_ID);
+  const [mappedServices, setMappedServices] = useState<Map<string, ServiceEntity>>(new Map());
+  const [mappedEmployees, setMappedEmployees] = useState<Map<string, Employee>>(new Map());
+
+  // Obtener categorías para encontrar "Cosmetic Tattoo" o "Tattoo Cosmético"
+  // Si está autenticado, obtener dinámicamente desde la API
+  // Si no está autenticado, usar el ID hardcodeado
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        if (isAuthenticated) {
+          // Si está autenticado, obtener categorías desde la API
+          const response = await CategoryService.getAll();
+          const categories = response.data;
+          
+          // Buscar categoría que contenga "cosmetic tattoo" o "tattoo cosmético"
+          const category = categories.find(
+            (cat) => 
+              cat.name.toLowerCase().includes('cosmetic tattoo') ||
+              cat.name.toLowerCase().includes('tattoo cosmético') ||
+              cat.name.toLowerCase().includes('tattoo cosmetico')
+          );
+          
+          if (category && category.id !== cosmeticTattooCategoryId) {
+            setCosmeticTattooCategoryId(category.id);
+          }
+        }
+        // Si no está autenticado, ya tenemos el ID hardcodeado como valor inicial
+      } catch (error) {
+        console.error('Error fetching category:', error);
+        // En caso de error, mantener el ID hardcodeado
+      }
+    };
+    
+    fetchCategory();
+  }, [isAuthenticated, cosmeticTattooCategoryId]);
+
+  // Obtener servicios de la categoría
+  const { data: services = [], isLoading: isLoadingServices, error: servicesError } = useServices(cosmeticTattooCategoryId);
+  
+  // Obtener empleados - el endpoint público requiere categoryId
+  const { data: employees = [], isLoading: isLoadingEmployees, error: employeesError } = useEmployees(cosmeticTattooCategoryId);
+
+  // Debug: Log cuando cambian los servicios o categoryId
+  useEffect(() => {
+    console.log('Services loading state:', {
+      cosmeticTattooCategoryId,
+      servicesCount: services.length,
+      isLoadingServices,
+      servicesError,
+      services: services.map(s => ({ id: s.id, name: s.name, showOnSite: s.showOnSite }))
+    });
+  }, [cosmeticTattooCategoryId, services, isLoadingServices, servicesError]);
+
+  // Debug: Log cuando cambian los empleados
+  useEffect(() => {
+    console.log('Employees loading state:', {
+      cosmeticTattooCategoryId,
+      employeesCount: employees.length,
+      isLoadingEmployees,
+      employeesError,
+      employees: employees.map(e => ({ id: e.id, fullName: e.fullName }))
+    });
+  }, [cosmeticTattooCategoryId, employees, isLoadingEmployees, employeesError]);
+
+  // Mapear servicios y empleados cuando se cargan
+  useEffect(() => {
+    if (services.length > 0) {
+      const serviceMap = new Map<string, ServiceEntity>();
+      
+      // Mapear servicios - buscar la primera sesión de cada servicio como servicio base
+      // Para Nanoblading: buscar "Nanoblading By Mery Garcia [1° Sesión]"
+      const nanobladingService = services.find(s => 
+        s.showOnSite && 
+        s.name.toLowerCase().includes('nanoblading') && 
+        s.name.toLowerCase().includes('1° sesión') &&
+        s.name.toLowerCase().includes('mery garcia')
+      ) || findServiceByName(services, 'nanoblading');
+      
+      // Para Lip Blush: buscar "Lip Blush [1° Sesión]"
+      const lipBlushService = services.find(s => 
+        s.showOnSite && 
+        s.name.toLowerCase().includes('lip blush') && 
+        s.name.toLowerCase().includes('1° sesión')
+      ) || findServiceByName(services, 'lip-blush');
+      
+      // Para Lip Camouflage: buscar "Lip Camouflage (By Mery Garcia)"
+      const lipCamouflageService = services.find(s => 
+        s.showOnSite && 
+        s.name.toLowerCase().includes('lip camouflage') &&
+        s.name.toLowerCase().includes('mery garcia')
+      ) || findServiceByName(services, 'lip-camouflage');
+      
+      // Para Lashes Line: buscar "Lashes Line [1° Sesión]"
+      const lashesLineService = services.find(s => 
+        s.showOnSite && 
+        s.name.toLowerCase().includes('lashes line') && 
+        s.name.toLowerCase().includes('1° sesión')
+      ) || findServiceByName(services, 'lashes-line');
+      
+      if (nanobladingService) serviceMap.set('nanoblading', nanobladingService);
+      if (lipBlushService) serviceMap.set('lip-blush', lipBlushService);
+      if (lipCamouflageService) serviceMap.set('lip-camouflage', lipCamouflageService);
+      if (lashesLineService) serviceMap.set('lashes-line', lashesLineService);
+      
+      setMappedServices(serviceMap);
+    }
+  }, [services]);
+
+  useEffect(() => {
+    if (employees.length > 0) {
+      const employeeMap = new Map<string, Employee>();
+      
+      // Mapear empleados
+      const meryGarcia = findEmployeeByName(employees, 'mery-garcia');
+      const staffMg = findEmployeeByName(employees, 'staff-mg');
+      // Buscar "Staff Consultas" específicamente - búsqueda flexible
+      const staffConsultas = employees.find(e => {
+        const nameLower = e.fullName.toLowerCase();
+        return nameLower.includes('staff consultas') || 
+               nameLower === 'staff consultas' ||
+               nameLower.includes('staff consulta');
+      });
+      
+      if (meryGarcia) employeeMap.set('mery-garcia', meryGarcia);
+      if (staffMg) employeeMap.set('staff-mg', staffMg);
+      if (staffConsultas) {
+        employeeMap.set('staff-consultas', staffConsultas);
+        console.log('Staff Consultas encontrado:', staffConsultas);
+      } else {
+        console.warn('Staff Consultas NO encontrado. Empleados disponibles:', employees.map(e => e.fullName));
+        // Usar ID hardcodeado como fallback si no se encuentra en la lista
+        // Crear un objeto Employee temporal con el ID hardcodeado
+        const staffConsultasFallback: Employee = {
+          id: STAFF_CONSULTAS_ID,
+          fullName: 'Staff Consultas',
+          email: 'info6@merygarcia.com.ar',
+          phone: '+541145303203',
+          createdAt: '',
+          updatedAt: ''
+        };
+        employeeMap.set('staff-consultas', staffConsultasFallback);
+        console.log('Usando Staff Consultas con ID hardcodeado:', STAFF_CONSULTAS_ID);
+      }
+      
+      setMappedEmployees(employeeMap);
+    }
+  }, [employees]);
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -461,6 +1213,130 @@ export default function TattooCosmeticoPage() {
   const openExternalLink = (url: string) => {
     window.open(url, '_blank');
   };
+
+  // Función para obtener opciones con IDs mapeados
+  const getOptionsWithIds = (baseOptions: ServiceOption[], serviceKey: string, allServices: ServiceEntity[]): ServiceOption[] => {
+    const service = mappedServices.get(serviceKey);
+    const meryGarcia = mappedEmployees.get('mery-garcia');
+    
+    return baseOptions.map(option => {
+      // Solo agregar IDs a opciones que no sean last-minute
+      if (option.contentType === 'last-minute') {
+        return option;
+      }
+      
+      // Para consultas, buscar el servicio de consulta específico
+      if (option.contentType === 'consulta-sin-trabajo' || option.contentType === 'consulta-con-trabajo') {
+        // Buscar servicio de consulta específico según el tipo
+        let consultaService: ServiceEntity | undefined;
+        
+        if (serviceKey === 'nanoblading') {
+          if (option.contentType === 'consulta-sin-trabajo') {
+            // Buscar: "Nanoblading [Consulta obligatoria] SIN trabajo previo"
+            // Nombre exacto del backend: "Nanoblading [Consulta obligatoria] SIN trabajo previo"
+            consultaService = allServices.find(s => {
+              const nameLower = s.name.toLowerCase();
+              return s.showOnSite && 
+                nameLower.includes('nanoblading') &&
+                nameLower.includes('consulta') &&
+                nameLower.includes('sin trabajo previo');
+            });
+          } else if (option.contentType === 'consulta-con-trabajo') {
+            // Buscar: "Nanoblading [Consulta Obligatoria] CON trabajo previo"
+            // Nombre exacto del backend: "Nanoblading [Consulta Obligatoria] CON trabajo previo"
+            consultaService = allServices.find(s => {
+              const nameLower = s.name.toLowerCase();
+              return s.showOnSite && 
+                nameLower.includes('nanoblading') &&
+                nameLower.includes('consulta') &&
+                nameLower.includes('con trabajo previo');
+            });
+          }
+        } else if (serviceKey === 'lip-camouflage') {
+          // Buscar: "Lip Camouflage [Consulta previa obligatoria]"
+          // Nombre exacto del backend: "Lip Camouflage [Consulta previa obligatoria]"
+          consultaService = allServices.find(s => {
+            const nameLower = s.name.toLowerCase();
+            return s.showOnSite && 
+              nameLower.includes('lip camouflage') &&
+              nameLower.includes('consulta previa obligatoria');
+          });
+        }
+        
+        // Debug: Log si no se encuentra el servicio
+        if (!consultaService) {
+          console.warn(`No se encontró servicio de consulta para ${serviceKey} - ${option.contentType}`, {
+            services: allServices.filter(s => s.showOnSite).map(s => s.name),
+            optionLabel: option.label,
+            allServicesCount: allServices.length
+          });
+        }
+        
+        return {
+          ...option,
+          serviceId: consultaService?.id,
+          serviceDuration: consultaService?.duration || 60,
+        };
+      }
+      
+      // Para servicios con calendario, usar el servicio mapeado y Mery Garcia
+      // EXCEPCIÓN: "Consulta previa" de Lashes Line no debe tener serviceId para mostrar "no hay turnos"
+      if (option.contentType === 'sesion-calendario' || 
+          option.contentType === 'retoque-calendario' || 
+          option.contentType === 'mantenimiento-calendario') {
+        // Si es "Consulta previa" de Lashes Line, no asignar serviceId
+        if (serviceKey === 'lashes-line' && option.label === 'Consulta previa') {
+          return {
+            ...option,
+            // No asignar serviceId para que muestre el SVG de "no hay turnos"
+            employeeId: meryGarcia?.id,
+          };
+        }
+        
+        return {
+          ...option,
+          serviceId: service?.id,
+          employeeId: meryGarcia?.id,
+          serviceDuration: service?.duration,
+        };
+      }
+      
+      return option;
+    });
+  };
+
+  // Opciones con IDs mapeados - solo ejecutar cuando los servicios estén cargados
+  const nanobladingOptionsWithIds = useMemo(
+    () => {
+      if (services.length === 0) return nanobladingOptions;
+      return getOptionsWithIds(nanobladingOptions, 'nanoblading', services);
+    },
+    [mappedServices, mappedEmployees, services]
+  );
+
+  const lipBlushOptionsWithIds = useMemo(
+    () => {
+      if (services.length === 0) return lipBlushOptions;
+      return getOptionsWithIds(lipBlushOptions, 'lip-blush', services);
+    },
+    [mappedServices, mappedEmployees, services]
+  );
+
+  const lipCamouflageOptionsWithIds = useMemo(
+    () => {
+      if (services.length === 0) return lipCamouflageOptions;
+      return getOptionsWithIds(lipCamouflageOptions, 'lip-camouflage', services);
+    },
+    [mappedServices, mappedEmployees, services]
+  );
+
+  const lashesLineOptionsWithIds = useMemo(
+    () => {
+      if (services.length === 0) return lashesLineOptions;
+      return getOptionsWithIds(lashesLineOptions, 'lashes-line', services);
+    },
+    [mappedServices, mappedEmployees, services]
+  );
 
   return (
     <>
@@ -548,14 +1424,25 @@ export default function TattooCosmeticoPage() {
                     Mas de cuatro años de practica y perfeccionamientos constantes en el exterior dieron por resultado que el ultimo año Mery Garcia utilizara Nanoblading para dar respuesta a todas las personas que buscan mejorar sus cejas a través del tatuaje cosmético.
                   </Text>
                   <Box className={classes.buttonsWrapper}>
-                    <button className={classes.ctaButton}>MÁS INFO AQUÍ</button>
+                    <button 
+                      className={classes.ctaButton}
+                      onClick={() => openExternalLink('https://merygarcia.com.ar/servicios/nanoblading')}
+                    >
+                      MÁS INFO AQUÍ
+                    </button>
                   </Box>
                 </Box>
               </Box>
               
               <Box className={classes.optionsSection}>
                 <Text className={classes.optionsTitle}>Seleccioná la opción deseada para solicitar tu cita:</Text>
-                <ServiceAccordion options={nanobladingOptions} />
+                <ServiceAccordion 
+                  options={nanobladingOptionsWithIds} 
+                  staffConsultasId={mappedEmployees.get('staff-consultas')?.id || STAFF_CONSULTAS_ID}
+                  meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
+                  services={services}
+                  employees={employees}
+                />
               </Box>
             </Box>
 
@@ -577,14 +1464,25 @@ export default function TattooCosmeticoPage() {
                     Es un maquillaje semi permanente que dura entre 18 y 24 meses. El procedimiento consta de una primera sesión y un retoque para terminar de definir unos labios perfectos a los 30 o 60 días.
                   </Text>
                   <Box className={classes.buttonsWrapper}>
-                    <button className={classes.ctaButton}>MÁS INFO AQUÍ</button>
+                    <button 
+                      className={classes.ctaButton}
+                      onClick={() => openExternalLink('https://merygarcia.com.ar/servicios/lip-blush')}
+                    >
+                      MÁS INFO AQUÍ
+                    </button>
                   </Box>
                 </Box>
               </Box>
               
               <Box className={classes.optionsSection}>
                 <Text className={classes.optionsTitle}>Seleccioná la opción deseada para solicitar tu cita:</Text>
-                <ServiceAccordion options={lipBlushOptions} />
+                <ServiceAccordion 
+                  options={lipBlushOptionsWithIds} 
+                  staffConsultasId={mappedEmployees.get('staff-consultas')?.id || STAFF_CONSULTAS_ID}
+                  meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
+                  services={services}
+                  employees={employees}
+                />
               </Box>
             </Box>
 
@@ -609,14 +1507,25 @@ export default function TattooCosmeticoPage() {
                     Servicio dirigido a personas que tengan un trabajo previo mal realizado o deteriorado. En la consulta podremos indicarte si está dentro de nuestras posibilidades mejorarlo.
                   </Text>
                   <Box className={classes.buttonsWrapper}>
-                    <button className={classes.ctaButton}>MÁS INFO AQUÍ</button>
+                    <button 
+                      className={classes.ctaButton}
+                      onClick={() => openExternalLink('https://merygarcia.com.ar/servicios/lip-blush')}
+                    >
+                      MÁS INFO AQUÍ
+                    </button>
                   </Box>
                 </Box>
               </Box>
               
               <Box className={classes.optionsSection}>
                 <Text className={classes.optionsTitle}>Seleccioná la opción deseada para solicitar tu cita:</Text>
-                <ServiceAccordion options={lipCamouflageOptions} />
+                <ServiceAccordion 
+                  options={lipCamouflageOptionsWithIds} 
+                  staffConsultasId={mappedEmployees.get('staff-consultas')?.id || STAFF_CONSULTAS_ID}
+                  meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
+                  services={services}
+                  employees={employees}
+                />
               </Box>
             </Box>
 
@@ -645,14 +1554,25 @@ export default function TattooCosmeticoPage() {
                     <span className={classes.serviceHighlight}>✨ Preparate para lucir una mirada increíble pero sobre todo natural ✨</span>
                   </Text>
                   <Box className={classes.buttonsWrapper}>
-                    <button className={classes.ctaButton}>MÁS INFO AQUÍ</button>
+                    <button 
+                      className={classes.ctaButton}
+                      onClick={() => openExternalLink('https://merygarcia.com.ar/servicios/styling-pestanas')}
+                    >
+                      MÁS INFO AQUÍ
+                    </button>
                   </Box>
                 </Box>
               </Box>
               
               <Box className={classes.optionsSection}>
                 <Text className={classes.optionsTitle}>Seleccioná la opción deseada para solicitar tu cita:</Text>
-                <ServiceAccordion options={lashesLineOptions} />
+                <ServiceAccordion 
+                  options={lashesLineOptionsWithIds} 
+                  staffConsultasId={mappedEmployees.get('staff-consultas')?.id || STAFF_CONSULTAS_ID}
+                  meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
+                  services={services}
+                  employees={employees}
+                />
               </Box>
             </Box>
 

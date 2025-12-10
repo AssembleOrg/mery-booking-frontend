@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Container, Stack, Text } from '@mantine/core';
+import { Box, Container, Stack, Text, Loader, Center } from '@mantine/core';
 import {
   Header,
   Footer,
@@ -9,16 +9,22 @@ import {
   BookingConfirmationModal,
 } from '@/presentation/components';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useDisclosure } from '@mantine/hooks';
-import { MOCK_SERVICES, MOCK_PROFESSIONALS, MOCK_LOCATION } from '@/infrastructure/data/mockData';
-import { Service, Professional, Client, BuyIntention } from '@/domain/entities';
+import { useServices, useEmployees, useCreateClient, useCreateBooking } from '@/presentation/hooks';
+import { Client } from '@/domain/entities';
+import type { ServiceEntity } from '@/infrastructure/http';
 import classes from './page.module.css';
+import dayjs from 'dayjs';
 
 interface ServiceBookingData {
   servicio: string;
   profesional: string;
 }
+
+const MOCK_LOCATION = 'Mery García Office';
+// ID de la categoría "Estilismo de Cejas y Pestañas"
+const ESTILISMO_CEJAS_CATEGORY_ID = '316f01a6-ef73-4b05-a322-8da598ba50aa';
 
 export default function EstilismoCejasPage() {
   const [step, setStep] = useState(1);
@@ -27,9 +33,33 @@ export default function EstilismoCejasPage() {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
 
+  // Hooks para crear cliente y reserva
+  const createClientMutation = useCreateClient();
+  const createBookingMutation = useCreateBooking();
+
+  // Cargar lista de servicios para buscar el servicio seleccionado
+  const { data: services = [], isLoading: isLoadingServices } = useServices(ESTILISMO_CEJAS_CATEGORY_ID);
+  
+  // Buscar el servicio seleccionado en la lista ya cargada
+  const currentService = bookingData?.servicio 
+    ? (services.find(s => s.id === bookingData.servicio) as ServiceEntity | undefined)
+    : null;
+  
+  // Solo mostrar loading si estamos cargando servicios Y hay un servicio seleccionado
+  const isLoadingService = isLoadingServices && !!bookingData?.servicio;
+  
+  // Cargar lista de empleados para buscar el empleado seleccionado
+  const { data: employees = [] } = useEmployees(ESTILISMO_CEJAS_CATEGORY_ID, bookingData?.servicio || undefined);
+  
+  // Buscar el empleado seleccionado en la lista ya cargada
+  const currentEmployee = bookingData?.profesional 
+    ? employees.find(e => e.id === bookingData.profesional)
+    : null;
+
   const handleServiceSubmit = (data: ServiceBookingData) => {
     setBookingData(data);
-    setStep(2);
+    // No cambiar a step 2 inmediatamente, esperar a que se cargue el servicio
+    // El step 2 se mostrará cuando currentService esté disponible
   };
 
   const handleDateTimeSelect = (date: Date, time: string) => {
@@ -42,44 +72,80 @@ export default function EstilismoCejasPage() {
     setStep(1);
   };
 
-  const handleConfirmBooking = (client: Client) => {
-    if (!bookingData || !selectedDate || !selectedTime) return;
+  const handleConfirmBooking = async (clientData: Client) => {
+    if (!bookingData || !selectedDate || !selectedTime || !currentService) return;
 
-    // Obtener servicio y profesional de los datos mock
-    const service = MOCK_SERVICES.find((s) => s.id === bookingData.servicio);
-    const professional = bookingData.profesional
-      ? MOCK_PROFESSIONALS.find((p) => p.id === bookingData.profesional)
-      : null;
+    // Validar que haya un empleado seleccionado
+    if (!bookingData.profesional) {
+      // Si no hay empleado seleccionado, no podemos crear la reserva
+      // Esto no debería pasar porque DateTimeSelector requiere employeeId
+      return;
+    }
 
-    if (!service) return;
+    try {
+      // 1. Crear cliente primero (usando endpoint público si no está autenticado)
+      // El DNI es requerido en el formulario, así que siempre debería estar presente
+      if (!clientData.dni) {
+        throw new Error('El DNI es requerido para completar la reserva');
+      }
+      
+      const client = await createClientMutation.mutateAsync({
+        fullName: `${clientData.name} ${clientData.surname}`,
+        email: clientData.email,
+        phone: clientData.mobile,
+        dni: clientData.dni,
+      } as any);
 
-    const buyIntention: BuyIntention = {
-      professional: professional?.id || '',
-      date: selectedDate.toISOString(),
-      time: selectedTime,
-      location: MOCK_LOCATION,
-      client,
-      service: service.id,
-      price: service.priceBook,
-      deposit: Math.round(service.priceBook * 0.8),
-    };
+      // 2. Crear reserva
+      const dateString = dayjs(selectedDate).format('YYYY-MM-DD');
+      await createBookingMutation.mutateAsync({
+        clientId: client.id,
+        employeeId: bookingData.profesional,
+        serviceId: currentService.id,
+        date: dateString,
+        startTime: selectedTime,
+        quantity: 1,
+        paid: false,
+        notes: clientData.notes,
+      });
 
-    console.log('Buy Intention:', buyIntention);
-    
-    close();
-    alert('¡Reserva confirmada! Los datos se han guardado en la consola.');
-    
-    // Aquí irá la llamada al backend
-    // await createBooking(buyIntention);
+      close();
+      
+      // Resetear estado
+      setStep(1);
+      setBookingData(null);
+      setSelectedDate(null);
+      setSelectedTime(null);
+    } catch (error) {
+      // Los errores ya se manejan en los hooks con notificaciones
+      console.error('Error al crear reserva:', error);
+    }
   };
 
-  // Obtener servicio y profesional actuales para el modal
-  const currentService = bookingData
-    ? MOCK_SERVICES.find((s) => s.id === bookingData.servicio)
-    : null;
-  const currentProfessional = bookingData?.profesional
-    ? MOCK_PROFESSIONALS.find((p) => p.id === bookingData.profesional)
-    : null;
+  // Transformar ServiceEntity a Service para el modal (compatibilidad)
+  const serviceForModal = useMemo(() => {
+    if (!currentService) return null;
+    return {
+      id: currentService.id,
+      name: currentService.name,
+      slug: currentService.name.toLowerCase().replace(/\s+/g, '-'),
+      price: Number(currentService.price),
+      priceBook: Number(currentService.price), // Usar el mismo precio por ahora
+      duration: currentService.duration,
+      image: currentService.urlImage || '/desk.svg',
+    };
+  }, [currentService]);
+
+  // Transformar Employee a Professional para el modal (compatibilidad)
+  const professionalForModal = useMemo(() => {
+    if (!currentEmployee) return null;
+    return {
+      id: currentEmployee.id,
+      name: currentEmployee.fullName,
+      available: true,
+      services: [],
+    };
+  }, [currentEmployee]);
 
   return (
     <>
@@ -137,22 +203,44 @@ export default function EstilismoCejasPage() {
               <Box w="100%" maw={1100}>
                 <Box className={classes.formLayout}>
                   {/* Paso 2: Selector de fecha y hora - Izquierda en Desktop */}
-                  {step === 2 && currentService && (
-                    <Box className={classes.calendarColumn}>
-                      <DateTimeSelector
-                        serviceDuration={currentService.duration}
-                        onSelectDateTime={handleDateTimeSelect}
-                        onBack={handleBack}
-                        showBackButton={true}
-                      />
-                    </Box>
+                  {/* Mostrar cuando hay bookingData y el servicio está cargado */}
+                  {bookingData?.servicio && (
+                    <>
+                      {isLoadingService ? (
+                        <Box className={classes.calendarColumn}>
+                          <Center py="xl">
+                            <Loader size="md" />
+                          </Center>
+                        </Box>
+                      ) : currentService ? (
+                        <Box className={classes.calendarColumn}>
+                          <DateTimeSelector
+                            serviceDuration={currentService.duration}
+                            employeeId={bookingData?.profesional || null}
+                            serviceId={currentService.id}
+                            onSelectDateTime={handleDateTimeSelect}
+                            onBack={handleBack}
+                            showBackButton={true}
+                          />
+                        </Box>
+                      ) : null}
+                    </>
                   )}
 
                   {/* Paso 1: Formulario de servicio - Derecha en Desktop */}
+                  {/* Ocultar en mobile solo si hay servicio seleccionado y cargado */}
                   <Box 
-                    className={`${classes.formColumn} ${step === 2 ? classes.hiddenOnMobile : ''}`}
+                    className={`${classes.formColumn} ${bookingData?.servicio && currentService ? classes.hiddenOnMobile : ''}`}
                   >
-                    <ServiceBookingForm onSubmit={handleServiceSubmit} />
+                    <ServiceBookingForm 
+                      onSubmit={handleServiceSubmit}
+                      onChange={handleServiceSubmit}
+                      categoryId={ESTILISMO_CEJAS_CATEGORY_ID}
+                      employeeFilter={(employee) => 
+                        employee.fullName.toLowerCase().includes('rosario staff') ||
+                        employee.fullName.toLowerCase() === 'rosario staff'
+                      }
+                    />
                   </Box>
                 </Box>
               </Box>
@@ -164,12 +252,12 @@ export default function EstilismoCejasPage() {
       <Footer />
 
       {/* Modal de Confirmación */}
-      {currentService && selectedDate && selectedTime && (
+      {serviceForModal && selectedDate && selectedTime && (
         <BookingConfirmationModal
           opened={opened}
           onClose={close}
-          service={currentService}
-          professional={currentProfessional || null}
+          service={serviceForModal}
+          professional={professionalForModal || null}
           date={selectedDate}
           time={selectedTime}
           location={MOCK_LOCATION}

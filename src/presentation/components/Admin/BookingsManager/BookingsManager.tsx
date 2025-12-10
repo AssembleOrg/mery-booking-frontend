@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import {
   Box,
   Button,
@@ -15,18 +15,32 @@ import {
   ScrollArea,
   SegmentedControl,
   Table,
+  Modal,
+  Divider,
+  ActionIcon,
+  TextInput,
+  Textarea,
+  Checkbox,
+  Loader,
 } from '@mantine/core';
-import { DatePickerInput, DateValue } from '@mantine/dates';
+import { DatePickerInput, DateValue, DatesProvider } from '@mantine/dates';
+import { useForm, Controller } from 'react-hook-form';
 import { notifications } from '@mantine/notifications';
-import { BookingService, EmployeeService, ServiceService } from '@/infrastructure/http';
-import type { Booking, Employee, ServiceEntity } from '@/infrastructure/http';
+import { BookingService, EmployeeService, ServiceService, ClientService } from '@/infrastructure/http';
+import type { Booking, BookingResponse, Employee, ServiceEntity, Client, ClientSearchResult } from '@/infrastructure/http';
+import { useCreateBooking, useCreateClient, useAvailability } from '@/presentation/hooks';
+import { ConfirmationModal } from '@/presentation/components';
+import dayjs from 'dayjs';
+import 'dayjs/locale/es';
 import classes from './BookingsManager.module.css';
+
+dayjs.locale('es');
 
 type ViewMode = 'calendar' | 'list';
 type CalendarView = 'today' | 'week' | 'month';
 
 export function BookingsManager() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<BookingResponse[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [services, setServices] = useState<ServiceEntity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,6 +61,184 @@ export function BookingsManager() {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
+  
+  // Estados para modales
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState<BookingResponse | null>(null);
+  const [dayBookingsModalOpen, setDayBookingsModalOpen] = useState(false);
+  const [bookingDetailsModalOpen, setBookingDetailsModalOpen] = useState(false);
+  const [createBookingModalOpen, setCreateBookingModalOpen] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelConfirmationModalOpen, setCancelConfirmationModalOpen] = useState(false);
+  const [clients, setClients] = useState<ClientSearchResult[]>([]);
+  const [isLoadingClients, setIsLoadingClients] = useState(false);
+  const [clientSearchQuery, setClientSearchQuery] = useState('');
+  
+  // Hooks para crear reserva y cliente
+  const createBookingMutation = useCreateBooking();
+  const createClientMutation = useCreateClient();
+  
+  // Formulario para crear reserva manual
+  interface CreateBookingFormData {
+    clientId: string;
+    employeeId: string;
+    serviceId: string;
+    date: Date | null;
+    startTime: string; // HH:mm
+    notes: string;
+    paid: boolean;
+  }
+  
+  const {
+    control: createBookingControl,
+    handleSubmit: handleCreateBookingSubmit,
+    formState: { errors: createBookingErrors },
+    reset: resetCreateBookingForm,
+    watch: watchCreateBooking,
+    setValue: setCreateBookingValue,
+  } = useForm<CreateBookingFormData>({
+    defaultValues: {
+      clientId: '',
+      employeeId: '',
+      serviceId: '',
+      date: null,
+      startTime: '',
+      notes: '',
+      paid: false,
+    },
+  });
+  
+  const selectedServiceIdForBooking = watchCreateBooking('serviceId');
+  const selectedEmployeeIdForBooking = watchCreateBooking('employeeId');
+  const selectedDateForBooking = watchCreateBooking('date');
+  
+  // Calcular fechas para la consulta de disponibilidad (rango de 30 días desde la fecha seleccionada)
+  const availabilityMinDate = selectedDateForBooking 
+    ? dayjs(selectedDateForBooking).format('YYYY-MM-DD')
+    : null;
+  const availabilityMaxDate = selectedDateForBooking
+    ? dayjs(selectedDateForBooking).add(30, 'days').format('YYYY-MM-DD')
+    : null;
+  
+  // Consultar disponibilidad cuando tengamos empleado, servicio y fecha
+  const { data: availability, isLoading: isLoadingAvailability } = useAvailability(
+    selectedEmployeeIdForBooking || null,
+    selectedServiceIdForBooking || null,
+    availabilityMinDate,
+    availabilityMaxDate
+  );
+  
+  // Cargar clientes cuando se abre el modal (sin filtro inicial)
+  useEffect(() => {
+    if (createBookingModalOpen) {
+      // Cargar primeros 50 clientes al abrir el modal
+      searchClients();
+    } else {
+      // Limpiar búsqueda cuando se cierra el modal
+      setClientSearchQuery('');
+      setClients([]);
+    }
+  }, [createBookingModalOpen]);
+  
+  // Debounce para la búsqueda de clientes cuando el usuario escribe
+  useEffect(() => {
+    if (!createBookingModalOpen) return;
+    
+    const trimmedQuery = clientSearchQuery.trim();
+    
+    // Solo buscar si está vacío (cargar primeros 50) o tiene al menos 2 caracteres
+    if (trimmedQuery.length > 0 && trimmedQuery.length < 2) {
+      // Si tiene solo 1 carácter, limpiar resultados
+      setClients([]);
+      return;
+    }
+    
+    const timeoutId = setTimeout(() => {
+      const query = trimmedQuery.length >= 2 ? trimmedQuery : undefined;
+      searchClients(query);
+    }, 300); // Esperar 300ms después de que el usuario deje de escribir
+
+    return () => clearTimeout(timeoutId);
+  }, [clientSearchQuery, createBookingModalOpen]);
+  
+  const searchClients = async (name?: string) => {
+    try {
+      setIsLoadingClients(true);
+      const results = await ClientService.search(name);
+      setClients(results);
+    } catch (error) {
+      console.error('Error searching clients:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Error al buscar clientes',
+        color: 'red',
+      });
+      setClients([]);
+    } finally {
+      setIsLoadingClients(false);
+    }
+  };
+  
+  const onSubmitCreateBooking = async (data: CreateBookingFormData) => {
+    if (!data.date) {
+      notifications.show({
+        title: 'Error',
+        message: 'Por favor selecciona una fecha',
+        color: 'red',
+      });
+      return;
+    }
+    
+    try {
+      const dateString = dayjs(data.date).format('YYYY-MM-DD');
+      await createBookingMutation.mutateAsync({
+        clientId: data.clientId,
+        employeeId: data.employeeId,
+        serviceId: data.serviceId,
+        date: dateString,
+        startTime: data.startTime,
+        quantity: 1,
+        paid: data.paid,
+        notes: data.notes || undefined,
+      });
+      
+      setCreateBookingModalOpen(false);
+      resetCreateBookingForm();
+      await fetchBookings();
+    } catch (error) {
+      // Los errores ya se manejan en el hook
+      console.error('Error creating booking:', error);
+    }
+  };
+  
+  // Generar opciones de hora filtradas por disponibilidad
+  const timeOptions = useMemo(() => {
+    const allOptions = [];
+    for (let hour = 10; hour <= 17; hour++) {
+      allOptions.push({ value: `${hour.toString().padStart(2, '0')}:00`, label: `${hour}:00` });
+      if (hour < 17) {
+        allOptions.push({ value: `${hour.toString().padStart(2, '0')}:30`, label: `${hour}:30` });
+      }
+    }
+    
+    // Si tenemos disponibilidad y una fecha seleccionada, filtrar las opciones
+    if (availability && selectedDateForBooking && selectedEmployeeIdForBooking && selectedServiceIdForBooking) {
+      const dateStr = dayjs(selectedDateForBooking).format('YYYY-MM-DD');
+      const dayAvailability = availability.availability.find(day => day.date === dateStr);
+      
+      if (dayAvailability && dayAvailability.slots) {
+        // Filtrar solo los slots disponibles
+        const availableSlots = dayAvailability.slots
+          .filter(slot => slot.available)
+          .map(slot => slot.startTime);
+        
+        return allOptions.filter(option => availableSlots.includes(option.value));
+      }
+    }
+    
+    // Si no hay disponibilidad o no hay fecha seleccionada, devolver todas las opciones
+    return allOptions;
+  }, [availability, selectedDateForBooking, selectedEmployeeIdForBooking, selectedServiceIdForBooking]);
 
   useEffect(() => {
     initializeData();
@@ -141,14 +333,17 @@ export function BookingsManager() {
       const startDateStr = formatDateToString(startDateObj);
       const endDateStr = formatDateToString(endDateObj);
 
-      const bookingsData = await BookingService.getOccupiedTimeSlots({
-        startDate: startDateStr,
-        endDate: endDateStr,
+      const response = await BookingService.getAll({
+        fromDate: startDateStr,
+        toDate: endDateStr,
         employeeId: selectedEmployeeId || undefined,
         serviceId: selectedServiceId || undefined,
+        // No filtrar por status para mostrar todas las reservas
       });
 
-      setBookings(bookingsData);
+      // Asegurarse de que response.data sea un array
+      const bookingsArray = Array.isArray(response.data) ? response.data : [];
+      setBookings(bookingsArray);
     } catch (error) {
       console.error('Error fetching bookings:', error);
       notifications.show({
@@ -162,8 +357,24 @@ export function BookingsManager() {
     }
   };
 
-  const formatTime = (hour: number) => {
+  const formatTime = (hour: number | string) => {
+    if (typeof hour === 'string') {
+      // Si es un string en formato HH:mm, devolverlo tal cual
+      return hour;
+    }
     return `${hour.toString().padStart(2, '0')}:00`;
+  };
+
+  // Función para truncar texto con "..."
+  const truncateText = (text: string, maxLength: number = 15) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  };
+
+  // Función para parsear hora de formato HH:mm a número
+  const parseTimeToNumber = (timeStr: string): number => {
+    const [hours] = timeStr.split(':').map(Number);
+    return hours;
   };
 
   const formatDateToString = (date: Date): string => {
@@ -263,20 +474,112 @@ export function BookingsManager() {
     const dateStr = formatDateToString(date);
     return bookings.filter(
       (booking) =>
-        booking.date === dateStr &&
+        (booking.localDate || booking.date) === dateStr &&
         booking.status !== 'CANCELLED'
     );
+  };
+
+  const handleDayClick = (date: Date) => {
+    setSelectedDate(date);
+    setDayBookingsModalOpen(true);
+  };
+
+  const handleBookingClick = (booking: BookingResponse) => {
+    setSelectedBooking(booking);
+    setBookingDetailsModalOpen(true);
+  };
+
+  const handleCancelBookingClick = () => {
+    // Abrir modal de confirmación en lugar de cancelar directamente
+    setCancelConfirmationModalOpen(true);
+  };
+
+  const handleConfirmCancelBooking = async () => {
+    if (!selectedBooking) return;
+
+    try {
+      setIsCancelling(true);
+      await BookingService.cancel(selectedBooking.id);
+      notifications.show({
+        title: 'Reserva cancelada',
+        message: 'La reserva se ha cancelado exitosamente',
+        color: 'green',
+      });
+      setCancelConfirmationModalOpen(false);
+      setBookingDetailsModalOpen(false);
+      setSelectedBooking(null);
+      // Refrescar las reservas
+      await fetchBookings();
+    } catch (error: any) {
+      console.error('Error cancelling booking:', error);
+      notifications.show({
+        title: 'Error',
+        message: error.response?.data?.message || 'Error al cancelar la reserva',
+        color: 'red',
+      });
+    } finally {
+      setIsCancelling(false);
+    }
   };
 
   const getBookingsForEmployeeAndTime = (employeeId: string, hour: number, date: Date) => {
     const dateStr = formatDateToString(date);
     return bookings.filter(
-      (booking) =>
-        booking.date === dateStr &&
-        booking.employeeId === employeeId &&
-        booking.startTime === hour &&
-        booking.status !== 'CANCELLED'
+      (booking) => {
+        const bookingDate = booking.localDate || booking.date;
+        const startTime = booking.localStartTime || booking.startTimeFormatted || '';
+        return (
+          bookingDate === dateStr &&
+          booking.employeeId === employeeId &&
+          parseTimeToNumber(startTime) === hour &&
+          booking.status !== 'CANCELLED'
+        );
+      }
     );
+  };
+
+  // Calcular duración en horas desde strings HH:mm
+  const calculateDuration = (startTime: string, endTime: string): number => {
+    if (!startTime || !endTime) return 0;
+    const [startHours, startMinutes] = startTime.split(':').map(Number);
+    const [endHours, endMinutes] = endTime.split(':').map(Number);
+    const startTotal = startHours * 60 + startMinutes;
+    const endTotal = endHours * 60 + endMinutes;
+    return (endTotal - startTotal) / 60; // Devolver en horas
+  };
+
+  // Helper para obtener la fecha de una reserva (compatibilidad con campos antiguos y nuevos)
+  const getBookingDate = (booking: BookingResponse): string => {
+    return booking.localDate || booking.date || '';
+  };
+
+  // Helper para obtener la hora de inicio formateada
+  const getBookingStartTime = (booking: BookingResponse): string => {
+    return booking.localStartTime || booking.startTimeFormatted || '';
+  };
+
+  // Helper para obtener la hora de fin formateada
+  const getBookingEndTime = (booking: BookingResponse): string => {
+    return booking.localEndTime || booking.endTimeFormatted || '';
+  };
+
+  // Helper para formatear una fecha YYYY-MM-DD a string localizado sin problemas de zona horaria
+  const formatDateString = (dateStr: string): string => {
+    if (!dateStr) return 'Fecha no disponible';
+    
+    // Parsear la fecha manualmente para evitar problemas de zona horaria
+    const [year, month, day] = dateStr.split('-').map(Number);
+    if (!year || !month || !day) return 'Fecha no disponible';
+    
+    // Crear la fecha usando los componentes directamente (evita problemas de UTC)
+    const date = new Date(year, month - 1, day);
+    
+    return date.toLocaleDateString('es-AR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   };
 
   const getEmployeesWithBookingsToday = () => {
@@ -284,7 +587,7 @@ export function BookingsManager() {
     const todayStr = formatDateToString(today);
     const todayBookings = bookings.filter(
       (booking) =>
-        booking.date === todayStr &&
+        getBookingDate(booking) === todayStr &&
         booking.status !== 'CANCELLED'
     );
 
@@ -339,6 +642,9 @@ export function BookingsManager() {
     <Stack gap="lg">
       <Box className={classes.header}>
         <Text className={classes.title}>Reservas</Text>
+        <Button onClick={() => setCreateBookingModalOpen(true)}>
+          Crear Reserva Manual
+        </Button>
       </Box>
 
       {/* Filtros */}
@@ -504,7 +810,9 @@ export function BookingsManager() {
                         return (
                           <Box key={employee.id} className={classes.dayCalendarCell}>
                             {slotBookings.map((booking) => {
-                              const duration = booking.endTime - booking.startTime;
+                              const startTime = getBookingStartTime(booking);
+                              const endTime = getBookingEndTime(booking);
+                              const duration = calculateDuration(startTime, endTime);
                               const height = duration > 0 ? `${duration * 80 - 4}px` : '76px';
                               return (
                                 <Paper
@@ -515,14 +823,16 @@ export function BookingsManager() {
                                     backgroundColor: '#e3f2fd',
                                     minHeight: height,
                                     height: duration > 1 ? height : 'auto',
+                                    cursor: 'pointer',
                                   }}
+                                  onClick={() => handleBookingClick(booking)}
                                 >
-                                  <Text size="xs" fw={500} lineClamp={1}>
-                                    {booking.clientName}
+                                  <Text size="xs" fw={500} lineClamp={1} title={booking.client?.fullName || 'Cliente'}>
+                                    {truncateText(booking.client?.fullName || 'Sin nombre', 15)}
                                   </Text>
                                   {duration > 1 && (
                                     <Text size="xs" c="dimmed" mt={2}>
-                                      {formatTime(booking.startTime)} - {formatTime(booking.endTime)}
+                                      {startTime} - {endTime}
                                     </Text>
                                   )}
                                 </Paper>
@@ -573,6 +883,8 @@ export function BookingsManager() {
                     <Box
                       key={index}
                       className={`${classes.monthDayCell} ${!isCurrentMonth ? classes.otherMonthDay : ''} ${isToday ? classes.todayCell : ''}`}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleDayClick(day)}
                     >
                       <Text
                         size="sm"
@@ -591,15 +903,25 @@ export function BookingsManager() {
                             style={{
                               backgroundColor: '#e3f2fd',
                             }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleBookingClick(booking);
+                            }}
                           >
-                            <Text size="xs" fw={500} lineClamp={1}>
-                              {booking.clientName}
+                            <Text 
+                              size="xs" 
+                              fw={500} 
+                              lineClamp={1}
+                              style={{ cursor: 'pointer' }}
+                              title={booking.client?.fullName || 'Cliente'}
+                            >
+                              {truncateText(booking.client?.fullName || 'Sin nombre', 15)}
                             </Text>
                             <Text size="xs" c="dimmed" lineClamp={1}>
-                              {formatTime(booking.startTime)}-{formatTime(booking.endTime)}
+                              {getBookingStartTime(booking)}-{getBookingEndTime(booking)}
                             </Text>
                             <Text size="xs" c="dimmed" lineClamp={1}>
-                              {booking.serviceName}
+                              {booking.service?.name || 'Sin servicio'}
                             </Text>
                           </Paper>
                         ))}
@@ -644,16 +966,23 @@ export function BookingsManager() {
                       const dateStr = formatDateToString(day);
                       // Solo mostrar reservas que empiezan en esta hora exacta
                       const slotBookings = bookings.filter(
-                        (booking) =>
-                          booking.date === dateStr &&
-                          booking.startTime === hour &&
-                          booking.status !== 'CANCELLED'
+                        (booking) => {
+                          const bookingDate = getBookingDate(booking);
+                          const startTime = getBookingStartTime(booking);
+                          return (
+                            bookingDate === dateStr &&
+                            parseTimeToNumber(startTime) === hour &&
+                            booking.status !== 'CANCELLED'
+                          );
+                        }
                       );
 
                       return (
                         <Box key={dayIndex} className={classes.calendarCell}>
                           {slotBookings.map((booking) => {
-                            const duration = booking.endTime - booking.startTime;
+                            const startTime = getBookingStartTime(booking);
+                            const endTime = getBookingEndTime(booking);
+                            const duration = calculateDuration(startTime, endTime);
                             const height = duration > 0 ? `${duration * 80 - 4}px` : '76px';
                             return (
                               <Paper
@@ -664,17 +993,19 @@ export function BookingsManager() {
                                   backgroundColor: '#e3f2fd',
                                   minHeight: height,
                                   height: duration > 1 ? height : 'auto',
+                                  cursor: 'pointer',
                                 }}
+                                onClick={() => handleBookingClick(booking)}
                               >
-                                <Text size="xs" fw={500} lineClamp={1}>
-                                  {booking.clientName}
+                                <Text size="xs" fw={500} lineClamp={1} title={booking.client?.fullName || 'Cliente'}>
+                                  {truncateText(booking.client?.fullName || 'Sin nombre', 15)}
                                 </Text>
                                 <Text size="xs" c="dimmed" lineClamp={1}>
-                                  {booking.serviceName}
+                                  {booking.service?.name || 'Sin servicio'}
                                 </Text>
                                 {duration > 1 && (
                                   <Text size="xs" c="dimmed" mt={2}>
-                                    {formatTime(booking.startTime)} - {formatTime(booking.endTime)}
+                                    {startTime} - {endTime}
                                   </Text>
                                 )}
                                 <Group gap={4} mt={4} wrap="wrap">
@@ -727,21 +1058,35 @@ export function BookingsManager() {
                   </Table.Td>
                 </Table.Tr>
               ) : (
-                bookings.map((booking) => (
-                  <Table.Tr key={booking.id}>
-                    <Table.Td>
-                      {new Date(booking.date).toLocaleDateString('es-AR', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
+                bookings.map((booking) => {
+                  const bookingDate = getBookingDate(booking);
+                  const startTime = getBookingStartTime(booking);
+                  const endTime = getBookingEndTime(booking);
+                  return (
+                    <Table.Tr key={booking.id}>
+                      <Table.Td>
+                        {bookingDate ? (() => {
+                          const [year, month, day] = bookingDate.split('-').map(Number);
+                          if (!year || !month || !day) return '-';
+                          const date = new Date(year, month - 1, day);
+                          return date.toLocaleDateString('es-AR', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          });
+                        })() : '-'}
+                      </Table.Td>
+                      <Table.Td>
+                        {startTime && endTime ? `${startTime} - ${endTime}` : '-'}
+                      </Table.Td>
+                    <Table.Td 
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleBookingClick(booking)}
+                    >
+                      {booking.client?.fullName || 'Sin nombre'}
                     </Table.Td>
-                    <Table.Td>
-                      {formatTime(booking.startTime)} - {formatTime(booking.endTime)}
-                    </Table.Td>
-                    <Table.Td>{booking.clientName}</Table.Td>
-                    <Table.Td>{booking.employeeName}</Table.Td>
-                    <Table.Td>{booking.serviceName}</Table.Td>
+                    <Table.Td>{booking.employee?.fullName || 'Sin empleado'}</Table.Td>
+                    <Table.Td>{booking.service?.name || 'Sin servicio'}</Table.Td>
                     <Table.Td>
                       <Badge
                         color={getStatusColor(booking.status)}
@@ -756,12 +1101,346 @@ export function BookingsManager() {
                       </Badge>
                     </Table.Td>
                   </Table.Tr>
-                ))
+                  );
+                })
               )}
             </Table.Tbody>
           </Table>
         </Paper>
       )}
+
+      {/* Modal: Lista de reservas del día */}
+      <Modal
+        opened={dayBookingsModalOpen}
+        onClose={() => {
+          setDayBookingsModalOpen(false);
+          setSelectedDate(null);
+        }}
+        title={selectedDate ? `Reservas del ${selectedDate.toLocaleDateString('es-AR', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })}` : 'Reservas del día'}
+        size="lg"
+      >
+        {selectedDate && (
+          <Stack gap="md">
+            {getBookingsForDate(selectedDate).length === 0 ? (
+              <Text c="dimmed" ta="center" py="xl">
+                No hay reservas para este día
+              </Text>
+            ) : (
+              getBookingsForDate(selectedDate).map((booking) => (
+                <Paper
+                  key={booking.id}
+                  p="md"
+                  withBorder
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    setDayBookingsModalOpen(false);
+                    handleBookingClick(booking);
+                  }}
+                >
+                  <Group justify="space-between">
+                    <Box>
+                      <Text fw={500} size="sm">
+                        {booking.client?.fullName || 'Sin nombre'}
+                      </Text>
+                      <Text size="xs" c="dimmed">
+                        {getBookingStartTime(booking)} - {getBookingEndTime(booking)}
+                      </Text>
+                      <Text size="xs" c="dimmed">
+                        {booking.service?.name || 'Sin servicio'} • {booking.employee?.fullName || 'Sin empleado'}
+                      </Text>
+                    </Box>
+                    <Badge color={getStatusColor(booking.status)} variant="light">
+                      {getStatusLabel(booking.status)}
+                    </Badge>
+                  </Group>
+                </Paper>
+              ))
+            )}
+          </Stack>
+        )}
+      </Modal>
+
+      {/* Modal: Detalles de reserva */}
+      <Modal
+        opened={bookingDetailsModalOpen}
+        onClose={() => {
+          setBookingDetailsModalOpen(false);
+          setSelectedBooking(null);
+        }}
+        title="Detalles de la Reserva"
+        size="lg"
+      >
+        {selectedBooking && (
+          <Stack gap="md">
+            <Box>
+              <Text size="sm" fw={500} c="dimmed">Cliente</Text>
+              <Text size="md" fw={600}>{selectedBooking.client?.fullName || 'Sin nombre'}</Text>
+              <Text size="xs" c="dimmed">{selectedBooking.client?.email || 'Sin email'}</Text>
+              <Text size="xs" c="dimmed">{selectedBooking.client?.phone || 'Sin teléfono'}</Text>
+            </Box>
+
+            <Divider />
+
+            <Box>
+              <Text size="sm" fw={500} c="dimmed">Fecha y Hora</Text>
+              <Text size="md">
+                {formatDateString(getBookingDate(selectedBooking))}
+              </Text>
+              <Text size="md" fw={600}>
+                {getBookingStartTime(selectedBooking)} - {getBookingEndTime(selectedBooking)}
+              </Text>
+            </Box>
+
+            <Divider />
+
+            <Box>
+              <Text size="sm" fw={500} c="dimmed">Servicio</Text>
+              <Text size="md">{selectedBooking.service?.name || 'Sin servicio'}</Text>
+              <Text size="xs" c="dimmed">
+                Duración: {selectedBooking.service?.duration || 0} minutos
+              </Text>
+              <Text size="xs" c="dimmed">
+                Precio: ${selectedBooking.service?.price || '0'}
+              </Text>
+            </Box>
+
+            <Divider />
+
+            <Box>
+              <Text size="sm" fw={500} c="dimmed">Profesional</Text>
+              <Text size="md">{selectedBooking.employee?.fullName || 'Sin empleado'}</Text>
+            </Box>
+
+            {selectedBooking.notes && (
+              <>
+                <Divider />
+                <Box>
+                  <Text size="sm" fw={500} c="dimmed">Notas</Text>
+                  <Text size="sm">{selectedBooking.notes}</Text>
+                </Box>
+              </>
+            )}
+
+            <Divider />
+
+            <Group justify="space-between">
+              <Group gap="xs">
+                <Badge color={getStatusColor(selectedBooking.status)} variant="light">
+                  {getStatusLabel(selectedBooking.status)}
+                </Badge>
+                <Badge color={selectedBooking.paid ? 'green' : 'gray'} variant="light">
+                  {selectedBooking.paid ? 'Pagado' : 'No pagado'}
+                </Badge>
+              </Group>
+            </Group>
+
+            {selectedBooking.status !== 'CANCELLED' && (
+              <Button
+                color="red"
+                variant="outline"
+                onClick={handleCancelBookingClick}
+                fullWidth
+              >
+                Cancelar Reserva
+              </Button>
+            )}
+          </Stack>
+        )}
+      </Modal>
+
+      {/* Modal: Crear reserva manual */}
+      <Modal
+        opened={createBookingModalOpen}
+        onClose={() => {
+          setCreateBookingModalOpen(false);
+          resetCreateBookingForm();
+        }}
+        title="Crear Reserva Manual"
+        size="lg"
+      >
+        <form onSubmit={handleCreateBookingSubmit(onSubmitCreateBooking)}>
+          <Stack gap="md">
+            {/* Cliente */}
+            <Controller
+              name="clientId"
+              control={createBookingControl}
+              rules={{ required: 'El cliente es requerido' }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="* Cliente"
+                  placeholder="Busca un cliente por nombre..."
+                  data={clients.map(c => ({ value: c.id, label: `${c.fullName}${c.email ? ` (${c.email})` : ''}` }))}
+                  searchable
+                  searchValue={clientSearchQuery}
+                  onSearchChange={setClientSearchQuery}
+                  disabled={isLoadingClients}
+                  error={createBookingErrors.clientId?.message}
+                  nothingFoundMessage={isLoadingClients ? "Buscando..." : "No se encontraron clientes"}
+                  rightSection={isLoadingClients ? <Loader size="xs" /> : undefined}
+                />
+              )}
+            />
+
+            {/* Empleado */}
+            <Controller
+              name="employeeId"
+              control={createBookingControl}
+              rules={{ required: 'El empleado es requerido' }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="* Empleado"
+                  placeholder="Selecciona un empleado"
+                  data={employees.map(e => ({ value: e.id, label: e.fullName }))}
+                  searchable
+                  error={createBookingErrors.employeeId?.message}
+                />
+              )}
+            />
+
+            {/* Servicio */}
+            <Controller
+              name="serviceId"
+              control={createBookingControl}
+              rules={{ required: 'El servicio es requerido' }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="* Servicio"
+                  placeholder="Selecciona un servicio"
+                  data={services.map(s => ({ value: s.id, label: s.name }))}
+                  searchable
+                  error={createBookingErrors.serviceId?.message}
+                />
+              )}
+            />
+
+            {/* Fecha */}
+            <Controller
+              name="date"
+              control={createBookingControl}
+              rules={{ required: 'La fecha es requerida' }}
+              render={({ field }) => (
+                <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 1 }}>
+                  <DatePickerInput
+                    {...field}
+                    label="* Fecha"
+                    placeholder="Selecciona una fecha"
+                    value={field.value}
+                    onChange={(date) => {
+                      field.onChange(date);
+                      // Resetear la hora cuando cambie la fecha
+                      setCreateBookingValue('startTime', '');
+                    }}
+                    minDate={new Date()}
+                    error={createBookingErrors.date?.message}
+                    locale="es"
+                  />
+                </DatesProvider>
+              )}
+            />
+
+            {/* Hora */}
+            <Controller
+              name="startTime"
+              control={createBookingControl}
+              rules={{ 
+                required: 'La hora es requerida',
+                pattern: {
+                  value: /^([0-1][0-9]|2[0-3]):(00|30)$/,
+                  message: 'La hora debe estar en formato HH:mm y solo permite :00 o :30'
+                }
+              }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="* Hora de inicio"
+                  placeholder={
+                    isLoadingAvailability 
+                      ? "Cargando disponibilidad..." 
+                      : !selectedDateForBooking || !selectedEmployeeIdForBooking || !selectedServiceIdForBooking
+                      ? "Selecciona fecha, empleado y servicio primero"
+                      : timeOptions.length === 0
+                      ? "No hay horarios disponibles para esta fecha"
+                      : "Selecciona una hora"
+                  }
+                  data={timeOptions}
+                  error={createBookingErrors.startTime?.message}
+                  disabled={isLoadingAvailability || !selectedDateForBooking || !selectedEmployeeIdForBooking || !selectedServiceIdForBooking || timeOptions.length === 0}
+                  rightSection={isLoadingAvailability ? <Loader size="xs" /> : undefined}
+                />
+              )}
+            />
+
+            {/* Notas */}
+            <Controller
+              name="notes"
+              control={createBookingControl}
+              render={({ field }) => (
+                <Textarea
+                  {...field}
+                  label="Notas"
+                  placeholder="Notas adicionales (opcional)"
+                  rows={3}
+                />
+              )}
+            />
+
+            {/* Pagado */}
+            <Controller
+              name="paid"
+              control={createBookingControl}
+              render={({ field }) => (
+                <Checkbox
+                  checked={field.value}
+                  onChange={(e) => field.onChange(e.currentTarget.checked)}
+                  label="Reserva pagada"
+                />
+              )}
+            />
+
+            <Group justify="flex-end" mt="md">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setCreateBookingModalOpen(false);
+                  resetCreateBookingForm();
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                loading={createBookingMutation.isPending}
+              >
+                Crear Reserva
+              </Button>
+            </Group>
+          </Stack>
+        </form>
+      </Modal>
+
+      {/* Modal: Confirmación de cancelación */}
+      <ConfirmationModal
+        opened={cancelConfirmationModalOpen}
+        onClose={() => setCancelConfirmationModalOpen(false)}
+        onConfirm={handleConfirmCancelBooking}
+        title="Cancelar Reserva"
+        message={selectedBooking 
+          ? `¿Estás seguro de que deseas cancelar la reserva de "${selectedBooking.client?.fullName || 'Cliente'}" para el ${formatDateString(getBookingDate(selectedBooking))} a las ${getBookingStartTime(selectedBooking)}?`
+          : '¿Estás seguro de que deseas cancelar esta reserva?'
+        }
+        confirmationWord="cancelar"
+        confirmButtonText="Cancelar Reserva"
+        confirmButtonColor="red"
+        isLoading={isCancelling}
+      />
     </Stack>
   );
 }

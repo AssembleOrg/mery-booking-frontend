@@ -23,16 +23,20 @@ import {
   Divider,
   Collapse,
   UnstyledButton,
+  Tabs,
 } from '@mantine/core';
 import { useForm, Controller } from 'react-hook-form';
 import { notifications } from '@mantine/notifications';
-import { EmployeeTimeSlotService, EmployeeService, ServiceService } from '@/infrastructure/http';
+import { EmployeeTimeSlotService, EmployeeService, ServiceService, BlockedTimeSlotService } from '@/infrastructure/http';
 import type {
   EmployeeTimeSlot,
   CreateEmployeeTimeSlotDto,
   DayOfWeek,
   Employee,
   ServiceEntity,
+  BlockedTimeSlot,
+  CreateBlockedTimeSlotDto,
+  UpdateBlockedTimeSlotDto,
 } from '@/infrastructure/http';
 import { ConfirmationModal } from '@/presentation/components';
 import classes from './TimeSlotsManager.module.css';
@@ -58,7 +62,20 @@ const DAYS_OF_WEEK: Array<{ value: DayOfWeek; label: string }> = [
   { value: 'SUNDAY', label: 'Domingo' },
 ];
 
+interface BlockedFormData {
+  employeeId: string;
+  date: string;
+  dayOfWeek: DayOfWeek | '';
+  startTime: number;
+  endTime: number;
+  reason: string;
+  type: 'date' | 'dayOfWeek';
+}
+
 export function TimeSlotsManager() {
+  const [activeTab, setActiveTab] = useState<string>('timeslots');
+  
+  // Estados para timeslots regulares
   const [timeSlots, setTimeSlots] = useState<EmployeeTimeSlot[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [services, setServices] = useState<ServiceEntity[]>([]);
@@ -77,6 +94,18 @@ export function TimeSlotsManager() {
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
   const [isCopying, setIsCopying] = useState(false);
 
+  // Estados para bloqueos
+  const [blockedTimeSlots, setBlockedTimeSlots] = useState<BlockedTimeSlot[]>([]);
+  const [isLoadingBlocked, setIsLoadingBlocked] = useState(false);
+  const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
+  const [editingBlocked, setEditingBlocked] = useState<BlockedTimeSlot | null>(null);
+  const [isSubmittingBlocked, setIsSubmittingBlocked] = useState(false);
+  const [deleteBlockedModalOpen, setDeleteBlockedModalOpen] = useState(false);
+  const [blockedToDelete, setBlockedToDelete] = useState<BlockedTimeSlot | null>(null);
+  const [isDeletingBlocked, setIsDeletingBlocked] = useState(false);
+  const [expandedBlockedDays, setExpandedBlockedDays] = useState<Set<string>>(new Set());
+  const [isCopyingBlocked, setIsCopyingBlocked] = useState(false);
+
   const {
     register,
     control,
@@ -86,8 +115,18 @@ export function TimeSlotsManager() {
     formState: { errors },
   } = useForm<FormData>();
 
+  const {
+    register: registerBlocked,
+    control: controlBlocked,
+    handleSubmit: handleSubmitBlocked,
+    reset: resetBlocked,
+    watch: watchBlocked,
+    formState: { errors: errorsBlocked },
+  } = useForm<BlockedFormData>();
+
   const type = watch('type');
   const selectedServiceIds = watch('serviceIds') || [];
+  const blockedType = watchBlocked('type');
 
   useEffect(() => {
     initializeData();
@@ -95,13 +134,20 @@ export function TimeSlotsManager() {
 
   useEffect(() => {
     if (selectedEmployeeId) {
-      fetchTimeSlots();
-      setExpandedDays(new Set()); // Reset expanded days when employee changes
+      if (activeTab === 'timeslots') {
+        fetchTimeSlots();
+        setExpandedDays(new Set()); // Reset expanded days when employee changes
+      } else if (activeTab === 'blocked') {
+        fetchBlockedTimeSlots();
+        setExpandedBlockedDays(new Set());
+      }
     } else {
       setTimeSlots([]);
+      setBlockedTimeSlots([]);
       setExpandedDays(new Set());
+      setExpandedBlockedDays(new Set());
     }
-  }, [selectedEmployeeId]);
+  }, [selectedEmployeeId, activeTab]);
 
   const initializeData = async () => {
     try {
@@ -500,19 +546,257 @@ export function TimeSlotsManager() {
       ));
   };
 
+  // ========== FUNCIONES PARA BLOQUEOS ==========
+  const fetchBlockedTimeSlots = async () => {
+    if (!selectedEmployeeId) return;
+    
+    try {
+      setIsLoadingBlocked(true);
+      const response = await BlockedTimeSlotService.getAll(selectedEmployeeId);
+      setBlockedTimeSlots(response);
+    } catch (error) {
+      console.error('Error fetching blocked time slots:', error);
+      setBlockedTimeSlots([]);
+      notifications.show({
+        title: 'Error',
+        message: 'No se pudieron cargar los bloqueos.',
+        color: 'red',
+      });
+    } finally {
+      setIsLoadingBlocked(false);
+    }
+  };
+
+  const handleOpenCreateBlocked = () => {
+    if (!selectedEmployeeId) {
+      notifications.show({
+        title: 'Empleado requerido',
+        message: 'Por favor, selecciona un empleado antes de crear un bloqueo.',
+        color: 'orange',
+      });
+      return;
+    }
+    
+    setEditingBlocked(null);
+    setIsCopyingBlocked(false);
+    resetBlocked({
+      employeeId: selectedEmployeeId,
+      date: '',
+      dayOfWeek: '',
+      startTime: 12,
+      endTime: 13,
+      reason: '',
+      type: 'dayOfWeek',
+    });
+    setIsBlockedModalOpen(true);
+  };
+
+  const handleOpenCopyBlocked = (blocked: BlockedTimeSlot) => {
+    if (!selectedEmployeeId) {
+      notifications.show({
+        title: 'Empleado requerido',
+        message: 'Por favor, selecciona un empleado antes de copiar un bloqueo.',
+        color: 'orange',
+      });
+      return;
+    }
+
+    setEditingBlocked(null);
+    setIsCopyingBlocked(true);
+    const isDateType = !!blocked.date;
+    resetBlocked({
+      employeeId: selectedEmployeeId,
+      date: '', // Al copiar, no copiamos la fecha específica, solo el día de la semana si aplica
+      dayOfWeek: blocked.dayOfWeek || '',
+      startTime: blocked.startTime,
+      endTime: blocked.endTime,
+      reason: blocked.reason || '',
+      type: isDateType ? 'dayOfWeek' : 'dayOfWeek', // Siempre copiamos como día de la semana recurrente
+    });
+    setIsBlockedModalOpen(true);
+  };
+
+  const handleOpenEditBlocked = (blocked: BlockedTimeSlot) => {
+    setEditingBlocked(blocked);
+    setIsCopyingBlocked(false);
+    const isDateType = !!blocked.date;
+    resetBlocked({
+      employeeId: blocked.employeeId,
+      date: blocked.date || '',
+      dayOfWeek: (blocked.dayOfWeek as DayOfWeek) || '',
+      startTime: blocked.startTime,
+      endTime: blocked.endTime,
+      reason: blocked.reason || '',
+      type: isDateType ? 'date' : 'dayOfWeek',
+    });
+    setIsBlockedModalOpen(true);
+  };
+
+  const handleCloseBlockedModal = () => {
+    setIsBlockedModalOpen(false);
+    setEditingBlocked(null);
+    setIsCopyingBlocked(false);
+  };
+
+  const onSubmitBlocked = async (data: BlockedFormData) => {
+    try {
+      setIsSubmittingBlocked(true);
+      
+      const blockedData: CreateBlockedTimeSlotDto = {
+        employeeId: data.employeeId,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        reason: data.reason || undefined,
+      };
+
+      if (data.type === 'date') {
+        blockedData.date = data.date;
+      } else {
+        blockedData.dayOfWeek = data.dayOfWeek as DayOfWeek;
+      }
+
+      if (editingBlocked && !isCopyingBlocked) {
+        await BlockedTimeSlotService.update(editingBlocked.id, blockedData);
+        notifications.show({
+          title: 'Bloqueo actualizado',
+          message: 'El bloqueo se ha actualizado correctamente.',
+          color: 'green',
+        });
+      } else {
+        await BlockedTimeSlotService.create(blockedData);
+        notifications.show({
+          title: isCopyingBlocked ? 'Bloqueo copiado' : 'Bloqueo creado',
+          message: isCopyingBlocked 
+            ? 'El bloqueo se ha copiado correctamente.' 
+            : 'El bloqueo se ha creado correctamente.',
+          color: 'green',
+        });
+      }
+
+      await fetchBlockedTimeSlots();
+      handleCloseBlockedModal();
+    } catch (error: any) {
+      console.error('Error submitting blocked time slot:', error);
+      notifications.show({
+        title: 'Error',
+        message: error.response?.data?.message || 'Hubo un error al guardar el bloqueo.',
+        color: 'red',
+      });
+    } finally {
+      setIsSubmittingBlocked(false);
+    }
+  };
+
+  const handleOpenDeleteBlocked = (blocked: BlockedTimeSlot) => {
+    setBlockedToDelete(blocked);
+    setDeleteBlockedModalOpen(true);
+  };
+
+  const handleConfirmDeleteBlocked = async () => {
+    if (!blockedToDelete) return;
+
+    try {
+      setIsDeletingBlocked(true);
+      await BlockedTimeSlotService.delete(blockedToDelete.id);
+      await fetchBlockedTimeSlots();
+      setDeleteBlockedModalOpen(false);
+      setBlockedToDelete(null);
+      notifications.show({
+        title: 'Bloqueo eliminado',
+        message: 'El bloqueo se ha eliminado correctamente.',
+        color: 'green',
+      });
+    } catch (error) {
+      console.error('Error deleting blocked time slot:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Hubo un error al eliminar el bloqueo.',
+        color: 'red',
+      });
+    } finally {
+      setIsDeletingBlocked(false);
+    }
+  };
+
+  const toggleBlockedDay = (dayKey: string) => {
+    setExpandedBlockedDays((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(dayKey)) {
+        newSet.delete(dayKey);
+      } else {
+        newSet.add(dayKey);
+      }
+      return newSet;
+    });
+  };
+
+  const groupBlockedTimeSlotsByDay = () => {
+    const grouped: Record<string, BlockedTimeSlot[]> = {};
+
+    blockedTimeSlots.forEach((blocked) => {
+      let dayKey: string;
+      let dayLabel: string;
+
+      if (blocked.date) {
+        const date = new Date(blocked.date);
+        dayKey = `date-${blocked.date}`;
+        dayLabel = date.toLocaleDateString('es-AR', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+      } else if (blocked.dayOfWeek) {
+        dayKey = `day-${blocked.dayOfWeek}`;
+        dayLabel = DAYS_OF_WEEK.find((d) => d.value === blocked.dayOfWeek)?.label || blocked.dayOfWeek;
+      } else {
+        return;
+      }
+
+      if (!grouped[dayKey]) {
+        grouped[dayKey] = [];
+      }
+      grouped[dayKey].push(blocked);
+    });
+
+    Object.keys(grouped).forEach((key) => {
+      grouped[key].sort((a, b) => a.startTime - b.startTime);
+    });
+
+    return Object.entries(grouped).map(([dayKey, slots]) => {
+      const firstSlot = slots[0];
+      let dayLabel: string;
+      let sortOrder: number;
+
+      if (firstSlot.date) {
+        const date = new Date(firstSlot.date);
+        dayLabel = date.toLocaleDateString('es-AR', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+        sortOrder = date.getTime();
+      } else {
+        const dayOrder = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+        dayLabel = DAYS_OF_WEEK.find((d) => d.value === firstSlot.dayOfWeek)?.label || firstSlot.dayOfWeek || '';
+        sortOrder = dayOrder.indexOf(firstSlot.dayOfWeek || '') + 1000;
+      }
+
+      return {
+        dayKey,
+        dayLabel,
+        sortOrder,
+        slots,
+      };
+    }).sort((a, b) => a.sortOrder - b.sortOrder);
+  };
+
   return (
     <>
       <Stack gap="lg">
         <Box className={classes.header}>
-          <Text className={classes.title}>Gestión de Franjas Horarias</Text>
-          <Button 
-            color="pink" 
-            onClick={handleOpenCreate} 
-            className={classes.createButton}
-            disabled={!selectedEmployeeId}
-          >
-            + Nueva Franja Horaria
-          </Button>
+          <Text className={classes.title}>Gestión de Franjas Horarias y Bloqueos</Text>
         </Box>
 
         {/* Selector de Empleado (Requerido) */}
@@ -549,119 +833,277 @@ export function TimeSlotsManager() {
         </Box>
 
         {selectedEmployeeId && (
-          <Box className={classes.tableContainer}>
-            {isLoading ? (
-              <Stack gap="md" p="md">
-                {Array(3).fill(0).map((_, i) => (
-                  <Skeleton key={i} height={60} />
-                ))}
-              </Stack>
-            ) : timeSlots.length === 0 ? (
-              <Center py="xl">
-                <Text c="dimmed">No hay franjas horarias para este empleado</Text>
-              </Center>
-            ) : (
-              <Stack gap="xs" p="md">
-                {groupTimeSlotsByDay().map(({ dayKey, dayLabel, slots }) => {
-                  const isExpanded = expandedDays.has(dayKey);
-                  const firstSlot = slots[0];
-                  const isDateSpecific = !!firstSlot.date;
+          <Tabs value={activeTab} onChange={(value) => setActiveTab(value || 'timeslots')}>
+            <Tabs.List>
+              <Tabs.Tab 
+                value="timeslots"
+                rightSection={
+                  timeSlots.length > 0 ? (
+                    <Badge size="sm" color="red" variant="filled" circle>
+                      {timeSlots.length}
+                    </Badge>
+                  ) : null
+                }
+              >
+                Franjas Horarias
+              </Tabs.Tab>
+              <Tabs.Tab 
+                value="blocked"
+                rightSection={
+                  blockedTimeSlots.length > 0 ? (
+                    <Badge size="sm" color="red" variant="filled" circle>
+                      {blockedTimeSlots.length}
+                    </Badge>
+                  ) : null
+                }
+              >
+                Bloqueos
+              </Tabs.Tab>
+            </Tabs.List>
 
-                  return (
-                    <Box key={dayKey} className={classes.dayGroup}>
-                      <UnstyledButton
-                        className={classes.dayHeader}
-                        onClick={() => toggleDay(dayKey)}
-                      >
-                        <Group justify="space-between" wrap="nowrap">
-                          <Group gap="md">
-                            <Text fw={600} size="lg" className={classes.dayTitle}>
-                              {dayLabel}
-                            </Text>
-                            <Badge color={isDateSpecific ? 'blue' : 'violet'} size="lg">
-                              {slots.length} horario{slots.length !== 1 ? 's' : ''}
-                            </Badge>
-                          </Group>
-                          <Text size="xl" c="dimmed">
-                            {isExpanded ? '−' : '+'}
-                          </Text>
-                        </Group>
-                      </UnstyledButton>
+            <Tabs.Panel value="timeslots" pt="lg">
+              <Stack gap="lg">
+                <Box className={classes.header}>
+                  <Text className={classes.title}>Franjas Horarias</Text>
+                  <Button 
+                    color="pink" 
+                    onClick={handleOpenCreate} 
+                    className={classes.createButton}
+                    disabled={!selectedEmployeeId}
+                  >
+                    + Nueva Franja Horaria
+                  </Button>
+                </Box>
 
-                      <Collapse in={isExpanded}>
-                        <Stack gap="xs" mt="xs" p="sm" className={classes.timeSlotsList}>
-                          {slots.map((timeSlot) => (
-                            <Box key={timeSlot.id} className={classes.timeSlotCard}>
-                              <Group justify="space-between" align="flex-start" wrap="nowrap">
-                                <Box style={{ flex: 1 }}>
-                                  <Group gap="md" mb="xs">
-                                    <Text fw={500} size="md">
-                                      {formatTimeRange(timeSlot.startTime, timeSlot.endTime)}
-                                    </Text>
-                                    <Badge color={timeSlot.isActive ? 'green' : 'gray'} size="sm">
-                                      {timeSlot.isActive ? 'Activo' : 'Inactivo'}
-                                    </Badge>
-                                  </Group>
-                                  {timeSlot.services && timeSlot.services.length > 0 ? (
-                                    <Group gap={4} wrap="wrap">
-                                      {timeSlot.services.map((service) => (
-                                        <Badge key={service.id} color="pink" variant="light" size="sm">
-                                          {service.name}
-                                        </Badge>
-                                      ))}
-                                    </Group>
-                                  ) : (
-                                    <Text size="xs" c="dimmed">
-                                      Sin servicios
-                                    </Text>
-                                  )}
-                                </Box>
-                                <Group gap="xs" ml="md">
-                                  <Button
-                                    variant="light"
-                                    color="violet"
-                                    size="xs"
-                                    onClick={() => handleOpenCopy(timeSlot)}
-                                  >
-                                    Copiar
-                                  </Button>
-                                  <Button
-                                    variant="light"
-                                    color={timeSlot.isActive ? 'orange' : 'green'}
-                                    size="xs"
-                                    onClick={() => handleToggleActive(timeSlot)}
-                                    loading={isToggling === timeSlot.id}
-                                  >
-                                    {timeSlot.isActive ? 'Desactivar' : 'Activar'}
-                                  </Button>
-                                  <Button
-                                    variant="light"
-                                    color="blue"
-                                    size="xs"
-                                    onClick={() => handleOpenEdit(timeSlot)}
-                                  >
-                                    Editar
-                                  </Button>
-                                  <Button
-                                    variant="light"
-                                    color="red"
-                                    size="xs"
-                                    onClick={() => handleOpenDelete(timeSlot)}
-                                  >
-                                    Eliminar
-                                  </Button>
+                <Box className={classes.tableContainer}>
+                  {isLoading ? (
+                    <Stack gap="md" p="md">
+                      {Array(3).fill(0).map((_, i) => (
+                        <Skeleton key={i} height={60} />
+                      ))}
+                    </Stack>
+                  ) : timeSlots.length === 0 ? (
+                    <Center py="xl">
+                      <Text c="dimmed">No hay franjas horarias para este empleado</Text>
+                    </Center>
+                  ) : (
+                    <Stack gap="xs" p="md">
+                      {groupTimeSlotsByDay().map(({ dayKey, dayLabel, slots }) => {
+                        const isExpanded = expandedDays.has(dayKey);
+                        const firstSlot = slots[0];
+                        const isDateSpecific = !!firstSlot.date;
+
+                        return (
+                          <Box key={dayKey} className={classes.dayGroup}>
+                            <UnstyledButton
+                              className={classes.dayHeader}
+                              onClick={() => toggleDay(dayKey)}
+                            >
+                              <Group justify="space-between" wrap="nowrap">
+                                <Group gap="md">
+                                  <Text fw={600} size="lg" className={classes.dayTitle}>
+                                    {dayLabel}
+                                  </Text>
+                                  <Badge color={isDateSpecific ? 'blue' : 'violet'} size="lg">
+                                    {slots.length} horario{slots.length !== 1 ? 's' : ''}
+                                  </Badge>
                                 </Group>
+                                <Text size="xl" c="dimmed">
+                                  {isExpanded ? '−' : '+'}
+                                </Text>
                               </Group>
-                            </Box>
-                          ))}
-                        </Stack>
-                      </Collapse>
-                    </Box>
-                  );
-                })}
+                            </UnstyledButton>
+
+                            <Collapse in={isExpanded}>
+                              <Stack gap="xs" mt="xs" p="sm" className={classes.timeSlotsList}>
+                                {slots.map((timeSlot) => (
+                                  <Box key={timeSlot.id} className={classes.timeSlotCard}>
+                                    <Group justify="space-between" align="flex-start" wrap="nowrap">
+                                      <Box style={{ flex: 1 }}>
+                                        <Group gap="md" mb="xs">
+                                          <Text fw={500} size="md">
+                                            {formatTimeRange(timeSlot.startTime, timeSlot.endTime)}
+                                          </Text>
+                                          <Badge color={timeSlot.isActive ? 'green' : 'gray'} size="sm">
+                                            {timeSlot.isActive ? 'Activo' : 'Inactivo'}
+                                          </Badge>
+                                        </Group>
+                                        {timeSlot.services && timeSlot.services.length > 0 ? (
+                                          <Group gap={4} wrap="wrap">
+                                            {timeSlot.services.map((service) => (
+                                              <Badge key={service.id} color="pink" variant="light" size="sm">
+                                                {service.name}
+                                              </Badge>
+                                            ))}
+                                          </Group>
+                                        ) : (
+                                          <Text size="xs" c="dimmed">
+                                            Sin servicios
+                                          </Text>
+                                        )}
+                                      </Box>
+                                      <Group gap="xs" ml="md">
+                                        <Button
+                                          variant="light"
+                                          color="violet"
+                                          size="xs"
+                                          onClick={() => handleOpenCopy(timeSlot)}
+                                        >
+                                          Copiar
+                                        </Button>
+                                        <Button
+                                          variant="light"
+                                          color={timeSlot.isActive ? 'orange' : 'green'}
+                                          size="xs"
+                                          onClick={() => handleToggleActive(timeSlot)}
+                                          loading={isToggling === timeSlot.id}
+                                        >
+                                          {timeSlot.isActive ? 'Desactivar' : 'Activar'}
+                                        </Button>
+                                        <Button
+                                          variant="light"
+                                          color="blue"
+                                          size="xs"
+                                          onClick={() => handleOpenEdit(timeSlot)}
+                                        >
+                                          Editar
+                                        </Button>
+                                        <Button
+                                          variant="light"
+                                          color="red"
+                                          size="xs"
+                                          onClick={() => handleOpenDelete(timeSlot)}
+                                        >
+                                          Eliminar
+                                        </Button>
+                                      </Group>
+                                    </Group>
+                                  </Box>
+                                ))}
+                              </Stack>
+                            </Collapse>
+                          </Box>
+                        );
+                      })}
+                    </Stack>
+                  )}
+                </Box>
               </Stack>
-            )}
-          </Box>
+            </Tabs.Panel>
+
+            <Tabs.Panel value="blocked" pt="lg">
+              <Stack gap="lg">
+                <Box className={classes.header}>
+                  <Text className={classes.title}>Bloqueos de Horarios</Text>
+                  <Button 
+                    color="red" 
+                    onClick={handleOpenCreateBlocked} 
+                    className={classes.createButton}
+                    disabled={!selectedEmployeeId}
+                  >
+                    + Nuevo Bloqueo
+                  </Button>
+                </Box>
+
+                <Box className={classes.tableContainer}>
+                  {isLoadingBlocked ? (
+                    <Stack gap="md" p="md">
+                      {Array(3).fill(0).map((_, i) => (
+                        <Skeleton key={i} height={60} />
+                      ))}
+                    </Stack>
+                  ) : blockedTimeSlots.length === 0 ? (
+                    <Center py="xl">
+                      <Text c="dimmed">No hay bloqueos para este empleado</Text>
+                    </Center>
+                  ) : (
+                    <Stack gap="xs" p="md">
+                      {groupBlockedTimeSlotsByDay().map(({ dayKey, dayLabel, slots }) => {
+                        const isExpanded = expandedBlockedDays.has(dayKey);
+                        const firstSlot = slots[0];
+                        const isDateSpecific = !!firstSlot.date;
+
+                        return (
+                          <Box key={dayKey} className={classes.dayGroup}>
+                            <UnstyledButton
+                              className={classes.dayHeader}
+                              onClick={() => toggleBlockedDay(dayKey)}
+                            >
+                              <Group justify="space-between" wrap="nowrap">
+                                <Group gap="md">
+                                  <Text fw={600} size="lg" className={classes.dayTitle}>
+                                    {dayLabel}
+                                  </Text>
+                                  <Badge color={isDateSpecific ? 'red' : 'orange'} size="lg">
+                                    {slots.length} bloqueo{slots.length !== 1 ? 's' : ''}
+                                  </Badge>
+                                </Group>
+                                <Text size="xl" c="dimmed">
+                                  {isExpanded ? '−' : '+'}
+                                </Text>
+                              </Group>
+                            </UnstyledButton>
+
+                            <Collapse in={isExpanded}>
+                              <Stack gap="xs" mt="xs" p="sm" className={classes.timeSlotsList}>
+                                {slots.map((blocked) => (
+                                  <Box key={blocked.id} className={classes.timeSlotCard}>
+                                    <Group justify="space-between" align="flex-start" wrap="nowrap">
+                                      <Box style={{ flex: 1 }}>
+                                        <Group gap="md" mb="xs">
+                                          <Text fw={500} size="md">
+                                            {formatTimeRange(blocked.startTime, blocked.endTime)}
+                                          </Text>
+                                          <Badge color="red" size="sm">
+                                            Bloqueado
+                                          </Badge>
+                                        </Group>
+                                        {blocked.reason && (
+                                          <Text size="sm" c="dimmed" mt={4}>
+                                            Razón: {blocked.reason}
+                                          </Text>
+                                        )}
+                                      </Box>
+                                      <Group gap="xs" ml="md">
+                                        <Button
+                                          variant="light"
+                                          color="violet"
+                                          size="xs"
+                                          onClick={() => handleOpenCopyBlocked(blocked)}
+                                        >
+                                          Copiar
+                                        </Button>
+                                        <Button
+                                          variant="light"
+                                          color="blue"
+                                          size="xs"
+                                          onClick={() => handleOpenEditBlocked(blocked)}
+                                        >
+                                          Editar
+                                        </Button>
+                                        <Button
+                                          variant="light"
+                                          color="red"
+                                          size="xs"
+                                          onClick={() => handleOpenDeleteBlocked(blocked)}
+                                        >
+                                          Eliminar
+                                        </Button>
+                                      </Group>
+                                    </Group>
+                                  </Box>
+                                ))}
+                              </Stack>
+                            </Collapse>
+                          </Box>
+                        );
+                      })}
+                    </Stack>
+                  )}
+                </Box>
+              </Stack>
+            </Tabs.Panel>
+          </Tabs>
         )}
       </Stack>
 
@@ -952,6 +1394,197 @@ export function TimeSlotsManager() {
         confirmButtonText="Eliminar Franja Horaria"
         confirmButtonColor="red"
         isLoading={isDeleting}
+      />
+
+      {/* Modal Create/Edit Blocked */}
+      <Modal
+        opened={isBlockedModalOpen}
+        onClose={handleCloseBlockedModal}
+        title={
+          editingBlocked && !isCopyingBlocked
+            ? 'Editar Bloqueo' 
+            : isCopyingBlocked
+              ? 'Copiar Bloqueo'
+              : 'Nuevo Bloqueo'
+        }
+        centered
+        size="lg"
+        classNames={{
+          title: classes.modalTitle,
+        }}
+      >
+        <form onSubmit={handleSubmitBlocked(onSubmitBlocked)}>
+          <Stack gap="md">
+            <Controller
+              name="employeeId"
+              control={controlBlocked}
+              rules={{ required: 'El empleado es requerido' }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="Empleado"
+                  placeholder="Selecciona un empleado"
+                  data={employees.map((emp) => ({
+                    value: emp.id,
+                    label: emp.fullName,
+                  }))}
+                  error={errorsBlocked.employeeId?.message}
+                  disabled={true}
+                  description="El empleado no puede ser modificado una vez abierto el modal"
+                />
+              )}
+            />
+
+            <Controller
+              name="type"
+              control={controlBlocked}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="Tipo de bloqueo"
+                  data={[
+                    { value: 'dayOfWeek', label: 'Día de la Semana (Recurrente)' },
+                    { value: 'date', label: 'Fecha Específica' },
+                  ]}
+                />
+              )}
+            />
+
+            {blockedType === 'date' ? (
+              <Box>
+                <Text size="sm" fw={500} mb={5}>
+                  Fecha Específica
+                </Text>
+                <Controller
+                  name="date"
+                  control={controlBlocked}
+                  rules={{
+                    required: blockedType === 'date' ? 'La fecha es requerida' : false,
+                  }}
+                  render={({ field }) => (
+                    <input
+                      {...field}
+                      type="date"
+                      className={classes.dateInput}
+                      required={blockedType === 'date'}
+                    />
+                  )}
+                />
+                {errorsBlocked.date && (
+                  <Text size="xs" c="red" mt={5}>
+                    {errorsBlocked.date.message}
+                  </Text>
+                )}
+              </Box>
+            ) : (
+              <Controller
+                name="dayOfWeek"
+                control={controlBlocked}
+                rules={{
+                  required: blockedType === 'dayOfWeek' ? 'El día de la semana es requerido' : false,
+                }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    label="Día de la Semana"
+                    placeholder="Selecciona un día"
+                    data={DAYS_OF_WEEK}
+                    error={errorsBlocked.dayOfWeek?.message}
+                  />
+                )}
+              />
+            )}
+
+            <Box className={classes.formRow}>
+              <Controller
+                name="startTime"
+                control={controlBlocked}
+                rules={{
+                  required: 'La hora de inicio es requerida',
+                  min: { value: 0, message: 'Mínimo 0' },
+                  max: { value: 23, message: 'Máximo 23' },
+                }}
+                render={({ field }) => (
+                  <NumberInput
+                    {...field}
+                    label="Hora de Inicio"
+                    placeholder="12"
+                    min={0}
+                    max={23}
+                    error={errorsBlocked.startTime?.message}
+                    style={{ flex: 1 }}
+                  />
+                )}
+              />
+
+              <Controller
+                name="endTime"
+                control={controlBlocked}
+                rules={{
+                  required: 'La hora de fin es requerida',
+                  min: { value: 0, message: 'Mínimo 0' },
+                  max: { value: 23, message: 'Máximo 23' },
+                }}
+                render={({ field }) => (
+                  <NumberInput
+                    {...field}
+                    label="Hora de Fin"
+                    placeholder="13"
+                    min={0}
+                    max={23}
+                    error={errorsBlocked.endTime?.message}
+                    style={{ flex: 1 }}
+                  />
+                )}
+              />
+            </Box>
+
+            <Controller
+              name="reason"
+              control={controlBlocked}
+              render={({ field }) => (
+                <TextInput
+                  {...field}
+                  label="Razón del bloqueo (opcional)"
+                  placeholder="Ej: Navidad, Almuerzo semanal, etc."
+                  error={errorsBlocked.reason?.message}
+                />
+              )}
+            />
+
+            <Divider my="md" />
+            
+            <Box className={classes.modalActions}>
+              <Button variant="outline" color="gray" onClick={handleCloseBlockedModal} disabled={isSubmittingBlocked}>
+                Cancelar
+              </Button>
+              <Button 
+                type="submit" 
+                color="red" 
+                loading={isSubmittingBlocked}
+              >
+                {editingBlocked && !isCopyingBlocked 
+                  ? 'Guardar Cambios' 
+                  : isCopyingBlocked
+                    ? 'Copiar Bloqueo'
+                    : 'Crear Bloqueo'}
+              </Button>
+            </Box>
+          </Stack>
+        </form>
+      </Modal>
+
+      {/* Modal Delete Blocked Confirmation */}
+      <ConfirmationModal
+        opened={deleteBlockedModalOpen}
+        onClose={() => setDeleteBlockedModalOpen(false)}
+        onConfirm={handleConfirmDeleteBlocked}
+        title="Eliminar Bloqueo"
+        message={`¿Estás seguro de que deseas eliminar este bloqueo? Esta acción no se puede deshacer.`}
+        confirmationWord="eliminar"
+        confirmButtonText="Eliminar Bloqueo"
+        confirmButtonColor="red"
+        isLoading={isDeletingBlocked}
       />
     </>
   );

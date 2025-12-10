@@ -92,7 +92,15 @@ export function BookingConfirmationModal({
   const remaining = service.priceBook - deposit;
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('es-ES', {
+    // Usar los componentes de la fecha directamente para evitar problemas de timezone
+    const day = date.getDate();
+    const month = date.getMonth();
+    const year = date.getFullYear();
+    
+    // Crear una nueva fecha usando los componentes locales
+    const localDate = new Date(year, month, day);
+    
+    return localDate.toLocaleDateString('es-ES', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',

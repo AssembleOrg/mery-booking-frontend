@@ -34,32 +34,20 @@ export default function ParamedicalTattooPage() {
               PARAMEDICAL TATTOO
             </Text>
 
-            {/* Navigation Buttons */}
+            {/* Sub Menu Navigation */}
             <Box className={classes.heroNav}>
-              <Button
-                variant="subtle"
-                color="white"
-                className={classes.navButton}
-                onClick={() => scrollToSection('nano-scalp')}
-              >
-                NANO SCALP
-              </Button>
-              <Button
-                variant="subtle"
-                color="white"
-                className={classes.navButton}
-                onClick={() => scrollToSection('areola-harmonization')}
-              >
-                AREOLA HARMONIZATION
-              </Button>
-              <Button
-                variant="subtle"
-                color="white"
-                className={classes.navButton}
-                onClick={() => scrollToSection('nipple-reconstruction')}
-              >
-                NIPPLE RECONSTRUCTION
-              </Button>
+              <Box className={classes.navButton} onClick={() => scrollToSection('nano-scalp')}>
+                <span className={classes.navIcon}>▼</span>
+                <span>NANO SCALP</span>
+              </Box>
+              <Box className={classes.navButton} onClick={() => scrollToSection('areola-harmonization')}>
+                <span className={classes.navIcon}>▼</span>
+                <span>AREOLA HARMONIZATION</span>
+              </Box>
+              <Box className={classes.navButton} onClick={() => scrollToSection('nipple-reconstruction')}>
+                <span className={classes.navIcon}>▼</span>
+                <span>NIPPLE RECONSTRUCTION</span>
+              </Box>
             </Box>
           </Container>
         </Box>
@@ -87,16 +75,16 @@ export default function ParamedicalTattooPage() {
                     NANO SCALP
                   </Text>
                   <Stack gap="md">
-                    <Text size="md" c="dimmed" fw={300} className={classes.sectionText}>
+                    <Text className={classes.sectionText}>
                       Es un tatuaje cosmético que consiste en implantar pigmento en el cuero cabelludo y piel generando líneas de
                       cabello hiperrealista. Desde la primera sesión notarás un efecto óptico de densidad mayor capilar, de forma
                       natural que irá aumentando progresivamente sesión tras sesión.
                     </Text>
-                    <Text size="md" c="dimmed" fw={300} className={classes.sectionText}>
+                    <Text className={classes.sectionText}>
                       Este procedimiento está recomendado para personas con cicatrices post lifting, falta de crecimiento del
                       cabello, remolinos hasta alopecias frontales florazantes.
                     </Text>
-                    <Text size="md" c="dimmed" fw={300} className={classes.sectionText}>
+                    <Text className={classes.sectionText}>
                       Es importante aclarar que entre sesión y sesión debe pasar un mes para que la piel cicatrice correctamente.
                     </Text>
                   </Stack>
@@ -144,16 +132,16 @@ export default function ParamedicalTattooPage() {
                     AREOLA HARMONIZATION
                   </Text>
                   <Stack gap="md">
-                    <Text size="md" c="dimmed" fw={300} className={classes.sectionText}>
+                    <Text className={classes.sectionText}>
                       La armonización de aréola es un procedimiento de tatuaje cosmético que busca mejorar la apariencia
                       de las aréolas, ya sea corrigiendo asimetrías, restaurando el color después de cirugías o tratamientos
                       médicos, o simplemente mejorando su aspecto estético.
                     </Text>
-                    <Text size="md" c="dimmed" fw={300} className={classes.sectionText}>
+                    <Text className={classes.sectionText}>
                       Este tratamiento es ideal para personas que han pasado por mastectomías, reconstrucciones mamarias,
                       o que simplemente desean mejorar la pigmentación natural de sus aréolas.
                     </Text>
-                    <Text size="md" c="dimmed" fw={300} className={classes.sectionText}>
+                    <Text className={classes.sectionText}>
                       El procedimiento se realiza con técnicas avanzadas de micropigmentación que garantizan resultados
                       naturales y duraderos.
                     </Text>
@@ -202,15 +190,15 @@ export default function ParamedicalTattooPage() {
                     NIPPLE RECONSTRUCTION
                   </Text>
                   <Stack gap="md">
-                    <Text size="md" c="dimmed" fw={300} className={classes.sectionText}>
+                    <Text className={classes.sectionText}>
                       La reconstrucción de pezón mediante tatuaje cosmético es el paso final en la reconstrucción mamaria,
                       creando la ilusión tridimensional de un pezón mediante técnicas avanzadas de micropigmentación.
                     </Text>
-                    <Text size="md" c="dimmed" fw={300} className={classes.sectionText}>
+                    <Text className={classes.sectionText}>
                       Este procedimiento es especialmente beneficioso para pacientes que han completado su reconstrucción
                       mamaria y desean un resultado más natural y completo sin necesidad de cirugía adicional.
                     </Text>
-                    <Text size="md" c="dimmed" fw={300} className={classes.sectionText}>
+                    <Text className={classes.sectionText}>
                       El proceso se realiza con pigmentos específicos que se adaptan al tono de piel de cada paciente,
                       garantizando un resultado personalizado y realista.
                     </Text>

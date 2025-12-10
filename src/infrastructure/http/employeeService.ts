@@ -1,4 +1,5 @@
 import apiClient from './apiClient';
+import publicApiClient from './publicApiClient';
 import type { ServiceEntity } from './serviceService';
 
 export interface Employee {
@@ -116,6 +117,21 @@ export class EmployeeService {
     const response = await apiClient.get<BackendResponse<DayOff[]>>(
       `${this.BASE_PATH}/${employeeId}/days-off`
     );
+    return response.data.data;
+  }
+
+  // Método público (sin autenticación) - categoryId y serviceId opcionales
+  static async getAllPublic(categoryId?: string, serviceId?: string): Promise<Employee[]> {
+    const params = new URLSearchParams();
+    if (categoryId) params.append('categoryId', categoryId);
+    if (serviceId) params.append('serviceId', serviceId);
+
+    const queryString = params.toString();
+    const url = queryString 
+      ? `${this.BASE_PATH}/public?${queryString}`
+      : `${this.BASE_PATH}/public`;
+
+    const response = await publicApiClient.get<BackendResponse<Employee[]>>(url);
     return response.data.data;
   }
 }
