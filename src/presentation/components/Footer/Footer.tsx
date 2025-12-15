@@ -24,7 +24,7 @@ export function Footer() {
       </Box>
 
       {/* Contenido principal del footer */}
-      <Container size="xl" py={{ base: 40, sm: 50, md: 60 }}>
+      <Container size="xl" py={{ base: 60, sm: 80, md: 100 }}>
         <Stack align="center" gap="xl">
           {/* Logo */}
           <Image

@@ -18,17 +18,8 @@ export default function ParamedicalTattooPage() {
       <Header />
 
       <Box className={classes.pageWrapper}>
-        {/* Hero Section con imagen de fondo y navegación */}
+        {/* Hero Section - Minimalista */}
         <Box className={classes.heroSection}>
-          <Image
-            src="/images/nano-scallping.webp"
-            alt="Paramedical Tattoo"
-            fill
-            priority
-            className={classes.heroImage}
-            quality={90}
-          />
-          <Box className={classes.heroOverlay} />
           <Container size="xl" className={classes.heroContent}>
             <Text className={classes.heroTitle}>
               PARAMEDICAL TATTOO
@@ -56,15 +47,13 @@ export default function ParamedicalTattooPage() {
         <Box className={classes.contentWrapper}>
           {/* Nano Scalp Section */}
           <Box id="nano-scalp" className={classes.section}>
-            <Container size="lg" py={{ base: 60, sm: 80, md: 100 }}>
-              <Box className={classes.sectionContent}>
+            <Box className={classes.sectionContent}>
                 {/* Image */}
                 <Box className={classes.imageColumn}>
                   <Image
                     src="/images/nano-scallping.webp"
                     alt="Nano Scalp"
-                    width={500}
-                    height={600}
+                    fill
                     className={classes.sectionImage}
                   />
                 </Box>
@@ -95,6 +84,10 @@ export default function ParamedicalTattooPage() {
                     size="lg"
                     mt="xl"
                     className={classes.infoButton}
+                    style={{
+                      backgroundColor: '#f9bbc4',
+                      color: '#ffffff',
+                    }}
                   >
                     MÁS INFO AQUÍ
                   </Button>
@@ -108,20 +101,17 @@ export default function ParamedicalTattooPage() {
                   </Box>
                 </Box>
               </Box>
-            </Container>
-          </Box>
+            </Box>
 
           {/* Areola Harmonization Section */}
           <Box id="areola-harmonization" className={classes.section}>
-            <Container size="lg" py={{ base: 60, sm: 80, md: 100 }}>
-              <Box className={classes.sectionContent}>
+            <Box className={classes.sectionContent}>
                 {/* Image */}
                 <Box className={classes.imageColumn}>
                   <Image
                     src="/images/aereola.webp"
                     alt="Areola Harmonization"
-                    width={500}
-                    height={600}
+                    fill
                     className={classes.sectionImage}
                   />
                 </Box>
@@ -153,6 +143,10 @@ export default function ParamedicalTattooPage() {
                     size="lg"
                     mt="xl"
                     className={classes.infoButton}
+                    style={{
+                      backgroundColor: '#f9bbc4',
+                      color: '#ffffff',
+                    }}
                   >
                     MÁS INFO AQUÍ
                   </Button>
@@ -166,20 +160,17 @@ export default function ParamedicalTattooPage() {
                   </Box>
                 </Box>
               </Box>
-            </Container>
-          </Box>
+            </Box>
 
           {/* Nipple Reconstruction Section */}
           <Box id="nipple-reconstruction" className={classes.section}>
-            <Container size="lg" py={{ base: 60, sm: 80, md: 100 }}>
-              <Box className={classes.sectionContent}>
+            <Box className={classes.sectionContent}>
                 {/* Image */}
                 <Box className={classes.imageColumn}>
                   <Image
                     src="/images/nano-scallping.webp"
                     alt="Nipple Reconstruction"
-                    width={500}
-                    height={600}
+                    fill
                     className={classes.sectionImage}
                   />
                 </Box>
@@ -210,6 +201,10 @@ export default function ParamedicalTattooPage() {
                     size="lg"
                     mt="xl"
                     className={classes.infoButton}
+                    style={{
+                      backgroundColor: '#f9bbc4',
+                      color: '#ffffff',
+                    }}
                   >
                     MÁS INFO AQUÍ
                   </Button>
@@ -223,8 +218,7 @@ export default function ParamedicalTattooPage() {
                   </Box>
                 </Box>
               </Box>
-            </Container>
-          </Box>
+            </Box>
         </Box>
       </Box>
 

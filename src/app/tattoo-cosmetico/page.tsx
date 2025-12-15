@@ -309,13 +309,14 @@ function ConsultaContent({
         ) : (
           <Text style={{ padding: '0.5rem', color: '#666' }}>Staff Consultas</Text>
         )}
-        <Button 
+        <button
+          type="button"
           className={classes.continueButton}
           onClick={handleContinue}
           // disabled={!staffConsultasId || !option.serviceId}
         >
           Continuar
-        </Button>
+        </button>
       </Box>
 
       {option.footerNote && (
@@ -524,13 +525,14 @@ function SesionCalendarioContent({
             ) : (
               <Text style={{ padding: '0.5rem', color: '#333' }}>Mery Garcia</Text>
             )}
-            <Button 
+            <button
+              type="button"
               className={classes.continueButton}
               onClick={handleContinue}
               disabled={!effectiveEmployeeId}
             >
               Continuar
-            </Button>
+            </button>
           </Box>
         </>
       ) : (
@@ -1343,17 +1345,8 @@ export default function TattooCosmeticoPage() {
       <Header />
       
       <Box className={classes.pageWrapper}>
-        {/* Hero Section */}
+        {/* Hero Section - Minimalista */}
         <Box className={classes.heroSection}>
-          <Image
-            src="/images/im.2-op-2-scaled-1.webp"
-            alt="Cosmetic Tattoo"
-            fill
-            priority
-            className={classes.heroImage}
-            quality={90}
-          />
-          <Box className={classes.heroOverlay} />
           <Container size="xl" className={classes.heroContent}>
             <Text className={classes.heroTitle}>
               COSMETIC TATTOO

@@ -3,82 +3,118 @@
   background-color: #ffffff;
 }
 
-/* Hero Section */
+/* Hero Section - Full Width Editorial */
 .heroSection {
   position: relative;
   width: 100%;
-  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ffffff 0%, #fff5f8 50%, #ffffff 100%);
+  padding: 8rem 0 6rem;
   overflow: hidden;
 }
 
-.heroImage {
-  object-fit: cover;
-  object-position: center 50%;
-}
-
-.heroOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.25) 0%,
-    rgba(0, 0, 0, 0.45) 100%
-  );
-  z-index: 1;
+@media (min-width: 1024px) {
+  .heroSection {
+    min-height: 70vh;
+    padding: 12rem 0 8rem;
+  }
 }
 
 .heroContent {
   position: relative;
   z-index: 2;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  padding-left: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 3rem;
+  text-align: center;
+  width: 100%;
 }
 
 .heroTitle {
   font-family: var(--font-avant-garde-buttons), sans-serif;
-  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-size: clamp(3.5rem, 9vw, 7rem);
   font-weight: 300;
-  letter-spacing: 0.15em;
-  color: #ffffff;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
-  margin-bottom: 1.5rem;
+  letter-spacing: 0.08em;
+  color: #1a1a1a;
+  margin: 0;
+  text-transform: uppercase;
+  line-height: 1.1;
+  position: relative;
+  display: inline-block;
 }
 
-/* Sub Menu Navigation */
+.heroTitle::before,
+.heroTitle::after {
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 1px;
+  background: #f9bbc4;
+  top: 50%;
+}
+
+.heroTitle::before {
+  left: -140px;
+}
+
+.heroTitle::after {
+  right: -140px;
+}
+
+@media (max-width: 768px) {
+  .heroTitle::before,
+  .heroTitle::after {
+    display: none;
+  }
+}
+
+/* Sub Menu Navigation - Minimalista y Elegante */
 .subMenuNav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
-  margin-top: 0.5rem;
+  justify-content: center;
+  gap: 1.5rem 3rem;
+  margin-top: 6rem;
+  padding-top: 4rem;
+  border-top: 1px solid #e8e8e8;
 }
 
 .subMenuItem {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.7rem;
+  color: #666666;
+  font-size: clamp(0.7rem, 1.3vw, 0.8rem);
   font-weight: 300;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.2em;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: all 0.3s ease;
   text-transform: uppercase;
+  padding: 0.5rem 0;
+  position: relative;
+  font-family: var(--font-avant-garde-buttons), sans-serif;
+}
+
+.subMenuItem::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #f9bbc4;
+  transition: width 0.3s ease;
 }
 
 .subMenuItem:hover {
-  color: #f9bbc4;
+  color: #1a1a1a;
+}
+
+.subMenuItem:hover::after {
+  width: 100%;
 }
 
 .subMenuIcon {
-  font-size: 0.6rem;
-  opacity: 0.7;
+  display: none;
 }
 
 /* Content Section */
@@ -88,156 +124,281 @@
 
 /* Service Block */
 .serviceBlock {
-  padding: 3rem 0;
-  border-bottom: 1px solid #e8e8e8;
+  padding: 6rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  background: #ffffff;
 }
 
 .serviceBlock:last-of-type {
   border-bottom: none;
 }
 
+.serviceBlock:nth-child(even) {
+  background: #fafafa;
+}
+
 .serviceLayout {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  gap: 3rem;
+  align-items: stretch;
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1024px) {
   .serviceLayout {
     flex-direction: row;
-    gap: 3rem;
+    gap: 5rem;
     align-items: flex-start;
+    padding: 0 4rem;
+  }
+  
+  .serviceBlock:nth-child(even) .serviceLayout {
+    flex-direction: row-reverse;
   }
 }
 
+/* Imagen - Tamaño adecuado y visible */
 .serviceImageWrapper {
-  flex-shrink: 0;
-  width: 100%;
-  max-width: 280px;
-  aspect-ratio: 1 / 1;
   position: relative;
+  width: 100%;
+  flex: 0 0 auto;
+  aspect-ratio: 3 / 4;
+  max-width: 450px;
+  order: 1;
   overflow: hidden;
+  background: #fafafa;
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin: 0 auto;
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1024px) {
   .serviceImageWrapper {
-    width: 280px;
+    flex: 0 0 42%;
+    max-width: 480px;
+    margin: 0;
+    position: sticky;
+    top: 2rem;
+    align-self: flex-start;
+    order: 0;
+  }
+  
+  .serviceBlock:nth-child(even) .serviceImageWrapper {
+    order: 2;
   }
 }
 
 .serviceImage {
   object-fit: cover;
+  object-position: center;
   filter: grayscale(100%);
+  transition: filter 0.8s ease;
+  width: 100%;
+  height: 100%;
 }
 
+.serviceImageWrapper:hover .serviceImage {
+  filter: grayscale(0%);
+}
+
+/* Contenido */
 .serviceContent {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 2rem 0;
+  order: 2;
+}
+
+@media (min-width: 1024px) {
+  .serviceContent {
+    padding: 0;
+    order: 1;
+  }
+  
+  .serviceBlock:nth-child(even) .serviceContent {
+    order: 1;
+  }
 }
 
 .serviceTitle {
   font-family: var(--font-avant-garde-buttons), sans-serif;
-  font-size: 1.3rem;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-weight: 300;
-  letter-spacing: 0.1em;
-  color: #c9a77c;
-  margin-bottom: 1rem;
+  letter-spacing: 0.12em;
+  color: #1a1a1a;
+  margin-bottom: 3rem;
   text-transform: uppercase;
-}
-
-.serviceSubtitle {
-  color: #c9a77c;
-  font-size: 0.85rem;
-  margin-bottom: 0.75rem;
-  font-weight: 400;
-}
-
-.serviceSubtitleQuestion {
-  color: #5a5a5a;
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
+  line-height: 1.15;
+  position: relative;
+  padding-left: 2rem;
+  border-left: 3px solid #f9bbc4;
 }
 
 .serviceDescription {
   font-family: var(--font-avant-garde-buttons), sans-serif;
-  color: #333333;
-  font-size: 16px;
-  line-height: 20px;
-  text-align: justify;
-  margin-bottom: 1.5rem;
+  color: #2d2d2d;
+  font-size: clamp(1rem, 1.8vw, 1.125rem);
+  line-height: 1.9;
+  text-align: left;
+  margin-bottom: 2rem;
+  letter-spacing: 0.02em;
+  font-weight: 300;
+  max-width: 600px;
+}
+
+.serviceSubtitle {
+  color: #c9a77c;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.serviceSubtitleQuestion {
+  color: #5a5a5a;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
 .serviceHighlight {
   color: #c9a77c;
+  font-weight: 400;
 }
 
 /* Buttons */
-.ctaButton {
-  background-color: #f9bbc4;
-  color: #ffffff;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.7rem;
-  font-weight: 400;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  margin-bottom: 0.75rem;
-  margin-right: 0.75rem;
-}
-
-.ctaButton:hover {
-  background-color: #f5a3af;
-}
-
-.ctaButtonSecondary {
-  background-color: transparent;
-  color: #f9bbc4;
-  border: 1px solid #f9bbc4;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.7rem;
-  font-weight: 400;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  margin-bottom: 0.75rem;
-  margin-right: 0.75rem;
-}
-
-.ctaButtonSecondary:hover {
-  background-color: #f9bbc4;
-  color: #ffffff;
-}
-
 .buttonsWrapper {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  gap: 1rem;
+  margin-top: 3rem;
 }
 
-/* Options Section */
+.ctaButton {
+  background-color: #f9bbc4 !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 1.125rem 3rem !important;
+  font-size: clamp(0.8rem, 1.5vw, 0.875rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.12em !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase !important;
+  border-radius: 0 !important;
+  font-family: var(--font-avant-garde-buttons), sans-serif !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaButton * {
+  color: #ffffff !important;
+}
+
+.ctaButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: left 0.3s ease;
+}
+
+.ctaButton:hover::before {
+  left: 100%;
+}
+
+.ctaButton:hover {
+  background-color: #f5a3af !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249, 187, 196, 0.3);
+}
+
+.ctaButton:hover * {
+  color: #ffffff !important;
+}
+
+.ctaButtonSecondary {
+  background-color: transparent !important;
+  color: #f9bbc4 !important;
+  border: 1px solid #f9bbc4 !important;
+  padding: 1.125rem 3rem !important;
+  font-size: clamp(0.8rem, 1.5vw, 0.875rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.12em !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase !important;
+  border-radius: 0 !important;
+  font-family: var(--font-avant-garde-buttons), sans-serif !important;
+}
+
+.ctaButtonSecondary * {
+  color: #f9bbc4 !important;
+}
+
+.ctaButtonSecondary:hover {
+  background-color: #f9bbc4 !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+}
+
+.ctaButtonSecondary:hover * {
+  color: #ffffff !important;
+}
+
+/* Options Section - Separado y Elegante */
 .optionsSection {
-  margin-top: 2rem;
+  margin-top: 6rem;
+  padding-top: 5rem;
+  border-top: 1px solid #e8e8e8;
+  background: #ffffff;
+  padding-left: 3rem;
+  padding-right: 3rem;
+  padding-bottom: 4rem;
+}
+
+@media (min-width: 1024px) {
+  .optionsSection {
+    padding-left: 5rem;
+    padding-right: 5rem;
+  }
 }
 
 .optionsTitle {
-  color: #c9a77c;
-  font-size: 0.8rem;
-  margin-bottom: 1rem;
+  color: #666666;
+  font-size: clamp(0.875rem, 1.5vw, 0.95rem);
+  margin-bottom: 3rem;
   font-weight: 300;
+  letter-spacing: 0.15em;
+  text-align: left;
+  font-family: var(--font-avant-garde-buttons), sans-serif;
+  text-transform: uppercase;
 }
 
-/* Accordion Items */
+/* Accordion - Estilo Minimalista */
 .accordionWrapper {
-  border: 1px solid #e8e8e8;
+  border: none;
   border-radius: 0;
+  overflow: visible;
+  background: transparent;
 }
 
 .accordionItem {
   border-bottom: 1px solid #e8e8e8;
+  background: #ffffff;
+  margin-bottom: 0.5rem;
 }
 
 .accordionItem:last-child {
@@ -248,22 +409,22 @@
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 1rem 1.25rem;
-  background: transparent;
+  padding: 1.75rem 2rem;
+  background: #fafafa;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .accordionControl:hover {
-  background-color: #fafafa;
+  background: #f5f5f5;
 }
 
 .accordionChevron {
   color: #c9a77c;
-  margin-right: 0.75rem;
+  margin-right: 1.5rem;
   font-size: 0.75rem;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease;
 }
 
 .accordionChevronOpen {
@@ -271,157 +432,191 @@
 }
 
 .accordionLabel {
-  color: #c9a77c;
-  font-size: 0.85rem;
-  font-weight: 400;
-  letter-spacing: 0.02em;
+  color: #1a1a1a;
+  font-size: clamp(0.875rem, 1.5vw, 0.95rem);
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  font-family: var(--font-avant-garde-buttons), sans-serif;
+  text-transform: uppercase;
 }
 
 .accordionPanel {
-  padding: 1rem 1.25rem 1.5rem 1.25rem;
+  padding: 0;
   background-color: #ffffff;
   border-top: 1px solid #e8e8e8;
 }
 
-/* Accordion Panel Content */
 .accordionPanelContent {
   width: 100%;
+  padding: 2.5rem;
 }
 
 .panelDescription {
   font-family: var(--font-avant-garde-buttons), sans-serif;
-  color: #333333;
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 0.75rem;
+  color: #2d2d2d;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  font-weight: 300;
+  letter-spacing: 0.015em;
 }
 
 .panelPrice {
   font-family: var(--font-avant-garde-buttons), sans-serif;
-  color: #c9a77c;
-  font-size: 14px;
-  margin-bottom: 1rem;
+  color: #1a1a1a;
+  font-size: clamp(0.95rem, 1.5vw, 1.05rem);
+  margin-bottom: 2rem;
+  font-weight: 400;
 }
 
 .priceValue {
-  color: #e67e22;
+  color: #c9a77c;
   font-weight: 500;
 }
 
 .depositValue {
-  color: #2ecc71;
+  color: #1a1a1a;
   font-weight: 500;
 }
 
 .panelCuotas {
   font-family: var(--font-avant-garde-buttons), sans-serif;
-  color: #333333;
-  font-size: 13px;
+  color: #666666;
+  font-size: clamp(0.85rem, 1.3vw, 0.9rem);
   margin-bottom: 1.5rem;
+  font-weight: 300;
+  line-height: 1.7;
 }
 
-/* Booking Card (Consulta) */
 .bookingCard {
   background: linear-gradient(135deg, #fff5f7 0%, #fce9ed 100%);
-  border-right: 4px solid #f9bbc4;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-  max-width: 500px;
+  border-left: 4px solid #f9bbc4;
+  padding: 2rem;
+  margin: 2rem 0;
+  max-width: 550px;
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .bookingCard {
+    padding: 1.5rem;
+    max-width: 100%;
+  }
 }
 
 .bookingLabel {
   font-family: var(--font-avant-garde-buttons), sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  color: #333333;
-  margin-bottom: 0.5rem;
+  font-size: clamp(0.875rem, 1.5vw, 0.95rem);
+  font-weight: 400;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  letter-spacing: 0.05em;
 }
 
 .bookingSelect {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .continueButton {
   background-color: #f9bbc4;
   color: #ffffff;
   border: none;
-  padding: 0.6rem 1.5rem;
-  font-size: 0.75rem;
-  font-weight: 400;
-  letter-spacing: 0.08em;
+  padding: 1rem 2.5rem;
+  font-size: clamp(0.875rem, 1.5vw, 0.95rem);
+  font-weight: 500;
+  letter-spacing: 0.1em;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   text-transform: uppercase;
+  border-radius: 0;
+  font-family: var(--font-avant-garde-buttons), sans-serif;
+  width: 100%;
+  display: block;
+  text-align: center;
+  line-height: 1.5;
 }
 
-.continueButton:hover {
+.continueButton:hover:not(:disabled) {
   background-color: #f5a3af;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(249, 187, 196, 0.3);
 }
 
-/* Calendar Card */
+.continueButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #e9ecef;
+  color: #adb5bd;
+}
+
 .calendarCard {
   background: linear-gradient(135deg, #fff5f7 0%, #fce9ed 100%);
-  border-right: 4px solid #f9bbc4;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
+  border-left: 4px solid #f9bbc4;
+  padding: 2rem;
+  margin: 2rem 0;
   max-width: 700px;
+  border-radius: 4px;
 }
 
-/* Empty Booking Card (Last Minute) */
+@media (max-width: 768px) {
+  .calendarCard {
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+}
+
 .emptyBookingCard {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
-  margin: 1.5rem 0;
+  padding: 4rem 2rem;
+  margin: 2rem 0;
   background-color: #fafafa;
-  border-radius: 8px;
+  border: 1px solid #e8e8e8;
 }
 
 .emptyBookingText {
   font-family: var(--font-avant-garde-buttons), sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  color: #333333;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  font-weight: 300;
+  color: #2d2d2d;
   text-align: center;
-  margin-top: 1rem;
-  max-width: 400px;
+  margin-top: 1.5rem;
+  max-width: 450px;
+  line-height: 1.7;
+  letter-spacing: 0.015em;
 }
 
 .promoText {
   font-family: var(--font-avant-garde-buttons), sans-serif;
-  color: #e67e22;
-  font-size: 13px;
+  color: #c9a77c;
+  font-size: clamp(0.85rem, 1.3vw, 0.9rem);
   font-style: italic;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 300;
 }
 
 .footerNote {
   font-family: var(--font-avant-garde-buttons), sans-serif;
-  color: #c9a77c;
-  font-size: 12px;
+  color: #666666;
+  font-size: clamp(0.8rem, 1.3vw, 0.85rem);
   font-style: italic;
-  margin-top: 1rem;
-  line-height: 1.5;
+  margin-top: 2rem;
+  line-height: 1.7;
+  font-weight: 300;
 }
 
-/* Special Section - Clientes Exterior */
 .specialSection {
-  padding: 3rem 0;
+  padding: 10rem 0;
+  background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%);
 }
 
 .specialImageWrapper {
-  flex-shrink: 0;
-  width: 100%;
-  max-width: 320px;
+  flex: 0 0 42%;
+  max-width: 480px;
   position: relative;
-}
-
-@media (min-width: 769px) {
-  .specialImageWrapper {
-    width: 320px;
-  }
 }
 
 .specialImage {
@@ -430,71 +625,136 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .heroSection {
-    height: 280px;
-  }
-
-  .heroContent {
-    padding-left: 1rem;
-  }
-
-  .heroTitle {
-    font-size: 1.35rem;
-    letter-spacing: 0.12em;
-  }
-
-  .subMenuNav {
-    gap: 0.4rem 1rem;
-  }
-
-  .subMenuItem {
-    font-size: 0.6rem;
+    min-height: auto;
+    padding: 6rem 0 4rem;
   }
 
   .serviceBlock {
-    padding: 2rem 0;
+    padding: 4rem 0;
   }
 
-  /* Ocultar imagen en mobile */
+  .serviceLayout {
+    padding: 0 1.5rem;
+    gap: 2.5rem;
+  }
+
   .serviceImageWrapper {
-    display: none;
+    max-width: 100%;
+    max-height: 500px;
+    margin: 0 auto;
+  }
+
+  .serviceContent {
+    padding: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroSection {
+    padding: 5rem 0 3rem;
+  }
+
+  .heroContent {
+    padding: 0 1.5rem;
+  }
+
+  .heroTitle {
+    font-size: clamp(2.5rem, 7vw, 4rem);
+  }
+
+  .subMenuNav {
+    gap: 1rem 1.5rem;
+    margin-top: 3rem;
+    padding-top: 2.5rem;
+  }
+
+  .serviceBlock {
+    padding: 3rem 0;
+  }
+
+  .serviceLayout {
+    padding: 0 1rem;
+    gap: 2rem;
+  }
+
+  .serviceImageWrapper {
+    max-height: 400px;
   }
 
   .serviceTitle {
-    font-size: 1.15rem;
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    padding-left: 1rem;
+    border-left-width: 2px;
+    margin-bottom: 2rem;
   }
 
-  .bookingCard,
-  .calendarCard {
-    max-width: 100%;
+  .serviceDescription {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .optionsSection {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-top: 3rem;
+    padding-top: 2.5rem;
+    padding-bottom: 3rem;
+  }
+
+  .buttonsWrapper {
+    margin-top: 2rem;
+  }
+
+  .ctaButton,
+  .ctaButtonSecondary {
+    width: 100%;
+    padding: 1rem 2rem;
   }
 }
 
 @media (max-width: 480px) {
   .heroSection {
-    height: 240px;
+    padding: 4rem 0 2.5rem;
   }
 
   .heroTitle {
-    font-size: 1.1rem;
-    letter-spacing: 0.1em;
+    font-size: clamp(2rem, 6vw, 3rem);
   }
 
-  .subMenuItem {
-    font-size: 0.55rem;
+  .subMenuNav {
+    gap: 0.75rem 1rem;
+    font-size: 0.7rem;
   }
 
   .serviceBlock {
-    padding: 1.5rem 0;
+    padding: 2.5rem 0;
+  }
+
+  .serviceLayout {
+    padding: 0 0.75rem;
+  }
+
+  .serviceImageWrapper {
+    max-height: 350px;
   }
 
   .serviceTitle {
-    font-size: 1rem;
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    padding-left: 0.75rem;
+    margin-bottom: 1.5rem;
   }
 
   .serviceDescription {
-    font-size: 0.8rem;
+    font-size: 0.95rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .optionsSection {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
   }
 }
-

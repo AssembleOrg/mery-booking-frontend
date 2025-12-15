@@ -152,17 +152,8 @@ export default function EstilismoCejasPage() {
       <Header />
       
       <Box className={classes.pageWrapper}>
-        {/* Hero Section con imagen de fondo */}
+        {/* Hero Section - Minimalista */}
         <Box className={classes.heroSection}>
-          <Image
-            src="/images/estilismo-cejas.webp"
-            alt="Estilismo de Cejas"
-            fill
-            priority
-            className={classes.heroImage}
-            quality={90}
-          />
-          <Box className={classes.heroOverlay} />
           <Container size="xl" className={classes.heroContent}>
             <Text className={classes.heroTitle}>
               ESTILISMO DE CEJAS

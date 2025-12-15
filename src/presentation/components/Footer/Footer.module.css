@@ -13,12 +13,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background-color: #f9f9f9;
   color: #333;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   text-decoration: none;
 }
@@ -26,25 +26,30 @@
 .socialIcon:hover {
   background-color: #f9bbc4;
   color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(249, 187, 196, 0.3);
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 0 6px 20px rgba(249, 187, 196, 0.4);
 }
 
 .footerLogo {
   width: auto;
-  height: 70px;
+  height: 85px;
   object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.footerLogo:hover {
+  transform: scale(1.05);
 }
 
 @media (min-width: 768px) {
   .footerLogo {
-    height: 85px;
+    height: 100px;
   }
 }
 
 @media (min-width: 1024px) {
   .footerLogo {
-    height: 95px;
+    height: 110px;
   }
 }
 
