@@ -1,20 +1,28 @@
+/* ================================
+   PARAMEDICAL TATTOO - EDITORIAL STYLE
+   ================================ */
+
 .pageWrapper {
   min-height: 100vh;
-  background: white;
+  background: var(--mg-white);
+  font-family: var(--font-poppins-extralight), system-ui, sans-serif;
 }
 
-/* Hero Section */
+/* ======== HERO SECTION ======== */
 .heroSection {
   position: relative;
   width: 100%;
-  height: 320px;
+  min-height: 500px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 80px;
 }
 
 .heroImage {
   object-fit: cover;
   object-position: center 50%;
-  filter: grayscale(100%);
 }
 
 .heroOverlay {
@@ -25,102 +33,165 @@
   bottom: 0;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.25) 0%,
-    rgba(0, 0, 0, 0.45) 100%
+    rgba(43, 43, 43, 0.4) 0%,
+    rgba(43, 43, 43, 0.65) 100%
   );
   z-index: 1;
 }
 
 .heroContent {
-  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 2;
-  height: 100%;
+  text-align: center;
+  width: 90%;
+  max-width: 1200px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
+  gap: 24px;
+}
+
+.heroOverline {
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--mg-pink);
+  text-transform: uppercase;
 }
 
 .heroTitle {
-  font-family: var(--font-avant-garde-buttons), sans-serif;
-  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-family: var(--font-poppins-extralight), sans-serif;
+  font-size: 64px;
   font-weight: 300;
-  letter-spacing: 0.2em;
-  color: #f9bbc4;
+  letter-spacing: 0.08em;
+  color: var(--mg-white);
   text-align: center;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+  line-height: 1.05;
+}
+
+.heroNumber {
+  position: absolute;
+  bottom: 40px;
+  right: 80px;
+  font-size: 180px;
+  font-weight: 800;
+  color: var(--mg-white);
+  opacity: 0.12;
+  line-height: 1;
+  font-family: var(--font-poppins-extralight), sans-serif;
+  z-index: 2;
 }
 
 .heroNav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
-  margin-top: 0.5rem;
+  gap: 8px 32px;
+  margin-top: 16px;
   justify-content: center;
+  width: 100%;
 }
 
 .navButton {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 8px;
   color: rgba(255, 255, 255, 0.85);
-  font-size: 0.7rem;
-  font-weight: 300;
-  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 2px;
   cursor: pointer;
   transition: color 0.2s ease;
   text-transform: uppercase;
+  font-family: var(--font-poppins-extralight), sans-serif;
 }
 
 .navButton:hover {
-  color: #f9bbc4;
+  color: var(--mg-pink);
 }
 
 .navIcon {
-  font-size: 0.6rem;
-  opacity: 0.7;
+  font-size: 8px;
+  opacity: 0.6;
 }
 
-/* Content Sections */
+/* ======== CONTENT WRAPPER ======== */
 .contentWrapper {
-  background: linear-gradient(
-    to bottom,
-    #ffffff 0%,
-    #fff5f7 50%,
-    #ffffff 100%
-  );
+  background: var(--mg-white);
 }
 
+/* ======== SECTION ======== */
 .section {
-  padding: 3rem 0;
-  border-bottom: 1px solid #e8e8e8;
+  padding: 100px 0;
+  border-bottom: 1px solid var(--mg-pink-lighter);
+  position: relative;
+  overflow: visible;
 }
 
 .section:last-of-type {
   border-bottom: none;
 }
 
+/* Números de fondo */
+.section:nth-child(1)::before { content: '01'; }
+.section:nth-child(2)::before { content: '02'; }
+.section:nth-child(3)::before { content: '03'; }
+
+.section::before {
+  position: absolute;
+  top: 20px;
+  right: 60px;
+  font-size: 200px;
+  font-weight: 800;
+  color: var(--mg-pink-lighter);
+  opacity: 0.5;
+  line-height: 1;
+  font-family: var(--font-poppins-extralight), sans-serif;
+  z-index: 0;
+  pointer-events: none;
+}
+
 .sectionContent {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 48px;
+  position: relative;
+  z-index: 1;
 }
 
 .imageColumn {
   flex-shrink: 0;
   width: 100%;
-  max-width: 280px;
+  max-width: 360px;
   aspect-ratio: 1 / 1;
   position: relative;
   overflow: hidden;
+  background: var(--mg-pink-light);
+}
+
+/* Frame decorativo */
+.imageColumn::after {
+  content: '';
+  position: absolute;
+  top: -16px;
+  left: -16px;
+  right: 16px;
+  bottom: 16px;
+  border: 1px solid var(--mg-pink);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .sectionImage {
   object-fit: cover;
-  filter: grayscale(100%);
   width: 100%;
   height: 100%;
+  transition: transform 0.6s ease;
+}
+
+.imageColumn:hover .sectionImage {
+  transform: scale(1.05);
 }
 
 .textColumn {
@@ -128,85 +199,373 @@
 }
 
 .sectionTitle {
-  font-family: var(--font-avant-garde-buttons), sans-serif;
-  font-size: 1.3rem;
-  font-weight: 300;
-  letter-spacing: 0.1em;
-  color: #c9a77c;
-  margin-bottom: 1rem;
+  font-family: var(--font-avant-garde), system-ui, sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--mg-dark);
+  margin-bottom: 24px;
   text-transform: uppercase;
 }
 
 .sectionText {
-  font-family: var(--font-avant-garde-buttons), sans-serif;
-  color: #333333;
-  font-size: 16px;
-  line-height: 1.6;
-  text-align: justify;
-  margin-bottom: 1.5rem;
-  font-weight: 300;
+  font-family: var(--font-poppins-extralight), sans-serif;
+  color: var(--mg-gray);
+  font-size: 15px;
+  line-height: 1.9;
+  margin-bottom: 20px;
 }
 
 .infoButton {
-  background-color: #f9bbc4;
-  color: #ffffff;
+  background-color: var(--mg-dark);
+  color: var(--mg-white);
   border: none;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.7rem;
+  padding: 16px 32px;
+  font-size: 11px;
   font-weight: 400;
-  letter-spacing: 0.1em;
+  letter-spacing: 2px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   text-transform: uppercase;
-  margin-bottom: 0.75rem;
-  margin-right: 0.75rem;
+  font-family: var(--font-poppins-extralight), sans-serif;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .infoButton:hover {
-  background-color: #f5a3af;
+  background-color: var(--mg-pink);
+  transform: translateY(-2px);
 }
 
 .bookingSection {
-  border-top: 1px solid #e9ecef;
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--mg-pink-lighter);
+}
+
+/* ======== OPTIONS SECTION ======== */
+.optionsSection {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--mg-pink-lighter);
+}
+
+.optionsTitle {
+  color: var(--mg-gray);
+  font-size: 11px;
+  letter-spacing: 3px;
+  margin-bottom: 24px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+/* ======== ACCORDION ======== */
+.accordionWrapper {
+  border: 1px solid var(--mg-pink-lighter);
+}
+
+.accordionItem {
+  border-bottom: 1px solid var(--mg-pink-lighter);
+}
+
+.accordionItem:last-child {
+  border-bottom: none;
+}
+
+.accordionControl {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 20px 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.accordionControl:hover {
+  background-color: var(--mg-pink-light);
+}
+
+.accordionChevron {
+  color: var(--mg-pink);
+  margin-right: 16px;
+  font-size: 12px;
+  transition: transform 0.2s ease;
+}
+
+.accordionChevronOpen {
+  transform: rotate(90deg);
+}
+
+.accordionLabel {
+  color: var(--mg-dark);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  font-family: var(--font-poppins-extralight), sans-serif;
+  text-align: left;
+}
+
+.accordionPanel {
+  padding: 24px;
+  background-color: var(--mg-pink-light);
+  border-top: 1px solid var(--mg-pink-lighter);
+}
+
+/* Accordion Panel Content */
+.accordionPanelContent {
+  width: 100%;
+}
+
+.panelDescription {
+  font-family: var(--font-poppins-extralight), sans-serif;
+  color: var(--mg-gray);
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+
+.panelPrice {
+  font-family: var(--font-poppins-extralight), sans-serif;
+  color: var(--mg-dark);
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.priceValue {
+  color: var(--mg-pink);
+  font-weight: 500;
+}
+
+.depositValue {
+  color: #27ae60;
+  font-weight: 500;
+}
+
+/* Booking Card */
+.bookingCard {
+  background: var(--mg-white);
+  border-left: 3px solid var(--mg-pink);
+  padding: 24px;
+  margin: 24px 0;
+  max-width: 450px;
+}
+
+.bookingLabel {
+  font-family: var(--font-poppins-extralight), sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--mg-dark);
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.continueButton {
+  background-color: var(--mg-dark);
+  color: var(--mg-white);
+  border: none;
+  padding: 14px 32px;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-family: var(--font-poppins-extralight), sans-serif;
+}
+
+.continueButton:hover {
+  background-color: var(--mg-pink);
+}
+
+/* Calendar Card */
+.calendarCard {
+  background: var(--mg-white);
+  border-left: 3px solid var(--mg-pink);
+  padding: 24px;
+  margin: 24px 0;
+  max-width: 700px;
+}
+
+/* Empty Booking Card */
+.emptyBookingCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  margin: 24px 0;
+  background-color: var(--mg-white);
+  border: 1px dashed var(--mg-pink-lighter);
+}
+
+.emptyBookingText {
+  font-family: var(--font-poppins-extralight), sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--mg-gray);
+  text-align: center;
+  margin-top: 16px;
+  max-width: 350px;
+  line-height: 1.7;
+}
+
+.footerNote {
+  font-family: var(--font-poppins-extralight), sans-serif;
+  color: var(--mg-gray);
+  font-size: 12px;
+  font-style: italic;
+  margin-top: 16px;
+  line-height: 1.6;
+}
+
+/* Special Section - CLIENTES INTERIOR/EXTERIOR */
+.specialSection {
+  padding: 100px 0;
+  background: var(--mg-pink-light);
+  position: relative;
+  overflow: visible;
+}
+
+.specialImageWrapper {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 320px;
+  position: relative;
+}
+
+.specialImage {
+  width: 100%;
+  height: auto;
 }
 
 /* Desktop Layout */
 @media (min-width: 769px) {
   .sectionContent {
     flex-direction: row;
-    gap: 3rem;
+    gap: 64px;
     align-items: flex-start;
   }
 
   .imageColumn {
-    width: 280px;
+    width: 360px;
+  }
+
+  .specialImageWrapper {
+    width: 320px;
   }
 }
 
-/* Tablet */
+/* ======== RESPONSIVE ======== */
+@media (max-width: 1024px) {
+  .heroTitle {
+    font-size: 48px;
+  }
+
+  .heroNumber {
+    font-size: 120px;
+    right: 40px;
+  }
+
+  .section {
+    padding: 80px 0;
+  }
+
+  .section::before {
+    font-size: 140px;
+    right: 40px;
+  }
+}
+
 @media (max-width: 768px) {
   .heroSection {
-    height: 280px;
+    min-height: 400px;
+    padding-top: 100px;
   }
 
   .heroTitle {
-    font-size: 1.35rem;
-    letter-spacing: 0.15em;
+    font-size: 32px;
+    letter-spacing: 0.06em;
+  }
+
+  .heroNumber {
+    font-size: 80px;
+    right: 20px;
+    bottom: 20px;
+  }
+
+  .heroNav {
+    gap: 6px 20px;
+  }
+
+  .navButton {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  .section {
+    padding: 60px 0;
+  }
+
+  .section::before {
+    font-size: 100px;
+    right: 20px;
+    top: 10px;
+  }
+
+  .imageColumn {
+    display: none;
+  }
+
+  .sectionTitle {
+    font-size: 24px;
   }
 }
 
-/* Mobile */
 @media (max-width: 480px) {
   .heroSection {
-    height: 220px;
+    min-height: 350px;
   }
 
   .heroTitle {
-    font-size: 1.15rem;
-    letter-spacing: 0.12em;
+    font-size: 24px;
+  }
+
+  .heroNav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+    align-items: center;
+  }
+
+  .navButton {
+    font-size: 10px;
+    padding: 8px 0;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .section {
+    padding: 48px 0;
+  }
+
+  .section::before {
+    font-size: 70px;
+  }
+
+  .sectionTitle {
+    font-size: 20px;
+  }
+
+  .sectionText {
+    font-size: 14px;
+  }
+
+  .infoButton {
+    padding: 14px 24px;
+    font-size: 10px;
   }
 }
-
-
-
-

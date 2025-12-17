@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Container, Text, Collapse, Select, Button } from '@mantine/core';
-import { Header, Footer, DateTimeSelector, BookingConfirmationModal } from '@/presentation/components';
+import { Header, Footer, DateTimeSelector, BookingConfirmationModal, FadeInSection, StaggerContainer, StaggerItem, LayeredText, ImageCrossfade } from '@/presentation/components';
 import Image from 'next/image';
 import { useState, useMemo, useEffect } from 'react';
 import { useDisclosure } from '@mantine/hooks';
@@ -1345,21 +1345,39 @@ export default function TattooCosmeticoPage() {
       <Box className={classes.pageWrapper}>
         {/* Hero Section */}
         <Box className={classes.heroSection}>
-          <Image
-            src="/images/im.2-op-2-scaled-1.webp"
-            alt="Cosmetic Tattoo"
-            fill
-            priority
+          <ImageCrossfade
+            images={[
+              '/images/im.2-op-2-scaled-1.webp',
+              '/images/nano-scallping.webp',
+              '/images/Lip-blush-1-1-768x512.webp',
+              '/images/lashes_line_b.webp',
+            ]}
+            interval={6000}
+            transitionDuration={1.0}
             className={classes.heroImage}
-            quality={90}
+            alt="Cosmetic Tattoo"
+            objectPosition="center 50%"
           />
           <Box className={classes.heroOverlay} />
-          <Container size="xl" className={classes.heroContent}>
-            <Text className={classes.heroTitle}>
-              COSMETIC TATTOO
-            </Text>
-            
+
+          {/* Layered background text */}
+          <LayeredText
+            text={<>COSMETIC<br />TATTOO</>}
+            size={120}
+            top="25%"
+            left="5%"
+          />
+
+          <Box className={classes.heroContent}>
+            <FadeInSection direction="up" delay={0.2}>
+              <Text className={classes.heroOverline}>MERY GARCÍA</Text>
+              <Text className={classes.heroTitle}>
+                COSMETIC<br />TATTOO
+              </Text>
+            </FadeInSection>
+
             {/* Sub Menu Navigation */}
+            <FadeInSection direction="up" delay={0.4}>
             <Box className={classes.subMenuNav}>
               <Box className={classes.subMenuItem} onClick={() => scrollToSection('nanoblading')}>
                 <span className={classes.subMenuIcon}>▼</span>
@@ -1390,7 +1408,8 @@ export default function TattooCosmeticoPage() {
                 <span>CLIENTES DEL EXTERIOR / INTERIOR</span>
               </Box>
             </Box>
-          </Container>
+            </FadeInSection>
+          </Box>
         </Box>
 
         {/* Content Section */}
@@ -1399,6 +1418,7 @@ export default function TattooCosmeticoPage() {
             
             {/* NANOBLADING Section */}
             <Box id="nanoblading" className={classes.serviceBlock}>
+              <LayeredText text="NANO" size={100} top="55%" left="50%" />
               <Box className={classes.serviceLayout}>
                 <Box className={classes.serviceImageWrapper}>
                   <Image
@@ -1406,7 +1426,8 @@ export default function TattooCosmeticoPage() {
                     alt="Nanoblading"
                     fill
                     className={classes.serviceImage}
-                    quality={85}
+                    quality={75}
+                    loading="lazy"
                   />
                 </Box>
                 <Box className={classes.serviceContent}>
@@ -1448,6 +1469,7 @@ export default function TattooCosmeticoPage() {
 
             {/* LIP BLUSH Section */}
             <Box id="lip-blush" className={classes.serviceBlock}>
+              <LayeredText text="LIPS" size={100} top="55%" left="50%" />
               <Box className={classes.serviceLayout}>
                 <Box className={classes.serviceImageWrapper}>
                   <Image
@@ -1455,7 +1477,8 @@ export default function TattooCosmeticoPage() {
                     alt="Lip Blush"
                     fill
                     className={classes.serviceImage}
-                    quality={85}
+                    quality={75}
+                    loading="lazy"
                   />
                 </Box>
                 <Box className={classes.serviceContent}>
@@ -1488,6 +1511,7 @@ export default function TattooCosmeticoPage() {
 
             {/* LIP CAMOUFLAGE Section */}
             <Box id="lip-camouflage" className={classes.serviceBlock}>
+              <LayeredText text="CAMUFLAGE" size={80} top="70%" left="45%" />
               <Box className={classes.serviceLayout}>
                 <Box className={classes.serviceImageWrapper}>
                   <Image
@@ -1495,7 +1519,8 @@ export default function TattooCosmeticoPage() {
                     alt="Lip Camouflage"
                     fill
                     className={classes.serviceImage}
-                    quality={85}
+                    quality={75}
+                    loading="lazy"
                   />
                 </Box>
                 <Box className={classes.serviceContent}>
@@ -1531,6 +1556,7 @@ export default function TattooCosmeticoPage() {
 
             {/* LASHES LINE Section */}
             <Box id="lashes-line" className={classes.serviceBlock}>
+              <LayeredText text="LASHES" size={100} top="55%" left="50%" />
               <Box className={classes.serviceLayout}>
                 <Box className={classes.serviceImageWrapper}>
                   <Image
@@ -1538,7 +1564,8 @@ export default function TattooCosmeticoPage() {
                     alt="Lashes Line"
                     fill
                     className={classes.serviceImage}
-                    quality={85}
+                    quality={75}
+                    loading="lazy"
                   />
                 </Box>
                 <Box className={classes.serviceContent}>
@@ -1578,6 +1605,7 @@ export default function TattooCosmeticoPage() {
 
             {/* PECAS Y LUNARES Section */}
             <Box id="pecas-lunares" className={classes.serviceBlock}>
+              <LayeredText text="PECAS" size={100} top="70%" left="50%" />
               <Box className={classes.serviceLayout}>
                 <Box className={classes.serviceImageWrapper}>
                   <Image
@@ -1585,7 +1613,8 @@ export default function TattooCosmeticoPage() {
                     alt="Pecas y Lunares"
                     fill
                     className={classes.serviceImage}
-                    quality={85}
+                    quality={75}
+                    loading="lazy"
                   />
                 </Box>
                 <Box className={classes.serviceContent}>
@@ -1613,6 +1642,7 @@ export default function TattooCosmeticoPage() {
 
             {/* CAMUFLAJE Section */}
             <Box id="camuflaje" className={classes.serviceBlock}>
+              <LayeredText text="CAMUFLAJE" size={80} top="70%" left="45%" />
               <Box className={classes.serviceLayout}>
                 <Box className={classes.serviceImageWrapper}>
                   <Image
@@ -1620,7 +1650,8 @@ export default function TattooCosmeticoPage() {
                     alt="Camuflaje"
                     fill
                     className={classes.serviceImage}
-                    quality={85}
+                    quality={75}
+                    loading="lazy"
                   />
                 </Box>
                 <Box className={classes.serviceContent}>
@@ -1651,6 +1682,7 @@ export default function TattooCosmeticoPage() {
 
             {/* CLIENTES DEL INTERIOR / EXTERIOR Section */}
             <Box id="clientes-exterior" className={classes.specialSection}>
+              <LayeredText text="EXTERIOR" size={80} top="30%" left="55%" />
               <Box className={classes.serviceLayout}>
                 <Box className={classes.specialImageWrapper}>
                   <Image
@@ -1659,7 +1691,7 @@ export default function TattooCosmeticoPage() {
                     width={320}
                     height={240}
                     className={classes.specialImage}
-                    quality={85}
+                    loading="lazy"
                     style={{ filter: 'none' }}
                   />
                 </Box>

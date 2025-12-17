@@ -1,0 +1,42 @@
+.wrapper {
+  margin-bottom: 48px;
+}
+
+.overline {
+  font-size: 11px;
+  letter-spacing: 4px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  font-family: var(--font-poppins-extralight), sans-serif;
+  font-weight: 400;
+}
+
+.title {
+  font-size: 42px;
+  font-weight: 300;
+  line-height: 1.1;
+  font-family: var(--font-poppins-extralight), var(--font-avant-garde), sans-serif;
+}
+
+.title em,
+.title i {
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .wrapper {
+    margin-bottom: 32px;
+  }
+
+  .overline {
+    font-size: 10px;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+}

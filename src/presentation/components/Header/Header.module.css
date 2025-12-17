@@ -1,17 +1,87 @@
 .header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
-  background-color: white;
-  border-bottom: 1px solid #f0f0f0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(235, 162, 168, 0.2);
+}
+
+.container {
+  padding: 0 48px;
+}
+
+.flex {
+  height: 72px;
+}
+
+/* Brand / Logo */
+.brand {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
 }
 
 .logo {
-  width: auto;
-  height: 55px;
-  object-fit: contain;
+  width: 220px;
+  height: auto;
 }
 
+@media (max-width: 1024px) {
+  .logo {
+    width: 200px;
+  }
+}
+
+@media (max-width: 767px) {
+  .logo {
+    width: 160px;
+  }
+}
+
+/* Desktop Navigation */
+.nav {
+  display: none;
+  gap: 40px;
+}
+
+.navLink {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--mg-gray);
+  text-decoration: none;
+  font-family: var(--font-poppins-extralight), sans-serif;
+  font-weight: 400;
+  transition: color 0.2s ease;
+}
+
+.navLink:hover {
+  color: var(--mg-pink);
+}
+
+/* CTA Button */
+.ctaButton {
+  display: none;
+  background: var(--mg-dark);
+  color: var(--mg-white);
+  border: none;
+  padding: 12px 28px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-decoration: none;
+  font-family: var(--font-poppins-extralight), sans-serif;
+  font-weight: 400;
+  transition: background 0.2s ease;
+}
+
+.ctaButton:hover {
+  background: var(--mg-pink);
+}
+
+/* Mobile Menu Button */
 .menuButton {
   cursor: pointer;
   transition: opacity 0.2s ease;
@@ -21,15 +91,42 @@
   opacity: 0.7;
 }
 
+.menuText {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--mg-gray);
+  font-family: var(--font-poppins-extralight), sans-serif;
+}
+
+/* Desktop styles */
 @media (min-width: 768px) {
-  .logo {
-    height: 70px;
+  .container {
+    padding: 0 48px;
+  }
+
+  .flex {
+    height: 80px;
+  }
+
+  .nav {
+    display: flex;
+  }
+
+  .ctaButton {
+    display: block;
+  }
+
+  .menuButton {
+    display: none;
   }
 }
 
-@media (min-width: 1024px) {
-  .logo {
-    height: 75px;
+@media (max-width: 767px) {
+  .container {
+    padding: 0 24px;
+  }
+
+  .flex {
+    height: 64px;
   }
 }
-

@@ -7,3 +7,13 @@ export { DateTimeSelector } from './DateTimeSelector';
 export { BookingConfirmationModal } from './BookingConfirmationModal';
 export { ConfirmationModal } from './ConfirmationModal';
 
+// Editorial components
+export { LayeredText } from './LayeredText';
+export { SectionTitle } from './SectionTitle';
+export { ServiceCard } from './ServiceCard';
+export { ImageFrame } from './ImageFrame';
+export { ImageCrossfade } from './ImageCrossfade';
+
+// Animation components
+export * from './Animations';
+

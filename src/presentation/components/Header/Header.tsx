@@ -2,10 +2,17 @@
 
 import { Box, Burger, Container, Flex, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import Image from 'next/image';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { MenuModal } from '@/presentation/components';
 import classes from './Header.module.css';
+
+const NAV_ITEMS = [
+  { label: 'COSMETIC TATTOO', href: '/tattoo-cosmetico' },
+  { label: 'ESTILISMO', href: '/estilismo-de-cejas' },
+  { label: 'PARAMEDICAL', href: '/paramedical-tattoo' },
+];
 
 export function Header() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -13,20 +20,44 @@ export function Header() {
   return (
     <>
       <Box component="header" className={classes.header}>
-        <Container size="xl">
-          <Flex justify="space-between" align="center" h={{ base: 90, sm: 100 }}>
-            <Link href="/" style={{ textDecoration: 'none' }}>
+        <Container size="xl" className={classes.container}>
+          <Flex justify="space-between" align="center" className={classes.flex}>
+            {/* Logo / Brand Name */}
+            <Link href="/" className={classes.brand}>
               <Image
                 src="/logo_cosetic_tattoo.svg"
                 alt="Mery García Cosmetic Tattoo"
-                width={200}
-                height={70}
-                priority
+                width={360}
+                height={75}
                 className={classes.logo}
-                style={{ cursor: 'pointer' }}
+                priority
               />
             </Link>
 
+            {/* Desktop Navigation */}
+            <nav className={classes.nav}>
+              {NAV_ITEMS.map((item) => (
+                <motion.div
+                  key={item.label}
+                  whileHover={{ y: -2 }}
+                  transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                >
+                  <Link
+                    href={item.href}
+                    className={classes.navLink}
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
+              ))}
+            </nav>
+
+            {/* CTA Button - Desktop */}
+            <Link href="/tattoo-cosmetico" className={classes.ctaButton}>
+              RESERVAR
+            </Link>
+
+            {/* Mobile Menu Button */}
             <Flex
               align="center"
               gap="xs"
@@ -36,13 +67,15 @@ export function Header() {
               <Burger
                 opened={opened}
                 size="sm"
-                color="var(--mantine-color-pink-3)"
+                color="var(--mg-pink)"
+                styles={{
+                  root: {
+                    outline: 'none',
+                    border: 'none'
+                  }
+                }}
               />
-              <Text
-                size="sm"
-                fw={300}
-                style={{ letterSpacing: '0.1em', color: '#d0d1d3' }}
-              >
+              <Text className={classes.menuText}>
                 MENÚ
               </Text>
             </Flex>
