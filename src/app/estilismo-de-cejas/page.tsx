@@ -155,7 +155,7 @@ export default function EstilismoCejasPage() {
       <Header />
       
       <Box className={classes.pageWrapper}>
-        {/* Hero Section con imagen de fondo */}
+        {/* Hero Section - Minimalista */}
         <Box className={classes.heroSection}>
           <ImageCrossfade
             images={[

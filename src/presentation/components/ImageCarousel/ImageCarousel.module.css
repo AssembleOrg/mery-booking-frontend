@@ -1,0 +1,144 @@
+.carouselWrapper {
+  width: 100%;
+  position: relative;
+  margin: 0 auto;
+}
+
+.carouselContainer {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+@media (min-width: 768px) {
+  .carouselContainer {
+    height: 600px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .carouselContainer {
+    height: 700px;
+  }
+}
+
+.carouselSlide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carouselSlide.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.carouselImage {
+  object-fit: cover;
+  filter: grayscale(100%);
+  transition: filter 0.3s ease;
+}
+
+.carouselSlide.active .carouselImage {
+  filter: grayscale(0%);
+}
+
+/* Navigation Arrows */
+.carouselArrowLeft,
+.carouselArrowRight {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #1a1a1a;
+  backdrop-filter: blur(10px);
+}
+
+.carouselArrowLeft {
+  left: 1.5rem;
+}
+
+.carouselArrowRight {
+  right: 1.5rem;
+}
+
+.carouselArrowLeft:hover,
+.carouselArrowRight:hover {
+  background: #f9bbc4;
+  color: #ffffff;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 4px 16px rgba(249, 187, 196, 0.4);
+}
+
+/* Dots Indicator */
+.carouselDots {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.carouselDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+}
+
+.carouselDot:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.2);
+}
+
+.carouselDot.active {
+  background: #f9bbc4;
+  border-color: #f9bbc4;
+  width: 14px;
+  height: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .carouselArrowLeft,
+  .carouselArrowRight {
+    width: 40px;
+    height: 40px;
+  }
+
+  .carouselArrowLeft {
+    left: 1rem;
+  }
+
+  .carouselArrowRight {
+    right: 1rem;
+  }
+
+  .carouselDots {
+    bottom: 1.5rem;
+  }
+}

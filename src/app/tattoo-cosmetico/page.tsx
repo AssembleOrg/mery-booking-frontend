@@ -358,13 +358,14 @@ function ConsultaContent({
             Staff Consultas
           </Text>
         )}
-        <Button
+        <button
+          type="button"
           className={classes.continueButton}
           onClick={handleContinue}
           // disabled={!staffConsultasId || !option.serviceId}
         >
           Continuar
-        </Button>
+        </button>
       </Box>
 
       {option.footerNote && (
@@ -600,13 +601,14 @@ function SesionCalendarioContent({
                 Mery Garcia
               </Text>
             )}
-            <Button
+            <button
+              type="button"
               className={classes.continueButton}
               onClick={handleContinue}
               disabled={!effectiveEmployeeId}
             >
               Continuar
-            </Button>
+            </button>
           </Box>
         </>
       ) : (
@@ -1569,7 +1571,7 @@ export default function TattooCosmeticoPage() {
       <Header />
 
       <Box className={classes.pageWrapper}>
-        {/* Hero Section */}
+        {/* Hero Section - Minimalista */}
         <Box className={classes.heroSection}>
           <ImageCrossfade
             images={[

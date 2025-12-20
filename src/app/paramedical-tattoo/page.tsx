@@ -737,8 +737,7 @@ export default function ParamedicalTattooPage() {
                   </Box>
                 </FadeInSection>
               </Box>
-            </Container>
-          </Box>
+            </Box>
 
           {/* Areola Harmonization Section */}
           <Box id="areola-harmonization" className={classes.section}>
@@ -801,8 +800,7 @@ export default function ParamedicalTattooPage() {
                   </Box>
                 </FadeInSection>
               </Box>
-            </Container>
-          </Box>
+            </Box>
 
           {/* Nipple Reconstruction Section */}
           <Box id="nipple-reconstruction" className={classes.section}>
@@ -905,8 +903,7 @@ export default function ParamedicalTattooPage() {
                   </Box>
                 </FadeInSection>
               </Box>
-            </Container>
-          </Box>
+            </Box>
         </Box>
       </Box>
 

@@ -85,7 +85,14 @@
   z-index: 2;
 }
 
-/* Sub Menu Navigation */
+@media (max-width: 768px) {
+  .heroTitle::before,
+  .heroTitle::after {
+    display: none;
+  }
+}
+
+/* Sub Menu Navigation - Minimalista y Elegante */
 .subMenuNav {
   display: flex;
   flex-wrap: wrap;
@@ -104,7 +111,7 @@
   font-weight: 400;
   letter-spacing: 2px;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: all 0.3s ease;
   text-transform: uppercase;
   font-family: var(--font-poppins-extralight), sans-serif;
 }
@@ -180,20 +187,31 @@
   z-index: 1;
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1024px) {
   .serviceLayout {
     flex-direction: row;
     gap: 64px;
     align-items: flex-start;
+    padding: 0 4rem;
+  }
+  
+  .serviceBlock:nth-child(even) .serviceLayout {
+    flex-direction: row-reverse;
   }
 }
 
+/* Imagen - Tamaño adecuado y visible */
 .serviceImageWrapper {
   flex-shrink: 0;
   width: 100%;
   max-width: 360px;
   aspect-ratio: 1 / 1;
   position: relative;
+  width: 100%;
+  flex: 0 0 auto;
+  aspect-ratio: 3 / 4;
+  max-width: 450px;
+  order: 1;
   overflow: hidden;
   background: var(--mg-pink-light);
 }
@@ -211,7 +229,7 @@
   z-index: 1;
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1024px) {
   .serviceImageWrapper {
     width: 360px;
   }
@@ -226,8 +244,25 @@
   transform: scale(1.05);
 }
 
+/* Contenido */
 .serviceContent {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 2rem 0;
+  order: 2;
+}
+
+@media (min-width: 1024px) {
+  .serviceContent {
+    padding: 0;
+    order: 1;
+  }
+  
+  .serviceBlock:nth-child(even) .serviceContent {
+    order: 1;
+  }
 }
 
 .serviceTitle {
@@ -353,7 +388,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .accordionControl:hover {
@@ -385,9 +420,9 @@
   border-top: 1px solid var(--mg-pink-lighter);
 }
 
-/* Accordion Panel Content */
 .accordionPanelContent {
   width: 100%;
+  padding: 2.5rem;
 }
 
 .panelDescription {
@@ -464,16 +499,22 @@
   background-color: var(--mg-pink);
 }
 
-/* Calendar Card */
 .calendarCard {
   background: var(--mg-white);
   border-left: 3px solid var(--mg-pink);
   padding: 24px;
   margin: 24px 0;
   max-width: 700px;
+  border-radius: 4px;
 }
 
-/* Empty Booking Card */
+@media (max-width: 768px) {
+  .calendarCard {
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+}
+
 .emptyBookingCard {
   display: flex;
   flex-direction: column;
@@ -525,16 +566,9 @@
 }
 
 .specialImageWrapper {
-  flex-shrink: 0;
-  width: 100%;
-  max-width: 320px;
+  flex: 0 0 42%;
+  max-width: 480px;
   position: relative;
-}
-
-@media (min-width: 769px) {
-  .specialImageWrapper {
-    width: 320px;
-  }
 }
 
 .specialImage {
@@ -542,7 +576,6 @@
   height: auto;
 }
 
-/* ======== RESPONSIVE ======== */
 @media (max-width: 1024px) {
   .heroTitle {
     font-size: 48px;
@@ -655,7 +688,7 @@
   }
 
   .heroContent {
-    top: calc(50% + 30px); /* Bajar más en mobile pequeño */
+    top: calc(50% + 30px); 
     gap: 12px;
   }
 
