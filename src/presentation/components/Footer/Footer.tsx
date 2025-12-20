@@ -16,10 +16,10 @@ const SERVICES = [
 ];
 
 const INFO_LINKS = [
-  { label: 'Precios', href: '#precios' },
-  { label: 'Cuidados', href: '#' },
-  { label: 'Políticas', href: '#' },
-  { label: 'Gift Card', href: '#' },
+  { label: 'Precios', href: 'https://merygarcia.com.ar/asesoramiento-express' },
+  { label: 'Cuidados', href: '/tattoo-cosmetico' },
+  { label: 'Políticas', href: 'https://merygarcia.com.ar/politica-de-cancelaciones' },
+  { label: 'Gift Card', href: 'https://merygarcia.com.ar/gift-card' },
 ];
 
 const SOCIAL_LINKS = [

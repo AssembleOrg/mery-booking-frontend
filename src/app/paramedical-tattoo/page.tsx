@@ -167,12 +167,6 @@ function ConsultaContent({
       <Text className={classes.panelPrice}>
         {option.priceLabel} <span className={classes.priceValue}>{option.priceValue}</span>
       </Text>
-      <Box className={classes.bookingCard}>
-        <Text className={classes.bookingLabel}>Profesional: Staff Consultas</Text>
-        <button className={classes.continueButton} onClick={handleContinue}>
-          CONTINUAR
-        </button>
-      </Box>
       {option.footerNote && <Text className={classes.footerNote}>{option.footerNote}</Text>}
     </Box>
   );
@@ -312,12 +306,6 @@ function SesionContent({
         {option.priceEffective && <> (<span className={classes.priceValue}>{option.priceEffective}</span> en efectivo)</>}
         {option.depositLabel && <> {option.depositLabel} <span className={classes.depositValue}>{option.depositValue}</span></>}
       </Text>
-      <Box className={classes.bookingCard}>
-        <Text className={classes.bookingLabel}>Profesional: Mery García</Text>
-        <button className={classes.continueButton} onClick={handleContinue}>
-          CONTINUAR
-        </button>
-      </Box>
     </Box>
   );
 }
@@ -725,15 +713,14 @@ export default function ParamedicalTattooPage() {
                       </Text>
                     </Stack>
 
-                    <Button
-                      component="a"
+                    <a
                       href="https://merygarcia.com.ar/servicios/tatuaje-paramedico"
                       target="_blank"
-                      className={classes.infoButton}
-                      mt="lg"
+                      rel="noopener noreferrer"
+                      className={classes.ctaButton}
                     >
                       MÁS INFO
-                    </Button>
+                    </a>
 
                     <Box className={classes.optionsSection}>
                       <Text className={classes.optionsTitle}>
@@ -790,15 +777,14 @@ export default function ParamedicalTattooPage() {
                       </Text>
                     </Stack>
 
-                    <Button
-                      component="a"
+                    <a
                       href="https://merygarcia.com.ar/servicios/tatuaje-paramedico"
                       target="_blank"
-                      className={classes.infoButton}
-                      mt="lg"
+                      rel="noopener noreferrer"
+                      className={classes.ctaButton}
                     >
                       MÁS INFO
-                    </Button>
+                    </a>
 
                     <Box className={classes.optionsSection}>
                       <Text className={classes.optionsTitle}>
@@ -855,15 +841,14 @@ export default function ParamedicalTattooPage() {
                       </Text>
                     </Stack>
 
-                    <Button
-                      component="a"
+                    <a
                       href="https://merygarcia.com.ar/servicios/tatuaje-paramedico"
                       target="_blank"
-                      className={classes.infoButton}
-                      mt="lg"
+                      rel="noopener noreferrer"
+                      className={classes.ctaButton}
                     >
                       MÁS INFO
-                    </Button>
+                    </a>
 
                     <Box className={classes.optionsSection}>
                       <Text className={classes.optionsTitle}>

@@ -84,6 +84,11 @@
   overflow: hidden;
 }
 
+/* Aplicar grayscale solo a la primera imagen del slideshow */
+.heroImageContainer img:first-child {
+  filter: grayscale(100%);
+}
+
 /* Placeholder (mantener por compatibilidad) */
 .heroImagePlaceholder {
   width: 75%;
@@ -114,28 +119,6 @@
   opacity: 0.5;
   line-height: 1;
   font-family: var(--font-poppins-extralight), sans-serif;
-}
-
-/* Scroll Indicator */
-.scrollIndicator {
-  position: absolute;
-  bottom: 40px;
-  left: 48px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.scrollLine {
-  width: 40px;
-  height: 1px;
-  background: var(--mg-gray);
-}
-
-.scrollText {
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--mg-gray);
 }
 
 /* ================================
@@ -304,6 +287,7 @@
 .galleryImage {
   object-fit: cover;
   transition: transform 0.4s ease;
+  filter: grayscale(100%);
 }
 
 .galleryItem:hover .galleryImage {
@@ -441,11 +425,11 @@
   .heroContent {
     flex: none;
     padding: 60px 40px;
+    width: 100%;  /* Tomar todo el ancho disponible */
   }
 
   .heroImageWrapper {
-    flex: none;
-    min-height: 50vh;
+    display: none;  /* Ocultar en tablet y mobile */
   }
 
   .heroImageContainer {
@@ -484,8 +468,7 @@
 
 @media (max-width: 768px) {
   .heroImageWrapper {
-    min-height: 45vh;
-    display: flex;
+    display: none;  /* Mantener oculto en mobile */
   }
 
   .heroImageContainer {
@@ -517,12 +500,9 @@
     bottom: 20px;
   }
 
-  .scrollIndicator {
-    display: none;
-  }
-
   .servicesSection {
     padding: 60px 24px;
+    margin-top: 48px;  /* Separación entre hero y servicios en mobile */
   }
 
   .servicesGrid {

@@ -17,7 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 80px;
+  padding-top: 120px;
 }
 
 .heroImage {
@@ -51,7 +51,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 8px;  /* Reducido de 24px a 8px para comprimir verticalmente */
 }
 
 .heroOverline {
@@ -88,7 +88,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px 32px;
-  margin-top: 16px;
+  margin-top: 8px;
   justify-content: center;
   width: 100%;
 }
@@ -134,9 +134,15 @@
 }
 
 /* Números de fondo */
-.section:nth-child(1)::before { content: '01'; }
-.section:nth-child(2)::before { content: '02'; }
-.section:nth-child(3)::before { content: '03'; }
+.section:nth-child(1)::before {
+  content: '01';
+}
+.section:nth-child(2)::before {
+  content: '02';
+}
+.section:nth-child(3)::before {
+  content: '03';
+}
 
 .section::before {
   position: absolute;
@@ -216,7 +222,7 @@
   margin-bottom: 20px;
 }
 
-.infoButton {
+.ctaButton {
   background-color: var(--mg-dark);
   color: var(--mg-white);
   border: none;
@@ -232,7 +238,7 @@
   display: inline-block;
 }
 
-.infoButton:hover {
+.ctaButton:hover {
   background-color: var(--mg-pink);
   transform: translateY(-2px);
 }
@@ -485,9 +491,15 @@
     padding-top: 100px;
   }
 
+  .heroContent {
+    top: calc(50% + 20px);  /* Bajar para evitar navbar (64px) */
+    gap: 12px;  /* Más espacio en mobile */
+  }
+
   .heroTitle {
     font-size: 32px;
     letter-spacing: 0.06em;
+    margin-bottom: 8px;
   }
 
   .heroNumber {
@@ -498,6 +510,7 @@
 
   .heroNav {
     gap: 6px 20px;
+    margin-top: 4px;
   }
 
   .navButton {
@@ -515,8 +528,27 @@
     top: 10px;
   }
 
+  .sectionContent {
+    flex-direction: column;
+    gap: 24px;
+  }
+
   .imageColumn {
-    display: none;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: 180px;
+    aspect-ratio: 16/9;
+  }
+
+  .sectionImage {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  .textColumn {
+    width: 100%;
   }
 
   .sectionTitle {
@@ -529,8 +561,14 @@
     min-height: 350px;
   }
 
+  .heroContent {
+    top: calc(50% + 30px);  /* Bajar más en mobile pequeño */
+    gap: 12px;
+  }
+
   .heroTitle {
     font-size: 24px;
+    margin-bottom: 4px;
   }
 
   .heroNav {
@@ -564,8 +602,20 @@
     font-size: 14px;
   }
 
-  .infoButton {
+  .ctaButton {
     padding: 14px 24px;
     font-size: 10px;
+  }
+}
+
+/* ======== OCULTAR IMAGEN EN NIPPLE RECONSTRUCTION ======== */
+/* Ocultar imagen solo en la sección de Nipple Reconstruction */
+#nipple-reconstruction .imageColumn {
+  display: none !important;  /* Forzar con !important para asegurar aplicación */
+}
+
+@media (min-width: 769px) {
+  #nipple-reconstruction .imageColumn {
+    display: none !important;  /* Forzar en desktop también */
   }
 }

@@ -17,7 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 80px;
+  padding-top: 120px;
 }
 
 .heroImage {
@@ -51,7 +51,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 8px; /* Reducido de 24px a 8px para comprimir verticalmente */
 }
 
 .heroOverline {
@@ -90,7 +90,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px 32px;
-  margin-top: 16px;
+  margin-top: 8px;
   justify-content: center;
   width: 100%;
 }
@@ -136,13 +136,27 @@
 }
 
 /* Números de fondo para cada servicio */
-.serviceBlock:nth-child(1)::before { content: '01'; }
-.serviceBlock:nth-child(2)::before { content: '02'; }
-.serviceBlock:nth-child(3)::before { content: '03'; }
-.serviceBlock:nth-child(4)::before { content: '04'; }
-.serviceBlock:nth-child(5)::before { content: '05'; }
-.serviceBlock:nth-child(6)::before { content: '06'; }
-.serviceBlock:nth-child(7)::before { content: '07'; }
+.serviceBlock:nth-child(1)::before {
+  content: '01';
+}
+.serviceBlock:nth-child(2)::before {
+  content: '02';
+}
+.serviceBlock:nth-child(3)::before {
+  content: '03';
+}
+.serviceBlock:nth-child(4)::before {
+  content: '04';
+}
+.serviceBlock:nth-child(5)::before {
+  content: '05';
+}
+.serviceBlock:nth-child(6)::before {
+  content: '06';
+}
+.serviceBlock:nth-child(7)::before {
+  content: '07';
+}
 
 .serviceBlock::before {
   position: absolute;
@@ -558,11 +572,13 @@
   .heroContent {
     padding: 40px 24px;
     text-align: center;
+    top: calc(50% + 20px);
   }
 
   .heroTitle {
     font-size: 32px;
     letter-spacing: 0.06em;
+    margin-bottom: 8px;
   }
 
   .heroNumber {
@@ -573,6 +589,7 @@
 
   .subMenuNav {
     gap: 6px 20px;
+    margin-top: 4px;
   }
 
   .subMenuItem {
@@ -587,11 +604,30 @@
   .serviceBlock::before {
     font-size: 100px;
     right: 20px;
-    top: 10px;
+  }
+
+  .serviceSection {
+    flex-direction: column;
   }
 
   .serviceImageWrapper {
-    display: none;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: 180px;
+    aspect-ratio: 16/9;
+    order: -1;
+  }
+
+  .serviceImage {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  .textColumn {
+    width: 100%;
+    order: 1;
   }
 
   .serviceTitle {
@@ -618,15 +654,19 @@
     min-height: 350px;
   }
 
+  .heroContent {
+    top: calc(50% + 30px); /* Bajar más en mobile pequeño */
+    gap: 12px;
+  }
+
   .heroTitle {
     font-size: 24px;
+    margin-bottom: 4px;
   }
 
   .subMenuNav {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px 16px;
-    margin-top: 24px;
     justify-items: center;
   }
 

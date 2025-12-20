@@ -208,7 +208,7 @@ export default function EstilismoCejasPage() {
                   Si es tu primera vez podés conocer todos nuestros servicios ingresando{' '}
                   <Text
                     component="a"
-                    href="#"
+                    href="https://merygarcia.com.ar/"
                     c="pink.6"
                     fw={400}
                     className={classes.linkText}

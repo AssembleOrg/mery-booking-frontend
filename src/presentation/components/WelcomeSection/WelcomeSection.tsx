@@ -25,15 +25,15 @@ const SERVICES = [
 ];
 
 const HERO_IMAGES = [
-  '/images/camuflaje.webp',
-  '/images/nano-scallping.webp',
-  '/images/Lip-blush-1-1-768x512.webp',
+  '/images/mery1.webp',         // Primera: mery1.webp (grayscale 100%)
+  '/images/camuflaje.webp',     // Segunda: camuflaje.webp
+  '/images/lashes_line_b.webp', // Tercera: lashes_line_b.webp (y se repite)
 ];
 
 const GALLERY_IMAGES = [
-  '/images/nano-scallping.webp',
+  '/images/mery4.webp',
   '/images/camuflaje.webp',
-  '/images/Lip-blush-1-1-768x512.webp',
+  '/images/mery3.webp',
   '/images/lashes_line_b.webp',
 ];
 
@@ -52,7 +52,7 @@ export function WelcomeSection() {
           size={140}
           top="12%"
           left="5%"
-          mobileTop="8%"
+          mobileTop="14%"
         />
 
         {/* Left content */}
@@ -101,14 +101,6 @@ export function WelcomeSection() {
           {/* Decorative number */}
           <FadeInSection direction="right" delay={0.4}>
             <span className={classes.heroNumber}>01</span>
-          </FadeInSection>
-        </Box>
-
-        {/* Scroll indicator */}
-        <Box className={classes.scrollIndicator}>
-          <FadeInSection direction="up" delay={0.8}>
-            <div className={classes.scrollLine} />
-            <span className={classes.scrollText}>SCROLL</span>
           </FadeInSection>
         </Box>
       </section>
@@ -175,7 +167,7 @@ export function WelcomeSection() {
             <FadeInSection direction="left" delay={0.2}>
               <Box className={classes.aboutImageWrapper}>
                 <ImageFrame
-                  src="/images/camuflaje.webp"
+                  src="/images/mery.webp"
                   alt="Mery García"
                   aspectRatio="3/4"
                   frameOffset={24}
@@ -194,7 +186,7 @@ export function WelcomeSection() {
                   "Los detalles son todo"
                 </Text>
 
-                <Link href="#" className={classes.buttonSecondary}>
+                <Link href="https://merygarcia.com.ar/sobre-mi" className={classes.buttonSecondary}>
                   CONOCER MÁS
                 </Link>
               </Box>

@@ -112,7 +112,7 @@
   gap: 12px;
   padding: 16px 32px;
   margin-top: 40px;
-  background: #25D366;
+  background: var(--mg-dark);
   color: var(--mg-white);
   text-decoration: none;
   font-family: var(--font-poppins-extralight), sans-serif;
@@ -123,7 +123,7 @@
 }
 
 .whatsappButton:hover {
-  background: #1da851;
+  background: var(--mg-pink);
   transform: translateY(-2px);
 }
 
@@ -164,8 +164,10 @@
   }
 
   .decorativeNumber {
-    font-size: 120px;
-    bottom: 20px;
+    font-size: 100px;     /* Reducir de 120px a 100px */
+    bottom: auto;          /* Cambiar de bottom a top */
+    top: 120px;            /* Posicionar desde arriba */
     right: 20px;
+    opacity: 0.15;         /* Reducir opacidad para que no distraiga */
   }
 }
