@@ -1,20 +1,41 @@
 'use client';
 
 import { Box, Container, Text, Collapse, Select, Button } from '@mantine/core';
-import { Header, Footer, DateTimeSelector, BookingConfirmationModal } from '@/presentation/components';
+import {
+  Header,
+  Footer,
+  DateTimeSelector,
+  BookingConfirmationModal,
+  FadeInSection,
+  StaggerContainer,
+  StaggerItem,
+  LayeredText,
+  ImageCrossfade,
+} from '@/presentation/components';
 import Image from 'next/image';
 import { useState, useMemo, useEffect } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
-import { useAvailability, useServices, useEmployees, useCreateClient, useCreateBooking } from '@/presentation/hooks';
-import { CategoryService, type Category, type ServiceEntity, type Employee } from '@/infrastructure/http';
+import {
+  useAvailability,
+  useServices,
+  useEmployees,
+  useCreateClient,
+  useCreateBooking,
+} from '@/presentation/hooks';
+import {
+  CategoryService,
+  type Category,
+  type ServiceEntity,
+  type Employee,
+} from '@/infrastructure/http';
 import { useAuth } from '@/presentation/contexts';
 import { Client } from '@/domain/entities';
 import dayjs from 'dayjs';
 import classes from './page.module.css';
 
 // Tipos de contenido del acordeón
-type AccordionContentType = 
+type AccordionContentType =
   | 'consulta-sin-trabajo'
   | 'consulta-con-trabajo'
   | 'sesion-calendario'
@@ -49,13 +70,13 @@ interface AccordionItemProps {
 }
 
 // Componente para el contenido de Consulta (con selector de profesional)
-function ConsultaContent({ 
-  option, 
+function ConsultaContent({
+  option,
   staffConsultasId,
   services = [],
-  employees = []
-}: { 
-  option: ServiceOption; 
+  employees = [],
+}: {
+  option: ServiceOption;
   staffConsultasId?: string;
   services?: ServiceEntity[];
   employees?: Employee[];
@@ -64,10 +85,10 @@ function ConsultaContent({
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
-  
+
   // ID hardcodeado de "Staff Consultas" como fallback
   const STAFF_CONSULTAS_ID = '2d283dc6-6940-46fc-9166-eb6b17b8cc0f';
-  
+
   // Usar el ID proporcionado o el hardcodeado como fallback
   const effectiveStaffConsultasId = staffConsultasId || STAFF_CONSULTAS_ID;
 
@@ -76,13 +97,13 @@ function ConsultaContent({
   const createBookingMutation = useCreateBooking();
 
   // Buscar el servicio actual
-  const currentService = option.serviceId 
-    ? services.find(s => s.id === option.serviceId)
+  const currentService = option.serviceId
+    ? services.find((s) => s.id === option.serviceId)
     : null;
 
   // Buscar el empleado actual
   const currentEmployee = effectiveStaffConsultasId
-    ? employees.find(e => e.id === effectiveStaffConsultasId)
+    ? employees.find((e) => e.id === effectiveStaffConsultasId)
     : null;
 
   const handleDateTimeSelect = (date: Date, time: string) => {
@@ -92,7 +113,8 @@ function ConsultaContent({
   };
 
   const handleConfirmBooking = async (clientData: Client) => {
-    if (!option.serviceId || !selectedDate || !selectedTime || !currentService) return;
+    if (!option.serviceId || !selectedDate || !selectedTime || !currentService)
+      return;
 
     if (!effectiveStaffConsultasId) {
       return;
@@ -103,7 +125,7 @@ function ConsultaContent({
       if (!clientData.dni) {
         throw new Error('El DNI es requerido para completar la reserva');
       }
-      
+
       const client = await createClientMutation.mutateAsync({
         fullName: `${clientData.name} ${clientData.surname}`,
         email: clientData.email,
@@ -125,7 +147,7 @@ function ConsultaContent({
       });
 
       close();
-      
+
       // Resetear estado
       setShowCalendar(false);
       setSelectedDate(null);
@@ -141,7 +163,12 @@ function ConsultaContent({
   };
 
   const handleContinue = () => {
-    console.log('Continuar clicked - staffConsultasId:', effectiveStaffConsultasId, 'serviceId:', option.serviceId);
+    console.log(
+      'Continuar clicked - staffConsultasId:',
+      effectiveStaffConsultasId,
+      'serviceId:',
+      option.serviceId
+    );
     // Permitir continuar aunque staffConsultasId sea undefined temporalmente
     // El hook useAvailability manejará el caso cuando no hay employeeId
     if (option.serviceId) {
@@ -153,16 +180,27 @@ function ConsultaContent({
 
   // Calcular rango de fechas (hoy hasta 3 meses)
   const minDate = useMemo(() => dayjs().format('YYYY-MM-DD'), []);
-  const maxDate = useMemo(() => dayjs().add(3, 'months').format('YYYY-MM-DD'), []);
+  const maxDate = useMemo(
+    () => dayjs().add(3, 'months').format('YYYY-MM-DD'),
+    []
+  );
 
   // Verificar disponibilidad si tenemos serviceId y employeeId
   // Solo ejecutar cuando showCalendar es true y tenemos todos los parámetros
-  const employeeIdForAvailability = showCalendar && effectiveStaffConsultasId ? effectiveStaffConsultasId : null;
-  const serviceIdForAvailability = showCalendar && option.serviceId ? option.serviceId : null;
+  const employeeIdForAvailability =
+    showCalendar && effectiveStaffConsultasId
+      ? effectiveStaffConsultasId
+      : null;
+  const serviceIdForAvailability =
+    showCalendar && option.serviceId ? option.serviceId : null;
   const minDateForAvailability = showCalendar ? minDate : null;
   const maxDateForAvailability = showCalendar ? maxDate : null;
 
-  const { data: availability, isLoading: isLoadingAvailability, error: availabilityError } = useAvailability(
+  const {
+    data: availability,
+    isLoading: isLoadingAvailability,
+    error: availabilityError,
+  } = useAvailability(
     employeeIdForAvailability,
     serviceIdForAvailability,
     minDateForAvailability,
@@ -179,7 +217,13 @@ function ConsultaContent({
         maxDate: maxDateForAvailability,
       });
     }
-  }, [showCalendar, employeeIdForAvailability, serviceIdForAvailability, minDateForAvailability, maxDateForAvailability]);
+  }, [
+    showCalendar,
+    employeeIdForAvailability,
+    serviceIdForAvailability,
+    minDateForAvailability,
+    maxDateForAvailability,
+  ]);
 
   // Debug: Log errores
   useEffect(() => {
@@ -197,25 +241,24 @@ function ConsultaContent({
       return false;
     }
     // Verificar si hay al menos un día con slots disponibles
-    return availability.availability.some(day => {
+    return availability.availability.some((day) => {
       if (!day.hasActiveTimeSlots) return false;
-      return day.slots.some(slot => slot.available);
+      return day.slots.some((slot) => slot.available);
     });
   }, [availability, option.serviceId, staffConsultasId, showCalendar]);
 
   if (showCalendar) {
     return (
       <Box className={classes.accordionPanelContent}>
-        <Text className={classes.panelDescription}>
-          {option.description}
-        </Text>
+        <Text className={classes.panelDescription}>{option.description}</Text>
         {option.extraDescription && (
           <Text className={classes.panelDescription}>
             {option.extraDescription}
           </Text>
         )}
         <Text className={classes.panelPrice}>
-          {option.priceLabel} <span className={classes.priceValue}>{option.priceValue}</span>
+          {option.priceLabel}{' '}
+          <span className={classes.priceValue}>{option.priceValue}</span>
         </Text>
 
         {/* Mostrar mensaje de no disponibilidad si no hay slots disponibles */}
@@ -228,7 +271,8 @@ function ConsultaContent({
               height={100}
             />
             <Text className={classes.emptyBookingText}>
-              Actualmente no hay citas disponible. Ingresa periódicamente para verificar nuevas disponibilidades
+              Actualmente no hay citas disponible. Ingresa periódicamente para
+              verificar nuevas disponibilidades
             </Text>
           </Box>
         ) : (
@@ -265,12 +309,16 @@ function ConsultaContent({
               duration: currentService.duration,
               image: currentService.urlImage || '/desk.svg',
             }}
-            professional={currentEmployee ? {
-              id: currentEmployee.id,
-              name: currentEmployee.fullName,
-              available: true,
-              services: [],
-            } : null}
+            professional={
+              currentEmployee
+                ? {
+                    id: currentEmployee.id,
+                    name: currentEmployee.fullName,
+                    available: true,
+                    services: [],
+                  }
+                : null
+            }
             date={selectedDate}
             time={selectedTime}
             location="Mery García Office"
@@ -283,16 +331,15 @@ function ConsultaContent({
 
   return (
     <Box className={classes.accordionPanelContent}>
-      <Text className={classes.panelDescription}>
-        {option.description}
-      </Text>
+      <Text className={classes.panelDescription}>{option.description}</Text>
       {option.extraDescription && (
         <Text className={classes.panelDescription}>
           {option.extraDescription}
         </Text>
       )}
       <Text className={classes.panelPrice}>
-        {option.priceLabel} <span className={classes.priceValue}>{option.priceValue}</span>
+        {option.priceLabel}{' '}
+        <span className={classes.priceValue}>{option.priceValue}</span>
       </Text>
 
       <Box className={classes.bookingCard}>
@@ -307,7 +354,9 @@ function ConsultaContent({
             className={classes.bookingSelect}
           />
         ) : (
-          <Text style={{ padding: '0.5rem', color: '#666' }}>Staff Consultas</Text>
+          <Text style={{ padding: '0.5rem', color: '#666' }}>
+            Staff Consultas
+          </Text>
         )}
         <button
           type="button"
@@ -340,12 +389,16 @@ function ConsultaContent({
             duration: currentService.duration,
             image: currentService.urlImage || '/desk.svg',
           }}
-          professional={currentEmployee ? {
-            id: currentEmployee.id,
-            name: currentEmployee.fullName,
-            available: true,
-            services: [],
-          } : null}
+          professional={
+            currentEmployee
+              ? {
+                  id: currentEmployee.id,
+                  name: currentEmployee.fullName,
+                  available: true,
+                  services: [],
+                }
+              : null
+          }
           date={selectedDate}
           time={selectedTime}
           location="Mery García Office"
@@ -357,13 +410,13 @@ function ConsultaContent({
 }
 
 // Componente para el contenido de Sesiones (con calendario)
-function SesionCalendarioContent({ 
-  option, 
+function SesionCalendarioContent({
+  option,
   meryGarciaId,
   services = [],
-  employees = []
-}: { 
-  option: ServiceOption; 
+  employees = [],
+}: {
+  option: ServiceOption;
   meryGarciaId?: string;
   services?: ServiceEntity[];
   employees?: Employee[];
@@ -378,13 +431,13 @@ function SesionCalendarioContent({
   const createBookingMutation = useCreateBooking();
 
   // Buscar el servicio actual
-  const currentService = option.serviceId 
-    ? services.find(s => s.id === option.serviceId)
+  const currentService = option.serviceId
+    ? services.find((s) => s.id === option.serviceId)
     : null;
 
   // Buscar el empleado actual (Mery Garcia)
   const currentEmployee = meryGarciaId
-    ? employees.find(e => e.id === meryGarciaId)
+    ? employees.find((e) => e.id === meryGarciaId)
     : null;
 
   // Usar meryGarciaId o option.employeeId como fallback
@@ -397,14 +450,21 @@ function SesionCalendarioContent({
   };
 
   const handleConfirmBooking = async (clientData: Client) => {
-    if (!option.serviceId || !selectedDate || !selectedTime || !currentService || !effectiveEmployeeId) return;
+    if (
+      !option.serviceId ||
+      !selectedDate ||
+      !selectedTime ||
+      !currentService ||
+      !effectiveEmployeeId
+    )
+      return;
 
     try {
       // 1. Crear cliente primero (usando endpoint público si no está autenticado)
       if (!clientData.dni) {
         throw new Error('El DNI es requerido para completar la reserva');
       }
-      
+
       const client = await createClientMutation.mutateAsync({
         fullName: `${clientData.name} ${clientData.surname}`,
         email: clientData.email,
@@ -426,7 +486,7 @@ function SesionCalendarioContent({
       });
 
       close();
-      
+
       // Resetear estado
       setShowCalendar(false);
       setSelectedDate(null);
@@ -453,18 +513,27 @@ function SesionCalendarioContent({
 
   // Calcular rango de fechas (hoy hasta 3 meses)
   const minDate = useMemo(() => dayjs().format('YYYY-MM-DD'), []);
-  const maxDate = useMemo(() => dayjs().add(3, 'months').format('YYYY-MM-DD'), []);
+  const maxDate = useMemo(
+    () => dayjs().add(3, 'months').format('YYYY-MM-DD'),
+    []
+  );
 
   // Usar meryGarciaId si está disponible, sino usar option.employeeId
   const employeeId = meryGarciaId || option.employeeId;
 
   // Verificar disponibilidad solo cuando showCalendar es true y tenemos serviceId y employeeId
-  const employeeIdForAvailability = showCalendar && employeeId ? employeeId : null;
-  const serviceIdForAvailability = showCalendar && option.serviceId ? option.serviceId : null;
+  const employeeIdForAvailability =
+    showCalendar && employeeId ? employeeId : null;
+  const serviceIdForAvailability =
+    showCalendar && option.serviceId ? option.serviceId : null;
   const minDateForAvailability = showCalendar ? minDate : null;
   const maxDateForAvailability = showCalendar ? maxDate : null;
 
-  const { data: availability, isLoading: isLoadingAvailability, error: availabilityError } = useAvailability(
+  const {
+    data: availability,
+    isLoading: isLoadingAvailability,
+    error: availabilityError,
+  } = useAvailability(
     employeeIdForAvailability,
     serviceIdForAvailability,
     minDateForAvailability,
@@ -484,24 +553,31 @@ function SesionCalendarioContent({
       return false;
     }
     // Verificar si hay al menos un día con slots disponibles
-    return availability.availability.some(day => {
+    return availability.availability.some((day) => {
       if (!day.hasActiveTimeSlots) return false;
-      return day.slots.some(slot => slot.available);
+      return day.slots.some((slot) => slot.available);
     });
   }, [availability, option.serviceId, employeeId, showCalendar]);
 
   return (
     <Box className={classes.accordionPanelContent}>
-      <Text className={classes.panelDescription}>
-        {option.description}
-      </Text>
+      <Text className={classes.panelDescription}>{option.description}</Text>
       <Text className={classes.panelPrice}>
-        {option.priceLabel} <span className={classes.priceValue}>{option.priceValue}</span>
+        {option.priceLabel}{' '}
+        <span className={classes.priceValue}>{option.priceValue}</span>
         {option.priceEffective && (
-          <> (en efectivo <span className={classes.priceValue}>{option.priceEffective}</span>)</>
+          <>
+            {' '}
+            (en efectivo{' '}
+            <span className={classes.priceValue}>{option.priceEffective}</span>)
+          </>
         )}
         {option.depositLabel && (
-          <> {option.depositLabel} <span className={classes.depositValue}>{option.depositValue}</span></>
+          <>
+            {' '}
+            {option.depositLabel}{' '}
+            <span className={classes.depositValue}>{option.depositValue}</span>
+          </>
         )}
       </Text>
       {option.cuotasText && (
@@ -515,15 +591,15 @@ function SesionCalendarioContent({
             <Text className={classes.bookingLabel}>Profesional:</Text>
             {meryGarciaId ? (
               <Select
-                data={[
-                  { value: meryGarciaId, label: 'Mery Garcia' },
-                ]}
+                data={[{ value: meryGarciaId, label: 'Mery Garcia' }]}
                 value={meryGarciaId}
                 readOnly={true}
                 className={classes.bookingSelect}
               />
             ) : (
-              <Text style={{ padding: '0.5rem', color: '#333' }}>Mery Garcia</Text>
+              <Text style={{ padding: '0.5rem', color: '#333' }}>
+                Mery Garcia
+              </Text>
             )}
             <button
               type="button"
@@ -547,7 +623,8 @@ function SesionCalendarioContent({
                 height={100}
               />
               <Text className={classes.emptyBookingText}>
-                Actualmente no hay citas disponible. Ingresa periódicamente para verificar nuevas disponibilidades
+                Actualmente no hay citas disponible. Ingresa periódicamente para
+                verificar nuevas disponibilidades
               </Text>
             </Box>
           ) : (
@@ -583,12 +660,16 @@ function SesionCalendarioContent({
             duration: currentService.duration,
             image: currentService.urlImage || '/desk.svg',
           }}
-          professional={currentEmployee ? {
-            id: currentEmployee.id,
-            name: currentEmployee.fullName,
-            available: true,
-            services: [],
-          } : null}
+          professional={
+            currentEmployee
+              ? {
+                  id: currentEmployee.id,
+                  name: currentEmployee.fullName,
+                  available: true,
+                  services: [],
+                }
+              : null
+          }
           date={selectedDate}
           time={selectedTime}
           location="Mery García Office"
@@ -603,16 +684,25 @@ function SesionCalendarioContent({
 function LastMinuteContent({ option }: { option: ServiceOption }) {
   return (
     <Box className={classes.accordionPanelContent}>
-      <Text className={classes.panelDescription}>
-        {option.description}
-      </Text>
+      <Text className={classes.panelDescription}>{option.description}</Text>
       <Text className={classes.panelPrice}>
-        {option.priceLabel} <span className={classes.priceValue}>{option.priceValue}</span>
+        {option.priceLabel}{' '}
+        <span className={classes.priceValue}>{option.priceValue}</span>
         {option.priceEffective && (
-          <> (<span className={classes.priceValue}>{option.priceEffective}</span> en efectivo)</>
+          <>
+            {' '}
+            (<span className={classes.priceValue}>
+              {option.priceEffective}
+            </span>{' '}
+            en efectivo)
+          </>
         )}
         {option.depositLabel && (
-          <> {option.depositLabel} <span className={classes.depositValue}>{option.depositValue}</span></>
+          <>
+            {' '}
+            {option.depositLabel}{' '}
+            <span className={classes.depositValue}>{option.depositValue}</span>
+          </>
         )}
       </Text>
       {option.promoText && (
@@ -627,7 +717,8 @@ function LastMinuteContent({ option }: { option: ServiceOption }) {
           height={100}
         />
         <Text className={classes.emptyBookingText}>
-          Actualmente no hay citas disponible. Ingresa periódicamente para verificar nuevas disponibilidades
+          Actualmente no hay citas disponible. Ingresa periódicamente para
+          verificar nuevas disponibilidades
         </Text>
       </Box>
     </Box>
@@ -641,16 +732,38 @@ interface AccordionItemWithIdsProps extends AccordionItemProps {
   employees?: Employee[];
 }
 
-function AccordionItem({ option, isOpen, onToggle, staffConsultasId, meryGarciaId, services, employees }: AccordionItemWithIdsProps) {
+function AccordionItem({
+  option,
+  isOpen,
+  onToggle,
+  staffConsultasId,
+  meryGarciaId,
+  services,
+  employees,
+}: AccordionItemWithIdsProps) {
   const renderContent = () => {
     switch (option.contentType) {
       case 'consulta-sin-trabajo':
       case 'consulta-con-trabajo':
-        return <ConsultaContent option={option} staffConsultasId={staffConsultasId} services={services} employees={employees} />;
+        return (
+          <ConsultaContent
+            option={option}
+            staffConsultasId={staffConsultasId}
+            services={services}
+            employees={employees}
+          />
+        );
       case 'sesion-calendario':
       case 'retoque-calendario':
       case 'mantenimiento-calendario':
-        return <SesionCalendarioContent option={option} meryGarciaId={meryGarciaId} services={services} employees={employees} />;
+        return (
+          <SesionCalendarioContent
+            option={option}
+            meryGarciaId={meryGarciaId}
+            services={services}
+            employees={employees}
+          />
+        );
       case 'last-minute':
         return <LastMinuteContent option={option} />;
       default:
@@ -661,16 +774,16 @@ function AccordionItem({ option, isOpen, onToggle, staffConsultasId, meryGarciaI
   return (
     <Box className={classes.accordionItem}>
       <button className={classes.accordionControl} onClick={onToggle}>
-        <IconChevronDown 
-          size={14} 
-          className={`${classes.accordionChevron} ${isOpen ? classes.accordionChevronOpen : ''}`} 
+        <IconChevronDown
+          size={14}
+          className={`${classes.accordionChevron} ${
+            isOpen ? classes.accordionChevronOpen : ''
+          }`}
         />
         <span className={classes.accordionLabel}>{option.label}</span>
       </button>
       <Collapse in={isOpen}>
-        <Box className={classes.accordionPanel}>
-          {renderContent()}
-        </Box>
+        <Box className={classes.accordionPanel}>{renderContent()}</Box>
       </Collapse>
     </Box>
   );
@@ -684,7 +797,13 @@ interface ServiceAccordionProps {
   employees?: Employee[];
 }
 
-function ServiceAccordion({ options, staffConsultasId, meryGarciaId, services, employees }: ServiceAccordionProps) {
+function ServiceAccordion({
+  options,
+  staffConsultasId,
+  meryGarciaId,
+  services,
+  employees,
+}: ServiceAccordionProps) {
   const [openId, setOpenId] = useState<string | null>(null);
 
   const handleToggle = (id: string) => {
@@ -711,245 +830,270 @@ function ServiceAccordion({ options, staffConsultasId, meryGarciaId, services, e
 
 // Datos de las opciones de cada servicio - NANOBLADING
 const nanobladingOptions: ServiceOption[] = [
-  { 
-    id: 'nano-1', 
+  {
+    id: 'nano-1',
     label: 'Consulta Obligatoria SIN trabajo previo (*)',
     contentType: 'consulta-sin-trabajo',
-    description: 'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio.',
+    description:
+      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'AR$ 50.000.-',
-    footerNote: '(*) Espacio para que conozcas nuestro modo de trabajo, técnica y cuidados que deberás cumplir. Dibujamos los resultados que buscamos y saldamos todas tus dudas.',
+    footerNote:
+      '(*) Espacio para que conozcas nuestro modo de trabajo, técnica y cuidados que deberás cumplir. Dibujamos los resultados que buscamos y saldamos todas tus dudas.',
     footerNote2: 'Sin consulta previa no podremos brindarte un servicio MG.',
   },
-  { 
-    id: 'nano-2', 
+  {
+    id: 'nano-2',
     label: 'Consulta Obligatoria CON trabajo previo (*)',
     contentType: 'consulta-con-trabajo',
-    description: 'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio.',
-    extraDescription: 'Se considera trabajo previo a cualquier servicio de cosmetic tattoo en cejas que no haya sido realizado por MG & Staff.',
+    description:
+      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio.',
+    extraDescription:
+      'Se considera trabajo previo a cualquier servicio de cosmetic tattoo en cejas que no haya sido realizado por MG & Staff.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'AR$ 50.000.-',
-    footerNote: '(*) Espacio para que conozcas nuestro modo de trabajo, técnica y cuidados que deberás cumplir. Dibujamos los resultados que buscamos y saldamos todas tus dudas.',
+    footerNote:
+      '(*) Espacio para que conozcas nuestro modo de trabajo, técnica y cuidados que deberás cumplir. Dibujamos los resultados que buscamos y saldamos todas tus dudas.',
     footerNote2: 'Sin consulta previa no podremos brindarte un servicio MG.',
   },
-  { 
-    id: 'nano-3', 
+  {
+    id: 'nano-3',
     label: '1ª Sesión (By Mery Garcia)',
     contentType: 'sesion-calendario',
-    description: 'Primera experiencia de Nanoblading con nosotras. Recordá que los resultados óptimos se logran con dos sesiones.',
+    description:
+      'Primera experiencia de Nanoblading con nosotras. Recordá que los resultados óptimos se logran con dos sesiones.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 610.-',
     priceEffective: 'U$S 420.-',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
-    cuotasText: 'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
-  { 
-    id: 'nano-4', 
+  {
+    id: 'nano-4',
     label: '2ª Sesión - Retoque (By Mery Garcia)',
     contentType: 'retoque-calendario',
-    description: 'Completá tu servicio de Nanoblading entre 30 y 60 días después de tu primera sesión.',
+    description:
+      'Completá tu servicio de Nanoblading entre 30 y 60 días después de tu primera sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 317.-',
     priceEffective: 'U$S 180.-',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
-    cuotasText: 'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
-  { 
-    id: 'nano-5', 
+  {
+    id: 'nano-5',
     label: 'Mantenimiento (By Mery Garcia)',
     contentType: 'mantenimiento-calendario',
-    description: 'Reactiva tu servicio de Nanoblading. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
+    description:
+      'Reactiva tu servicio de Nanoblading. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 610.-',
     priceEffective: 'U$S 420.- en efectivo',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
-    cuotasText: 'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
-  { 
-    id: 'nano-6', 
+  {
+    id: 'nano-6',
     label: 'Last Minute Booking Nanoblading (Mantenimiento)',
     contentType: 'last-minute',
-    description: 'Reactiva tu servicio de Nanoblading. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
+    description:
+      'Reactiva tu servicio de Nanoblading. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 488.-',
     priceEffective: 'U$S 336.-',
     depositLabel: ' Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
-    promoText: 'Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
+    promoText:
+      'Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
   },
 ];
 
 const lipBlushOptions: ServiceOption[] = [
-  { 
-    id: 'lip-1', 
+  {
+    id: 'lip-1',
     label: 'Consulta previa',
     contentType: 'sesion-calendario',
-    description: 'Un espacio reservado para saldar tus dudas y que Mery de manera personalizada pueda hacerte una demostración de diseño elegido especialmente para vos. Por favor, lee atentamente la información previa y en caso de que quieras, solicita los cuidados post de tu Lip Blush y el consentimiento informado.',
+    description:
+      'Un espacio reservado para saldar tus dudas y que Mery de manera personalizada pueda hacerte una demostración de diseño elegido especialmente para vos. Por favor, lee atentamente la información previa y en caso de que quieras, solicita los cuidados post de tu Lip Blush y el consentimiento informado.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'AR$ 50.000.-',
-    cuotasText: 'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
-  { 
-    id: 'lip-2', 
+  {
+    id: 'lip-2',
     label: '1ª Sesión',
     contentType: 'sesion-calendario',
-    description: 'Primer experiencia de Lip Blush con nosotras. Recordá que los resultados óptimos se logran con dos sesiones.',
+    description:
+      'Primer experiencia de Lip Blush con nosotras. Recordá que los resultados óptimos se logran con dos sesiones.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 650.-',
     priceEffective: 'U$S 475.-',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
-    cuotasText: 'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
-  { 
-    id: 'lip-3', 
+  {
+    id: 'lip-3',
     label: '2ª Sesión - Retoque',
     contentType: 'retoque-calendario',
-    description: 'Completá tu servicio de Lip Blush entre 30 y 60 días después de tu primera sesión.',
+    description:
+      'Completá tu servicio de Lip Blush entre 30 y 60 días después de tu primera sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 317.-',
     priceEffective: 'U$S 180.-',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
-    cuotasText: 'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
-  { 
-    id: 'lip-4', 
+  {
+    id: 'lip-4',
     label: 'Mantenimiento',
     contentType: 'mantenimiento-calendario',
-    description: 'Reactiva tu servicio de Lip Blush. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
+    description:
+      'Reactiva tu servicio de Lip Blush. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 650.-',
     priceEffective: 'U$S 475.-',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
-    cuotasText: 'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
-  { 
-    id: 'lip-5', 
+  {
+    id: 'lip-5',
     label: 'Last Minute Booking Lip Blush (Mantenimiento)',
     contentType: 'last-minute',
-    description: 'Reactiva tu servicio de Lip Blush. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
+    description:
+      'Reactiva tu servicio de Lip Blush. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 520.-',
     priceEffective: 'U$S 380.-',
     depositLabel: ' Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
-    promoText: 'Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
+    promoText:
+      'Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
   },
 ];
 
 const lipCamouflageOptions: ServiceOption[] = [
-  { 
-    id: 'lipcam-1', 
+  {
+    id: 'lipcam-1',
     label: 'Lip Camouflage Consulta previa Obligatoria',
     contentType: 'consulta-con-trabajo',
-    description: 'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio.',
-    extraDescription: 'Se considera trabajo previo a cualquier servicio de Cosmetic Tattoo que no haya sido realizado por MG & Staff.',
+    description:
+      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio.',
+    extraDescription:
+      'Se considera trabajo previo a cualquier servicio de Cosmetic Tattoo que no haya sido realizado por MG & Staff.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'AR$ 50.000.-',
   },
-  { 
-    id: 'lipcam-2', 
+  {
+    id: 'lipcam-2',
     label: 'Lip Camouflage by Mery Garcia',
     contentType: 'sesion-calendario',
-    description: 'Servicio de corrección y mejora de trabajos previos en labios.',
+    description:
+      'Servicio de corrección y mejora de trabajos previos en labios.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 600.-',
     priceEffective: 'U$S 420.-',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
-    cuotasText: 'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
 ];
 
 const lashesLineOptions: ServiceOption[] = [
-  { 
-    id: 'lash-1', 
+  {
+    id: 'lash-1',
     label: 'Consulta previa',
     contentType: 'sesion-calendario',
-    description: 'Un espacio reservado para saldar tus dudas y que Mery Garcia & Staff de manera personalizada pueda hacerte una demostración de diseño elegido especialmente para vos.',
+    description:
+      'Un espacio reservado para saldar tus dudas y que Mery Garcia & Staff de manera personalizada pueda hacerte una demostración de diseño elegido especialmente para vos.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'AR$ 50.000.-',
-    cuotasText: 'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
-  { 
-    id: 'lash-2', 
+  {
+    id: 'lash-2',
     label: '1ª Sesión',
     contentType: 'sesion-calendario',
-    description: 'Primer experiencia de Lashes Line con nosotras. Recordá que los resultados óptimos se logran con dos sesiones.',
+    description:
+      'Primer experiencia de Lashes Line con nosotras. Recordá que los resultados óptimos se logran con dos sesiones.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 480.-',
     priceEffective: 'U$S 320.-',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
-    cuotasText: 'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
-  { 
-    id: 'lash-3', 
+  {
+    id: 'lash-3',
     label: '2ª Sesión - Retoque',
     contentType: 'retoque-calendario',
-    description: 'Completá tu servicio de Lashes Line entre 30 y 60 días después de tu primera sesión.',
+    description:
+      'Completá tu servicio de Lashes Line entre 30 y 60 días después de tu primera sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 317.-',
     priceEffective: 'U$S 180.-',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
-    cuotasText: 'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
-  { 
-    id: 'lash-4', 
+  {
+    id: 'lash-4',
     label: 'Mantenimiento',
     contentType: 'mantenimiento-calendario',
-    description: 'Reactiva tu servicio de Lashes Line. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
+    description:
+      'Reactiva tu servicio de Lashes Line. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 480.-',
     priceEffective: 'U$S 320.-',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
-    cuotasText: 'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
-  { 
-    id: 'lash-5', 
+  {
+    id: 'lash-5',
     label: 'Last Minute Booking Lashes Line (Mantenimiento)',
     contentType: 'last-minute',
-    description: 'Reactiva tu servicio de Lashes Line. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
+    description:
+      'Reactiva tu servicio de Lashes Line. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 384.-',
     priceEffective: 'U$S 256.-',
     depositLabel: ' Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
-    promoText: 'Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
+    promoText:
+      'Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
   },
 ];
 
 // Mapeo de nombres de servicios estáticos a nombres en el backend
 // Basado en los servicios reales del backend
 const SERVICE_NAME_MAPPING: Record<string, string[]> = {
-  'nanoblading': [
+  nanoblading: [
     'nanoblading by mery garcia',
     'nanoblading',
     'nano blading',
-    'nano-blading'
+    'nano-blading',
   ],
-  'lip-blush': [
-    'lip blush',
-    'lipblush',
-    'lip-blush'
-  ],
-  'lip-camouflage': [
-    'lip camouflage',
-    'lipcamouflage',
-    'lip-camouflage'
-  ],
-  'lashes-line': [
-    'lashes line',
-    'lashesline',
-    'lashes-line'
-  ],
+  'lip-blush': ['lip blush', 'lipblush', 'lip-blush'],
+  'lip-camouflage': ['lip camouflage', 'lipcamouflage', 'lip-camouflage'],
+  'lashes-line': ['lashes line', 'lashesline', 'lashes-line'],
 };
 
 // Mapeo de nombres de empleados estáticos a nombres en el backend
@@ -959,34 +1103,60 @@ const EMPLOYEE_NAME_MAPPING: Record<string, string[]> = {
 };
 
 // Función para encontrar servicio por nombre y tipo (búsqueda flexible)
-function findServiceByName(services: ServiceEntity[], serviceKey: string, optionType?: string): ServiceEntity | null {
-  const searchTerms = SERVICE_NAME_MAPPING[serviceKey] || [serviceKey.toLowerCase()];
-  
+function findServiceByName(
+  services: ServiceEntity[],
+  serviceKey: string,
+  optionType?: string
+): ServiceEntity | null {
+  const searchTerms = SERVICE_NAME_MAPPING[serviceKey] || [
+    serviceKey.toLowerCase(),
+  ];
+
   // Filtrar servicios visibles primero
-  const visibleServices = services.filter(s => s.showOnSite);
-  
+  const visibleServices = services.filter((s) => s.showOnSite);
+
   // Si hay un tipo de opción específico, buscar coincidencias más precisas
   if (optionType) {
     const optionTypeLower = optionType.toLowerCase();
-    
+
     for (const service of visibleServices) {
       const serviceNameLower = service.name.toLowerCase();
-      
+
       // Verificar que coincida con el término de búsqueda base
-      const matchesBase = searchTerms.some(term => serviceNameLower.includes(term));
-      
+      const matchesBase = searchTerms.some((term) =>
+        serviceNameLower.includes(term)
+      );
+
       if (matchesBase) {
         // Buscar coincidencias específicas según el tipo de opción
-        if (optionTypeLower.includes('consulta') || optionTypeLower.includes('previa')) {
+        if (
+          optionTypeLower.includes('consulta') ||
+          optionTypeLower.includes('previa')
+        ) {
           if (serviceNameLower.includes('consulta')) {
             return service;
           }
-        } else if (optionTypeLower.includes('1ª sesión') || optionTypeLower.includes('1° sesión') || optionTypeLower.includes('sesion-calendario')) {
-          if (serviceNameLower.includes('1° sesión') || serviceNameLower.includes('1ª sesión')) {
+        } else if (
+          optionTypeLower.includes('1ª sesión') ||
+          optionTypeLower.includes('1° sesión') ||
+          optionTypeLower.includes('sesion-calendario')
+        ) {
+          if (
+            serviceNameLower.includes('1° sesión') ||
+            serviceNameLower.includes('1ª sesión')
+          ) {
             return service;
           }
-        } else if (optionTypeLower.includes('2ª sesión') || optionTypeLower.includes('2° sesión') || optionTypeLower.includes('retoque')) {
-          if (serviceNameLower.includes('2° sesión') || serviceNameLower.includes('2ª sesión') || serviceNameLower.includes('retoque')) {
+        } else if (
+          optionTypeLower.includes('2ª sesión') ||
+          optionTypeLower.includes('2° sesión') ||
+          optionTypeLower.includes('retoque')
+        ) {
+          if (
+            serviceNameLower.includes('2° sesión') ||
+            serviceNameLower.includes('2ª sesión') ||
+            serviceNameLower.includes('retoque')
+          ) {
             return service;
           }
         } else if (optionTypeLower.includes('mantenimiento')) {
@@ -997,20 +1167,23 @@ function findServiceByName(services: ServiceEntity[], serviceKey: string, option
       }
     }
   }
-  
+
   // Si no hay tipo específico o no se encontró coincidencia, buscar cualquier servicio que coincida
   for (const service of visibleServices) {
     const serviceNameLower = service.name.toLowerCase();
     for (const term of searchTerms) {
       if (serviceNameLower.includes(term)) {
         // Priorizar servicios que no sean "Last Minute" o "Consulta"
-        if (!serviceNameLower.includes('last minute') && !serviceNameLower.includes('consulta')) {
+        if (
+          !serviceNameLower.includes('last minute') &&
+          !serviceNameLower.includes('consulta')
+        ) {
           return service;
         }
       }
     }
   }
-  
+
   // Si no se encontró, intentar con cualquier servicio visible que coincida
   for (const service of visibleServices) {
     const serviceNameLower = service.name.toLowerCase();
@@ -1020,14 +1193,19 @@ function findServiceByName(services: ServiceEntity[], serviceKey: string, option
       }
     }
   }
-  
+
   return null;
 }
 
 // Función para encontrar empleado por nombre (búsqueda flexible)
-function findEmployeeByName(employees: Employee[], employeeKey: string): Employee | null {
-  const searchTerms = EMPLOYEE_NAME_MAPPING[employeeKey] || [employeeKey.toLowerCase()];
-  
+function findEmployeeByName(
+  employees: Employee[],
+  employeeKey: string
+): Employee | null {
+  const searchTerms = EMPLOYEE_NAME_MAPPING[employeeKey] || [
+    employeeKey.toLowerCase(),
+  ];
+
   for (const employee of employees) {
     const employeeNameLower = employee.fullName.toLowerCase();
     for (const term of searchTerms) {
@@ -1036,23 +1214,28 @@ function findEmployeeByName(employees: Employee[], employeeKey: string): Employe
       }
     }
   }
-  
+
   return null;
 }
 
 export default function TattooCosmeticoPage() {
   const { isAuthenticated } = useAuth();
-  
+
   // ID hardcodeado de la categoría "Tattoo Cosmético"
   const TATTOO_COSMETICO_CATEGORY_ID = '9a39b2f8-0d4a-4bca-bc93-b4b5d6cf2d11';
-  
+
   // ID hardcodeado de "Staff Consultas"
   const STAFF_CONSULTAS_ID = '2d283dc6-6940-46fc-9166-eb6b17b8cc0f';
 
   // Inicializar con el ID hardcodeado para que los hooks se ejecuten inmediatamente
-  const [cosmeticTattooCategoryId, setCosmeticTattooCategoryId] = useState<string>(TATTOO_COSMETICO_CATEGORY_ID);
-  const [mappedServices, setMappedServices] = useState<Map<string, ServiceEntity>>(new Map());
-  const [mappedEmployees, setMappedEmployees] = useState<Map<string, Employee>>(new Map());
+  const [cosmeticTattooCategoryId, setCosmeticTattooCategoryId] =
+    useState<string>(TATTOO_COSMETICO_CATEGORY_ID);
+  const [mappedServices, setMappedServices] = useState<
+    Map<string, ServiceEntity>
+  >(new Map());
+  const [mappedEmployees, setMappedEmployees] = useState<Map<string, Employee>>(
+    new Map()
+  );
 
   // Obtener categorías para encontrar "Cosmetic Tattoo" o "Tattoo Cosmético"
   // Si está autenticado, obtener dinámicamente desde la API
@@ -1064,15 +1247,15 @@ export default function TattooCosmeticoPage() {
           // Si está autenticado, obtener categorías desde la API
           const response = await CategoryService.getAll();
           const categories = response.data;
-          
+
           // Buscar categoría que contenga "cosmetic tattoo" o "tattoo cosmético"
           const category = categories.find(
-            (cat) => 
+            (cat) =>
               cat.name.toLowerCase().includes('cosmetic tattoo') ||
               cat.name.toLowerCase().includes('tattoo cosmético') ||
               cat.name.toLowerCase().includes('tattoo cosmetico')
           );
-          
+
           if (category && category.id !== cosmeticTattooCategoryId) {
             setCosmeticTattooCategoryId(category.id);
           }
@@ -1083,15 +1266,23 @@ export default function TattooCosmeticoPage() {
         // En caso de error, mantener el ID hardcodeado
       }
     };
-    
+
     fetchCategory();
   }, [isAuthenticated, cosmeticTattooCategoryId]);
 
   // Obtener servicios de la categoría
-  const { data: services = [], isLoading: isLoadingServices, error: servicesError } = useServices(cosmeticTattooCategoryId);
-  
+  const {
+    data: services = [],
+    isLoading: isLoadingServices,
+    error: servicesError,
+  } = useServices(cosmeticTattooCategoryId);
+
   // Obtener empleados - el endpoint público requiere categoryId
-  const { data: employees = [], isLoading: isLoadingEmployees, error: employeesError } = useEmployees(cosmeticTattooCategoryId);
+  const {
+    data: employees = [],
+    isLoading: isLoadingEmployees,
+    error: employeesError,
+  } = useEmployees(cosmeticTattooCategoryId);
 
   // Debug: Log cuando cambian los servicios o categoryId
   useEffect(() => {
@@ -1100,7 +1291,11 @@ export default function TattooCosmeticoPage() {
       servicesCount: services.length,
       isLoadingServices,
       servicesError,
-      services: services.map(s => ({ id: s.id, name: s.name, showOnSite: s.showOnSite }))
+      services: services.map((s) => ({
+        id: s.id,
+        name: s.name,
+        showOnSite: s.showOnSite,
+      })),
     });
   }, [cosmeticTattooCategoryId, services, isLoadingServices, servicesError]);
 
@@ -1111,7 +1306,7 @@ export default function TattooCosmeticoPage() {
       employeesCount: employees.length,
       isLoadingEmployees,
       employeesError,
-      employees: employees.map(e => ({ id: e.id, fullName: e.fullName }))
+      employees: employees.map((e) => ({ id: e.id, fullName: e.fullName })),
     });
   }, [cosmeticTattooCategoryId, employees, isLoadingEmployees, employeesError]);
 
@@ -1119,42 +1314,51 @@ export default function TattooCosmeticoPage() {
   useEffect(() => {
     if (services.length > 0) {
       const serviceMap = new Map<string, ServiceEntity>();
-      
+
       // Mapear servicios - buscar la primera sesión de cada servicio como servicio base
       // Para Nanoblading: buscar "Nanoblading By Mery Garcia [1° Sesión]"
-      const nanobladingService = services.find(s => 
-        s.showOnSite && 
-        s.name.toLowerCase().includes('nanoblading') && 
-        s.name.toLowerCase().includes('1° sesión') &&
-        s.name.toLowerCase().includes('mery garcia')
-      ) || findServiceByName(services, 'nanoblading');
-      
+      const nanobladingService =
+        services.find(
+          (s) =>
+            s.showOnSite &&
+            s.name.toLowerCase().includes('nanoblading') &&
+            s.name.toLowerCase().includes('1° sesión') &&
+            s.name.toLowerCase().includes('mery garcia')
+        ) || findServiceByName(services, 'nanoblading');
+
       // Para Lip Blush: buscar "Lip Blush [1° Sesión]"
-      const lipBlushService = services.find(s => 
-        s.showOnSite && 
-        s.name.toLowerCase().includes('lip blush') && 
-        s.name.toLowerCase().includes('1° sesión')
-      ) || findServiceByName(services, 'lip-blush');
-      
+      const lipBlushService =
+        services.find(
+          (s) =>
+            s.showOnSite &&
+            s.name.toLowerCase().includes('lip blush') &&
+            s.name.toLowerCase().includes('1° sesión')
+        ) || findServiceByName(services, 'lip-blush');
+
       // Para Lip Camouflage: buscar "Lip Camouflage (By Mery Garcia)"
-      const lipCamouflageService = services.find(s => 
-        s.showOnSite && 
-        s.name.toLowerCase().includes('lip camouflage') &&
-        s.name.toLowerCase().includes('mery garcia')
-      ) || findServiceByName(services, 'lip-camouflage');
-      
+      const lipCamouflageService =
+        services.find(
+          (s) =>
+            s.showOnSite &&
+            s.name.toLowerCase().includes('lip camouflage') &&
+            s.name.toLowerCase().includes('mery garcia')
+        ) || findServiceByName(services, 'lip-camouflage');
+
       // Para Lashes Line: buscar "Lashes Line [1° Sesión]"
-      const lashesLineService = services.find(s => 
-        s.showOnSite && 
-        s.name.toLowerCase().includes('lashes line') && 
-        s.name.toLowerCase().includes('1° sesión')
-      ) || findServiceByName(services, 'lashes-line');
-      
+      const lashesLineService =
+        services.find(
+          (s) =>
+            s.showOnSite &&
+            s.name.toLowerCase().includes('lashes line') &&
+            s.name.toLowerCase().includes('1° sesión')
+        ) || findServiceByName(services, 'lashes-line');
+
       if (nanobladingService) serviceMap.set('nanoblading', nanobladingService);
       if (lipBlushService) serviceMap.set('lip-blush', lipBlushService);
-      if (lipCamouflageService) serviceMap.set('lip-camouflage', lipCamouflageService);
+      if (lipCamouflageService)
+        serviceMap.set('lip-camouflage', lipCamouflageService);
       if (lashesLineService) serviceMap.set('lashes-line', lashesLineService);
-      
+
       setMappedServices(serviceMap);
     }
   }, [services]);
@@ -1162,25 +1366,30 @@ export default function TattooCosmeticoPage() {
   useEffect(() => {
     if (employees.length > 0) {
       const employeeMap = new Map<string, Employee>();
-      
+
       // Mapear empleados
       const meryGarcia = findEmployeeByName(employees, 'mery-garcia');
       const staffMg = findEmployeeByName(employees, 'staff-mg');
       // Buscar "Staff Consultas" específicamente - búsqueda flexible
-      const staffConsultas = employees.find(e => {
+      const staffConsultas = employees.find((e) => {
         const nameLower = e.fullName.toLowerCase();
-        return nameLower.includes('staff consultas') || 
-               nameLower === 'staff consultas' ||
-               nameLower.includes('staff consulta');
+        return (
+          nameLower.includes('staff consultas') ||
+          nameLower === 'staff consultas' ||
+          nameLower.includes('staff consulta')
+        );
       });
-      
+
       if (meryGarcia) employeeMap.set('mery-garcia', meryGarcia);
       if (staffMg) employeeMap.set('staff-mg', staffMg);
       if (staffConsultas) {
         employeeMap.set('staff-consultas', staffConsultas);
         console.log('Staff Consultas encontrado:', staffConsultas);
       } else {
-        console.warn('Staff Consultas NO encontrado. Empleados disponibles:', employees.map(e => e.fullName));
+        console.warn(
+          'Staff Consultas NO encontrado. Empleados disponibles:',
+          employees.map((e) => e.fullName)
+        );
         // Usar ID hardcodeado como fallback si no se encuentra en la lista
         // Crear un objeto Employee temporal con el ID hardcodeado
         const staffConsultasFallback: Employee = {
@@ -1189,12 +1398,15 @@ export default function TattooCosmeticoPage() {
           email: 'info6@merygarcia.com.ar',
           phone: '+541145303203',
           createdAt: '',
-          updatedAt: ''
+          updatedAt: '',
         };
         employeeMap.set('staff-consultas', staffConsultasFallback);
-        console.log('Usando Staff Consultas con ID hardcodeado:', STAFF_CONSULTAS_ID);
+        console.log(
+          'Usando Staff Consultas con ID hardcodeado:',
+          STAFF_CONSULTAS_ID
+        );
       }
-      
+
       setMappedEmployees(employeeMap);
     }
   }, [employees]);
@@ -1209,7 +1421,10 @@ export default function TattooCosmeticoPage() {
   const openWhatsApp = (message: string) => {
     const phoneNumber = '5491161592591';
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+    window.open(
+      `https://wa.me/${phoneNumber}?text=${encodedMessage}`,
+      '_blank'
+    );
   };
 
   const openExternalLink = (url: string) => {
@@ -1217,84 +1432,107 @@ export default function TattooCosmeticoPage() {
   };
 
   // Función para obtener opciones con IDs mapeados
-  const getOptionsWithIds = (baseOptions: ServiceOption[], serviceKey: string, allServices: ServiceEntity[]): ServiceOption[] => {
+  const getOptionsWithIds = (
+    baseOptions: ServiceOption[],
+    serviceKey: string,
+    allServices: ServiceEntity[]
+  ): ServiceOption[] => {
     const service = mappedServices.get(serviceKey);
     const meryGarcia = mappedEmployees.get('mery-garcia');
-    
-    return baseOptions.map(option => {
+
+    return baseOptions.map((option) => {
       // Solo agregar IDs a opciones que no sean last-minute
       if (option.contentType === 'last-minute') {
         return option;
       }
-      
+
       // Para consultas, buscar el servicio de consulta específico
-      if (option.contentType === 'consulta-sin-trabajo' || option.contentType === 'consulta-con-trabajo') {
+      if (
+        option.contentType === 'consulta-sin-trabajo' ||
+        option.contentType === 'consulta-con-trabajo'
+      ) {
         // Buscar servicio de consulta específico según el tipo
         let consultaService: ServiceEntity | undefined;
-        
+
         if (serviceKey === 'nanoblading') {
           if (option.contentType === 'consulta-sin-trabajo') {
             // Buscar: "Nanoblading [Consulta obligatoria] SIN trabajo previo"
             // Nombre exacto del backend: "Nanoblading [Consulta obligatoria] SIN trabajo previo"
-            consultaService = allServices.find(s => {
+            consultaService = allServices.find((s) => {
               const nameLower = s.name.toLowerCase();
-              return s.showOnSite && 
+              return (
+                s.showOnSite &&
                 nameLower.includes('nanoblading') &&
                 nameLower.includes('consulta') &&
-                nameLower.includes('sin trabajo previo');
+                nameLower.includes('sin trabajo previo')
+              );
             });
           } else if (option.contentType === 'consulta-con-trabajo') {
             // Buscar: "Nanoblading [Consulta Obligatoria] CON trabajo previo"
             // Nombre exacto del backend: "Nanoblading [Consulta Obligatoria] CON trabajo previo"
-            consultaService = allServices.find(s => {
+            consultaService = allServices.find((s) => {
               const nameLower = s.name.toLowerCase();
-              return s.showOnSite && 
+              return (
+                s.showOnSite &&
                 nameLower.includes('nanoblading') &&
                 nameLower.includes('consulta') &&
-                nameLower.includes('con trabajo previo');
+                nameLower.includes('con trabajo previo')
+              );
             });
           }
         } else if (serviceKey === 'lip-camouflage') {
           // Buscar: "Lip Camouflage [Consulta previa obligatoria]"
           // Nombre exacto del backend: "Lip Camouflage [Consulta previa obligatoria]"
-          consultaService = allServices.find(s => {
+          consultaService = allServices.find((s) => {
             const nameLower = s.name.toLowerCase();
-            return s.showOnSite && 
+            return (
+              s.showOnSite &&
               nameLower.includes('lip camouflage') &&
-              nameLower.includes('consulta previa obligatoria');
+              nameLower.includes('consulta previa obligatoria')
+            );
           });
         }
-        
+
         // Debug: Log si no se encuentra el servicio
         if (!consultaService) {
-          console.warn(`No se encontró servicio de consulta para ${serviceKey} - ${option.contentType}`, {
-            services: allServices.filter(s => s.showOnSite).map(s => s.name),
-            optionLabel: option.label,
-            allServicesCount: allServices.length
-          });
+          console.warn(
+            `No se encontró servicio de consulta para ${serviceKey} - ${option.contentType}`,
+            {
+              services: allServices
+                .filter((s) => s.showOnSite)
+                .map((s) => s.name),
+              optionLabel: option.label,
+              allServicesCount: allServices.length,
+            }
+          );
         }
-        
+
         return {
           ...option,
           serviceId: consultaService?.id,
           serviceDuration: consultaService?.duration || 60,
         };
       }
-      
+
       // Para servicios con calendario, usar el servicio mapeado y Mery Garcia
       // EXCEPCIÓN: "Consulta previa" de Lashes Line no debe tener serviceId para mostrar "no hay turnos"
-      if (option.contentType === 'sesion-calendario' || 
-          option.contentType === 'retoque-calendario' || 
-          option.contentType === 'mantenimiento-calendario') {
+      if (
+        option.contentType === 'sesion-calendario' ||
+        option.contentType === 'retoque-calendario' ||
+        option.contentType === 'mantenimiento-calendario'
+      ) {
         // Si es "Consulta previa" de Lashes Line, no asignar serviceId
-        if (serviceKey === 'lashes-line' && option.label === 'Consulta previa') {
+        if (
+          serviceKey === 'lashes-line' &&
+          option.label === 'Consulta previa'
+        ) {
           return {
             ...option,
             // No asignar serviceId para que muestre el SVG de "no hay turnos"
             employeeId: meryGarcia?.id,
           };
         }
-        
+
         return {
           ...option,
           serviceId: service?.id,
@@ -1302,96 +1540,141 @@ export default function TattooCosmeticoPage() {
           serviceDuration: service?.duration,
         };
       }
-      
+
       return option;
     });
   };
 
   // Opciones con IDs mapeados - solo ejecutar cuando los servicios estén cargados
-  const nanobladingOptionsWithIds = useMemo(
-    () => {
-      if (services.length === 0) return nanobladingOptions;
-      return getOptionsWithIds(nanobladingOptions, 'nanoblading', services);
-    },
-    [mappedServices, mappedEmployees, services]
-  );
+  const nanobladingOptionsWithIds = useMemo(() => {
+    if (services.length === 0) return nanobladingOptions;
+    return getOptionsWithIds(nanobladingOptions, 'nanoblading', services);
+  }, [mappedServices, mappedEmployees, services]);
 
-  const lipBlushOptionsWithIds = useMemo(
-    () => {
-      if (services.length === 0) return lipBlushOptions;
-      return getOptionsWithIds(lipBlushOptions, 'lip-blush', services);
-    },
-    [mappedServices, mappedEmployees, services]
-  );
+  const lipBlushOptionsWithIds = useMemo(() => {
+    if (services.length === 0) return lipBlushOptions;
+    return getOptionsWithIds(lipBlushOptions, 'lip-blush', services);
+  }, [mappedServices, mappedEmployees, services]);
 
-  const lipCamouflageOptionsWithIds = useMemo(
-    () => {
-      if (services.length === 0) return lipCamouflageOptions;
-      return getOptionsWithIds(lipCamouflageOptions, 'lip-camouflage', services);
-    },
-    [mappedServices, mappedEmployees, services]
-  );
+  const lipCamouflageOptionsWithIds = useMemo(() => {
+    if (services.length === 0) return lipCamouflageOptions;
+    return getOptionsWithIds(lipCamouflageOptions, 'lip-camouflage', services);
+  }, [mappedServices, mappedEmployees, services]);
 
-  const lashesLineOptionsWithIds = useMemo(
-    () => {
-      if (services.length === 0) return lashesLineOptions;
-      return getOptionsWithIds(lashesLineOptions, 'lashes-line', services);
-    },
-    [mappedServices, mappedEmployees, services]
-  );
+  const lashesLineOptionsWithIds = useMemo(() => {
+    if (services.length === 0) return lashesLineOptions;
+    return getOptionsWithIds(lashesLineOptions, 'lashes-line', services);
+  }, [mappedServices, mappedEmployees, services]);
 
   return (
     <>
       <Header />
-      
+
       <Box className={classes.pageWrapper}>
         {/* Hero Section - Minimalista */}
         <Box className={classes.heroSection}>
-          <Container size="xl" className={classes.heroContent}>
-            <Text className={classes.heroTitle}>
-              COSMETIC TATTOO
-            </Text>
-            
+          <ImageCrossfade
+            images={[
+              '/images/im.2-op-2-scaled-1.webp',
+              '/images/nano-scallping.webp',
+              '/images/Lip-blush-1-1-768x512.webp',
+              '/images/lashes_line_b.webp',
+            ]}
+            interval={6000}
+            transitionDuration={1.0}
+            className={classes.heroImage}
+            alt="Cosmetic Tattoo"
+            objectPosition="center 50%"
+          />
+          <Box className={classes.heroOverlay} />
+
+          {/* Layered background text */}
+          <LayeredText
+            text={
+              <>
+                COSMETIC
+                <br />
+                TATTOO
+              </>
+            }
+            size={120}
+            top="25%"
+            left="5%"
+          />
+
+          <Box className={classes.heroContent}>
+            <FadeInSection direction="up" delay={0.2}>
+              <Text className={classes.heroOverline}>MERY GARCÍA</Text>
+              <Text className={classes.heroTitle}>
+                COSMETIC
+                <br />
+                TATTOO
+              </Text>
+            </FadeInSection>
+
             {/* Sub Menu Navigation */}
-            <Box className={classes.subMenuNav}>
-              <Box className={classes.subMenuItem} onClick={() => scrollToSection('nanoblading')}>
-                <span className={classes.subMenuIcon}>▼</span>
-                <span>NANOBLADING</span>
+            <FadeInSection direction="up" delay={0.4}>
+              <Box className={classes.subMenuNav}>
+                <Box
+                  className={classes.subMenuItem}
+                  onClick={() => scrollToSection('nanoblading')}
+                >
+                  <span className={classes.subMenuIcon}>▼</span>
+                  <span>NANOBLADING</span>
+                </Box>
+                <Box
+                  className={classes.subMenuItem}
+                  onClick={() => scrollToSection('lip-blush')}
+                >
+                  <span className={classes.subMenuIcon}>▼</span>
+                  <span>LIP BLUSH</span>
+                </Box>
+                <Box
+                  className={classes.subMenuItem}
+                  onClick={() => scrollToSection('lip-camouflage')}
+                >
+                  <span className={classes.subMenuIcon}>▼</span>
+                  <span>LIP CAMOUFLAGE</span>
+                </Box>
+                <Box
+                  className={classes.subMenuItem}
+                  onClick={() => scrollToSection('lashes-line')}
+                >
+                  <span className={classes.subMenuIcon}>▼</span>
+                  <span>LASHES LINE</span>
+                </Box>
+                <Box
+                  className={classes.subMenuItem}
+                  onClick={() => scrollToSection('pecas-lunares')}
+                >
+                  <span className={classes.subMenuIcon}>▼</span>
+                  <span>PECAS Y LUNARES</span>
+                </Box>
+                <Box
+                  className={classes.subMenuItem}
+                  onClick={() => scrollToSection('camuflaje')}
+                >
+                  <span className={classes.subMenuIcon}>▼</span>
+                  <span>CAMUFLAJE</span>
+                </Box>
+                <Box
+                  className={classes.subMenuItem}
+                  onClick={() => scrollToSection('clientes-exterior')}
+                >
+                  <span className={classes.subMenuIcon}>▼</span>
+                  <span>CLIENTES DEL EXTERIOR / INTERIOR</span>
+                </Box>
               </Box>
-              <Box className={classes.subMenuItem} onClick={() => scrollToSection('lip-blush')}>
-                <span className={classes.subMenuIcon}>▼</span>
-                <span>LIP BLUSH</span>
-              </Box>
-              <Box className={classes.subMenuItem} onClick={() => scrollToSection('lip-camouflage')}>
-                <span className={classes.subMenuIcon}>▼</span>
-                <span>LIP CAMOUFLAGE</span>
-              </Box>
-              <Box className={classes.subMenuItem} onClick={() => scrollToSection('lashes-line')}>
-                <span className={classes.subMenuIcon}>▼</span>
-                <span>LASHES LINE</span>
-              </Box>
-              <Box className={classes.subMenuItem} onClick={() => scrollToSection('pecas-lunares')}>
-                <span className={classes.subMenuIcon}>▼</span>
-                <span>PECAS Y LUNARES</span>
-              </Box>
-              <Box className={classes.subMenuItem} onClick={() => scrollToSection('camuflaje')}>
-                <span className={classes.subMenuIcon}>▼</span>
-                <span>CAMUFLAJE</span>
-              </Box>
-              <Box className={classes.subMenuItem} onClick={() => scrollToSection('clientes-exterior')}>
-                <span className={classes.subMenuIcon}>▼</span>
-                <span>CLIENTES DEL EXTERIOR / INTERIOR</span>
-              </Box>
-            </Box>
-          </Container>
+            </FadeInSection>
+          </Box>
         </Box>
 
         {/* Content Section */}
         <Box className={classes.contentSection}>
           <Container size="xl">
-            
             {/* NANOBLADING Section */}
             <Box id="nanoblading" className={classes.serviceBlock}>
+              <LayeredText text="NANO" size={100} top="55%" left="50%" />
               <Box className={classes.serviceLayout}>
                 <Box className={classes.serviceImageWrapper}>
                   <Image
@@ -1399,39 +1682,68 @@ export default function TattooCosmeticoPage() {
                     alt="Nanoblading"
                     fill
                     className={classes.serviceImage}
-                    quality={85}
+                    quality={75}
+                    loading="lazy"
                   />
                 </Box>
                 <Box className={classes.serviceContent}>
                   <Text className={classes.serviceTitle}>NANOBLADING</Text>
                   <Text className={classes.serviceDescription}>
-                    Es la técnica más avanzada de cosmetic tattoo de cejas. Servicio único y exclusivo brindado por MG y su staff.
+                    Es la técnica más avanzada de cosmetic tattoo de cejas.
+                    Servicio único y exclusivo brindado por MG y su staff.
                   </Text>
                   <Text className={classes.serviceDescription}>
-                    Si estás buscando mejorar la forma de tus cejas, completar o rellenar zonas donde no tenés mucho crecimiento, o nada de pelo, o donde haya cicatrices, este servicio es el indicado para vos.
+                    Si estás buscando mejorar la forma de tus cejas, completar o
+                    rellenar zonas donde no tenés mucho crecimiento, o nada de
+                    pelo, o donde haya cicatrices, este servicio es el indicado
+                    para vos.
                   </Text>
                   <Text className={classes.serviceDescription}>
-                    Permite lograr excelentes resultados en todo tipo de pieles, mayor hiper realismo y un acabado imperceptible. Genera menor trauma en la piel, mayor durabilidad y vibración del color. El procedimiento se realiza con maquina a la misma profundidad del Microblading (muy superficial) pero con agujas aún más pequeñas que permiten terminaciones plásticas infinitas (sombras, trazos, ramilletes de pelo, etc.) Recomendamos esta técnica para casos de alopecias, tricotilomanías, pieles maduras o muy finas, o tratamientos oncológicos. Pero también brinda resultados óptimos en pieles normales sin dificultad de crecimiento y/o con cicatrices.
+                    Permite lograr excelentes resultados en todo tipo de pieles,
+                    mayor hiper realismo y un acabado imperceptible. Genera
+                    menor trauma en la piel, mayor durabilidad y vibración del
+                    color. El procedimiento se realiza con maquina a la misma
+                    profundidad del Microblading (muy superficial) pero con
+                    agujas aún más pequeñas que permiten terminaciones plásticas
+                    infinitas (sombras, trazos, ramilletes de pelo, etc.)
+                    Recomendamos esta técnica para casos de alopecias,
+                    tricotilomanías, pieles maduras o muy finas, o tratamientos
+                    oncológicos. Pero también brinda resultados óptimos en
+                    pieles normales sin dificultad de crecimiento y/o con
+                    cicatrices.
                   </Text>
                   <Text className={classes.serviceDescription}>
-                    Mas de cuatro años de practica y perfeccionamientos constantes en el exterior dieron por resultado que el ultimo año Mery Garcia utilizara Nanoblading para dar respuesta a todas las personas que buscan mejorar sus cejas a través del tatuaje cosmético.
+                    Mas de cuatro años de practica y perfeccionamientos
+                    constantes en el exterior dieron por resultado que el ultimo
+                    año Mery Garcia utilizara Nanoblading para dar respuesta a
+                    todas las personas que buscan mejorar sus cejas a través del
+                    tatuaje cosmético.
                   </Text>
                   <Box className={classes.buttonsWrapper}>
-                    <button 
+                    <button
                       className={classes.ctaButton}
-                      onClick={() => openExternalLink('https://merygarcia.com.ar/servicios/nanoblading')}
+                      onClick={() =>
+                        openExternalLink(
+                          'https://merygarcia.com.ar/servicios/nanoblading'
+                        )
+                      }
                     >
                       MÁS INFO AQUÍ
                     </button>
                   </Box>
                 </Box>
               </Box>
-              
+
               <Box className={classes.optionsSection}>
-                <Text className={classes.optionsTitle}>Seleccioná la opción deseada para solicitar tu cita:</Text>
-                <ServiceAccordion 
-                  options={nanobladingOptionsWithIds} 
-                  staffConsultasId={mappedEmployees.get('staff-consultas')?.id || STAFF_CONSULTAS_ID}
+                <Text className={classes.optionsTitle}>
+                  Seleccioná la opción deseada para solicitar tu cita:
+                </Text>
+                <ServiceAccordion
+                  options={nanobladingOptionsWithIds}
+                  staffConsultasId={
+                    mappedEmployees.get('staff-consultas')?.id ||
+                    STAFF_CONSULTAS_ID
+                  }
                   meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
                   services={services}
                   employees={employees}
@@ -1441,6 +1753,7 @@ export default function TattooCosmeticoPage() {
 
             {/* LIP BLUSH Section */}
             <Box id="lip-blush" className={classes.serviceBlock}>
+              <LayeredText text="LIPS" size={100} top="55%" left="50%" />
               <Box className={classes.serviceLayout}>
                 <Box className={classes.serviceImageWrapper}>
                   <Image
@@ -1448,30 +1761,43 @@ export default function TattooCosmeticoPage() {
                     alt="Lip Blush"
                     fill
                     className={classes.serviceImage}
-                    quality={85}
+                    quality={75}
+                    loading="lazy"
                   />
                 </Box>
                 <Box className={classes.serviceContent}>
                   <Text className={classes.serviceTitle}>LIP BLUSH</Text>
                   <Text className={classes.serviceDescription}>
-                    Es un maquillaje semi permanente que dura entre 18 y 24 meses. El procedimiento consta de una primera sesión y un retoque para terminar de definir unos labios perfectos a los 30 o 60 días.
+                    Es un maquillaje semi permanente que dura entre 18 y 24
+                    meses. El procedimiento consta de una primera sesión y un
+                    retoque para terminar de definir unos labios perfectos a los
+                    30 o 60 días.
                   </Text>
                   <Box className={classes.buttonsWrapper}>
-                    <button 
+                    <button
                       className={classes.ctaButton}
-                      onClick={() => openExternalLink('https://merygarcia.com.ar/servicios/lip-blush')}
+                      onClick={() =>
+                        openExternalLink(
+                          'https://merygarcia.com.ar/servicios/lip-blush'
+                        )
+                      }
                     >
                       MÁS INFO AQUÍ
                     </button>
                   </Box>
                 </Box>
               </Box>
-              
+
               <Box className={classes.optionsSection}>
-                <Text className={classes.optionsTitle}>Seleccioná la opción deseada para solicitar tu cita:</Text>
-                <ServiceAccordion 
-                  options={lipBlushOptionsWithIds} 
-                  staffConsultasId={mappedEmployees.get('staff-consultas')?.id || STAFF_CONSULTAS_ID}
+                <Text className={classes.optionsTitle}>
+                  Seleccioná la opción deseada para solicitar tu cita:
+                </Text>
+                <ServiceAccordion
+                  options={lipBlushOptionsWithIds}
+                  staffConsultasId={
+                    mappedEmployees.get('staff-consultas')?.id ||
+                    STAFF_CONSULTAS_ID
+                  }
                   meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
                   services={services}
                   employees={employees}
@@ -1481,6 +1807,7 @@ export default function TattooCosmeticoPage() {
 
             {/* LIP CAMOUFLAGE Section */}
             <Box id="lip-camouflage" className={classes.serviceBlock}>
+              <LayeredText text="CAMUFLAGE" size={80} top="70%" left="45%" />
               <Box className={classes.serviceLayout}>
                 <Box className={classes.serviceImageWrapper}>
                   <Image
@@ -1488,33 +1815,48 @@ export default function TattooCosmeticoPage() {
                     alt="Lip Camouflage"
                     fill
                     className={classes.serviceImage}
-                    quality={85}
+                    quality={75}
+                    loading="lazy"
                   />
                 </Box>
                 <Box className={classes.serviceContent}>
                   <Text className={classes.serviceTitle}>LIP CAMPUFLAGE</Text>
                   <Text className={classes.serviceDescription}>
-                    Es un servicio que combina despigmentación, corrección de color, textura y estructura para MEJORAR EL ASPECTO de un trabajo mal hecho o deteriorado.
+                    Es un servicio que combina despigmentación, corrección de
+                    color, textura y estructura para MEJORAR EL ASPECTO de un
+                    trabajo mal hecho o deteriorado.
                   </Text>
                   <Text className={classes.serviceDescription}>
-                    Servicio dirigido a personas que tengan un trabajo previo mal realizado o deteriorado. En la consulta podremos indicarte si está dentro de nuestras posibilidades mejorarlo.
+                    Servicio dirigido a personas que tengan un trabajo previo
+                    mal realizado o deteriorado. En la consulta podremos
+                    indicarte si está dentro de nuestras posibilidades
+                    mejorarlo.
                   </Text>
                   <Box className={classes.buttonsWrapper}>
-                    <button 
+                    <button
                       className={classes.ctaButton}
-                      onClick={() => openExternalLink('https://merygarcia.com.ar/servicios/lip-blush')}
+                      onClick={() =>
+                        openExternalLink(
+                          'https://merygarcia.com.ar/servicios/lip-blush'
+                        )
+                      }
                     >
                       MÁS INFO AQUÍ
                     </button>
                   </Box>
                 </Box>
               </Box>
-              
+
               <Box className={classes.optionsSection}>
-                <Text className={classes.optionsTitle}>Seleccioná la opción deseada para solicitar tu cita:</Text>
-                <ServiceAccordion 
-                  options={lipCamouflageOptionsWithIds} 
-                  staffConsultasId={mappedEmployees.get('staff-consultas')?.id || STAFF_CONSULTAS_ID}
+                <Text className={classes.optionsTitle}>
+                  Seleccioná la opción deseada para solicitar tu cita:
+                </Text>
+                <ServiceAccordion
+                  options={lipCamouflageOptionsWithIds}
+                  staffConsultasId={
+                    mappedEmployees.get('staff-consultas')?.id ||
+                    STAFF_CONSULTAS_ID
+                  }
                   meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
                   services={services}
                   employees={employees}
@@ -1524,6 +1866,7 @@ export default function TattooCosmeticoPage() {
 
             {/* LASHES LINE Section */}
             <Box id="lashes-line" className={classes.serviceBlock}>
+              <LayeredText text="LASHES" size={100} top="55%" left="50%" />
               <Box className={classes.serviceLayout}>
                 <Box className={classes.serviceImageWrapper}>
                   <Image
@@ -1531,37 +1874,57 @@ export default function TattooCosmeticoPage() {
                     alt="Lashes Line"
                     fill
                     className={classes.serviceImage}
-                    quality={85}
+                    quality={75}
+                    loading="lazy"
                   />
                 </Box>
                 <Box className={classes.serviceContent}>
                   <Text className={classes.serviceTitle}>LASHES LINE</Text>
                   <Text className={classes.serviceSubtitle}>
-                    ✨ Lashes Line ✨ New Service en #TattoCosmetic #ByMeryGarcia
+                    ✨ Lashes Line ✨ New Service en #TattoCosmetic
+                    #ByMeryGarcia
                   </Text>
-                  <Text className={classes.serviceSubtitleQuestion}>¿Qué buscamos?</Text>
-                  <Text className={classes.serviceDescription}>
-                    Un efecto súper #Natural, no simulamos un ojo delineado, sino un efecto óptico de mayor volumen y densidad. Convive a la perfección con otros servicios, como el lifting y tinte de pestañas, y por supuesto unas cejas espectaculares By Mery Garcia & Staff.
+                  <Text className={classes.serviceSubtitleQuestion}>
+                    ¿Qué buscamos?
                   </Text>
                   <Text className={classes.serviceDescription}>
-                    <span className={classes.serviceHighlight}>✨ Preparate para lucir una mirada increíble pero sobre todo natural ✨</span>
+                    Un efecto súper #Natural, no simulamos un ojo delineado,
+                    sino un efecto óptico de mayor volumen y densidad. Convive a
+                    la perfección con otros servicios, como el lifting y tinte
+                    de pestañas, y por supuesto unas cejas espectaculares By
+                    Mery Garcia & Staff.
+                  </Text>
+                  <Text className={classes.serviceDescription}>
+                    <span className={classes.serviceHighlight}>
+                      ✨ Preparate para lucir una mirada increíble pero sobre
+                      todo natural ✨
+                    </span>
                   </Text>
                   <Box className={classes.buttonsWrapper}>
-                    <button 
+                    <button
                       className={classes.ctaButton}
-                      onClick={() => openExternalLink('https://merygarcia.com.ar/servicios/styling-pestanas')}
+                      onClick={() =>
+                        openExternalLink(
+                          'https://merygarcia.com.ar/servicios/styling-pestanas'
+                        )
+                      }
                     >
                       MÁS INFO AQUÍ
                     </button>
                   </Box>
                 </Box>
               </Box>
-              
+
               <Box className={classes.optionsSection}>
-                <Text className={classes.optionsTitle}>Seleccioná la opción deseada para solicitar tu cita:</Text>
-                <ServiceAccordion 
-                  options={lashesLineOptionsWithIds} 
-                  staffConsultasId={mappedEmployees.get('staff-consultas')?.id || STAFF_CONSULTAS_ID}
+                <Text className={classes.optionsTitle}>
+                  Seleccioná la opción deseada para solicitar tu cita:
+                </Text>
+                <ServiceAccordion
+                  options={lashesLineOptionsWithIds}
+                  staffConsultasId={
+                    mappedEmployees.get('staff-consultas')?.id ||
+                    STAFF_CONSULTAS_ID
+                  }
                   meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
                   services={services}
                   employees={employees}
@@ -1571,6 +1934,7 @@ export default function TattooCosmeticoPage() {
 
             {/* PECAS Y LUNARES Section */}
             <Box id="pecas-lunares" className={classes.serviceBlock}>
+              <LayeredText text="PECAS" size={100} top="70%" left="50%" />
               <Box className={classes.serviceLayout}>
                 <Box className={classes.serviceImageWrapper}>
                   <Image
@@ -1578,24 +1942,38 @@ export default function TattooCosmeticoPage() {
                     alt="Pecas y Lunares"
                     fill
                     className={classes.serviceImage}
-                    quality={85}
+                    quality={75}
+                    loading="lazy"
                   />
                 </Box>
                 <Box className={classes.serviceContent}>
                   <Text className={classes.serviceTitle}>PECAS Y LUNARES</Text>
                   <Text className={classes.serviceDescription}>
-                    En el caso de las pecas es una técnica muy novedosa, consta en generar un tatuaje muy superficial por medio de pequeños puntos donde se inserta la tinta y así lograr un efecto hiper realista con acabados del tipo peca o lunar. La durabilidad oscila entre los 5 meses o 6 meses máximo, según el tipo de piel y el cuidado que haya recibido. Finalizado este tiempo la piel queda LIMPIA, sin registro de tinta alguna y sin dejar cicatriz.
+                    En el caso de las pecas es una técnica muy novedosa, consta
+                    en generar un tatuaje muy superficial por medio de pequeños
+                    puntos donde se inserta la tinta y así lograr un efecto
+                    hiper realista con acabados del tipo peca o lunar. La
+                    durabilidad oscila entre los 5 meses o 6 meses máximo, según
+                    el tipo de piel y el cuidado que haya recibido. Finalizado
+                    este tiempo la piel queda LIMPIA, sin registro de tinta
+                    alguna y sin dejar cicatriz.
                   </Text>
                   <Box className={classes.buttonsWrapper}>
-                    <button 
+                    <button
                       className={classes.ctaButton}
-                      onClick={() => openExternalLink('https://merygarcia.com.ar/servicios/pecas-lunares')}
+                      onClick={() =>
+                        openExternalLink(
+                          'https://merygarcia.com.ar/servicios/pecas-lunares'
+                        )
+                      }
                     >
                       MÁS INFO AQUÍ
                     </button>
-                    <button 
+                    <button
                       className={classes.ctaButtonSecondary}
-                      onClick={() => openWhatsApp('Quiero consultar sobre Pecas y Lunares')}
+                      onClick={() =>
+                        openWhatsApp('Quiero consultar sobre Pecas y Lunares')
+                      }
                     >
                       CONSULTAR DISPONIBILIDAD
                     </button>
@@ -1606,6 +1984,7 @@ export default function TattooCosmeticoPage() {
 
             {/* CAMUFLAJE Section */}
             <Box id="camuflaje" className={classes.serviceBlock}>
+              <LayeredText text="CAMUFLAJE" size={80} top="70%" left="45%" />
               <Box className={classes.serviceLayout}>
                 <Box className={classes.serviceImageWrapper}>
                   <Image
@@ -1613,27 +1992,42 @@ export default function TattooCosmeticoPage() {
                     alt="Camuflaje"
                     fill
                     className={classes.serviceImage}
-                    quality={85}
+                    quality={75}
+                    loading="lazy"
                   />
                 </Box>
                 <Box className={classes.serviceContent}>
                   <Text className={classes.serviceTitle}>CAMUFLAJE</Text>
                   <Text className={classes.serviceDescription}>
-                    Es un servicio que combina despigmentación, corrección de color, textura y estructura para MEJORAR EL ASPECTO de un trabajo mal hecho o deteriorado tanto de Dermopigmentación como de Microblading.
+                    Es un servicio que combina despigmentación, corrección de
+                    color, textura y estructura para MEJORAR EL ASPECTO de un
+                    trabajo mal hecho o deteriorado tanto de Dermopigmentación
+                    como de Microblading.
                   </Text>
                   <Text className={classes.serviceDescription}>
-                    Servicio dirigido a personas que tengan un trabajo previo mal realizado o deteriorado. Completando el siguiente formulario podremos indicarte si está dentro de nuestras posibilidades mejorarlo.
+                    Servicio dirigido a personas que tengan un trabajo previo
+                    mal realizado o deteriorado. Completando el siguiente
+                    formulario podremos indicarte si está dentro de nuestras
+                    posibilidades mejorarlo.
                   </Text>
                   <Box className={classes.buttonsWrapper}>
-                    <button 
+                    <button
                       className={classes.ctaButton}
-                      onClick={() => openExternalLink('https://merygarcia.com.ar/servicios/nanoblading')}
+                      onClick={() =>
+                        openExternalLink(
+                          'https://merygarcia.com.ar/servicios/nanoblading'
+                        )
+                      }
                     >
                       CONSULTAR VALORES
                     </button>
-                    <button 
+                    <button
                       className={classes.ctaButtonSecondary}
-                      onClick={() => openWhatsApp('Tengo un trabajo previo, quisiera consultar por el servicio de Camuflaje')}
+                      onClick={() =>
+                        openWhatsApp(
+                          'Tengo un trabajo previo, quisiera consultar por el servicio de Camuflaje'
+                        )
+                      }
                     >
                       CONSULTA DISPONIBILIDAD Y RESERVÁ TU CITA
                     </button>
@@ -1644,6 +2038,7 @@ export default function TattooCosmeticoPage() {
 
             {/* CLIENTES DEL INTERIOR / EXTERIOR Section */}
             <Box id="clientes-exterior" className={classes.specialSection}>
+              <LayeredText text="EXTERIOR" size={80} top="30%" left="55%" />
               <Box className={classes.serviceLayout}>
                 <Box className={classes.specialImageWrapper}>
                   <Image
@@ -1652,27 +2047,36 @@ export default function TattooCosmeticoPage() {
                     width={320}
                     height={240}
                     className={classes.specialImage}
-                    quality={85}
+                    loading="lazy"
                     style={{ filter: 'none' }}
                   />
                 </Box>
                 <Box className={classes.serviceContent}>
-                  <Text className={classes.serviceTitle}>CLIENTES DEL INTERIOR / EXTERIOR</Text>
+                  <Text className={classes.serviceTitle}>
+                    CLIENTES DEL INTERIOR / EXTERIOR
+                  </Text>
                   <Text className={classes.serviceDescription}>
-                    Si residís en el interior de nuestro país o en el exterior y querés tener una experiencia MG, contamos con disponibilidades especiales para que puedas tomar tus servicios. Consultá las condiciones de Special Pass.
+                    Si residís en el interior de nuestro país o en el exterior y
+                    querés tener una experiencia MG, contamos con
+                    disponibilidades especiales para que puedas tomar tus
+                    servicios. Consultá las condiciones de Special Pass.
                   </Text>
                   <Box className={classes.buttonsWrapper}>
-                    <button 
+                    <button
                       className={classes.ctaButton}
-                      onClick={() => openWhatsApp('Quiero consultar por una cita especial con MG')}
+                      onClick={() =>
+                        openWhatsApp(
+                          'Quiero consultar por una cita especial con MG'
+                        )
+                      }
                     >
-                      CONSULTÁ COMO ACCEDER A TU CITA ESPECIAL, VALORES Y MODALIDAD
+                      CONSULTÁ COMO ACCEDER A TU CITA ESPECIAL, VALORES Y
+                      MODALIDAD
                     </button>
                   </Box>
                 </Box>
               </Box>
             </Box>
-
           </Container>
         </Box>
       </Box>

@@ -1,8 +1,10 @@
 'use client';
 
-import { Modal, Stack, Text, Box, Divider } from '@mantine/core';
-import { IconBrandWhatsapp } from '@tabler/icons-react';
+import { Drawer, Box, Text } from '@mantine/core';
+import { IconBrandWhatsapp, IconX } from '@tabler/icons-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 import classes from './MenuModal.module.css';
 
 interface MenuModalProps {
@@ -10,99 +12,97 @@ interface MenuModalProps {
   onClose: () => void;
 }
 
-export function MenuModal({ opened, onClose }: MenuModalProps) {
-  const menuItems = [
-    { label: 'MI CUENTA', href: '/login' },
-    { label: 'COSMETIC TATTOO', href: '/tattoo-cosmetico' },
-    { label: 'ESTILISMO DE CEJAS', href: '/estilismo-de-cejas' },
-    { label: 'PARAMEDICAL TATTOO', href: '/paramedical-tattoo' },
-  ];
+const menuItems = [
+  { label: 'INICIO', href: '/' },
+  { label: 'COSMETIC TATTOO', href: '/tattoo-cosmetico' },
+  { label: 'ESTILISMO DE CEJAS', href: '/estilismo-de-cejas' },
+  { label: 'PARAMEDICAL TATTOO', href: '/paramedical-tattoo' },
+  { label: 'MI CUENTA', href: '/login' },
+];
 
+export function MenuModal({ opened, onClose }: MenuModalProps) {
   return (
-    <Modal
+    <Drawer
       opened={opened}
       onClose={onClose}
-      centered
-      size="lg"
+      position="right"
+      size="100%"
       withCloseButton={false}
-      overlayProps={{
-        backgroundOpacity: 0.7,
-        blur: 3,
+      styles={{
+        body: { padding: 0 },
+        content: { background: 'var(--mg-pink-light)' },
+        inner: { background: 'transparent' },
+        overlay: { background: 'rgba(43, 43, 43, 0.5)' }
       }}
-      radius="xl"
-      padding={0}
-      className={classes.modal}
     >
-      <Box className={classes.modalContent}>
+      <Box className={classes.menuContainer}>
+        {/* Close Button */}
+        <button className={classes.closeButton} onClick={onClose}>
+          <IconX size={28} stroke={1.5} />
+        </button>
+
         {/* Logo */}
-        <Box className={classes.logoContainer}>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className={classes.logoContainer}
+        >
           <Image
             src="/logo_cosetic_tattoo.svg"
             alt="Mery García Cosmetic Tattoo"
-            width={180}
-            height={60}
-            style={{ objectFit: 'contain' }}
+            width={280}
+            height={58}
+            className={classes.logo}
           />
-        </Box>
+        </motion.div>
 
-        <Divider my="lg" color="pink.2" />
+        {/* Decorative Line */}
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className={classes.decorativeLine}
+        />
 
         {/* Menu Items */}
-        <Stack gap="xs" className={classes.menuStack}>
+        <nav className={classes.menuNav}>
           {menuItems.map((item, index) => (
-            <Box
-              key={index}
-              component="a"
-              href={item.href}
-              className={classes.menuItem}
-              onClick={onClose}
+            <motion.div
+              key={item.label}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: 0.15 * (index + 1) }}
             >
-              {item.label === 'PARAMEDICAL TATTOO' ? (
-                <Text
-                  size="lg"
-                  fw={300}
-                  ta="center"
-                  style={{ letterSpacing: '0.1em' }}
-                  c="#7f2c37"   
-                >
-                  {item.label}
-                </Text>
-
-              ) : (
-                <Text
-                  size="lg"
-                  fw={300}
-                  ta="center"
-                  style={{ letterSpacing: '0.1em' }}
-                >
-                  {item.label}
-                </Text>
-              )}
-            </Box>
+              <Link
+                href={item.href}
+                className={classes.menuItem}
+                onClick={onClose}
+              >
+                <span className={classes.menuNumber}>0{index + 1}</span>
+                <span className={classes.menuLabel}>{item.label}</span>
+              </Link>
+            </motion.div>
           ))}
-        </Stack>
-
-        <Divider my="lg" color="pink.2" />
+        </nav>
 
         {/* WhatsApp */}
-        <Box
-          component="a"
+        <motion.a
           href="https://wa.link/oxzkt1"
           target="_blank"
           rel="noopener noreferrer"
           className={classes.whatsappButton}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.7 }}
         >
-          <IconBrandWhatsapp size={32} stroke={1.5} />
-        </Box>
+          <IconBrandWhatsapp size={24} stroke={1.5} />
+          <span>WHATSAPP</span>
+        </motion.a>
 
-        {/* Close button */}
-        <Box className={classes.closeButton} onClick={onClose}>
-          <Text size="sm" fw={300} c="dimmed" style={{ letterSpacing: '0.1em' }}>
-            CERRAR
-          </Text>
-        </Box>
+        {/* Decorative Number */}
+        <span className={classes.decorativeNumber}>MG</span>
       </Box>
-    </Modal>
+    </Drawer>
   );
 }
-

@@ -7,6 +7,9 @@ import {
   ServiceBookingForm,
   DateTimeSelector,
   BookingConfirmationModal,
+  FadeInSection,
+  LayeredText,
+  ImageCrossfade,
 } from '@/presentation/components';
 import Image from 'next/image';
 import { useState, useMemo } from 'react';
@@ -154,18 +157,46 @@ export default function EstilismoCejasPage() {
       <Box className={classes.pageWrapper}>
         {/* Hero Section - Minimalista */}
         <Box className={classes.heroSection}>
-          <Container size="xl" className={classes.heroContent}>
-            <Text className={classes.heroTitle}>
-              ESTILISMO DE CEJAS
-            </Text>
-          </Container>
+          <ImageCrossfade
+            images={[
+              '/images/estilismo-cejas.webp',
+              '/images/nano-scallping.webp',
+              '/images/im.2-op-2-scaled-1.webp',
+            ]}
+            interval={6000}
+            transitionDuration={1.0}
+            className={classes.heroImage}
+            alt="Estilismo de Cejas"
+            objectPosition="center"
+          />
+          <Box className={classes.heroOverlay} />
+
+          {/* Layered background text */}
+          <LayeredText
+            text="ESTILISMO"
+            size={140}
+            top="20%"
+            left="55%"
+          />
+
+          <Box className={classes.heroContent}>
+            <FadeInSection direction="up" delay={0.2}>
+              <Text className={classes.heroOverline}>MERY GARCÍA</Text>
+              <Text className={classes.heroTitle}>
+                ESTILISMO DE<br />CEJAS
+              </Text>
+            </FadeInSection>
+          </Box>
+          <span className={classes.heroNumber}>01</span>
         </Box>
 
         {/* Content Section */}
         <Box className={classes.contentSection}>
+          <LayeredText text="CEJAS" size={120} top="5%" left="70%" />
           <Container size="xl" py={{ base: 40, sm: 60, md: 80 }}>
             <Stack gap="xl" align="center">
               {/* Texto descriptivo */}
+              <FadeInSection direction="up" delay={0.3}>
               <Box maw={1100} w="100%">
                 <Text
                   ta="center"
@@ -177,7 +208,7 @@ export default function EstilismoCejasPage() {
                   Si es tu primera vez podés conocer todos nuestros servicios ingresando{' '}
                   <Text
                     component="a"
-                    href="#"
+                    href="https://merygarcia.com.ar/"
                     c="pink.6"
                     fw={400}
                     className={classes.linkText}
@@ -189,6 +220,7 @@ export default function EstilismoCejasPage() {
                   abren de acuerdo a la disponibilidad de agenda.
                 </Text>
               </Box>
+              </FadeInSection>
 
               {/* Layout Desktop: Calendario a la izquierda, Form a la derecha */}
               <Box w="100%" maw={1100}>

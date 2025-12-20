@@ -1,252 +1,282 @@
 'use client';
 
-import { Box, Container, Text, Title } from '@mantine/core';
+import { Box, Container, Flex, Text } from '@mantine/core';
 import Image from 'next/image';
 import Link from 'next/link';
+import {
+  LayeredText,
+  SectionTitle,
+  ServiceCard,
+  ImageFrame,
+  ImageCrossfade,
+  FadeInSection,
+  StaggerContainer,
+  StaggerItem,
+} from '@/presentation/components';
 import classes from './WelcomeSection.module.css';
 
+const SERVICES = [
+  { num: '01', name: 'Nanoblading', desc: 'Cejas hiperrealistas', image: '/images/nano-scallping.webp', href: '/tattoo-cosmetico' },
+  { num: '02', name: 'Lip Blush', desc: 'Labios definidos', image: '/images/Lip-blush-1-1-768x512.webp', href: '/tattoo-cosmetico' },
+  { num: '03', name: 'Lash Line', desc: 'Mirada intensa', image: '/images/lashes_line_b.webp', href: '/tattoo-cosmetico' },
+  { num: '04', name: 'Pecas & Lunares', desc: 'Efecto natural', image: '/images/web-pecas-1-768x578.webp', href: '/tattoo-cosmetico' },
+  { num: '05', name: 'Paramedical', desc: 'Reconstrucción', image: '/images/aereola.webp', href: '/paramedical-tattoo' },
+  { num: '06', name: 'Styling', desc: 'Diseño profesional', image: '/images/estilismo-cejas.webp', href: '/estilismo-de-cejas' },
+];
+
+const HERO_IMAGES = [
+  '/images/mery1.webp',         // Primera: mery1.webp (grayscale 100%)
+  '/images/camuflaje.webp',     // Segunda: camuflaje.webp
+  '/images/lashes_line_b.webp', // Tercera: lashes_line_b.webp (y se repite)
+];
+
+const GALLERY_IMAGES = [
+  '/images/mery4.webp',
+  '/images/camuflaje.webp',
+  '/images/mery3.webp',
+  '/images/lashes_line_b.webp',
+];
+
 export function WelcomeSection() {
+  const openInstagram = () => {
+    window.open('https://www.instagram.com/merygarciaoficial/', '_blank');
+  };
+
   return (
     <Box className={classes.wrapper}>
-      {/* Hero Section - Layout Asimétrico */}
-      <Box className={classes.heroSection}>
-        <Container size="xl" className={classes.heroContainer}>
-          <Box className={classes.heroContent}>
-            {/* Left Column - Text */}
-            <Box className={classes.heroTextColumn}>
-              <Text className={classes.heroLabel}>PORTAL DE RESERVAS</Text>
-              <Title order={1} className={classes.heroTitle}>
-                BIENVENID@S
-              </Title>
-              <Text className={classes.heroSubtitle}>
-                Reservá tu cita online de forma simple y rápida
-              </Text>
-            </Box>
+      {/* ======== HERO SECTION ======== */}
+      <section className={classes.heroSection}>
+        {/* Layered background text */}
+        <LayeredText
+          text={<>MERY<br />GARCÍA</>}
+          size={140}
+          top="12%"
+          left="5%"
+          mobileTop="14%"
+        />
 
-            {/* Right Column - Illustration */}
-            <Box className={classes.heroImageColumn}>
-              <Box className={classes.illustrationWrapper}>
-                <Image
-                  src="/desk.svg"
-                  alt="Desk illustration"
-                  fill
-                  className={classes.illustration}
-                  priority
+        {/* Left content */}
+        <Box className={classes.heroContent}>
+          <FadeInSection direction="up" delay={0.2}>
+            <Text className={classes.heroOverline}>
+              COSMETIC TATTOO ARTIST · BUENOS AIRES
+            </Text>
+
+            <h1 className={classes.heroTitle}>
+              I didn't choose the<br />
+              <em className={classes.heroTitlePink}>brow life</em>.<br />
+              The brow life<br />
+              <em className={classes.heroTitleItalic}>chose me</em>.
+            </h1>
+
+            <Text className={classes.heroDescription}>
+              Más de 20 años creando resultados naturales e imperceptibles.
+              Cada trazo cuenta una historia.
+            </Text>
+
+            <Flex className={classes.heroButtons}>
+              <Link href="/tattoo-cosmetico" className={classes.buttonPrimary}>
+                RESERVAR CITA
+              </Link>
+              <Link href="#servicios" className={classes.buttonSecondary}>
+                VER TRABAJOS
+              </Link>
+            </Flex>
+          </FadeInSection>
+        </Box>
+
+        {/* Right image - Crossfade Slideshow */}
+        <Box className={classes.heroImageWrapper}>
+          <Box className={classes.heroImageContainer}>
+            <ImageCrossfade
+              images={HERO_IMAGES}
+              interval={5000}
+              transitionDuration={1.2}
+              alt="Trabajos de Mery García"
+              showIndicators={true}
+              objectPosition="center top"
+            />
+          </Box>
+
+          {/* Decorative number */}
+          <FadeInSection direction="right" delay={0.4}>
+            <span className={classes.heroNumber}>01</span>
+          </FadeInSection>
+        </Box>
+      </section>
+
+      {/* ======== SERVICES SECTION ======== */}
+      <section className={classes.servicesSection} id="servicios">
+        <LayeredText
+          text="SERVICIOS"
+          size={160}
+          top="5%"
+          left="50%"
+          mobileTop="-2%"
+        />
+
+        <Container size="xl" className={classes.servicesContainer}>
+          <FadeInSection direction="up" delay={0.2}>
+            <SectionTitle
+              overline="NUESTROS SERVICIOS"
+              title={<>¿Qué podemos hacer<br /><em>por vos</em>?</>}
+            />
+          </FadeInSection>
+
+          <StaggerContainer className={classes.servicesGrid} staggerDelay={0.1}>
+            {SERVICES.map((service) => (
+              <StaggerItem key={service.num}>
+                <ServiceCard
+                  number={service.num}
+                  name={service.name}
+                  description={service.desc}
+                  image={service.image}
+                  href={service.href}
+                />
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </Container>
+      </section>
+
+      {/* ======== ABOUT SECTION ======== */}
+      <section className={classes.aboutSection}>
+        {/* Background LayeredText */}
+        <LayeredText
+          text="MERY"
+          size={200}
+          top="5%"
+          left="60%"
+          mobileLeft="2%"
+          mobileTop="2%"
+        />
+
+        {/* Background keywords - distributed across section */}
+        <div className={classes.aboutKeywords}>
+          <span className={classes.keyword} style={{ top: '15%', left: '3%' }}>cejas</span>
+          <span className={classes.keyword} style={{ top: '55%', left: '8%' }}>tenaz</span>
+          <span className={classes.keyword} style={{ top: '35%', left: '25%' }}>autodidacta</span>
+          <span className={classes.keyword} style={{ top: '70%', left: '55%' }}>meticulosa</span>
+          <span className={classes.keyword} style={{ top: '25%', left: '75%' }}>pasión</span>
+          <span className={classes.keyword} style={{ top: '85%', left: '85%' }}>arte</span>
+        </div>
+
+        <Container size="xl">
+          <Flex className={classes.aboutContent}>
+            {/* Image - positioned to the right */}
+            <FadeInSection direction="left" delay={0.2}>
+              <Box className={classes.aboutImageWrapper}>
+                <ImageFrame
+                  src="/images/mery.webp"
+                  alt="Mery García"
+                  aspectRatio="3/4"
+                  frameOffset={24}
                 />
               </Box>
-            </Box>
-          </Box>
+            </FadeInSection>
+
+            {/* Content - description + quote + button */}
+            <FadeInSection direction="right" delay={0.4}>
+              <Box className={classes.aboutTextWrapper}>
+                <Text className={classes.aboutDescription}>
+                  Más de 20 años dedicada al arte de la belleza natural.
+                </Text>
+
+                <Text className={classes.aboutQuote}>
+                  "Los detalles son todo"
+                </Text>
+
+                <Link href="https://merygarcia.com.ar/sobre-mi" className={classes.buttonSecondary}>
+                  CONOCER MÁS
+                </Link>
+              </Box>
+            </FadeInSection>
+          </Flex>
         </Container>
-      </Box>
+      </section>
 
-      {/* Horizontal Scrolling Cards Section */}
-      <Box className={classes.cardsSection}>
-        <Container size="xl">
-          <Text className={classes.cardsTitle}>NUESTROS SERVICIOS</Text>
-          <Box className={classes.cardsScrollContainer}>
-            <Box className={classes.cardsRow}>
-              <Link href="/tattoo-cosmetico" className={classes.serviceCard}>
-                <Box className={classes.cardImageWrapper}>
-                  <Image
-                    src="/images/im.2-op-2-scaled-1.webp"
-                    alt="Cosmetic Tattoo"
-                    fill
-                    className={classes.cardImage}
-                  />
-                </Box>
-                <Box className={classes.cardContent}>
-                  <Text className={classes.cardTitle}>COSMETIC TATTOO</Text>
-                  <Text className={classes.cardSubtitle}>
-                    Nanoblading, Lip Blush, Lashes Line
-                  </Text>
-                </Box>
-              </Link>
+      {/* ======== GALLERY SECTION ======== */}
+      <section className={classes.gallerySection}>
+        <LayeredText
+          text="TRABAJOS"
+          size={140}
+          top="5%"
+          left="50%"
+          mobileTop="2%"
+        />
 
-              <Link href="/estilismo-de-cejas" className={classes.serviceCard}>
-                <Box className={classes.cardImageWrapper}>
-                  <Image
-                    src="/images/estilismo-cejas.webp"
-                    alt="Estilismo de Cejas"
-                    fill
-                    className={classes.cardImage}
-                  />
-                </Box>
-                <Box className={classes.cardContent}>
-                  <Text className={classes.cardTitle}>ESTILISMO DE CEJAS</Text>
-                  <Text className={classes.cardSubtitle}>
-                    Asesoramiento y servicios de cejas
-                  </Text>
-                </Box>
-              </Link>
-
-              <Link href="/paramedical-tattoo" className={classes.serviceCard}>
-                <Box className={classes.cardImageWrapper}>
-                  <Image
-                    src="/images/nano-scallping.webp"
-                    alt="Paramedical Tattoo"
-                    fill
-                    className={classes.cardImage}
-                  />
-                </Box>
-                <Box className={classes.cardContent}>
-                  <Text className={classes.cardTitle}>PARAMEDICAL TATTOO</Text>
-                  <Text className={classes.cardSubtitle}>
-                    Nano Scalp, Areola, Nipple
-                  </Text>
-                </Box>
-              </Link>
-
-              <Link href="/tattoo-cosmetico#lip-blush" className={classes.serviceCard}>
-                <Box className={classes.cardImageWrapper}>
-                  <Image
-                    src="/images/Lip-blush-1-1-768x512.webp"
-                    alt="Lip Blush"
-                    fill
-                    className={classes.cardImage}
-                  />
-                </Box>
-                <Box className={classes.cardContent}>
-                  <Text className={classes.cardTitle}>LIP BLUSH</Text>
-                  <Text className={classes.cardSubtitle}>
-                    Maquillaje semi permanente
-                  </Text>
-                </Box>
-              </Link>
-
-              <Link href="/tattoo-cosmetico#lashes-line" className={classes.serviceCard}>
-                <Box className={classes.cardImageWrapper}>
-                  <Image
-                    src="/images/lashes_line_b.webp"
-                    alt="Lashes Line"
-                    fill
-                    className={classes.cardImage}
-                  />
-                </Box>
-                <Box className={classes.cardContent}>
-                  <Text className={classes.cardTitle}>LASHES LINE</Text>
-                  <Text className={classes.cardSubtitle}>
-                    Efecto natural y volumen
-                  </Text>
-                </Box>
-              </Link>
-
-              <Link href="/paramedical-tattoo#areola-harmonization" className={classes.serviceCard}>
-                <Box className={classes.cardImageWrapper}>
-                  <Image
-                    src="/images/aereola.webp"
-                    alt="Areola"
-                    fill
-                    className={classes.cardImage}
-                  />
-                </Box>
-                <Box className={classes.cardContent}>
-                  <Text className={classes.cardTitle}>AREOLA</Text>
-                  <Text className={classes.cardSubtitle}>
-                    Armonización y reconstrucción
-                  </Text>
-                </Box>
-              </Link>
-
-              <Link href="/tattoo-cosmetico#pecas-lunares" className={classes.serviceCard}>
-                <Box className={classes.cardImageWrapper}>
-                  <Image
-                    src="/images/web-pecas-1-768x578.webp"
-                    alt="Pecas y Lunares"
-                    fill
-                    className={classes.cardImage}
-                  />
-                </Box>
-                <Box className={classes.cardContent}>
-                  <Text className={classes.cardTitle}>PECAS Y LUNARES</Text>
-                  <Text className={classes.cardSubtitle}>
-                    Técnica hiperrealista
-                  </Text>
-                </Box>
-              </Link>
-
-              <Link href="/tattoo-cosmetico#camuflaje" className={classes.serviceCard}>
-                <Box className={classes.cardImageWrapper}>
-                  <Image
-                    src="/images/camuflaje.webp"
-                    alt="Camuflaje"
-                    fill
-                    className={classes.cardImage}
-                  />
-                </Box>
-                <Box className={classes.cardContent}>
-                  <Text className={classes.cardTitle}>CAMUFLAJE</Text>
-                  <Text className={classes.cardSubtitle}>
-                    Corrección de trabajos previos
-                  </Text>
-                </Box>
-              </Link>
-            </Box>
-          </Box>
+        <Container size="xl" className={classes.galleryHeader}>
+          <FadeInSection direction="up" delay={0.2}>
+            <SectionTitle
+              overline="NUESTROS RESULTADOS"
+              title={<>Trabajos <em>reales</em></>}
+            />
+          </FadeInSection>
         </Container>
-      </Box>
 
-      {/* Info Section */}
-      <Box className={classes.infoSection}>
-        <Container size="xl">
-          <Box className={classes.infoContent}>
-            <Text className={classes.infoText}>
-              Si es la primera vez que ingresas te contamos que no es
-              necesario que previamente registres una cuenta, la misma se
-              generará cuando realices la primera reserva.
+        <FadeInSection direction="up" delay={0.3}>
+          <Box className={classes.galleryGrid}>
+            {GALLERY_IMAGES.map((src, i) => (
+              <Box
+                key={i}
+                className={classes.galleryItem}
+              >
+                <Image
+                  src={src}
+                  alt={`Trabajo ${i + 1}`}
+                  fill
+                  className={classes.galleryImage}
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  loading="lazy"
+                />
+                {/* Instagram CTA overlay on last image */}
+                {i === GALLERY_IMAGES.length - 1 && (
+                  <Box className={classes.instagramOverlay} onClick={openInstagram}>
+                    <svg
+                      className={classes.igIcon}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    >
+                      <rect x="2" y="2" width="20" height="20" rx="5" />
+                      <circle cx="12" cy="12" r="4" />
+                      <circle cx="18" cy="6" r="1.5" fill="currentColor" stroke="none" />
+                    </svg>
+                    <Text className={classes.igText}>VER MÁS</Text>
+                    <Text className={classes.igHandle}>@merygarciaoficial</Text>
+                  </Box>
+                )}
+              </Box>
+            ))}
+          </Box>
+        </FadeInSection>
+      </section>
+
+      {/* ======== CTA SECTION ======== */}
+      <section className={classes.ctaSection}>
+        {/* Background text */}
+        <div className={classes.ctaBackground}>
+          RESERVÁ
+        </div>
+
+        <FadeInSection direction="up" delay={0.3}>
+          <Box className={classes.ctaContent}>
+            <Text className={classes.ctaOverline}>
+              ¿LISTA PARA TU TRANSFORMACIÓN?
             </Text>
-            <Text className={classes.infoText}>
-              Si ya tenés una cuenta sólo ingresando tu mail al final de la
-              reserva la misma quedará vinculada.
-            </Text>
-          </Box>
-        </Container>
-      </Box>
 
-      {/* Services Grid - Cards Grandes */}
-      <Box className={classes.servicesSection}>
-        <Container size="xl">
-          <Text className={classes.servicesTitle}>SELECCIONÁ TU SERVICIO</Text>
-          
-          <Box className={classes.servicesGrid}>
-            {/* Service Card 1 */}
-            <Link href="/tattoo-cosmetico" className={classes.serviceCard}>
-              <Box className={classes.serviceCardContent}>
-                <Text className={classes.serviceCardNumber}>01</Text>
-                <Text className={classes.serviceCardTitle}>COSMETIC TATTOO</Text>
-                <Text className={classes.serviceCardSubtitle}>
-                  Nanoblading, Lip Blush, Lashes Line
-                </Text>
-                <Box className={classes.serviceCardArrow}>→</Box>
-              </Box>
-            </Link>
+            <h2 className={classes.ctaTitle}>
+              Reservá tu cita y<br />
+              comenzá tu experiencia <em>MG</em>
+            </h2>
 
-            {/* Service Card 2 */}
-            <Link href="/estilismo-de-cejas" className={classes.serviceCard}>
-              <Box className={classes.serviceCardContent}>
-                <Text className={classes.serviceCardNumber}>02</Text>
-                <Text className={classes.serviceCardTitle}>ESTILISMO DE CEJAS</Text>
-                <Text className={classes.serviceCardSubtitle}>
-                  Asesoramiento y servicios de cejas
-                </Text>
-                <Box className={classes.serviceCardArrow}>→</Box>
-              </Box>
-            </Link>
-
-            {/* Service Card 3 */}
-            <Link href="/paramedical-tattoo" className={classes.serviceCard}>
-              <Box className={classes.serviceCardContent}>
-                <Text className={classes.serviceCardNumber}>03</Text>
-                <Text className={classes.serviceCardTitle}>PARAMEDICAL TATTOO</Text>
-                <Text className={classes.serviceCardSubtitle}>
-                  Nano Scalp, Areola, Nipple Reconstruction
-                </Text>
-                <Box className={classes.serviceCardArrow}>→</Box>
-              </Box>
+            <Link href="/tattoo-cosmetico" className={classes.ctaButton}>
+              RESERVAR AHORA
             </Link>
           </Box>
-        </Container>
-      </Box>
+        </FadeInSection>
+      </section>
     </Box>
   );
 }
-

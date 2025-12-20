@@ -1,89 +1,109 @@
+/* ================================
+   EDITORIAL SERVICE PAGE STYLES
+   ================================ */
+
 .pageWrapper {
-  min-height: calc(100vh - 100px);
-  background: #ffffff;
+  min-height: calc(100vh - 80px);
+  background: var(--mg-white);
+  font-family: var(--font-poppins-extralight), system-ui, sans-serif;
 }
 
-/* Hero Section - Full Width Editorial */
+/* ======== HERO SECTION ======== */
 .heroSection {
   position: relative;
   width: 100%;
-  min-height: 70vh;
+  min-height: 450px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ffffff 0%, #fff5f8 50%, #ffffff 100%);
-  padding: 12rem 0 8rem;
-  overflow: hidden;
+  padding-top: 80px;
+}
+
+.heroImage {
+  object-fit: cover;
+  object-position: center;
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(43, 43, 43, 0.4) 0%,
+    rgba(43, 43, 43, 0.6) 100%
+  );
+  z-index: 1;
 }
 
 .heroContent {
-  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 2;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 3rem;
   text-align: center;
-  width: 100%;
+  width: 90%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.heroOverline {
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--mg-pink);
+  margin-bottom: 16px;
+  text-transform: uppercase;
 }
 
 .heroTitle {
-  font-family: var(--font-avant-garde-buttons), sans-serif;
-  font-size: clamp(3.5rem, 9vw, 7rem);
+  font-family: var(--font-poppins-extralight), sans-serif;
+  font-size: 56px;
   font-weight: 300;
-  letter-spacing: 0.08em;
-  color: #1a1a1a;
-  margin: 0;
-  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--mg-white);
+  text-align: center;
   line-height: 1.1;
-  position: relative;
-  display: inline-block;
+  margin-bottom: 24px;
 }
 
-.heroTitle::before,
-.heroTitle::after {
-  content: '';
+.heroNumber {
   position: absolute;
-  width: 120px;
-  height: 1px;
-  background: #f9bbc4;
-  top: 50%;
+  bottom: 40px;
+  right: 60px;
+  font-size: 150px;
+  font-weight: 800;
+  color: var(--mg-white);
+  opacity: 0.15;
+  line-height: 1;
+  font-family: var(--font-poppins-extralight), sans-serif;
 }
 
-.heroTitle::before {
-  left: -140px;
-}
-
-.heroTitle::after {
-  right: -140px;
-}
-
-@media (max-width: 768px) {
-  .heroTitle::before,
-  .heroTitle::after {
-    display: none;
-  }
-}
-
+/* ======== CONTENT SECTION ======== */
 .contentSection {
-  background: linear-gradient(
-    to bottom,
-    #ffffff 0%,
-    #fff5f7 50%,
-    #ffffff 100%
-  );
-  padding: 6rem 0;
+  padding: 100px 80px;
+  position: relative;
+  overflow: visible;
 }
 
 .descriptiveText {
   line-height: 1.9;
-  font-size: clamp(1rem, 1.8vw, 1.125rem);
+  font-size: 15px;
   letter-spacing: 0.02em;
-  color: #2d2d2d;
-  font-weight: 300;
-  font-family: var(--font-avant-garde-buttons), sans-serif;
+  color: var(--mg-gray);
+  max-width: 900px;
+  margin: 0 auto 48px;
+  text-align: center;
 }
 
 .linkText {
+  color: var(--mg-pink);
   text-decoration: underline;
   cursor: pointer;
   transition: opacity 0.2s ease;
@@ -94,75 +114,145 @@
   opacity: 0.8;
 }
 
+/* ======== FORM LAYOUT ======== */
 .formLayout {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 2rem;
   width: 100%;
   justify-content: center;
   align-items: center;
-  max-width: 1400px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 0 2rem;
 }
 
 .calendarColumn {
   width: 100%;
+  background: var(--mg-pink-light);
+  padding: 32px;
+  position: relative;
+}
+
+.calendarColumn::before {
+  content: '02';
+  position: absolute;
+  top: -20px;
+  right: 20px;
+  font-size: 80px;
+  font-weight: 800;
+  color: var(--mg-pink-lighter);
+  line-height: 1;
+  font-family: var(--font-poppins-extralight), sans-serif;
 }
 
 .formColumn {
   width: 100%;
   max-width: 700px;
+  background: var(--mg-white);
+  padding: 32px;
+  border: 1px solid var(--mg-pink-lighter);
+  position: relative;
+}
+
+.formColumn::before {
+  content: '01';
+  position: absolute;
+  top: -20px;
+  right: 20px;
+  font-size: 80px;
+  font-weight: 800;
+  color: var(--mg-pink-lighter);
+  line-height: 1;
+  font-family: var(--font-poppins-extralight), sans-serif;
 }
 
 .hiddenOnMobile {
   display: block;
 }
 
-/* Desktop: Calendario a la izquierda, Form a la derecha */
+/* ======== INFO BOX ======== */
+.infoBox {
+  background: var(--mg-pink-light);
+  padding: 24px 32px;
+  border-left: 3px solid var(--mg-pink);
+  margin-bottom: 48px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.infoBox p {
+  font-size: 13px;
+  color: var(--mg-gray);
+  line-height: 1.8;
+}
+
+/* ======== RESPONSIVE ======== */
 @media (min-width: 769px) {
   .formLayout {
     flex-direction: row;
-    gap: 5rem;
+    gap: 32px;
     align-items: flex-start;
   }
 
   .calendarColumn {
-    flex: 0 0 48%;
-    max-width: 600px;
+    flex: 0 0 50%;
+    max-width: 550px;
   }
 
   .formColumn {
     flex: 1;
-    max-width: 650px;
+    max-width: 500px;
   }
 }
 
-/* Mobile: Ocultar form cuando está en paso 2 */
-@media (max-width: 768px) {
-  .hiddenOnMobile {
-    display: none;
-  }
-}
-
-/* Responsive */
 @media (max-width: 768px) {
   .heroSection {
-    min-height: 60vh;
-    padding: 8rem 0 6rem;
+    min-height: 350px;
+    padding-top: 100px;
   }
 
   .heroTitle {
-    font-size: clamp(2.5rem, 7vw, 4rem);
+    font-size: 32px;
+    letter-spacing: 0.08em;
+  }
+
+  .heroNumber {
+    font-size: 80px;
+    right: 20px;
+    bottom: 20px;
+  }
+
+  .contentSection {
+    padding: 60px 24px;
+  }
+
+  .hiddenOnMobile {
+    display: none;
+  }
+
+  .calendarColumn::before,
+  .formColumn::before {
+    font-size: 50px;
+  }
+
+  .calendarColumn,
+  .formColumn {
+    padding: 24px 16px;
   }
 }
 
 @media (max-width: 480px) {
   .heroSection {
-    padding: 6rem 0 4rem;
+    min-height: 280px;
   }
 
   .heroTitle {
-    font-size: clamp(2rem, 6vw, 3rem);
+    font-size: 24px;
+  }
+
+  .heroNumber {
+    bottom: 10px;
+    font-size: 60px;
   }
 }

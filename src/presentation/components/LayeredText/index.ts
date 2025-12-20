@@ -1,0 +1,1 @@
+export { LayeredText } from './LayeredText';

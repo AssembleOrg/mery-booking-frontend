@@ -1,0 +1,103 @@
+.link {
+  text-decoration: none;
+  display: block;
+}
+
+.card {
+  position: relative;
+  aspect-ratio: 1;
+  background: var(--mg-pink-light);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* Number watermark */
+.number {
+  position: absolute;
+  top: -10px;
+  right: 16px;
+  font-size: 100px;
+  font-weight: 800;
+  color: var(--mg-pink-lighter);
+  line-height: 1;
+  z-index: 1;
+  font-family: var(--font-poppins-extralight), sans-serif;
+}
+
+/* Image wrapper for animation */
+.imageWrapper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Image */
+.image {
+  object-fit: cover;
+}
+
+/* Placeholder */
+.placeholder {
+  position: absolute;
+  inset: 0;
+  background: var(--mg-pink-lighter);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mg-gray);
+  font-size: 12px;
+}
+
+/* Gradient overlay */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(43, 43, 43, 0.8) 0%, transparent 60%);
+  z-index: 2;
+}
+
+/* Content */
+.content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px;
+  color: var(--mg-white);
+  z-index: 3;
+}
+
+.name {
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 4px;
+  font-family: var(--font-poppins-extralight), sans-serif;
+}
+
+.description {
+  font-size: 12px;
+  opacity: 0.8;
+  letter-spacing: 1px;
+  font-family: var(--font-poppins-extralight), sans-serif;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .number {
+    font-size: 60px;
+    right: 12px;
+    top: 5px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .name {
+    font-size: 16px;
+  }
+
+  .description {
+    font-size: 11px;
+  }
+}
