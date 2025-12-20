@@ -54,32 +54,60 @@
 }
 
 .submitButton {
-  background-color: #f9bbc4;
-  color: white;
+  background-color: #f9bbc4 !important;
+  color: #ffffff !important;
   height: 50px;
   border-radius: 10px;
-  font-size: 0.95rem;
+  font-size: 0.95rem !important;
   transition: all 0.3s ease;
-  border: 2px solid transparent;
-  letter-spacing: 0.08em;
+  border: 2px solid transparent !important;
+  letter-spacing: 0.08em !important;
+  font-family: var(--font-avant-garde-buttons), sans-serif !important;
+  text-transform: uppercase !important;
+  font-weight: 400 !important;
 }
 
-.submitButton:hover {
-  background-color: white;
-  color: #f9bbc4;
-  border-color: #f9bbc4;
+.submitButton,
+.submitButton *,
+.submitButton .mantine-Button-label,
+.submitButton .mantine-Button-section,
+.submitButton span {
+  color: #ffffff !important;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #f5a3af !important;
+  color: #ffffff !important;
+  border-color: #f5a3af !important;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(249, 187, 196, 0.3);
 }
 
-.submitButton:active {
+.submitButton:hover:not(:disabled),
+.submitButton:hover:not(:disabled) *,
+.submitButton:hover:not(:disabled) .mantine-Button-label,
+.submitButton:hover:not(:disabled) .mantine-Button-section,
+.submitButton:hover:not(:disabled) span {
+  color: #ffffff !important;
+}
+
+.submitButton:active:not(:disabled) {
   transform: translateY(0);
 }
 
 .submitButton:disabled {
-  background-color: #e9ecef;
-  color: #adb5bd;
+  background-color: #e9ecef !important;
+  color: #adb5bd !important;
   cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.submitButton:disabled,
+.submitButton:disabled *,
+.submitButton:disabled .mantine-Button-label,
+.submitButton:disabled .mantine-Button-section,
+.submitButton:disabled span {
+  color: #adb5bd !important;
 }
 
 /* Responsive */

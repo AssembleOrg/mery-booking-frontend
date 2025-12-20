@@ -6,6 +6,7 @@ export { ServiceBookingForm } from './ServiceBookingForm';
 export { DateTimeSelector } from './DateTimeSelector';
 export { BookingConfirmationModal } from './BookingConfirmationModal';
 export { ConfirmationModal } from './ConfirmationModal';
+export { ImageCarousel } from './ImageCarousel';
 
 // Editorial components
 export { LayeredText } from './LayeredText';

@@ -209,7 +209,11 @@ export function ServiceBookingForm({ onSubmit: onSubmitCallback, onChange, categ
             loading={isSubmitting}
             className={classes.submitButton}
             fw={300}
-            style={{ letterSpacing: '0.1em' }}
+            style={{ 
+              letterSpacing: '0.1em',
+              backgroundColor: '#f9bbc4',
+              color: '#ffffff',
+            }}
           >
             CONTINUAR
           </Button>
