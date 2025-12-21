@@ -21,7 +21,7 @@
   color: var(--mg-pink-lighter);
   line-height: 1;
   z-index: 1;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
 }
 
 /* Image wrapper for animation */
@@ -69,16 +69,16 @@
 
 .name {
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 500;
   margin-bottom: 4px;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-avant-garde), sans-serif;
 }
 
 .description {
   font-size: 12px;
   opacity: 0.8;
   letter-spacing: 1px;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-light), sans-serif;
 }
 
 /* Responsive */

@@ -7,15 +7,15 @@
   letter-spacing: 4px;
   margin-bottom: 12px;
   text-transform: uppercase;
-  font-family: var(--font-poppins-extralight), sans-serif;
-  font-weight: 400;
+  font-family: var(--font-avant-garde), sans-serif;
+  font-weight: 500;
 }
 
 .title {
   font-size: 42px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.1;
-  font-family: var(--font-poppins-extralight), var(--font-avant-garde), sans-serif;
+  font-family: var(--font-avant-garde), sans-serif;
 }
 
 .title em,

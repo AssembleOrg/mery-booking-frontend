@@ -809,20 +809,6 @@ export default function ParamedicalTattooPage() {
             <LayeredText text="NIPPLE" size={100} top="55%" left="50%" mobileTop="49%" />
             <Container size="lg" py={{ base: 60, sm: 80, md: 100 }}>
               <Box className={classes.sectionContent}>
-                <FadeInSection direction="left" delay={0.1}>
-                  <Box className={classes.imageColumn}>
-                    <Image
-                      src="/images/nano-scallping.webp"
-                      alt="Nipple Reconstruction"
-                      width={500}
-                      height={600}
-                      className={classes.sectionImage}
-                      quality={75}
-                      loading="lazy"
-                    />
-                  </Box>
-                </FadeInSection>
-
                 <FadeInSection direction="right" delay={0.2}>
                   <Box className={classes.textColumn}>
                     <Text className={classes.sectionTitle}>NIPPLE RECONSTRUCTION</Text>

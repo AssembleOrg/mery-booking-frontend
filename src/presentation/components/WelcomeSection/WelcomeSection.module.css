@@ -1,6 +1,5 @@
 .wrapper {
   background: var(--mg-white);
-  font-family: var(--font-poppins-extralight), system-ui, sans-serif;
   overflow-x: hidden;
 }
 
@@ -35,11 +34,11 @@
 
 .heroTitle {
   font-size: 52px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.15;
   color: var(--mg-dark);
   margin-bottom: 32px;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-avant-garde), sans-serif;
 }
 
 .heroTitlePink {
@@ -118,7 +117,7 @@
   color: var(--mg-white);
   opacity: 0.5;
   line-height: 1;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
 }
 
 /* ================================
@@ -134,7 +133,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
 }
 
 .buttonPrimary:hover {
@@ -152,7 +151,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
 }
 
 .buttonSecondary:hover {
@@ -229,7 +228,7 @@
   font-style: italic;
   font-size: 24px;
   margin-bottom: 32px;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-avant-garde), sans-serif;
 }
 
 /* Background keywords */
@@ -336,7 +335,7 @@
 }
 
 .igHandle {
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-regular), sans-serif;
   font-size: 12px;
   color: var(--mg-gray);
   letter-spacing: 0.05em;
@@ -365,7 +364,7 @@
   opacity: 0.03;
   white-space: nowrap;
   pointer-events: none;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
 }
 
 .ctaContent {
@@ -382,11 +381,11 @@
 
 .ctaTitle {
   font-size: 48px;
-  font-weight: 300;
+  font-weight: 500;
   color: var(--mg-white);
   margin-bottom: 40px;
   line-height: 1.2;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-avant-garde), sans-serif;
 }
 
 .ctaTitle em {
@@ -404,7 +403,7 @@
   cursor: pointer;
   text-decoration: none;
   transition: all 0.3s ease;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
 }
 
 .ctaButton:hover {

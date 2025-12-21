@@ -5,7 +5,6 @@
 .pageWrapper {
   min-height: calc(100vh - 80px);
   background: var(--mg-white);
-  font-family: var(--font-poppins-extralight), system-ui, sans-serif;
 }
 
 /* ======== HERO SECTION ======== */
@@ -63,9 +62,9 @@
 }
 
 .heroTitle {
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-avant-garde), sans-serif;
   font-size: 56px;
-  font-weight: 300;
+  font-weight: 500;
   letter-spacing: 0.1em;
   color: var(--mg-white);
   text-align: center;
@@ -82,7 +81,7 @@
   color: var(--mg-white);
   opacity: 0.15;
   line-height: 1;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
 }
 
 /* ======== CONTENT SECTION ======== */
@@ -142,7 +141,7 @@
   font-weight: 800;
   color: var(--mg-pink-lighter);
   line-height: 1;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
 }
 
 .formColumn {
@@ -163,7 +162,7 @@
   font-weight: 800;
   color: var(--mg-pink-lighter);
   line-height: 1;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
 }
 
 .hiddenOnMobile {

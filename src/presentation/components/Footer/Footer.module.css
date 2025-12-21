@@ -14,7 +14,7 @@
   font-weight: 500;
   color: var(--mg-white);
   letter-spacing: 2px;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
 }
 
 /* Main Footer */
@@ -68,7 +68,7 @@
   font-size: 14px;
   color: var(--mg-gray);
   line-height: 2;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-light), sans-serif;
 }
 
 /* Links Section */
@@ -82,12 +82,12 @@
 }
 
 .columnTitle {
-  font-weight: 600;
+  font-weight: 500;
   margin-bottom: 16px;
   letter-spacing: 1px;
   font-size: 11px;
   color: var(--mg-dark);
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
 }
 
 .link {
@@ -96,7 +96,7 @@
   line-height: 2.2;
   font-size: 13px;
   text-decoration: none;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-regular), sans-serif;
   transition: color 0.2s ease;
 }
 
@@ -110,7 +110,7 @@
   font-size: 12px;
   color: var(--mg-gray);
   letter-spacing: 1px;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-regular), sans-serif;
   padding-top: 40px;
   border-top: 1px solid rgba(235, 162, 168, 0.3);
 }

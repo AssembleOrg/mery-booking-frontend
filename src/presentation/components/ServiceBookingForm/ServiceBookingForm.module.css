@@ -23,8 +23,8 @@
   border-radius: 8px;
   transition: all 0.3s ease;
   font-size: 0.95rem;
-  font-family: var(--font-poppins-extralight), sans-serif;
-  font-weight: 200;
+  font-family: var(--font-din-regular), sans-serif;
+  font-weight: 400;
 }
 
 .selectInput:focus {
@@ -37,14 +37,14 @@
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   padding: 0.5rem 0;
-  font-family: var(--font-poppins-extralight), sans-serif;
-  font-weight: 200;
+  font-family: var(--font-din-regular), sans-serif;
+  font-weight: 400;
 }
 
 /* Opciones dentro del dropdown */
 .selectDropdown :global(.mantine-Select-option) {
-  font-family: var(--font-poppins-extralight), sans-serif;
-  font-weight: 200;
+  font-family: var(--font-din-regular), sans-serif;
+  font-weight: 400;
   padding: 0.75rem 1rem;
   transition: background-color 0.2s ease;
 }
@@ -119,11 +119,11 @@
 
   .selectInput {
     font-size: 0.9rem;
-    font-family: var(--font-poppins-extralight), sans-serif;
+    font-family: var(--font-din-regular), sans-serif;
   }
 
   .selectDropdown {
-    font-family: var(--font-poppins-extralight), sans-serif;
+    font-family: var(--font-din-regular), sans-serif;
   }
 
   .submitButton {

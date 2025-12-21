@@ -22,8 +22,8 @@
 }
 
 .day {
-  font-family: var(--font-poppins-extralight), sans-serif;
-  font-weight: 200;
+  font-family: var(--font-din-regular), sans-serif;
+  font-weight: 400;
   border-radius: 8px;
   transition: all 0.2s ease;
 }
@@ -50,8 +50,8 @@
   border: 2px solid #e9ecef;
   border-radius: 8px;
   text-align: center;
-  font-family: var(--font-poppins-extralight), sans-serif;
-  font-weight: 200;
+  font-family: var(--font-din-regular), sans-serif;
+  font-weight: 400;
   font-size: 0.85rem;
   transition: all 0.2s ease;
   cursor: pointer;

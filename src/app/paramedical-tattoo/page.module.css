@@ -5,7 +5,6 @@
 .pageWrapper {
   min-height: 100vh;
   background: var(--mg-white);
-  font-family: var(--font-poppins-extralight), system-ui, sans-serif;
 }
 
 /* ======== HERO SECTION ======== */
@@ -62,9 +61,9 @@
 }
 
 .heroTitle {
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-avant-garde), sans-serif;
   font-size: 64px;
-  font-weight: 300;
+  font-weight: 500;
   letter-spacing: 0.08em;
   color: var(--mg-white);
   text-align: center;
@@ -80,7 +79,7 @@
   color: var(--mg-white);
   opacity: 0.12;
   line-height: 1;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
   z-index: 2;
 }
 
@@ -112,7 +111,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
 }
 
 .navButton:hover {
@@ -161,7 +160,7 @@
   color: var(--mg-pink-lighter);
   opacity: 0.5;
   line-height: 1;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
   z-index: 0;
   pointer-events: none;
 }
@@ -223,11 +222,15 @@
 }
 
 @media (min-width: 1024px) {
+  .sectionContent {
+    flex-direction: row;
+  }
+
   .textColumn {
     padding: 0;
     order: 1;
   }
-  
+
   .section:nth-child(even) .textColumn {
     order: 1;
   }
@@ -248,7 +251,7 @@
 }
 
 .sectionText {
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
   color: var(--mg-gray);
   font-size: 15px;
   line-height: 1.9;
@@ -266,7 +269,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
   text-decoration: none;
   display: inline-block;
 }
@@ -342,7 +345,7 @@
   font-size: 13px;
   font-weight: 400;
   letter-spacing: 1px;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
   text-align: left;
 }
 
@@ -358,7 +361,7 @@
 }
 
 .panelDescription {
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
   color: var(--mg-gray);
   font-size: 14px;
   line-height: 1.8;
@@ -366,7 +369,7 @@
 }
 
 .panelPrice {
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
   color: var(--mg-dark);
   font-size: 14px;
   margin-bottom: 16px;
@@ -392,7 +395,7 @@
 }
 
 .bookingLabel {
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
   font-size: 11px;
   font-weight: 500;
   color: var(--mg-dark);
@@ -412,7 +415,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
 }
 
 .continueButton:hover {
@@ -441,7 +444,7 @@
 }
 
 .emptyBookingText {
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
   font-size: 14px;
   font-weight: 400;
   color: var(--mg-gray);
@@ -452,7 +455,7 @@
 }
 
 .footerNote {
-  font-family: var(--font-poppins-extralight), sans-serif;
+  font-family: var(--font-din-medium), sans-serif;
   color: var(--mg-gray);
   font-size: 12px;
   font-style: italic;
@@ -647,17 +650,5 @@
   .ctaButton {
     padding: 14px 24px;
     font-size: 10px;
-  }
-}
-
-/* ======== OCULTAR IMAGEN EN NIPPLE RECONSTRUCTION ======== */
-/* Ocultar imagen solo en la sección de Nipple Reconstruction */
-#nipple-reconstruction .imageColumn {
-  display: none !important;  /* Forzar con !important para asegurar aplicación */
-}
-
-@media (min-width: 769px) {
-  #nipple-reconstruction .imageColumn {
-    display: none !important;  /* Forzar en desktop también */
   }
 }
