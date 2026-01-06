@@ -1,6 +1,17 @@
 'use client';
 
-import { Box, Button, Flex, Modal, Select, Stack, Text, TextInput, Textarea, Image } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Flex,
+  Modal,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+  Textarea,
+  Image,
+} from '@mantine/core';
 import { useForm, Controller } from 'react-hook-form';
 import { useState } from 'react';
 import { Professional, Service, Client } from '@/domain/entities';
@@ -70,7 +81,7 @@ export function BookingConfirmationModal({
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
-    
+
     const client: Client = {
       name: data.name,
       surname: data.surname,
@@ -81,9 +92,9 @@ export function BookingConfirmationModal({
     };
 
     // Simular delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     setIsSubmitting(false);
-    
+
     onConfirm(client);
     reset(); // Limpiar formulario después de confirmar
   };
@@ -96,10 +107,10 @@ export function BookingConfirmationModal({
     const day = date.getDate();
     const month = date.getMonth();
     const year = date.getFullYear();
-    
+
     // Crear una nueva fecha usando los componentes locales
     const localDate = new Date(year, month, day);
-    
+
     return localDate.toLocaleDateString('es-ES', {
       day: 'numeric',
       month: 'long',
@@ -338,7 +349,11 @@ export function BookingConfirmationModal({
                 </Text>
               </Flex>
 
-              <Flex justify="space-between" mb="xs" className={classes.totalRow}>
+              <Flex
+                justify="space-between"
+                mb="xs"
+                className={classes.totalRow}
+              >
                 <Text size="md" fw={500}>
                   Coste total:
                 </Text>
@@ -349,7 +364,10 @@ export function BookingConfirmationModal({
 
               <Flex justify="space-between" mb="xs">
                 <Text size="sm" fw={400}>
-                  Depósito <Text component="span" fs="italic" c="dimmed">Pagar ahora</Text>
+                  Depósito{' '}
+                  <Text component="span" fs="italic" c="dimmed">
+                    Pagar ahora
+                  </Text>
                 </Text>
                 <Text size="sm" fw={600} c="pink.5">
                   AR${deposit.toLocaleString('es-AR')}
@@ -395,4 +413,3 @@ export function BookingConfirmationModal({
     </Modal>
   );
 }
-

@@ -5,6 +5,8 @@
 .pageWrapper {
   min-height: calc(100vh - 80px);
   background-color: var(--mg-white);
+  overflow: visible; /* Necesario para que sticky funcione */
+  padding-top: 80px; /* Compensar header fixed */
 }
 
 /* ======== HERO SECTION ======== */
@@ -91,37 +93,55 @@
   }
 }
 
-/* Sub Menu Navigation - Minimalista y Elegante */
+/* Sub Menu Navigation - Minimalista y Elegante - STICKY */
 .subMenuNav {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 32px;
-  margin-top: 8px;
+  gap: 8px 24px;
   justify-content: center;
   width: 100%;
+  /* STICKY NAVIGATION */
+  position: sticky;
+  top: 80px;
+  z-index: 90;
+  background: rgb(255, 255, 255);
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--mg-pink-lighter);
+  margin: 0;
+}
+
+/* Responsive: ajustar posición del sticky nav en mobile */
+@media (max-width: 767px) {
+  .subMenuNav {
+    top: 64px; /* Altura del header en mobile */
+  }
 }
 
 .subMenuItem {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: rgba(255, 255, 255, 0.85);
+  gap: 6px;
+  color: var(--mg-dark);
   font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 2px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
   font-family: var(--font-din-medium), sans-serif;
+  padding: 8px 12px;
+  border-radius: 4px;
 }
 
 .subMenuItem:hover {
   color: var(--mg-pink);
+  background-color: var(--mg-pink-light);
 }
 
 .subMenuIcon {
   font-size: 8px;
-  opacity: 0.6;
+  opacity: 0.5;
+  display: none;
 }
 
 /* ======== CONTENT SECTION ======== */
@@ -129,9 +149,9 @@
   background-color: var(--mg-white);
 }
 
-/* ======== SERVICE BLOCK ======== */
+/* ======== SERVICE BLOCK - COMPACTO ======== */
 .serviceBlock {
-  padding: 100px 0;
+  padding: 24px 0;
   border-bottom: 1px solid var(--mg-pink-lighter);
   position: relative;
   overflow: visible;
@@ -141,28 +161,15 @@
   border-bottom: none;
 }
 
-/* Números de fondo para cada servicio */
-.serviceBlock:nth-child(1)::before {
-  content: '01';
-}
-.serviceBlock:nth-child(2)::before {
-  content: '02';
-}
-.serviceBlock:nth-child(3)::before {
-  content: '03';
-}
-.serviceBlock:nth-child(4)::before {
-  content: '04';
-}
-.serviceBlock:nth-child(5)::before {
-  content: '05';
-}
-.serviceBlock:nth-child(6)::before {
-  content: '06';
-}
-.serviceBlock:nth-child(7)::before {
-  content: '07';
-}
+/* Números de fondo - DESACTIVADOS para vista compacta */
+/*
+.serviceBlock:nth-child(1)::before { content: '01'; }
+.serviceBlock:nth-child(2)::before { content: '02'; }
+.serviceBlock:nth-child(3)::before { content: '03'; }
+.serviceBlock:nth-child(4)::before { content: '04'; }
+.serviceBlock:nth-child(5)::before { content: '05'; }
+.serviceBlock:nth-child(6)::before { content: '06'; }
+.serviceBlock:nth-child(7)::before { content: '07'; }
 
 .serviceBlock::before {
   position: absolute;
@@ -177,101 +184,105 @@
   z-index: 0;
   pointer-events: none;
 }
+*/
 
+/* Layout principal del servicio */
 .serviceLayout {
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 16px;
   position: relative;
   z-index: 1;
 }
 
-@media (min-width: 1024px) {
-  .serviceLayout {
-    flex-direction: row;
-    gap: 64px;
-    align-items: flex-start;
-    padding: 0 4rem;
-  }
-  
-  .serviceBlock:nth-child(even) .serviceLayout {
-    flex-direction: row-reverse;
-  }
+/* Header: Thumbnail + Título en fila */
+.serviceHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
 }
 
-/* Imagen - Tamaño adecuado y visible */
-.serviceImageWrapper {
+/* Thumbnail pequeño */
+.serviceThumbnail {
   flex-shrink: 0;
-  width: 100%;
-  max-width: 360px;
-  aspect-ratio: 1 / 1;
-  position: relative;
-  width: 100%;
-  flex: 0 0 auto;
-  aspect-ratio: 3 / 4;
-  max-width: 450px;
-  order: 1;
+  width: 80px;
+  height: 80px;
+  border-radius: 4px;
   overflow: hidden;
   background: var(--mg-pink-light);
 }
 
-/* Frame decorativo */
-.serviceImageWrapper::after {
-  content: '';
-  position: absolute;
-  top: -16px;
-  left: -16px;
-  right: 16px;
-  bottom: 16px;
-  border: 1px solid var(--mg-pink);
-  pointer-events: none;
-  z-index: 1;
+.thumbnailImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
 }
 
-@media (min-width: 1024px) {
-  .serviceImageWrapper {
-    width: 360px;
+/* Wrapper para título + tagline */
+.serviceTitleWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Tagline de 1 línea */
+.serviceTagline {
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 14px;
+  color: var(--mg-gray);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .serviceHeader {
+    gap: 20px;
   }
+
+  .serviceThumbnail,
+  .thumbnailImage {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+/* LEGACY: Imagen grande - oculta en vista compacta */
+.serviceImageWrapper {
+  display: none;
 }
 
 .serviceImage {
   object-fit: cover;
-  transition: transform 0.6s ease;
 }
 
-.serviceImageWrapper:hover .serviceImage {
-  transform: scale(1.05);
-}
-
-/* Contenido */
+/* Contenido - oculto en vista compacta */
 .serviceContent {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 2rem 0;
-  order: 2;
+  display: none;
 }
 
-@media (min-width: 1024px) {
-  .serviceContent {
-    padding: 0;
-    order: 1;
-  }
-  
-  .serviceBlock:nth-child(even) .serviceContent {
-    order: 1;
-  }
-}
-
+/* Título del servicio - compacto */
 .serviceTitle {
   font-family: var(--font-avant-garde), system-ui, sans-serif;
-  font-size: 32px;
+  font-size: 20px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   color: var(--mg-dark);
   text-transform: uppercase;
-  margin-bottom: 24px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .serviceTitle {
+    font-size: 24px;
+  }
 }
 
 .serviceSubtitle {
@@ -304,37 +315,41 @@
   font-style: italic;
 }
 
-/* ======== BUTTONS ======== */
+/* ======== BUTTONS - ENFATIZADO ======== */
 .buttonsWrapper {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 32px;
+  margin: 8px 0 0 0;
 }
 
 .ctaButton {
-  background-color: var(--mg-dark);
+  background-color: var(--mg-pink);
   color: var(--mg-white);
-  border: none;
-  padding: 16px 32px;
+  border: 2px solid var(--mg-pink);
+  padding: 12px 24px;
   font-size: 11px;
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: 2px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
   font-family: var(--font-din-medium), sans-serif;
+  border-radius: 4px;
 }
 
 .ctaButton:hover {
-  background-color: var(--mg-pink);
+  background-color: var(--mg-dark);
+  color: var(--mg-white);
+  border-color: var(--mg-dark);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(43, 43, 43, 0.3);
 }
 
 .ctaButtonSecondary {
-  background-color: transparent;
-  color: var(--mg-dark);
-  border: 1px solid var(--mg-dark);
+  background-color: var(--mg-dark);
+  color: var(--mg-white);
+  border: 2px solid var(--mg-dark);
   padding: 16px 32px;
   font-size: 11px;
   font-weight: 400;
@@ -346,23 +361,45 @@
 }
 
 .ctaButtonSecondary:hover {
-  background-color: var(--mg-dark);
+  background-color: var(--mg-pink);
   color: var(--mg-white);
+  border-color: var(--mg-pink);
 }
 
-/* ======== OPTIONS SECTION ======== */
+/* Botón RESERVAR - Estilo distintivo */
+.ctaButtonReservar {
+  background-color: var(--mg-white);
+  color: var(--mg-pink);
+  border: 2px solid var(--mg-pink);
+  padding: 16px 32px;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-family: var(--font-din-medium), sans-serif;
+}
+
+.ctaButtonReservar:hover {
+  background-color: var(--mg-pink);
+  color: var(--mg-white) !important;
+  border-color: var(--mg-pink);
+}
+
+/* ======== OPTIONS SECTION - COMPACTO ======== */
 .optionsSection {
-  margin-top: 48px;
-  padding-top: 32px;
+  margin-top: 16px;
+  padding-top: 16px;
   border-top: 1px solid var(--mg-pink-lighter);
 }
 
 .optionsTitle {
   color: var(--mg-gray);
-  font-size: 11px;
-  letter-spacing: 3px;
-  margin-bottom: 24px;
-  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  font-weight: 500;
   text-transform: uppercase;
 }
 

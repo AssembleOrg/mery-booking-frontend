@@ -1,13 +1,8 @@
-/* ================================
-   EDITORIAL SERVICE PAGE STYLES
-   ================================ */
-
 .pageWrapper {
   min-height: calc(100vh - 80px);
   background: var(--mg-white);
 }
 
-/* ======== HERO SECTION ======== */
 .heroSection {
   position: relative;
   width: 100%;
@@ -84,160 +79,150 @@
   font-family: var(--font-din-medium), sans-serif;
 }
 
-/* ======== CONTENT SECTION ======== */
 .contentSection {
-  padding: 100px 80px;
+  padding: 60px 24px;
   position: relative;
-  overflow: visible;
 }
 
 .descriptiveText {
-  line-height: 1.9;
-  font-size: 15px;
+  line-height: 1.8;
+  font-size: 14px;
   letter-spacing: 0.02em;
   color: var(--mg-gray);
-  max-width: 900px;
-  margin: 0 auto 48px;
+  max-width: 800px;
+  margin: 0 auto 40px;
   text-align: center;
 }
 
 .linkText {
-  color: var(--mg-pink);
+  color: #F7CBCB;
   text-decoration: underline;
   cursor: pointer;
   transition: opacity 0.2s ease;
-  color: #f9bbc4;
 }
-
 .linkText:hover {
   opacity: 0.8;
 }
 
-/* ======== FORM LAYOUT ======== */
 .formLayout {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 48px;
   width: 100%;
   justify-content: center;
-  align-items: center;
-  max-width: 1100px;
+  align-items: flex-start;
   margin: 0 auto;
-}
-
-.calendarColumn {
-  width: 100%;
-  background: var(--mg-pink-light);
-  padding: 32px;
-  position: relative;
-}
-
-.calendarColumn::before {
-  content: '02';
-  position: absolute;
-  top: -20px;
-  right: 20px;
-  font-size: 80px;
-  font-weight: 800;
-  color: var(--mg-pink-lighter);
-  line-height: 1;
-  font-family: var(--font-din-medium), sans-serif;
 }
 
 .formColumn {
   width: 100%;
-  max-width: 700px;
   background: var(--mg-white);
   padding: 32px;
-  border: 1px solid var(--mg-pink-lighter);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   position: relative;
 }
 
 .formColumn::before {
   content: '01';
   position: absolute;
-  top: -20px;
-  right: 20px;
-  font-size: 80px;
+  top: -25px;
+  left: 20px;
+  font-size: 60px;
   font-weight: 800;
   color: var(--mg-pink-lighter);
+  opacity: 0.5;
   line-height: 1;
   font-family: var(--font-din-medium), sans-serif;
+  z-index: 0;
 }
 
-.hiddenOnMobile {
-  display: block;
+.calendarColumn {
+  width: 100%;
+  background: #fffafa;
+  padding: 32px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+  min-height: 250px;
 }
 
-/* ======== INFO BOX ======== */
+.calendarColumn::before {
+  content: '02';
+  position: absolute;
+  top: -25px;
+  right: 20px;
+  font-size: 60px;
+  font-weight: 800;
+  color: var(--mg-pink-lighter);
+  opacity: 0.5;
+  line-height: 1;
+  font-family: var(--font-din-medium), sans-serif;
+  z-index: 0;
+}
+
 .infoBox {
-  background: var(--mg-pink-light);
-  padding: 24px 32px;
-  border-left: 3px solid var(--mg-pink);
-  margin-bottom: 48px;
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
+  background: rgba(235, 162, 168, 0.08);
+  border: 1px solid rgba(235, 162, 168, 0.3);
+  padding: 32px;
+  border-radius: 4px;
+  text-align: center;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 200px;
 }
 
-.infoBox p {
-  font-size: 13px;
-  color: var(--mg-gray);
-  line-height: 1.8;
-}
-
-/* ======== RESPONSIVE ======== */
-@media (min-width: 769px) {
-  .formLayout {
-    flex-direction: row;
-    gap: 32px;
-    align-items: flex-start;
+@media (min-width: 900px) {
+  .contentSection {
+    padding: 100px 48px;
   }
 
-  .calendarColumn {
-    flex: 0 0 50%;
-    max-width: 550px;
+  .formLayout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 40px;
   }
 
   .formColumn {
+    flex: 0 0 350px;
+  }
+
+  .calendarColumn {
     flex: 1;
-    max-width: 500px;
+    max-width: 800px;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 899px) {
   .heroSection {
     min-height: 350px;
     padding-top: 100px;
   }
-
   .heroTitle {
     font-size: 32px;
-    letter-spacing: 0.08em;
   }
-
   .heroNumber {
     font-size: 80px;
     right: 20px;
     bottom: 20px;
   }
 
-  .contentSection {
-    padding: 60px 24px;
+  .formLayout {
+    gap: 60px;
   }
 
-  .hiddenOnMobile {
-    display: none;
-  }
-
-  .calendarColumn::before,
-  .formColumn::before {
-    font-size: 50px;
-  }
-
-  .calendarColumn,
-  .formColumn {
+  .formColumn,
+  .calendarColumn {
     padding: 24px 16px;
+  }
+
+  .formColumn::before,
+  .calendarColumn::before {
+    font-size: 50px;
+    top: -25px;
   }
 }
 
@@ -245,11 +230,9 @@
   .heroSection {
     min-height: 280px;
   }
-
   .heroTitle {
     font-size: 24px;
   }
-
   .heroNumber {
     bottom: 10px;
     font-size: 60px;

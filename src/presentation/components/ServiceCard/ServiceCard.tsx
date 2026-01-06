@@ -15,11 +15,10 @@ interface ServiceCardProps {
 }
 
 export function ServiceCard({
-  number,
   name,
   description,
   image,
-  href = '#'
+  href = '#',
 }: ServiceCardProps) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -30,7 +29,7 @@ export function ServiceCard({
       transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
     >
       {/* Number watermark */}
-      <span className={classes.number}>{number}</span>
+      {/* <span className={classes.number}>{number}</span> */}
 
       {/* Image or placeholder */}
       <motion.div
@@ -47,9 +46,7 @@ export function ServiceCard({
             sizes="(max-width: 768px) 100vw, 33vw"
           />
         ) : (
-          <Box className={classes.placeholder}>
-            [ IMG ]
-          </Box>
+          <Box className={classes.placeholder}>[ IMG ]</Box>
         )}
       </motion.div>
 
@@ -66,9 +63,7 @@ export function ServiceCard({
         <Text component="h3" className={classes.name}>
           {name}
         </Text>
-        <Text className={classes.description}>
-          {description}
-        </Text>
+        <Text className={classes.description}>{description}</Text>
       </motion.div>
     </motion.div>
   );

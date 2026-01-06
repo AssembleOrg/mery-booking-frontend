@@ -12,7 +12,7 @@
 .title {
   letter-spacing: 0.03em;
   line-height: 1.6;
-  color: #495057;
+  color: #545454;
 }
 
 .calendarWrapper {
@@ -29,16 +29,16 @@
 }
 
 .day:hover {
-  background-color: rgba(249, 187, 196, 0.2);
+  background-color: rgba(247, 203, 203, 0.2);
 }
 
 .day[data-selected] {
-  background-color: #f9bbc4 !important;
+  background-color: #F7CBCB !important;
   color: white !important;
 }
 
 .day[data-selected]:hover {
-  background-color: #f7a3af !important;
+  background-color: #EBA2A8 !important;
 }
 
 .timeSlotsGrid {
@@ -56,29 +56,29 @@
   transition: all 0.2s ease;
   cursor: pointer;
   background-color: white;
-  color: #495057;
+  color: #545454;
   white-space: nowrap;
 }
 
 .timeSlot:hover {
-  border-color: #f9bbc4;
-  background-color: rgba(249, 187, 196, 0.1);
+  border-color: #F7CBCB;
+  background-color: rgba(247, 203, 203, 0.1);
   transform: translateY(-1px);
 }
 
 .timeSlotSelected {
-  background-color: #f9bbc4;
-  border-color: #f9bbc4;
+  background-color: #F7CBCB;
+  border-color: #F7CBCB;
   color: white;
 }
 
 .timeSlotSelected:hover {
-  background-color: #f7a3af;
-  border-color: #f7a3af;
+  background-color: #EBA2A8;
+  border-color: #EBA2A8;
 }
 
 .continueButton {
-  background-color: #f9bbc4;
+  background-color: #F7CBCB;
   color: white;
   height: 50px;
   border-radius: 10px;
@@ -91,15 +91,15 @@
 
 .continueButton:hover {
   background-color: white;
-  color: #f9bbc4;
-  border-color: #f9bbc4;
+  color: #F7CBCB;
+  border-color: #F7CBCB;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(249, 187, 196, 0.3);
+  box-shadow: 0 6px 20px rgba(247, 203, 203, 0.3);
 }
 
 .backButton {
-  color: #f9bbc4;
-  border-color: #f9bbc4;
+  color: #F7CBCB;
+  border-color: #F7CBCB;
   height: 50px;
   border-radius: 10px;
   font-size: 0.95rem;
@@ -109,8 +109,8 @@
 }
 
 .backButton:hover {
-  background-color: rgba(249, 187, 196, 0.1);
-  border-color: #f7a3af;
+  background-color: rgba(247, 203, 203, 0.1);
+  border-color: #EBA2A8;
   transform: translateY(-2px);
 }
 

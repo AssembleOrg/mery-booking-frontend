@@ -10,7 +10,7 @@
   font-family: var(--font-avant-garde), sans-serif;
   font-size: 1.5rem;
   font-weight: 500;
-  color: #2c2c2c;
+  color: #2B2B2B;
   letter-spacing: 0.05em;
 }
 
@@ -55,7 +55,7 @@
 }
 
 .dayHeader {
-  background: #f9bbc4;
+  background: #F7CBCB;
   padding: 0.75rem;
   text-align: center;
   color: white;
@@ -117,7 +117,7 @@
 }
 
 .weekDayHeader {
-  background: #f9bbc4;
+  background: #F7CBCB;
   padding: 0.75rem;
   text-align: center;
   color: white;
@@ -148,7 +148,7 @@
 
 .todayCell {
   background: #fff9e6;
-  border: 2px solid #f9bbc4;
+  border: 2px solid #F7CBCB;
 }
 
 .dayNumber {
@@ -186,7 +186,7 @@
 }
 
 .employeeHeader {
-  background: #f9bbc4;
+  background: #F7CBCB;
   padding: 0.75rem;
   text-align: center;
   color: white;
@@ -261,7 +261,7 @@
 }
 
 .listContainer :global(.mantine-Table-thead tr th) {
-  background-color: #f9bbc4;
+  background-color: #F7CBCB;
   color: white;
   font-weight: 500;
   letter-spacing: 0.03em;

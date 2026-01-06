@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import { ANIMATION_EASING } from '@/presentation/lib/animations';
 
 interface TemplateProps {
@@ -10,8 +11,14 @@ interface TemplateProps {
 
 export default function Template({ children }: TemplateProps) {
   const prefersReducedMotion = useReducedMotion();
+  const pathname = usePathname();
 
-  if (prefersReducedMotion) {
+  // Rutas que necesitan sticky nav sin animación
+  const noAnimationRoutes: string[] = []; // Array vacío - todas las rutas tienen animación
+  const shouldAnimate = !noAnimationRoutes.includes(pathname);
+
+  // Deshabilitar animación para rutas problemáticas
+  if (prefersReducedMotion || !shouldAnimate) {
     return <>{children}</>;
   }
 

@@ -5,9 +5,9 @@
   justify-content: center;
   background: linear-gradient(
     135deg,
-    #fef5f7 0%,
-    #fff5f7 50%,
-    #fce9ed 100%
+    #FBE8EA 0%,
+    #FBE8EA 50%,
+    #F7CBCB 100%
   );
   padding: 2rem 1rem;
 }
@@ -29,7 +29,7 @@
 
 .paper {
   background: white;
-  border: 1px solid rgba(249, 187, 196, 0.2);
+  border: 1px solid rgba(247, 203, 203, 0.2);
 }
 
 .header {
@@ -40,7 +40,7 @@
   font-family: var(--font-avant-garde), sans-serif;
   font-size: 1.75rem;
   font-weight: 500;
-  color: #2c2c2c;
+  color: #2B2B2B;
   letter-spacing: 0.05em;
   margin-bottom: 0.5rem;
 }
@@ -55,7 +55,7 @@
   font-family: var(--font-avant-garde), sans-serif;
   font-weight: 500;
   font-size: 0.9rem;
-  color: #2c2c2c;
+  color: #2B2B2B;
   margin-bottom: 0.5rem;
 }
 
@@ -65,7 +65,7 @@
 }
 
 .submitButton {
-  background-color: #f9bbc4;
+  background-color: #F7CBCB;
   font-family: var(--font-avant-garde), sans-serif;
   font-weight: 500;
   letter-spacing: 0.05em;
@@ -73,9 +73,9 @@
 }
 
 .submitButton:hover {
-  background-color: #f7a3af;
+  background-color: #EBA2A8;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(249, 187, 196, 0.4);
+  box-shadow: 0 6px 20px rgba(247, 203, 203, 0.4);
 }
 
 @media (max-width: 480px) {

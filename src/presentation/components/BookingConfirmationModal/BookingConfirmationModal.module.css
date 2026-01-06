@@ -46,7 +46,7 @@
 .label {
   font-size: 0.875rem;
   font-weight: 400;
-  color: #495057;
+  color: #545454;
   letter-spacing: 0.02em;
   margin-bottom: 0.5rem;
 }
@@ -60,15 +60,15 @@
 }
 
 .input:focus {
-  border-color: #f9bbc4;
+  border-color: #F7CBCB;
 }
 
 .input::placeholder {
-  color: #adb5bd;
+  color: #545454;
 }
 
 .pricingSummary {
-  background: #fef5f7;
+  background: #FBE8EA;
   padding: 1rem;
   border-radius: 8px;
   margin-top: 0.5rem;
@@ -76,24 +76,24 @@
 
 .totalRow {
   padding: 0.5rem 0;
-  border-top: 1px solid #f9bbc4;
-  border-bottom: 1px solid #f9bbc4;
+  border-top: 1px solid #F7CBCB;
+  border-bottom: 1px solid #F7CBCB;
   margin: 0.5rem 0;
 }
 
 .cancelButton {
   border: 2px solid #dee2e6;
-  color: #495057;
+  color: #545454;
   transition: all 0.3s ease;
 }
 
 .cancelButton:hover {
   background-color: #f8f9fa;
-  border-color: #adb5bd;
+  border-color: #545454;
 }
 
 .confirmButton {
-  background-color: #f9bbc4;
+  background-color: #F7CBCB;
   color: white;
   transition: all 0.3s ease;
   border: 2px solid transparent;
@@ -102,10 +102,10 @@
 
 .confirmButton:hover {
   background-color: white;
-  color: #f9bbc4;
-  border-color: #f9bbc4;
+  color: #F7CBCB;
+  border-color: #F7CBCB;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(249, 187, 196, 0.3);
+  box-shadow: 0 6px 20px rgba(247, 203, 203, 0.3);
 }
 
 /* Responsive */

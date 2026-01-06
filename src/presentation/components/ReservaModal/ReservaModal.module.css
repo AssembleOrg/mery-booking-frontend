@@ -1,0 +1,336 @@
+/* ====================================
+   MODAL CONTAINER
+   ==================================== */
+
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: none; /* Sin header, usamos close button custom */
+}
+
+.modalBody {
+  padding: 0;
+}
+
+.container {
+  padding: 40px;
+  min-height: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  overflow: hidden;
+}
+
+/* ====================================
+   STEP INDICATOR
+   ==================================== */
+
+.stepIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 24px;
+}
+
+.stepIndicatorItem {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.stepCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #F5F5F5;
+  border: 2px solid #E0E0E0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.stepCircleActive {
+  background-color: var(--mg-pink);
+  border-color: var(--mg-pink);
+  box-shadow: 0 0 0 4px rgba(235, 162, 168, 0.2);
+}
+
+.stepCircleCompleted {
+  background-color: var(--mg-pink);
+  border-color: var(--mg-pink);
+}
+
+.stepNumber {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 16px;
+  color: var(--mg-gray);
+}
+
+.stepCircleActive .stepNumber {
+  color: var(--mg-white);
+}
+
+.stepLine {
+  width: 60px;
+  height: 2px;
+  background-color: #E0E0E0;
+  transition: background-color 0.3s ease;
+}
+
+.stepLineCompleted {
+  background-color: var(--mg-pink);
+}
+
+/* ====================================
+   CONTENT AREA
+   ==================================== */
+
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.stepContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  justify-content: space-between;
+}
+
+/* ====================================
+   TYPOGRAPHY
+   ==================================== */
+
+.stepTitle {
+  font-family: var(--font-avant-garde), sans-serif;
+  font-size: 24px;
+  letter-spacing: -0.03em;
+  color: var(--mg-dark);
+  margin-bottom: 8px;
+}
+
+.stepDescription {
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 15px;
+  color: var(--mg-gray);
+  line-height: 1.6;
+}
+
+/* ====================================
+   CHECKBOX (STEP 1)
+   ==================================== */
+
+.checkbox {
+  margin-top: 16px;
+}
+
+.checkboxLabel {
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 15px;
+  color: var(--mg-dark);
+}
+
+/* ====================================
+   OPTION CARDS (STEP 2)
+   ==================================== */
+
+.optionCard {
+  padding: 16px;
+  border: 2px solid #FBE8EA;
+  border-radius: 12px;
+  background-color: var(--mg-white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.optionCard:hover {
+  border-color: var(--mg-pink-lighter);
+  background-color: #FAFAFA;
+}
+
+.optionCardSelected {
+  border-color: var(--mg-pink);
+  background-color: var(--mg-pink-light);
+}
+
+.radioRoot {
+  width: 100%;
+}
+
+.radio {
+  cursor: pointer;
+}
+
+.optionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-left: 12px;
+}
+
+.optionLabel {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 15px;
+  color: var(--mg-dark);
+  font-weight: 500;
+}
+
+.optionPrice {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 16px;
+  color: var(--mg-pink);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.optionDescription {
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 13px;
+  color: var(--mg-gray);
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+/* ====================================
+   BUTTONS
+   ==================================== */
+
+.buttonGroup {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.buttonPrimary {
+  background-color: var(--mg-pink);
+  color: var(--mg-white);
+  border: none;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.buttonPrimary:hover:not(:disabled) {
+  background-color: #EBA2A8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(235, 162, 168, 0.3);
+}
+
+.buttonPrimary:disabled {
+  background-color: #E0E0E0;
+  color: #545454;
+  cursor: not-allowed;
+}
+
+.buttonSecondary {
+  background-color: transparent;
+  color: var(--mg-dark);
+  border: 1px solid #E0E0E0;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1.5;
+}
+
+.buttonSecondary:hover {
+  background-color: #F5F5F5;
+  border-color: #D0D0D0;
+}
+
+/* ====================================
+   RESPONSIVE
+   ==================================== */
+
+@media (max-width: 767px) {
+  .container {
+    padding: 24px;
+    min-height: auto;
+    max-height: 90vh;
+  }
+
+  .stepTitle {
+    font-size: 20px;
+  }
+
+  .stepDescription {
+    font-size: 14px;
+  }
+
+  .stepCircle {
+    width: 32px;
+    height: 32px;
+  }
+
+  .stepLine {
+    width: 40px;
+  }
+
+  .buttonGroup {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+
+  .buttonPrimary,
+  .buttonSecondary {
+    width: 100%;
+  }
+}
+
+/* ====================================
+   PROFESSIONAL SELECTION CARD
+   ==================================== */
+
+.professionalCard {
+  padding: 20px;
+  border: 1px solid #E0E0E0;
+  border-radius: 12px;
+  background-color: #FAFAFA;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.professionalLabel {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 14px;
+  color: var(--mg-gray);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.professionalName {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 18px;
+  color: var(--mg-dark);
+  font-weight: 500;
+}

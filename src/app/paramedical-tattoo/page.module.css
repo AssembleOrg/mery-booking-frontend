@@ -5,6 +5,8 @@
 .pageWrapper {
   min-height: 100vh;
   background: var(--mg-white);
+  overflow: visible; /* Necesario para que sticky funcione */
+  padding-top: 80px; /* Compensar header fixed */
 }
 
 /* ======== HERO SECTION ======== */
@@ -90,37 +92,53 @@
   }
 }
 
-/* Hero Navigation */
+/* Sticky Navigation */
 .heroNav {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 32px;
-  margin-top: 8px;
+  gap: 8px 24px;
   justify-content: center;
   width: 100%;
+  /* STICKY */
+  position: sticky;
+  top: 80px;
+  z-index: 90;
+  background: rgb(255, 255, 255);
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--mg-pink-lighter);
+  margin: 0;
+}
+
+/* Responsive: ajustar posición del sticky nav en mobile */
+@media (max-width: 767px) {
+  .heroNav {
+    top: 64px; /* Altura del header en mobile */
+  }
 }
 
 .navButton {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: rgba(255, 255, 255, 0.85);
+  gap: 6px;
+  color: var(--mg-dark);
   font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 2px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
   font-family: var(--font-din-medium), sans-serif;
+  padding: 8px 12px;
+  border-radius: 4px;
 }
 
 .navButton:hover {
   color: var(--mg-pink);
+  background-color: var(--mg-pink-light);
 }
 
 .navIcon {
-  font-size: 8px;
-  opacity: 0.6;
+  display: none;
 }
 
 /* ======== CONTENT WRAPPER ======== */
@@ -128,9 +146,9 @@
   background: var(--mg-white);
 }
 
-/* ======== SECTION ======== */
+/* ======== SECTION - COMPACTO ======== */
 .section {
-  padding: 100px 0;
+  padding: 24px 0;
   border-bottom: 1px solid var(--mg-pink-lighter);
   position: relative;
   overflow: visible;
@@ -140,17 +158,11 @@
   border-bottom: none;
 }
 
-/* Números de fondo */
-.section:nth-child(1)::before {
-  content: '01';
-}
-.section:nth-child(2)::before {
-  content: '02';
-}
-.section:nth-child(3)::before {
-  content: '03';
-}
-
+/* Números de fondo - DESACTIVADOS */
+/*
+.section:nth-child(1)::before { content: '01'; }
+.section:nth-child(2)::before { content: '02'; }
+.section:nth-child(3)::before { content: '03'; }
 .section::before {
   position: absolute;
   top: 20px;
@@ -164,104 +176,145 @@
   z-index: 0;
   pointer-events: none;
 }
+*/
 
 .sectionContent {
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 16px;
   position: relative;
   z-index: 1;
 }
 
-.imageColumn {
+/* Header: Thumbnail + Título */
+.serviceHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.serviceThumbnail {
   flex-shrink: 0;
-  width: 100%;
-  max-width: 360px;
-  aspect-ratio: 1 / 1;
-  position: relative;
-  width: 100%;
-  flex: 0 0 auto;
-  aspect-ratio: 3 / 4;
-  max-width: 450px;
-  order: 1;
+  width: 80px;
+  height: 80px;
+  border-radius: 4px;
   overflow: hidden;
   background: var(--mg-pink-light);
 }
 
-/* Frame decorativo */
-.imageColumn::after {
-  content: '';
-  position: absolute;
-  top: -16px;
-  left: -16px;
-  right: 16px;
-  bottom: 16px;
-  border: 1px solid var(--mg-pink);
-  pointer-events: none;
-  z-index: 1;
+.thumbnailImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.serviceTitleWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.serviceTagline {
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 14px;
+  color: var(--mg-gray);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .serviceHeader {
+    gap: 20px;
+  }
+
+  .serviceThumbnail,
+  .thumbnailImage {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+/* LEGACY - ocultar columna de imagen grande */
+.imageColumn {
+  display: none;
 }
 
 .sectionImage {
   object-fit: cover;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.6s ease;
 }
 
-.imageColumn:hover .sectionImage {
-  transform: scale(1.05);
-}
-
+/* LEGACY - ocultar columna de texto */
 .textColumn {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 2rem 0;
-  order: 2;
-}
-
-@media (min-width: 1024px) {
-  .sectionContent {
-    flex-direction: row;
-  }
-
-  .textColumn {
-    padding: 0;
-    order: 1;
-  }
-
-  .section:nth-child(even) .textColumn {
-    order: 1;
-  }
+  display: none;
 }
 
 .sectionTitle {
   font-family: var(--font-avant-garde), system-ui, sans-serif;
-  font-size: 32px;
+  font-size: 20px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   color: var(--mg-dark);
-  margin-bottom: 24px;
+  margin: 0;
   text-transform: uppercase;
-  line-height: 1.15;
-  position: relative;
-  padding-left: 2rem;
-  border-left: 3px solid #f9bbc4;
+  line-height: 1.2;
 }
 
+@media (min-width: 768px) {
+  .sectionTitle {
+    font-size: 24px;
+  }
+}
+
+/* LEGACY */
 .sectionText {
-  font-family: var(--font-din-medium), sans-serif;
-  color: var(--mg-gray);
-  font-size: 15px;
-  line-height: 1.9;
-  margin-bottom: 20px;
+  display: none;
+}
+
+/* ======== BUTTONS - ENFATIZADO ======== */
+.buttonsWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 8px 0 0 0;
 }
 
 .ctaButton {
+  background-color: var(--mg-pink);
+  color: var(--mg-white);
+  border: 2px solid var(--mg-pink);
+  padding: 12px 24px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-family: var(--font-din-medium), sans-serif;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.ctaButton:hover {
   background-color: var(--mg-dark);
   color: var(--mg-white);
-  border: none;
+  border-color: var(--mg-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(43, 43, 43, 0.3);
+}
+
+/* Botón CONSULTA - Estilo secundario */
+.ctaButtonSecondary {
+  background-color: var(--mg-dark);
+  color: var(--mg-white);
+  border: 2px solid var(--mg-dark);
   padding: 16px 32px;
   font-size: 11px;
   font-weight: 400;
@@ -270,34 +323,59 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   font-family: var(--font-din-medium), sans-serif;
-  text-decoration: none;
-  display: inline-block;
 }
 
-.ctaButton:hover {
+.ctaButtonSecondary:hover {
   background-color: var(--mg-pink);
+  color: var(--mg-white);
+  border-color: var(--mg-pink);
+}
+
+/* Botón RESERVAR - Estilo distintivo */
+.ctaButtonReservar {
+  background-color: var(--mg-white);
+  color: var(--mg-pink);
+  border: 2px solid var(--mg-pink);
+  padding: 16px 32px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-family: var(--font-din-medium), sans-serif;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.ctaButtonReservar:hover {
+  background-color: var(--mg-pink);
+  color: var(--mg-white) !important;
+  border-color: var(--mg-pink);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(235, 162, 168, 0.3);
 }
 
 .bookingSection {
-  margin-top: 48px;
-  padding-top: 32px;
+  margin-top: 16px;
+  padding-top: 16px;
   border-top: 1px solid var(--mg-pink-lighter);
 }
 
-/* ======== OPTIONS SECTION ======== */
+/* ======== OPTIONS SECTION - COMPACTO ======== */
 .optionsSection {
-  margin-top: 48px;
-  padding-top: 32px;
+  margin-top: 16px;
+  padding-top: 16px;
   border-top: 1px solid var(--mg-pink-lighter);
 }
 
 .optionsTitle {
   color: var(--mg-gray);
-  font-size: 11px;
-  letter-spacing: 3px;
-  margin-bottom: 24px;
-  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  font-weight: 500;
   text-transform: uppercase;
 }
 

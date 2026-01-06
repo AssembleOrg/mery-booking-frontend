@@ -8,13 +8,16 @@ import {
   DateTimeSelector,
   BookingConfirmationModal,
   FadeInSection,
-  LayeredText,
   ImageCrossfade,
 } from '@/presentation/components';
-import Image from 'next/image';
 import { useState, useMemo } from 'react';
 import { useDisclosure } from '@mantine/hooks';
-import { useServices, useEmployees, useCreateClient, useCreateBooking } from '@/presentation/hooks';
+import {
+  useServices,
+  useEmployees,
+  useCreateClient,
+  useCreateBooking,
+} from '@/presentation/hooks';
 import { Client } from '@/domain/entities';
 import type { ServiceEntity } from '@/infrastructure/http';
 import classes from './page.module.css';
@@ -26,72 +29,65 @@ interface ServiceBookingData {
 }
 
 const MOCK_LOCATION = 'Mery García Office';
-// ID de la categoría "Estilismo de Cejas y Pestañas"
 const ESTILISMO_CEJAS_CATEGORY_ID = '316f01a6-ef73-4b05-a322-8da598ba50aa';
 
 export default function EstilismoCejasPage() {
-  const [step, setStep] = useState(1);
-  const [bookingData, setBookingData] = useState<ServiceBookingData | null>(null);
+  const [bookingData, setBookingData] = useState<ServiceBookingData | null>(
+    null
+  );
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
 
-  // Hooks para crear cliente y reserva
   const createClientMutation = useCreateClient();
   const createBookingMutation = useCreateBooking();
 
-  // Cargar lista de servicios para buscar el servicio seleccionado
-  const { data: services = [], isLoading: isLoadingServices } = useServices(ESTILISMO_CEJAS_CATEGORY_ID);
-  
-  // Buscar el servicio seleccionado en la lista ya cargada
-  const currentService = bookingData?.servicio 
-    ? (services.find(s => s.id === bookingData.servicio) as ServiceEntity | undefined)
+  const { data: services = [], isLoading: isLoadingServices } = useServices(
+    ESTILISMO_CEJAS_CATEGORY_ID
+  );
+
+  const currentService = bookingData?.servicio
+    ? (services.find((s) => s.id === bookingData.servicio) as
+        | ServiceEntity
+        | undefined)
     : null;
-  
-  // Solo mostrar loading si estamos cargando servicios Y hay un servicio seleccionado
+
   const isLoadingService = isLoadingServices && !!bookingData?.servicio;
-  
-  // Cargar lista de empleados para buscar el empleado seleccionado
-  const { data: employees = [] } = useEmployees(ESTILISMO_CEJAS_CATEGORY_ID, bookingData?.servicio || undefined);
-  
-  // Buscar el empleado seleccionado en la lista ya cargada
-  const currentEmployee = bookingData?.profesional 
-    ? employees.find(e => e.id === bookingData.profesional)
+
+  const { data: employees = [] } = useEmployees(
+    ESTILISMO_CEJAS_CATEGORY_ID,
+    bookingData?.servicio || undefined
+  );
+
+  const currentEmployee = bookingData?.profesional
+    ? employees.find((e) => e.id === bookingData.profesional)
     : null;
 
   const handleServiceSubmit = (data: ServiceBookingData) => {
     setBookingData(data);
-    // No cambiar a step 2 inmediatamente, esperar a que se cargue el servicio
-    // El step 2 se mostrará cuando currentService esté disponible
+    // Scroll automático hacia el calendario en mobile
+    setTimeout(() => {
+      const calendarElement = document.getElementById('calendar-anchor');
+      if (calendarElement) {
+        calendarElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 150);
   };
 
   const handleDateTimeSelect = (date: Date, time: string) => {
     setSelectedDate(date);
     setSelectedTime(time);
-    open(); // Abrir modal de confirmación
-  };
-
-  const handleBack = () => {
-    setStep(1);
+    open();
   };
 
   const handleConfirmBooking = async (clientData: Client) => {
-    if (!bookingData || !selectedDate || !selectedTime || !currentService) return;
-
-    // Validar que haya un empleado seleccionado
-    if (!bookingData.profesional) {
-      // Si no hay empleado seleccionado, no podemos crear la reserva
-      // Esto no debería pasar porque DateTimeSelector requiere employeeId
+    if (!bookingData || !selectedDate || !selectedTime || !currentService)
       return;
-    }
+    if (!bookingData.profesional) return;
 
     try {
-      // 1. Crear cliente primero (usando endpoint público si no está autenticado)
-      // El DNI es requerido en el formulario, así que siempre debería estar presente
-      if (!clientData.dni) {
-        throw new Error('El DNI es requerido para completar la reserva');
-      }
-      
+      if (!clientData.dni) throw new Error('El DNI es requerido');
+
       const client = await createClientMutation.mutateAsync({
         fullName: `${clientData.name} ${clientData.surname}`,
         email: clientData.email,
@@ -99,7 +95,6 @@ export default function EstilismoCejasPage() {
         dni: clientData.dni,
       } as any);
 
-      // 2. Crear reserva
       const dateString = dayjs(selectedDate).format('YYYY-MM-DD');
       await createBookingMutation.mutateAsync({
         clientId: client.id,
@@ -113,19 +108,14 @@ export default function EstilismoCejasPage() {
       });
 
       close();
-      
-      // Resetear estado
-      setStep(1);
       setBookingData(null);
       setSelectedDate(null);
       setSelectedTime(null);
     } catch (error) {
-      // Los errores ya se manejan en los hooks con notificaciones
       console.error('Error al crear reserva:', error);
     }
   };
 
-  // Transformar ServiceEntity a Service para el modal (compatibilidad)
   const serviceForModal = useMemo(() => {
     if (!currentService) return null;
     return {
@@ -133,13 +123,12 @@ export default function EstilismoCejasPage() {
       name: currentService.name,
       slug: currentService.name.toLowerCase().replace(/\s+/g, '-'),
       price: Number(currentService.price),
-      priceBook: Number(currentService.price), // Usar el mismo precio por ahora
+      priceBook: Number(currentService.price),
       duration: currentService.duration,
       image: currentService.urlImage || '/desk.svg',
     };
   }, [currentService]);
 
-  // Transformar Employee a Professional para el modal (compatibilidad)
   const professionalForModal = useMemo(() => {
     if (!currentEmployee) return null;
     return {
@@ -153,9 +142,8 @@ export default function EstilismoCejasPage() {
   return (
     <>
       <Header />
-      
+
       <Box className={classes.pageWrapper}>
-        {/* Hero Section - Minimalista */}
         <Box className={classes.heroSection}>
           <ImageCrossfade
             images={[
@@ -170,100 +158,93 @@ export default function EstilismoCejasPage() {
             objectPosition="center"
           />
           <Box className={classes.heroOverlay} />
-
-          {/* Layered background text */}
-          <LayeredText
-            text="ESTILISMO"
-            size={140}
-            top="20%"
-            left="55%"
-          />
-
           <Box className={classes.heroContent}>
             <FadeInSection direction="up" delay={0.2}>
               <Text className={classes.heroOverline}>MERY GARCÍA</Text>
               <Text className={classes.heroTitle}>
-                ESTILISMO DE<br />CEJAS
+                ESTILISMO DE
+                <br />
+                CEJAS
               </Text>
             </FadeInSection>
           </Box>
           <span className={classes.heroNumber}>01</span>
         </Box>
 
-        {/* Content Section */}
         <Box className={classes.contentSection}>
-          <LayeredText text="CEJAS" size={120} top="5%" left="70%" />
           <Container size="xl" py={{ base: 40, sm: 60, md: 80 }}>
             <Stack gap="xl" align="center">
-              {/* Texto descriptivo */}
               <FadeInSection direction="up" delay={0.3}>
-              <Box maw={1100} w="100%">
-                <Text
-                  ta="center"
-                  size="sm"
-                  c="dimmed"
-                  fw={300}
-                  className={classes.descriptiveText}
-                >
-                  Si es tu primera vez podés conocer todos nuestros servicios ingresando{' '}
+                <Box maw={1100} w="100%">
                   <Text
-                    component="a"
-                    href="https://merygarcia.com.ar/"
-                    c="pink.6"
-                    fw={400}
-                    className={classes.linkText}
+                    ta="center"
+                    size="sm"
+                    c="dimmed"
+                    fw={300}
+                    className={classes.descriptiveText}
                   >
-                    AQUÍ
+                    Si es tu primera vez podés conocer todos nuestros servicios
+                    ingresando{' '}
+                    <Text
+                      component="a"
+                      href="https://merygarcia.com.ar/"
+                      c="pink.6"
+                      fw={400}
+                      className={classes.linkText}
+                    >
+                      AQUÍ
+                    </Text>
+                    .
                   </Text>
-                  . Te recomendamos en tu primera cita que reserves Asesoramiento de Estilismo de Cejas.
-                  Para Microblading / Tattoo Cosmético deberás tomar una cita de Consulta, las cuales se
-                  abren de acuerdo a la disponibilidad de agenda.
-                </Text>
-              </Box>
+                </Box>
               </FadeInSection>
 
-              {/* Layout Desktop: Calendario a la izquierda, Form a la derecha */}
-              <Box w="100%" maw={1100}>
+              <Box w="100%" maw={1200}>
                 <Box className={classes.formLayout}>
-                  {/* Paso 2: Selector de fecha y hora - Izquierda en Desktop */}
-                  {/* Mostrar cuando hay bookingData y el servicio está cargado */}
-                  {bookingData?.servicio && (
-                    <>
-                      {isLoadingService ? (
-                        <Box className={classes.calendarColumn}>
-                          <Center py="xl">
-                            <Loader size="md" />
-                          </Center>
-                        </Box>
-                      ) : currentService ? (
-                        <Box className={classes.calendarColumn}>
-                          <DateTimeSelector
-                            serviceDuration={currentService.duration}
-                            employeeId={bookingData?.profesional || null}
-                            serviceId={currentService.id}
-                            onSelectDateTime={handleDateTimeSelect}
-                            onBack={handleBack}
-                            showBackButton={true}
-                          />
-                        </Box>
-                      ) : null}
-                    </>
-                  )}
-
-                  {/* Paso 1: Formulario de servicio - Derecha en Desktop */}
-                  {/* Ocultar en mobile solo si hay servicio seleccionado y cargado */}
-                  <Box 
-                    className={`${classes.formColumn} ${bookingData?.servicio && currentService ? classes.hiddenOnMobile : ''}`}
-                  >
-                    <ServiceBookingForm 
+                  <Box className={classes.formColumn}>
+                    <ServiceBookingForm
                       onSubmit={handleServiceSubmit}
                       onChange={handleServiceSubmit}
                       categoryId={ESTILISMO_CEJAS_CATEGORY_ID}
-                      employeeFilter={(employee) => 
-                        employee.fullName.toLowerCase().includes('rosario staff') ||
+                      employeeFilter={(employee) =>
+                        employee.fullName
+                          .toLowerCase()
+                          .includes('rosario staff') ||
                         employee.fullName.toLowerCase() === 'rosario staff'
                       }
                     />
+                  </Box>
+
+                  <Box id="calendar-anchor" className={classes.calendarColumn}>
+                    {isLoadingService ? (
+                      <Center py="xl" h={400}>
+                        <Loader size="md" color="var(--mg-pink)" />
+                      </Center>
+                    ) : currentService ? (
+                      <DateTimeSelector
+                        serviceDuration={currentService.duration}
+                        employeeId={bookingData?.profesional || null}
+                        serviceId={currentService.id}
+                        onSelectDateTime={handleDateTimeSelect}
+                        onBack={() => {}}
+                        showBackButton={false}
+                      />
+                    ) : (
+                      <Box className={classes.infoBox}>
+                        <Text
+                          fw={600}
+                          size="sm"
+                          mb={8}
+                          style={{ color: 'var(--mg-pink)' }}
+                        >
+                          INFORMACIÓN
+                        </Text>
+                        <Text size="sm" style={{ color: 'var(--mg-gray)' }}>
+                          Por favor, seleccioná un servicio y profesional arriba
+                          para ver la disponibilidad.
+                        </Text>
+                      </Box>
+                    )}
                   </Box>
                 </Box>
               </Box>
@@ -274,7 +255,6 @@ export default function EstilismoCejasPage() {
 
       <Footer />
 
-      {/* Modal de Confirmación */}
       {serviceForModal && selectedDate && selectedTime && (
         <BookingConfirmationModal
           opened={opened}
@@ -290,4 +270,3 @@ export default function EstilismoCejasPage() {
     </>
   );
 }
-

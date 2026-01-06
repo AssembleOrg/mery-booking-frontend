@@ -3,7 +3,17 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Container, Paper, TextInput, PasswordInput, Button, Title, Text, Box, Stack } from '@mantine/core';
+import {
+  Container,
+  Paper,
+  TextInput,
+  PasswordInput,
+  Button,
+  Title,
+  Text,
+  Box,
+  Stack,
+} from '@mantine/core';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/presentation/contexts';
 import Image from 'next/image';
@@ -62,7 +72,7 @@ export default function LoginPage() {
         <Box className={classes.logoContainer}>
           <Link href="/" style={{ textDecoration: 'none' }}>
             <Image
-              src="/logo_cosetic_tattoo.svg"
+              src="/logo-cosmetic-artist.svg"
               alt="Mery García"
               width={200}
               height={70}
@@ -72,14 +82,14 @@ export default function LoginPage() {
             />
           </Link>
         </Box>
-        
+
         <Box style={{ marginBottom: '1rem', textAlign: 'center' }}>
           <Link href="/" style={{ textDecoration: 'none' }}>
             <Button
               variant="subtle"
               size="sm"
               style={{
-                color: '#6b6b6b',
+                color: '#545454',
                 fontFamily: 'var(--font-avant-garde), sans-serif',
               }}
             >
@@ -165,4 +175,3 @@ export default function LoginPage() {
     </Box>
   );
 }
-

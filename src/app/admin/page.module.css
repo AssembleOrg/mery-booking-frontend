@@ -3,7 +3,7 @@
   background: linear-gradient(
     to bottom,
     #ffffff 0%,
-    #fff5f7 50%,
+    #FBE8EA 50%,
     #ffffff 100%
   );
 }
@@ -16,9 +16,9 @@
 }
 
 .adminHeader {
-  background: linear-gradient(135deg, #f9bbc4 0%, #f58b9a 100%);
+  background: linear-gradient(135deg, #F7CBCB 0%, #EBA2A8 100%);
   padding: 2rem 0;
-  box-shadow: 0 4px 12px rgba(249, 187, 196, 0.2);
+  box-shadow: 0 4px 12px rgba(247, 203, 203, 0.2);
 }
 
 .headerContent {
@@ -79,12 +79,12 @@
 }
 
 .tab[data-active] {
-  color: #f9bbc4;
-  border-bottom-color: #f9bbc4;
+  color: #F7CBCB;
+  border-bottom-color: #F7CBCB;
 }
 
 .tab:hover {
-  background-color: rgba(249, 187, 196, 0.05);
+  background-color: rgba(247, 203, 203, 0.05);
 }
 
 .tabContent {

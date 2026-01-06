@@ -6,11 +6,8 @@ import {
   Footer,
   DateTimeSelector,
   BookingConfirmationModal,
+  ReservaModal,
   FadeInSection,
-  StaggerContainer,
-  StaggerItem,
-  LayeredText,
-  ImageCrossfade,
 } from '@/presentation/components';
 import Image from 'next/image';
 import { useState, useMemo, useEffect } from 'react';
@@ -354,7 +351,7 @@ function ConsultaContent({
             className={classes.bookingSelect}
           />
         ) : (
-          <Text style={{ padding: '0.5rem', color: '#666' }}>
+          <Text style={{ padding: '0.5rem', color: '#545454' }}>
             Staff Consultas
           </Text>
         )}
@@ -597,7 +594,7 @@ function SesionCalendarioContent({
                 className={classes.bookingSelect}
               />
             ) : (
-              <Text style={{ padding: '0.5rem', color: '#333' }}>
+              <Text style={{ padding: '0.5rem', color: '#2B2B2B' }}>
                 Mery Garcia
               </Text>
             )}
@@ -1566,106 +1563,78 @@ export default function TattooCosmeticoPage() {
     return getOptionsWithIds(lashesLineOptions, 'lashes-line', services);
   }, [mappedServices, mappedEmployees, services]);
 
+  // IDs de empleados para modal de reservas
+  const staffConsultasId = useMemo(() => {
+    return mappedEmployees.get('staff-consultas')?.id;
+  }, [mappedEmployees]);
+
+  const meryGarciaId = useMemo(() => {
+    return mappedEmployees.get('mery-garcia')?.id;
+  }, [mappedEmployees]);
+
+  // Estados para CONSULTA y RESERVA directos
+  const [consultaData, setConsultaData] = useState<{
+    serviceName: string;
+    serviceKey: string;
+  } | null>(null);
+  const [reservaData, setReservaData] = useState<{
+    serviceName: string;
+    serviceKey: string;
+  } | null>(null);
+  const [reservaTipo, setReservaTipo] = useState<
+    'sesion' | 'retoque' | 'mantenimiento' | null
+  >(null);
+
+  // Estado para modal de reservas con stepper
+  const [modalOpened, setModalOpened] = useState(false);
+  const [modalService, setModalService] = useState<{
+    serviceName: string;
+    serviceKey: string;
+    options: ServiceOption[];
+  } | null>(null);
+
   return (
     <>
       <Header />
 
       <Box className={classes.pageWrapper}>
-        {/* Hero Section - Minimalista */}
-        <Box className={classes.heroSection}>
-          <ImageCrossfade
-            images={[
-              '/images/im.2-op-2-scaled-1.webp',
-              '/images/nano-scallping.webp',
-              '/images/Lip-blush-1-1-768x512.webp',
-              '/images/lashes_line_b.webp',
-            ]}
-            interval={6000}
-            transitionDuration={1.0}
-            className={classes.heroImage}
-            alt="Cosmetic Tattoo"
-            objectPosition="center 50%"
-          />
-          <Box className={classes.heroOverlay} />
-
-          {/* Layered background text */}
-          <LayeredText
-            text={
-              <>
-                COSMETIC
-                <br />
-                TATTOO
-              </>
-            }
-            size={120}
-            top="25%"
-            left="5%"
-          />
-
-          <Box className={classes.heroContent}>
-            <FadeInSection direction="up" delay={0.2}>
-              <Text className={classes.heroOverline}>MERY GARCÍA</Text>
-              <Text className={classes.heroTitle}>
-                COSMETIC
-                <br />
-                TATTOO
-              </Text>
-            </FadeInSection>
-
-            {/* Sub Menu Navigation */}
-            <FadeInSection direction="up" delay={0.4}>
-              <Box className={classes.subMenuNav}>
-                <Box
-                  className={classes.subMenuItem}
-                  onClick={() => scrollToSection('nanoblading')}
-                >
-                  <span className={classes.subMenuIcon}>▼</span>
-                  <span>NANOBLADING</span>
-                </Box>
-                <Box
-                  className={classes.subMenuItem}
-                  onClick={() => scrollToSection('lip-blush')}
-                >
-                  <span className={classes.subMenuIcon}>▼</span>
-                  <span>LIP BLUSH</span>
-                </Box>
-                <Box
-                  className={classes.subMenuItem}
-                  onClick={() => scrollToSection('lip-camouflage')}
-                >
-                  <span className={classes.subMenuIcon}>▼</span>
-                  <span>LIP CAMOUFLAGE</span>
-                </Box>
-                <Box
-                  className={classes.subMenuItem}
-                  onClick={() => scrollToSection('lashes-line')}
-                >
-                  <span className={classes.subMenuIcon}>▼</span>
-                  <span>LASHES LINE</span>
-                </Box>
-                <Box
-                  className={classes.subMenuItem}
-                  onClick={() => scrollToSection('pecas-lunares')}
-                >
-                  <span className={classes.subMenuIcon}>▼</span>
-                  <span>PECAS Y LUNARES</span>
-                </Box>
-                <Box
-                  className={classes.subMenuItem}
-                  onClick={() => scrollToSection('camuflaje')}
-                >
-                  <span className={classes.subMenuIcon}>▼</span>
-                  <span>CAMUFLAJE</span>
-                </Box>
-                <Box
-                  className={classes.subMenuItem}
-                  onClick={() => scrollToSection('clientes-exterior')}
-                >
-                  <span className={classes.subMenuIcon}>▼</span>
-                  <span>CLIENTES DEL EXTERIOR / INTERIOR</span>
-                </Box>
-              </Box>
-            </FadeInSection>
+        {/* Sub Menu Navigation - STICKY */}
+        <Box className={classes.subMenuNav}>
+          <Box
+            className={classes.subMenuItem}
+            onClick={() => scrollToSection('nanoblading')}
+          >
+            <span>NANOBLADING</span>
+          </Box>
+          <Box
+            className={classes.subMenuItem}
+            onClick={() => scrollToSection('lip-blush')}
+          >
+            <span>LIP BLUSH</span>
+          </Box>
+          <Box
+            className={classes.subMenuItem}
+            onClick={() => scrollToSection('lip-camouflage')}
+          >
+            <span>LIP CAMOUFLAGE</span>
+          </Box>
+          <Box
+            className={classes.subMenuItem}
+            onClick={() => scrollToSection('lashes-line')}
+          >
+            <span>LASHES LINE</span>
+          </Box>
+          <Box
+            className={classes.subMenuItem}
+            onClick={() => scrollToSection('pecas-lunares')}
+          >
+            <span>PECAS</span>
+          </Box>
+          <Box
+            className={classes.subMenuItem}
+            onClick={() => scrollToSection('camuflaje')}
+          >
+            <span>CAMUFLAJE</span>
           </Box>
         </Box>
 
@@ -1673,52 +1642,27 @@ export default function TattooCosmeticoPage() {
         <Box className={classes.contentSection}>
           <Container size="xl">
             {/* NANOBLADING Section */}
-            <Box id="nanoblading" className={classes.serviceBlock}>
-              <LayeredText text="NANO" size={100} top="55%" left="50%" />
-              <Box className={classes.serviceLayout}>
-                <Box className={classes.serviceImageWrapper}>
-                  <Image
-                    src="/images/im.2-op-2-scaled-1.webp"
-                    alt="Nanoblading"
-                    fill
-                    className={classes.serviceImage}
-                    quality={75}
-                    loading="lazy"
-                  />
-                </Box>
-                <Box className={classes.serviceContent}>
-                  <Text className={classes.serviceTitle}>NANOBLADING</Text>
-                  <Text className={classes.serviceDescription}>
-                    Es la técnica más avanzada de cosmetic tattoo de cejas.
-                    Servicio único y exclusivo brindado por MG y su staff.
-                  </Text>
-                  <Text className={classes.serviceDescription}>
-                    Si estás buscando mejorar la forma de tus cejas, completar o
-                    rellenar zonas donde no tenés mucho crecimiento, o nada de
-                    pelo, o donde haya cicatrices, este servicio es el indicado
-                    para vos.
-                  </Text>
-                  <Text className={classes.serviceDescription}>
-                    Permite lograr excelentes resultados en todo tipo de pieles,
-                    mayor hiper realismo y un acabado imperceptible. Genera
-                    menor trauma en la piel, mayor durabilidad y vibración del
-                    color. El procedimiento se realiza con maquina a la misma
-                    profundidad del Microblading (muy superficial) pero con
-                    agujas aún más pequeñas que permiten terminaciones plásticas
-                    infinitas (sombras, trazos, ramilletes de pelo, etc.)
-                    Recomendamos esta técnica para casos de alopecias,
-                    tricotilomanías, pieles maduras o muy finas, o tratamientos
-                    oncológicos. Pero también brinda resultados óptimos en
-                    pieles normales sin dificultad de crecimiento y/o con
-                    cicatrices.
-                  </Text>
-                  <Text className={classes.serviceDescription}>
-                    Mas de cuatro años de practica y perfeccionamientos
-                    constantes en el exterior dieron por resultado que el ultimo
-                    año Mery Garcia utilizara Nanoblading para dar respuesta a
-                    todas las personas que buscan mejorar sus cejas a través del
-                    tatuaje cosmético.
-                  </Text>
+            <FadeInSection direction="up" delay={0}>
+              <Box id="nanoblading" className={classes.serviceBlock}>
+                <Box className={classes.serviceLayout}>
+                  <Box className={classes.serviceHeader}>
+                    <Box className={classes.serviceThumbnail}>
+                      <Image
+                        src="/images/im.2-op-2-scaled-1.webp"
+                        alt="Nanoblading"
+                        width={100}
+                        height={100}
+                        className={classes.thumbnailImage}
+                      />
+                    </Box>
+                    <Box className={classes.serviceTitleWrapper}>
+                      <Text className={classes.serviceTitle}>NANOBLADING</Text>
+                      <Text className={classes.serviceTagline}>
+                        Técnica avanzada de cosmetic tattoo de cejas. Resultados
+                        hiperrealistas.
+                      </Text>
+                    </Box>
+                  </Box>
                   <Box className={classes.buttonsWrapper}>
                     <button
                       className={classes.ctaButton}
@@ -1730,49 +1674,83 @@ export default function TattooCosmeticoPage() {
                     >
                       MÁS INFO AQUÍ
                     </button>
+                    <button
+                      className={classes.ctaButtonSecondary}
+                      onClick={() =>
+                        openWhatsApp('Quiero consultar sobre NANOBLADING')
+                      }
+                    >
+                      CONSULTA
+                    </button>
+                    <button
+                      className={classes.ctaButtonReservar}
+                      onClick={() => {
+                        console.log('📦 Opening ReservaModal with:', {
+                          serviceName: 'NANOBLADING',
+                          serviceKey: 'nanoblading',
+                          optionsCount: nanobladingOptionsWithIds.length,
+                          firstOptionSample: nanobladingOptionsWithIds[2], // La opción "1ª Sesión"
+                          staffConsultasId,
+                          meryGarciaId,
+                          employeesCount: employees.length,
+                          servicesCount: services.length,
+                        });
+                        setModalService({
+                          serviceName: 'NANOBLADING',
+                          serviceKey: 'nanoblading',
+                          options: nanobladingOptionsWithIds,
+                        });
+                        setModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
+                    >
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'RESERVAR'}
+                    </button>
                   </Box>
                 </Box>
-              </Box>
 
-              <Box className={classes.optionsSection}>
-                <Text className={classes.optionsTitle}>
-                  Seleccioná la opción deseada para solicitar tu cita:
-                </Text>
-                <ServiceAccordion
-                  options={nanobladingOptionsWithIds}
-                  staffConsultasId={
-                    mappedEmployees.get('staff-consultas')?.id ||
-                    STAFF_CONSULTAS_ID
-                  }
-                  meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
-                  services={services}
-                  employees={employees}
-                />
+                {/* <Box className={classes.optionsSection}>
+                  <Text className={classes.optionsTitle}>
+                    Seleccioná la opción deseada para solicitar tu cita:
+                  </Text>
+                  <ServiceAccordion
+                    options={nanobladingOptionsWithIds}
+                    staffConsultasId={
+                      mappedEmployees.get('staff-consultas')?.id ||
+                      STAFF_CONSULTAS_ID
+                    }
+                    meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
+                    services={services}
+                    employees={employees}
+                  />
+                </Box> */}
               </Box>
-            </Box>
+            </FadeInSection>
 
             {/* LIP BLUSH Section */}
-            <Box id="lip-blush" className={classes.serviceBlock}>
-              <LayeredText text="LIPS" size={100} top="55%" left="50%" />
-              <Box className={classes.serviceLayout}>
-                <Box className={classes.serviceImageWrapper}>
-                  <Image
-                    src="/images/Lip-blush-1-1-768x512.webp"
-                    alt="Lip Blush"
-                    fill
-                    className={classes.serviceImage}
-                    quality={75}
-                    loading="lazy"
-                  />
-                </Box>
-                <Box className={classes.serviceContent}>
-                  <Text className={classes.serviceTitle}>LIP BLUSH</Text>
-                  <Text className={classes.serviceDescription}>
-                    Es un maquillaje semi permanente que dura entre 18 y 24
-                    meses. El procedimiento consta de una primera sesión y un
-                    retoque para terminar de definir unos labios perfectos a los
-                    30 o 60 días.
-                  </Text>
+            <FadeInSection direction="up" delay={0.1}>
+              <Box id="lip-blush" className={classes.serviceBlock}>
+                <Box className={classes.serviceLayout}>
+                  <Box className={classes.serviceHeader}>
+                    <Box className={classes.serviceThumbnail}>
+                      <Image
+                        src="/images/Lip-blush-1-1-768x512.webp"
+                        alt="Lip Blush"
+                        width={100}
+                        height={100}
+                        className={classes.thumbnailImage}
+                      />
+                    </Box>
+                    <Box className={classes.serviceTitleWrapper}>
+                      <Text className={classes.serviceTitle}>LIP BLUSH</Text>
+                      <Text className={classes.serviceTagline}>
+                        Maquillaje semi permanente para labios. Dura 18-24
+                        meses.
+                      </Text>
+                    </Box>
+                  </Box>
                   <Box className={classes.buttonsWrapper}>
                     <button
                       className={classes.ctaButton}
@@ -1784,54 +1762,75 @@ export default function TattooCosmeticoPage() {
                     >
                       MÁS INFO AQUÍ
                     </button>
+                    <button
+                      className={classes.ctaButtonSecondary}
+                      onClick={() =>
+                        openWhatsApp('Quiero consultar sobre LIP BLUSH')
+                      }
+                    >
+                      CONSULTA
+                    </button>
+                    <button
+                      className={classes.ctaButtonReservar}
+                      onClick={() => {
+                        setModalService({
+                          serviceName: 'LIP BLUSH',
+                          serviceKey: 'lip-blush',
+                          options: lipBlushOptionsWithIds,
+                        });
+                        setModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
+                    >
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'RESERVAR'}
+                    </button>
                   </Box>
                 </Box>
-              </Box>
 
-              <Box className={classes.optionsSection}>
-                <Text className={classes.optionsTitle}>
-                  Seleccioná la opción deseada para solicitar tu cita:
-                </Text>
-                <ServiceAccordion
-                  options={lipBlushOptionsWithIds}
-                  staffConsultasId={
-                    mappedEmployees.get('staff-consultas')?.id ||
-                    STAFF_CONSULTAS_ID
-                  }
-                  meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
-                  services={services}
-                  employees={employees}
-                />
+                {/* <Box className={classes.optionsSection}>
+                  <Text className={classes.optionsTitle}>
+                    Seleccioná la opción deseada para solicitar tu cita:
+                  </Text>
+                  <ServiceAccordion
+                    options={lipBlushOptionsWithIds}
+                    staffConsultasId={
+                      mappedEmployees.get('staff-consultas')?.id ||
+                      STAFF_CONSULTAS_ID
+                    }
+                    meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
+                    services={services}
+                    employees={employees}
+                  />
+                </Box> */}
               </Box>
-            </Box>
+            </FadeInSection>
 
             {/* LIP CAMOUFLAGE Section */}
-            <Box id="lip-camouflage" className={classes.serviceBlock}>
-              <LayeredText text="CAMUFLAGE" size={80} top="70%" left="45%" />
-              <Box className={classes.serviceLayout}>
-                <Box className={classes.serviceImageWrapper}>
-                  <Image
-                    src="/images/lim-camouflage.webp"
-                    alt="Lip Camouflage"
-                    fill
-                    className={classes.serviceImage}
-                    quality={75}
-                    loading="lazy"
-                  />
-                </Box>
-                <Box className={classes.serviceContent}>
-                  <Text className={classes.serviceTitle}>LIP CAMPUFLAGE</Text>
-                  <Text className={classes.serviceDescription}>
-                    Es un servicio que combina despigmentación, corrección de
-                    color, textura y estructura para MEJORAR EL ASPECTO de un
-                    trabajo mal hecho o deteriorado.
-                  </Text>
-                  <Text className={classes.serviceDescription}>
-                    Servicio dirigido a personas que tengan un trabajo previo
-                    mal realizado o deteriorado. En la consulta podremos
-                    indicarte si está dentro de nuestras posibilidades
-                    mejorarlo.
-                  </Text>
+            <FadeInSection direction="up" delay={0.15}>
+              <Box id="lip-camouflage" className={classes.serviceBlock}>
+                <Box className={classes.serviceLayout}>
+                  <Box className={classes.serviceHeader}>
+                    <Box className={classes.serviceThumbnail}>
+                      <Image
+                        src="/images/lim-camouflage.webp"
+                        alt="Lip Camouflage"
+                        width={100}
+                        height={100}
+                        className={classes.thumbnailImage}
+                      />
+                    </Box>
+                    <Box className={classes.serviceTitleWrapper}>
+                      <Text className={classes.serviceTitle}>
+                        LIP CAMOUFLAGE
+                      </Text>
+                      <Text className={classes.serviceTagline}>
+                        Corrección de trabajos previos mal realizados o
+                        deteriorados.
+                      </Text>
+                    </Box>
+                  </Box>
                   <Box className={classes.buttonsWrapper}>
                     <button
                       className={classes.ctaButton}
@@ -1843,63 +1842,72 @@ export default function TattooCosmeticoPage() {
                     >
                       MÁS INFO AQUÍ
                     </button>
+                    <button
+                      className={classes.ctaButtonSecondary}
+                      onClick={() =>
+                        openWhatsApp('Quiero consultar sobre LIP CAMOUFLAGE')
+                      }
+                    >
+                      CONSULTA
+                    </button>
+                    <button
+                      className={classes.ctaButtonReservar}
+                      onClick={() => {
+                        setModalService({
+                          serviceName: 'LIP CAMOUFLAGE',
+                          serviceKey: 'lip-camouflage',
+                          options: lipCamouflageOptionsWithIds,
+                        });
+                        setModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
+                    >
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'RESERVAR'}
+                    </button>
                   </Box>
                 </Box>
-              </Box>
 
-              <Box className={classes.optionsSection}>
-                <Text className={classes.optionsTitle}>
-                  Seleccioná la opción deseada para solicitar tu cita:
-                </Text>
-                <ServiceAccordion
-                  options={lipCamouflageOptionsWithIds}
-                  staffConsultasId={
-                    mappedEmployees.get('staff-consultas')?.id ||
-                    STAFF_CONSULTAS_ID
-                  }
-                  meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
-                  services={services}
-                  employees={employees}
-                />
+                {/* <Box className={classes.optionsSection}>
+                  <Text className={classes.optionsTitle}>
+                    Seleccioná la opción deseada para solicitar tu cita:
+                  </Text>
+                  <ServiceAccordion
+                    options={lipCamouflageOptionsWithIds}
+                    staffConsultasId={
+                      mappedEmployees.get('staff-consultas')?.id ||
+                      STAFF_CONSULTAS_ID
+                    }
+                    meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
+                    services={services}
+                    employees={employees}
+                  />
+                </Box> */}
               </Box>
-            </Box>
+            </FadeInSection>
 
             {/* LASHES LINE Section */}
-            <Box id="lashes-line" className={classes.serviceBlock}>
-              <LayeredText text="LASHES" size={100} top="55%" left="50%" />
-              <Box className={classes.serviceLayout}>
-                <Box className={classes.serviceImageWrapper}>
-                  <Image
-                    src="/images/lashes_line_b.webp"
-                    alt="Lashes Line"
-                    fill
-                    className={classes.serviceImage}
-                    quality={75}
-                    loading="lazy"
-                  />
-                </Box>
-                <Box className={classes.serviceContent}>
-                  <Text className={classes.serviceTitle}>LASHES LINE</Text>
-                  <Text className={classes.serviceSubtitle}>
-                    ✨ Lashes Line ✨ New Service en #TattoCosmetic
-                    #ByMeryGarcia
-                  </Text>
-                  <Text className={classes.serviceSubtitleQuestion}>
-                    ¿Qué buscamos?
-                  </Text>
-                  <Text className={classes.serviceDescription}>
-                    Un efecto súper #Natural, no simulamos un ojo delineado,
-                    sino un efecto óptico de mayor volumen y densidad. Convive a
-                    la perfección con otros servicios, como el lifting y tinte
-                    de pestañas, y por supuesto unas cejas espectaculares By
-                    Mery Garcia & Staff.
-                  </Text>
-                  <Text className={classes.serviceDescription}>
-                    <span className={classes.serviceHighlight}>
-                      ✨ Preparate para lucir una mirada increíble pero sobre
-                      todo natural ✨
-                    </span>
-                  </Text>
+            <FadeInSection direction="up" delay={0.2}>
+              <Box id="lashes-line" className={classes.serviceBlock}>
+                <Box className={classes.serviceLayout}>
+                  <Box className={classes.serviceHeader}>
+                    <Box className={classes.serviceThumbnail}>
+                      <Image
+                        src="/images/lashes_line_b.webp"
+                        alt="Lashes Line"
+                        width={100}
+                        height={100}
+                        className={classes.thumbnailImage}
+                      />
+                    </Box>
+                    <Box className={classes.serviceTitleWrapper}>
+                      <Text className={classes.serviceTitle}>LASHES LINE</Text>
+                      <Text className={classes.serviceTagline}>
+                        Efecto natural de mayor volumen y densidad en pestañas.
+                      </Text>
+                    </Box>
+                  </Box>
                   <Box className={classes.buttonsWrapper}>
                     <button
                       className={classes.ctaButton}
@@ -1911,53 +1919,74 @@ export default function TattooCosmeticoPage() {
                     >
                       MÁS INFO AQUÍ
                     </button>
+                    <button
+                      className={classes.ctaButtonSecondary}
+                      onClick={() =>
+                        openWhatsApp('Quiero consultar sobre LASHES LINE')
+                      }
+                    >
+                      CONSULTA
+                    </button>
+                    <button
+                      className={classes.ctaButtonReservar}
+                      onClick={() => {
+                        setModalService({
+                          serviceName: 'LASHES LINE',
+                          serviceKey: 'lashes-line',
+                          options: lashesLineOptionsWithIds,
+                        });
+                        setModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
+                    >
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'RESERVAR'}
+                    </button>
                   </Box>
                 </Box>
-              </Box>
 
-              <Box className={classes.optionsSection}>
-                <Text className={classes.optionsTitle}>
-                  Seleccioná la opción deseada para solicitar tu cita:
-                </Text>
-                <ServiceAccordion
-                  options={lashesLineOptionsWithIds}
-                  staffConsultasId={
-                    mappedEmployees.get('staff-consultas')?.id ||
-                    STAFF_CONSULTAS_ID
-                  }
-                  meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
-                  services={services}
-                  employees={employees}
-                />
+                {/* <Box className={classes.optionsSection}>
+                  <Text className={classes.optionsTitle}>
+                    Seleccioná la opción deseada para solicitar tu cita:
+                  </Text>
+                  <ServiceAccordion
+                    options={lashesLineOptionsWithIds}
+                    staffConsultasId={
+                      mappedEmployees.get('staff-consultas')?.id ||
+                      STAFF_CONSULTAS_ID
+                    }
+                    meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
+                    services={services}
+                    employees={employees}
+                  />
+                </Box> */}
               </Box>
-            </Box>
+            </FadeInSection>
 
             {/* PECAS Y LUNARES Section */}
-            <Box id="pecas-lunares" className={classes.serviceBlock}>
-              <LayeredText text="PECAS" size={100} top="70%" left="50%" />
-              <Box className={classes.serviceLayout}>
-                <Box className={classes.serviceImageWrapper}>
-                  <Image
-                    src="/images/web-pecas-1-768x578.webp"
-                    alt="Pecas y Lunares"
-                    fill
-                    className={classes.serviceImage}
-                    quality={75}
-                    loading="lazy"
-                  />
-                </Box>
-                <Box className={classes.serviceContent}>
-                  <Text className={classes.serviceTitle}>PECAS Y LUNARES</Text>
-                  <Text className={classes.serviceDescription}>
-                    En el caso de las pecas es una técnica muy novedosa, consta
-                    en generar un tatuaje muy superficial por medio de pequeños
-                    puntos donde se inserta la tinta y así lograr un efecto
-                    hiper realista con acabados del tipo peca o lunar. La
-                    durabilidad oscila entre los 5 meses o 6 meses máximo, según
-                    el tipo de piel y el cuidado que haya recibido. Finalizado
-                    este tiempo la piel queda LIMPIA, sin registro de tinta
-                    alguna y sin dejar cicatriz.
-                  </Text>
+            <FadeInSection direction="up" delay={0.25}>
+              <Box id="pecas-lunares" className={classes.serviceBlock}>
+                <Box className={classes.serviceLayout}>
+                  <Box className={classes.serviceHeader}>
+                    <Box className={classes.serviceThumbnail}>
+                      <Image
+                        src="/images/web-pecas-1-768x578.webp"
+                        alt="Pecas y Lunares"
+                        width={100}
+                        height={100}
+                        className={classes.thumbnailImage}
+                      />
+                    </Box>
+                    <Box className={classes.serviceTitleWrapper}>
+                      <Text className={classes.serviceTitle}>
+                        PECAS Y LUNARES
+                      </Text>
+                      <Text className={classes.serviceTagline}>
+                        Tatuaje superficial hiperrealista. Dura 5-6 meses.
+                      </Text>
+                    </Box>
+                  </Box>
                   <Box className={classes.buttonsWrapper}>
                     <button
                       className={classes.ctaButton}
@@ -1972,116 +2001,84 @@ export default function TattooCosmeticoPage() {
                     <button
                       className={classes.ctaButtonSecondary}
                       onClick={() =>
-                        openWhatsApp('Quiero consultar sobre Pecas y Lunares')
+                        openWhatsApp('Quiero consultar sobre PECAS Y LUNARES')
                       }
                     >
-                      CONSULTAR DISPONIBILIDAD
+                      CONSULTA
                     </button>
                   </Box>
                 </Box>
               </Box>
-            </Box>
+            </FadeInSection>
 
             {/* CAMUFLAJE Section */}
-            <Box id="camuflaje" className={classes.serviceBlock}>
-              <LayeredText text="CAMUFLAJE" size={80} top="70%" left="45%" />
-              <Box className={classes.serviceLayout}>
-                <Box className={classes.serviceImageWrapper}>
-                  <Image
-                    src="/images/camuflaje.webp"
-                    alt="Camuflaje"
-                    fill
-                    className={classes.serviceImage}
-                    quality={75}
-                    loading="lazy"
-                  />
-                </Box>
-                <Box className={classes.serviceContent}>
-                  <Text className={classes.serviceTitle}>CAMUFLAJE</Text>
-                  <Text className={classes.serviceDescription}>
-                    Es un servicio que combina despigmentación, corrección de
-                    color, textura y estructura para MEJORAR EL ASPECTO de un
-                    trabajo mal hecho o deteriorado tanto de Dermopigmentación
-                    como de Microblading.
-                  </Text>
-                  <Text className={classes.serviceDescription}>
-                    Servicio dirigido a personas que tengan un trabajo previo
-                    mal realizado o deteriorado. Completando el siguiente
-                    formulario podremos indicarte si está dentro de nuestras
-                    posibilidades mejorarlo.
-                  </Text>
+            <FadeInSection direction="up" delay={0.3}>
+              <Box id="camuflaje" className={classes.serviceBlock}>
+                <Box className={classes.serviceLayout}>
+                  <Box className={classes.serviceHeader}>
+                    <Box className={classes.serviceThumbnail}>
+                      <Image
+                        src="/images/camuflaje.webp"
+                        alt="Camuflaje"
+                        width={100}
+                        height={100}
+                        className={classes.thumbnailImage}
+                      />
+                    </Box>
+                    <Box className={classes.serviceTitleWrapper}>
+                      <Text className={classes.serviceTitle}>CAMUFLAJE</Text>
+                      <Text className={classes.serviceTagline}>
+                        Corrección de trabajos previos de dermopigmentación o
+                        microblading.
+                      </Text>
+                    </Box>
+                  </Box>
                   <Box className={classes.buttonsWrapper}>
                     <button
                       className={classes.ctaButton}
                       onClick={() =>
                         openExternalLink(
-                          'https://merygarcia.com.ar/servicios/nanoblading'
+                          'https://merygarcia.com.ar/servicios/camuflaje'
                         )
                       }
                     >
-                      CONSULTAR VALORES
+                      MÁS INFO AQUÍ
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}
                       onClick={() =>
-                        openWhatsApp(
-                          'Tengo un trabajo previo, quisiera consultar por el servicio de Camuflaje'
-                        )
+                        openWhatsApp('Quiero consultar sobre CAMUFLAJE')
                       }
                     >
-                      CONSULTA DISPONIBILIDAD Y RESERVÁ TU CITA
+                      CONSULTA
                     </button>
                   </Box>
                 </Box>
               </Box>
-            </Box>
-
-            {/* CLIENTES DEL INTERIOR / EXTERIOR Section */}
-            <Box id="clientes-exterior" className={classes.specialSection}>
-              <LayeredText text="EXTERIOR" size={80} top="30%" left="55%" />
-              <Box className={classes.serviceLayout}>
-                <Box className={classes.specialImageWrapper}>
-                  <Image
-                    src="/Exterior.svg"
-                    alt="Clientes del Interior / Exterior"
-                    width={320}
-                    height={240}
-                    className={classes.specialImage}
-                    loading="lazy"
-                    style={{ filter: 'none' }}
-                  />
-                </Box>
-                <Box className={classes.serviceContent}>
-                  <Text className={classes.serviceTitle}>
-                    CLIENTES DEL INTERIOR / EXTERIOR
-                  </Text>
-                  <Text className={classes.serviceDescription}>
-                    Si residís en el interior de nuestro país o en el exterior y
-                    querés tener una experiencia MG, contamos con
-                    disponibilidades especiales para que puedas tomar tus
-                    servicios. Consultá las condiciones de Special Pass.
-                  </Text>
-                  <Box className={classes.buttonsWrapper}>
-                    <button
-                      className={classes.ctaButton}
-                      onClick={() =>
-                        openWhatsApp(
-                          'Quiero consultar por una cita especial con MG'
-                        )
-                      }
-                    >
-                      CONSULTÁ COMO ACCEDER A TU CITA ESPECIAL, VALORES Y
-                      MODALIDAD
-                    </button>
-                  </Box>
-                </Box>
-              </Box>
-            </Box>
+            </FadeInSection>
           </Container>
         </Box>
       </Box>
 
       <Footer />
+
+      {/* Modal de Reservas con Stepper */}
+      {modalService && (
+        <ReservaModal
+          opened={modalOpened}
+          onClose={() => {
+            setModalOpened(false);
+            setModalService(null);
+          }}
+          serviceName={modalService.serviceName}
+          serviceKey={modalService.serviceKey}
+          serviceOptions={modalService.options}
+          services={services as ServiceEntity[]}
+          employees={employees as Employee[]}
+          staffConsultasId={staffConsultasId}
+          meryGarciaId={meryGarciaId}
+        />
+      )}
     </>
   );
 }

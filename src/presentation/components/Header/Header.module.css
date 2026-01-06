@@ -4,7 +4,18 @@
   left: 0;
   right: 0;
   z-index: 100;
-  background: rgba(255, 255, 255, 0.95);
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  backdrop-filter: none;
+  border-bottom: 1px solid rgba(235, 162, 168, 0.4);
+  transition: all 0.4s ease;
+}
+
+.scrolled {
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(235, 162, 168, 0.2);
@@ -15,7 +26,7 @@
 }
 
 .flex {
-  height: 72px;
+  height: 90px;
 }
 
 /* Brand / Logo */
@@ -26,23 +37,55 @@
 }
 
 .logo {
-  width: 220px;
+  width: 300px;
   height: auto;
+  object-fit: contain;
+  transition: all 0.3s ease;
 }
 
 @media (max-width: 1024px) {
   .logo {
-    width: 200px;
+    width: 260px;
+    filter: brightness(0) invert(1);
+  }
+
+  .scrolled .logo {
+    width: 220px;
+    filter: none;
+  }
+
+  .menuText {
+    color: #ffffff;
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-family: var(--font-din-medium), sans-serif;
+    text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  .scrolled .menuText {
+    color: var(--mg-gray);
+    text-shadow: none;
+  }
+
+  .menuButton:hover {
+    background-color: rgba(255, 255, 255, 0.1);
   }
 }
 
 @media (max-width: 767px) {
   .logo {
-    width: 160px;
+    width: 240px;
+  }
+
+  .scrolled .logo {
+    width: 200px;
+  }
+
+  .container {
+    padding: 0 24px;
   }
 }
 
-/* Desktop Navigation */
 .nav {
   display: none;
   gap: 40px;
@@ -62,77 +105,50 @@
   color: var(--mg-pink);
 }
 
-/* CTA Button */
 .ctaButton {
   display: none;
   background: var(--mg-dark);
   color: var(--mg-white);
   border: none;
-  padding: 12px 28px;
+  padding: 14px 32px;
   font-size: 10px;
   letter-spacing: 2px;
   text-decoration: none;
   font-family: var(--font-din-medium), sans-serif;
   font-weight: 500;
-  transition: background 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .ctaButton:hover {
   background: var(--mg-pink);
+  transform: translateY(-2px);
 }
 
-/* Mobile Menu Button */
 .menuButton {
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.menuButton:hover {
-  background-color: rgba(249, 187, 196, 0.15);
-  transform: translateX(-4px);
-}
-
-.menuText {
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: var(--mg-gray);
-  font-family: var(--font-din-medium), sans-serif;
-}
-
-/* Desktop styles */
-@media (min-width: 768px) {
-  .container {
-    padding: 0 48px;
-  }
-
-  .flex {
-    height: 80px;
-  }
-
+@media (min-width: 1024px) {
   .nav {
     display: flex;
   }
-
   .ctaButton {
     display: block;
   }
-
   .menuButton {
     display: none;
   }
-}
 
-@media (max-width: 767px) {
-  .container {
-    padding: 0 24px;
+  .header {
+    background: transparent;
   }
-
-  .flex {
-    height: 64px;
+  .scrolled {
+    background: rgba(255, 255, 255, 0.95);
   }
 }

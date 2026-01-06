@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { MenuModal } from '@/presentation/components';
 import classes from './Header.module.css';
+import { useEffect, useState } from 'react';
 
 const NAV_ITEMS = [
   { label: 'COSMETIC TATTOO', href: '/tattoo-cosmetico' },
@@ -16,19 +17,32 @@ const NAV_ITEMS = [
 
 export function Header() {
   const [opened, { open, close }] = useDisclosure(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <>
-      <Box component="header" className={classes.header}>
+      <Box
+        component="header"
+        className={`${classes.header} ${scrolled ? classes.scrolled : ''}`}
+      >
         <Container size="xl" className={classes.container}>
           <Flex justify="space-between" align="center" className={classes.flex}>
             {/* Logo / Brand Name */}
             <Link href="/" className={classes.brand}>
               <Image
-                src="/logo_cosetic_tattoo.svg"
+                src="/logo-cosmetic-artist.svg"
                 alt="Mery García Cosmetic Tattoo"
-                width={360}
-                height={75}
+                width={0}
+                height={0}
+                sizes="100vw"
                 className={classes.logo}
                 priority
               />
@@ -42,10 +56,7 @@ export function Header() {
                   whileHover={{ y: -2 }}
                   transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                 >
-                  <Link
-                    href={item.href}
-                    className={classes.navLink}
-                  >
+                  <Link href={item.href} className={classes.navLink}>
                     {item.label}
                   </Link>
                 </motion.div>
@@ -67,17 +78,12 @@ export function Header() {
               <Burger
                 opened={opened}
                 size="sm"
-                color="var(--mg-pink)"
+                color={scrolled ? 'var(--mg-pink)' : '#ffffff'}
                 styles={{
-                  root: {
-                    outline: 'none',
-                    border: 'none'
-                  }
+                  root: { outline: 'none', border: 'none' },
                 }}
               />
-              <Text className={classes.menuText}>
-                MENÚ
-              </Text>
+              <Text className={classes.menuText}>MENÚ</Text>
             </Flex>
           </Flex>
         </Container>

@@ -10,7 +10,7 @@
   font-family: var(--font-avant-garde), sans-serif;
   font-size: 1.5rem;
   font-weight: 500;
-  color: #2c2c2c;
+  color: #2B2B2B;
   letter-spacing: 0.05em;
 }
 
@@ -30,7 +30,7 @@
 }
 
 .table :global(thead tr th) {
-  background-color: #f9bbc4;
+  background-color: #F7CBCB;
   color: white;
   font-weight: 500;
   letter-spacing: 0.03em;
@@ -51,7 +51,7 @@
   font-family: var(--font-avant-garde), sans-serif;
   font-weight: 500;
   font-size: 1.25rem;
-  color: #2c2c2c;
+  color: #2B2B2B;
 }
 
 .modalBody {
@@ -68,7 +68,7 @@
 
 .serviceCard:hover {
   background: #f1f3f5;
-  border-color: #f9bbc4;
+  border-color: #F7CBCB;
   box-shadow: 0 2px 8px rgba(249, 187, 196, 0.2);
 }
 
@@ -83,11 +83,11 @@
 
 .categoryTitle {
   font-family: var(--font-avant-garde), sans-serif;
-  color: #f9bbc4;
+  color: #F7CBCB;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #f9bbc4;
+  border-bottom: 2px solid #F7CBCB;
   margin-bottom: 1rem;
 }
 

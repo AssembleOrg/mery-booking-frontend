@@ -32,7 +32,7 @@ export function MenuModal({ opened, onClose }: MenuModalProps) {
         body: { padding: 0 },
         content: { background: 'var(--mg-pink-light)' },
         inner: { background: 'transparent' },
-        overlay: { background: 'rgba(43, 43, 43, 0.5)' }
+        overlay: { background: 'rgba(43, 43, 43, 0.5)' },
       }}
     >
       <Box className={classes.menuContainer}>
@@ -49,7 +49,7 @@ export function MenuModal({ opened, onClose }: MenuModalProps) {
           className={classes.logoContainer}
         >
           <Image
-            src="/logo_cosetic_tattoo.svg"
+            src="/logo-cosmetic-artist.svg"
             alt="Mery García Cosmetic Tattoo"
             width={280}
             height={58}
@@ -99,9 +99,6 @@ export function MenuModal({ opened, onClose }: MenuModalProps) {
           <IconBrandWhatsapp size={24} stroke={1.5} />
           <span>WHATSAPP</span>
         </motion.a>
-
-        {/* Decorative Number */}
-        <span className={classes.decorativeNumber}>MG</span>
       </Box>
     </Drawer>
   );

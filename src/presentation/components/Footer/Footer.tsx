@@ -1,11 +1,18 @@
 'use client';
 
 import { Box, Container, Flex, Stack, Text } from '@mantine/core';
-import { IconBrandInstagram, IconBrandWhatsapp, IconMail } from '@tabler/icons-react';
+import {
+  IconBrandInstagram,
+  IconBrandWhatsapp,
+  IconMail,
+} from '@tabler/icons-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ANIMATION_TIMING, ANIMATION_EASING } from '@/presentation/lib/animations';
+import {
+  ANIMATION_TIMING,
+  ANIMATION_EASING,
+} from '@/presentation/lib/animations';
 import classes from './Footer.module.css';
 
 const SERVICES = [
@@ -18,13 +25,24 @@ const SERVICES = [
 const INFO_LINKS = [
   { label: 'Precios', href: 'https://merygarcia.com.ar/asesoramiento-express' },
   { label: 'Cuidados', href: '/tattoo-cosmetico' },
-  { label: 'Políticas', href: 'https://merygarcia.com.ar/politica-de-cancelaciones' },
+  {
+    label: 'Políticas',
+    href: 'https://merygarcia.com.ar/politica-de-cancelaciones',
+  },
   { label: 'Gift Card', href: 'https://merygarcia.com.ar/gift-card' },
 ];
 
 const SOCIAL_LINKS = [
-  { icon: IconBrandWhatsapp, href: 'https://wa.link/oxzkt1', label: 'WhatsApp' },
-  { icon: IconBrandInstagram, href: 'https://www.instagram.com/merygarciaoficial/', label: 'Instagram' },
+  {
+    icon: IconBrandWhatsapp,
+    href: 'https://wa.link/oxzkt1',
+    label: 'WhatsApp',
+  },
+  {
+    icon: IconBrandInstagram,
+    href: 'https://www.instagram.com/merygarciaoficial/',
+    label: 'Instagram',
+  },
   { icon: IconMail, href: 'mailto:info@merygarcia.com.ar', label: 'Email' },
 ];
 
@@ -72,7 +90,7 @@ export function Footer() {
             <Flex className={classes.footerContent}>
               <Box className={classes.brandSection}>
                 <Image
-                  src="/logo_cosetic_tattoo.svg"
+                  src="/logo-cosmetic-artist.svg"
                   alt="Mery García Cosmetic Tattoo"
                   width={450}
                   height={94}
@@ -80,7 +98,8 @@ export function Footer() {
                 />
                 <Text className={classes.address}>
                   Av. Melián 3646 PB 1<br />
-                  CABA, Argentina<br />
+                  CABA, Argentina
+                  <br />
                   Martes a Sábado, 10 a 18hs
                 </Text>
               </Box>
@@ -90,7 +109,11 @@ export function Footer() {
                   <Text className={classes.columnTitle}>SERVICIOS</Text>
                   <Stack gap={0}>
                     {SERVICES.map((item) => (
-                      <Link key={item.label} href={item.href} className={classes.link}>
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        className={classes.link}
+                      >
                         {item.label}
                       </Link>
                     ))}
@@ -101,7 +124,11 @@ export function Footer() {
                   <Text className={classes.columnTitle}>INFO</Text>
                   <Stack gap={0}>
                     {INFO_LINKS.map((item) => (
-                      <Link key={item.label} href={item.href} className={classes.link}>
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        className={classes.link}
+                      >
                         {item.label}
                       </Link>
                     ))}
@@ -168,7 +195,7 @@ export function Footer() {
               <motion.div variants={itemVariants}>
                 <Box className={classes.brandSection}>
                   <Image
-                    src="/logo_cosetic_tattoo.svg"
+                    src="/logo-cosmetic-artist.svg"
                     alt="Mery García Cosmetic Tattoo"
                     width={450}
                     height={94}
@@ -176,7 +203,8 @@ export function Footer() {
                   />
                   <Text className={classes.address}>
                     Av. Melián 3646 PB 1<br />
-                    CABA, Argentina<br />
+                    CABA, Argentina
+                    <br />
                     Martes a Sábado, 10 a 18hs
                   </Text>
                 </Box>
@@ -190,7 +218,11 @@ export function Footer() {
                     <Text className={classes.columnTitle}>SERVICIOS</Text>
                     <Stack gap={0}>
                       {SERVICES.map((item) => (
-                        <Link key={item.label} href={item.href} className={classes.link}>
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          className={classes.link}
+                        >
                           {item.label}
                         </Link>
                       ))}
@@ -204,7 +236,11 @@ export function Footer() {
                     <Text className={classes.columnTitle}>INFO</Text>
                     <Stack gap={0}>
                       {INFO_LINKS.map((item) => (
-                        <Link key={item.label} href={item.href} className={classes.link}>
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          className={classes.link}
+                        >
                           {item.label}
                         </Link>
                       ))}

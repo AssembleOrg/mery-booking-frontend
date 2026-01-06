@@ -1,6 +1,16 @@
 'use client';
 
-import { Box, Button, SimpleGrid, Stack, Text, UnstyledButton, Loader, Center, Alert } from '@mantine/core';
+import {
+  Box,
+  Button,
+  SimpleGrid,
+  Stack,
+  Text,
+  UnstyledButton,
+  Loader,
+  Center,
+  Alert,
+} from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 import { useState, useMemo, useEffect } from 'react';
 import dayjs from 'dayjs';
@@ -32,15 +42,18 @@ export function DateTimeSelector({
 
   // Calcular rango de fechas (hoy hasta 3 meses)
   const minDate = useMemo(() => dayjs().format('YYYY-MM-DD'), []);
-  const maxDate = useMemo(() => dayjs().add(3, 'months').format('YYYY-MM-DD'), []);
+  const maxDate = useMemo(
+    () => dayjs().add(3, 'months').format('YYYY-MM-DD'),
+    []
+  );
 
   // Obtener disponibilidad de la API
-  const { data: availability, isLoading, error, refetch } = useAvailability(
-    employeeId ?? null,
-    serviceId ?? null,
-    minDate,
-    maxDate
-  );
+  const {
+    data: availability,
+    isLoading,
+    error,
+    refetch,
+  } = useAvailability(employeeId ?? null, serviceId ?? null, minDate, maxDate);
 
   // Resetear fecha y hora seleccionadas cuando cambie el servicio o empleado
   // Esto asegura que cuando el usuario cambie el servicio, se limpien las selecciones anteriores
@@ -52,14 +65,14 @@ export function DateTimeSelector({
   // Obtener slots disponibles para la fecha seleccionada
   const availableSlotsForDate = useMemo(() => {
     if (!selectedDate || !availability) return [];
-    
+
     const dayAvailability = availability.availability.find(
       (day) => day.date === selectedDate
     );
-    
+
     if (!dayAvailability || !dayAvailability.hasActiveTimeSlots) return [];
-    
-    return dayAvailability.slots.filter(slot => slot.available);
+
+    return dayAvailability.slots.filter((slot) => slot.available);
   }, [selectedDate, availability]);
 
   // Función para deshabilitar fechas sin disponibilidad o lunes/domingos
@@ -128,16 +141,12 @@ export function DateTimeSelector({
     return (
       <Box className={classes.container}>
         <Stack gap="xl">
-          <Text
-            ta="center"
-            size="md"
-            fw={300}
-            className={classes.title}
-          >
+          <Text ta="center" size="md" fw={300} className={classes.title}>
             Hacé click en la fecha y la hora que desees
           </Text>
-          <Alert color="yellow" title="Información">
-            Por favor, selecciona un servicio y profesional para ver la disponibilidad.
+          <Alert title="Información">
+            Por favor, selecciona un servicio y profesional para ver la
+            disponibilidad.
           </Alert>
         </Stack>
       </Box>
@@ -147,12 +156,7 @@ export function DateTimeSelector({
   return (
     <Box className={classes.container}>
       <Stack gap="xl">
-        <Text
-          ta="center"
-          size="md"
-          fw={300}
-          className={classes.title}
-        >
+        <Text ta="center" size="md" fw={300} className={classes.title}>
           Hacé click en la fecha y la hora que desees
         </Text>
 
@@ -180,7 +184,7 @@ export function DateTimeSelector({
               Selecciona un horario:
             </Text>
             {availableSlotsForDate.length === 0 ? (
-              <Alert color="yellow" title="Sin disponibilidad">
+              <Alert title="Sin disponibilidad">
                 No hay horarios disponibles para esta fecha.
               </Alert>
             ) : (
@@ -194,7 +198,9 @@ export function DateTimeSelector({
                     key={slot.startTime}
                     onClick={() => handleTimeSelect(slot.startTime)}
                     className={`${classes.timeSlot} ${
-                      selectedTime === slot.startTime ? classes.timeSlotSelected : ''
+                      selectedTime === slot.startTime
+                        ? classes.timeSlotSelected
+                        : ''
                     }`}
                   >
                     {slot.startTime} - {slot.endTime}
@@ -234,4 +240,3 @@ export function DateTimeSelector({
     </Box>
   );
 }
-

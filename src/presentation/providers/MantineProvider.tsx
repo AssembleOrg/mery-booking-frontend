@@ -11,16 +11,16 @@ const theme = createTheme({
   primaryColor: 'pink',
   colors: {
     pink: [
-      '#fef5f7',
-      '#fce9ed',
-      '#f9d0d8',
-      '#f9bbc4',
-      '#f7a3af',
-      '#f58b9a',
-      '#f37385',
-      '#ed516a',
-      '#e73f58',
-      '#e02d45',
+      '#FBE8EA',  // 0-1: muy claro (fondos)
+      '#FBE8EA',
+      '#F7CBCB',  // 2-3: claro (UI primario)
+      '#F7CBCB',
+      '#EBA2A8',  // 4-9: medio-oscuro (hovers, activos)
+      '#EBA2A8',
+      '#EBA2A8',
+      '#EBA2A8',
+      '#EBA2A8',
+      '#EBA2A8',
     ],
   },
   defaultRadius: 'md',

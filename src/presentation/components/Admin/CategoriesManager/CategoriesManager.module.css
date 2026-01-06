@@ -10,7 +10,7 @@
   font-family: var(--font-avant-garde), sans-serif;
   font-size: 1.5rem;
   font-weight: 500;
-  color: #2c2c2c;
+  color: #2B2B2B;
   letter-spacing: 0.05em;
 }
 
@@ -31,7 +31,7 @@
 }
 
 .table :global(thead tr th) {
-  background-color: #f9bbc4;
+  background-color: #F7CBCB;
   color: white;
   font-weight: 500;
   letter-spacing: 0.03em;
@@ -52,7 +52,7 @@
   font-family: var(--font-avant-garde), sans-serif;
   font-weight: 500;
   font-size: 1.25rem;
-  color: #2c2c2c;
+  color: #2B2B2B;
 }
 
 .modalActions {
