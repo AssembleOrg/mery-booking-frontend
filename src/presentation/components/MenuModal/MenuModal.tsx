@@ -49,7 +49,7 @@ export function MenuModal({ opened, onClose }: MenuModalProps) {
           className={classes.logoContainer}
         >
           <Image
-            src="/logo-cosmetic-artist.svg"
+            src="/logo-original.webp"
             alt="Mery García Cosmetic Tattoo"
             width={280}
             height={58}

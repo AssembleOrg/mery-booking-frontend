@@ -69,19 +69,19 @@ const PHILOSOPHY_IMAGES = [
   {
     id: 1,
     src: '/images/2.webp',
-    text: 'EMPOWERED',
+    text: 'LA NATURALIDAD',
     alt: 'Detalle y textura natural',
   },
   {
     id: 2,
     src: '/images/3.webp',
-    text: 'BY',
+    text: 'SIEMPRE',
     alt: 'Mirada y expresión',
   },
   {
     id: 3,
     src: '/images/4.webp',
-    text: 'BEAUTY',
+    text: 'ES LA META',
     alt: 'Resultados cicatrizados',
   },
 ];
@@ -137,7 +137,7 @@ export function WelcomeSection() {
                 RESERVAR CITA
               </Link>
               <Link href="#servicios" className={classes.heroButtonSecondary}>
-                VER TRABAJOS
+                NUESTROS TRABAJOS
               </Link>
             </Flex>
           </FadeInSection>

@@ -90,7 +90,7 @@ export function Footer() {
             <Flex className={classes.footerContent}>
               <Box className={classes.brandSection}>
                 <Image
-                  src="/logo-cosmetic-artist.svg"
+                  src="/logo-original.webp"
                   alt="Mery García Cosmetic Tattoo"
                   width={450}
                   height={94}
@@ -195,7 +195,7 @@ export function Footer() {
               <motion.div variants={itemVariants}>
                 <Box className={classes.brandSection}>
                   <Image
-                    src="/logo-cosmetic-artist.svg"
+                    src="/logo-original.webp"
                     alt="Mery García Cosmetic Tattoo"
                     width={450}
                     height={94}

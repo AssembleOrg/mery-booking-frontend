@@ -51,7 +51,7 @@
 
   .scrolled .logo {
     width: 220px;
-    filter: none;
+    filter: contrast(1.2) brightness(0.95);
   }
 
   .menuText {

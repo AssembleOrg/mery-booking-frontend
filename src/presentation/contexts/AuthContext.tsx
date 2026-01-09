@@ -1,6 +1,12 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 import { AuthService, apiClient } from '@/infrastructure/http';
 import type { LoginCredentials, AuthResponse } from '@/infrastructure/http';
 
@@ -46,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (credentials: LoginCredentials) => {
     try {
       const response: AuthResponse = await AuthService.login(credentials);
-      
+
       // Guardar token y usuario
       apiClient.setToken(response.accessToken);
       localStorage.setItem('user', JSON.stringify(response.user));
@@ -61,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('user');
     setUser(null);
-    
+
     // Redirigir al login
     if (typeof window !== 'undefined') {
       window.location.href = '/login';
@@ -90,4 +96,3 @@ export function useAuth() {
   }
   return context;
 }
-

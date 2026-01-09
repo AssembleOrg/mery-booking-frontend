@@ -72,7 +72,7 @@ export default function LoginPage() {
         <Box className={classes.logoContainer}>
           <Link href="/" style={{ textDecoration: 'none' }}>
             <Image
-              src="/logo-cosmetic-artist.svg"
+              src="/logo-original.webp"
               alt="Mery García"
               width={200}
               height={70}

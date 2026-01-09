@@ -38,7 +38,7 @@ export function Header() {
             {/* Logo / Brand Name */}
             <Link href="/" className={classes.brand}>
               <Image
-                src="/logo-cosmetic-artist.svg"
+                src="/logo-original.webp"
                 alt="Mery García Cosmetic Tattoo"
                 width={0}
                 height={0}
