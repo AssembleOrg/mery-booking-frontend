@@ -9,6 +9,7 @@ export interface ServiceEntity {
   showOnSite: boolean;
   duration: number;
   price: number;
+  depositAmount?: number; // Monto de depósito (backend lo agregará en el futuro)
   minQuantity: number;
   maxQuantity: number;
   urlImage: string | null;
@@ -62,6 +63,7 @@ export interface PublicServiceResponse {
   showOnSite: boolean;
   duration: number;
   price: number;
+  depositAmount?: number; // Monto de depósito (backend lo agregará en el futuro)
   minQuantity: number;
   maxQuantity: number;
   urlImage: string | null;

@@ -57,12 +57,14 @@ export function Step4Confirmation({
   // Transformar ServiceEntity a Service domain entity
   const serviceForModal = useMemo(() => {
     if (!service) return null;
+    const price = Number(service.price);
     return {
       id: service.id,
       name: service.name,
       slug: service.name.toLowerCase().replace(/\s+/g, '-'),
-      price: Number(service.price),
-      priceBook: Number(service.price),
+      price: price,
+      priceBook: price,
+      depositAmount: service.depositAmount,
       duration: service.duration,
       image: service.urlImage || '/desk.svg',
     };

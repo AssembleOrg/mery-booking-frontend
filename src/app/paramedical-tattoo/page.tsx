@@ -161,6 +161,7 @@ function ConsultaContent({
               slug: currentService.name.toLowerCase().replace(/\s+/g, '-'),
               price: Number(currentService.price),
               priceBook: Number(currentService.price),
+              depositAmount: currentService.depositAmount,
               duration: currentService.duration,
               image: currentService.urlImage || '/desk.svg',
             }}
@@ -326,6 +327,7 @@ function SesionContent({
               slug: currentService.name.toLowerCase().replace(/\s+/g, '-'),
               price: Number(currentService.price),
               priceBook: Number(currentService.price),
+              depositAmount: currentService.depositAmount,
               duration: currentService.duration,
               image: currentService.urlImage || '/desk.svg',
             }}

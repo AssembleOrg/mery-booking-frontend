@@ -99,8 +99,16 @@ export function BookingConfirmationModal({
     reset(); // Limpiar formulario después de confirmar
   };
 
-  const deposit = Math.round(service.priceBook * 0.8); // 80% del precio book
+  // Usar depositAmount si existe, sino calcular 80% como fallback
+  const depositAmount =
+    service.depositAmount !== undefined
+      ? service.depositAmount
+      : Math.round(service.priceBook * 0.8);
+
+  const isConsulta = depositAmount === 0;
+  const deposit = depositAmount;
   const remaining = service.priceBook - deposit;
+  const showDepositBreakdown = !isConsulta;
 
   const formatDate = (date: Date) => {
     // Usar los componentes de la fecha directamente para evitar problemas de timezone
@@ -340,48 +348,60 @@ export function BookingConfirmationModal({
 
             {/* Pricing Summary */}
             <Box className={classes.pricingSummary}>
-              <Flex justify="space-between" mb="xs">
-                <Text size="sm" fw={400}>
-                  Precio base:
-                </Text>
-                <Text size="sm" fw={600}>
-                  AR${service.price.toLocaleString('es-AR')}
-                </Text>
-              </Flex>
-
-              <Flex
-                justify="space-between"
-                mb="xs"
-                className={classes.totalRow}
-              >
-                <Text size="md" fw={500}>
-                  Coste total:
-                </Text>
-                <Text size="md" fw={600} c="pink.6">
-                  AR${service.priceBook.toLocaleString('es-AR')}
-                </Text>
-              </Flex>
-
-              <Flex justify="space-between" mb="xs">
-                <Text size="sm" fw={400}>
-                  Depósito{' '}
-                  <Text component="span" fs="italic" c="dimmed">
-                    Pagar ahora
+              {/* Para CONSULTAS: mostrar solo total a pagar */}
+              {!showDepositBreakdown && (
+                <Flex
+                  justify="space-between"
+                  mb="xs"
+                  className={classes.totalRow}
+                >
+                  <Text size="md" fw={500}>
+                    Total a pagar:
                   </Text>
-                </Text>
-                <Text size="sm" fw={600} c="pink.5">
-                  AR${deposit.toLocaleString('es-AR')}
-                </Text>
-              </Flex>
+                  <Text size="md" fw={600} c="pink.6">
+                    AR${service.priceBook.toLocaleString('es-AR')}
+                  </Text>
+                </Flex>
+              )}
 
-              <Flex justify="space-between">
-                <Text size="sm" fw={400}>
-                  A pagar
-                </Text>
-                <Text size="sm" fw={600}>
-                  AR${remaining.toLocaleString('es-AR')}
-                </Text>
-              </Flex>
+              {/* Para SERVICIOS CON DEPÓSITO: mostrar desglose completo */}
+              {showDepositBreakdown && (
+                <>
+                  <Flex justify="space-between" mb="xs">
+                    <Text size="sm" fw={400}>
+                      Precio total del servicio:
+                    </Text>
+                    <Text size="sm" fw={600}>
+                      AR${service.priceBook.toLocaleString('es-AR')}
+                    </Text>
+                  </Flex>
+
+                  <Flex
+                    justify="space-between"
+                    mb="xs"
+                    className={classes.totalRow}
+                  >
+                    <Text size="sm" fw={400}>
+                      Depósito{' '}
+                      <Text component="span" fs="italic" c="dimmed">
+                        Pagar ahora
+                      </Text>
+                    </Text>
+                    <Text size="sm" fw={600} c="pink.5">
+                      AR${deposit.toLocaleString('es-AR')}
+                    </Text>
+                  </Flex>
+
+                  <Flex justify="space-between">
+                    <Text size="sm" fw={400}>
+                      A pagar en la sesión
+                    </Text>
+                    <Text size="sm" fw={600}>
+                      AR${remaining.toLocaleString('es-AR')}
+                    </Text>
+                  </Flex>
+                </>
+              )}
             </Box>
 
             {/* Action Buttons */}
