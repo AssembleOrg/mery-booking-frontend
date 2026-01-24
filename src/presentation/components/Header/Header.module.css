@@ -37,7 +37,7 @@
 }
 
 .logo {
-  width: 300px;
+  width: 250px;
   height: auto;
   object-fit: contain;
   transition: all 0.3s ease;
@@ -45,12 +45,12 @@
 
 @media (max-width: 1024px) {
   .logo {
-    width: 260px;
+    width: 220px;
     filter: brightness(0) invert(1);
   }
 
   .scrolled .logo {
-    width: 220px;
+    width: 190px;
     filter: contrast(1.2) brightness(0.95);
   }
 
@@ -74,11 +74,11 @@
 
 @media (max-width: 767px) {
   .logo {
-    width: 240px;
+    width: 200px;
   }
 
   .scrolled .logo {
-    width: 200px;
+    width: 170px;
   }
 
   .container {

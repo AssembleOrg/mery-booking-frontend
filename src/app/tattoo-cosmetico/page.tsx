@@ -9,6 +9,7 @@ import {
   ReservaModal,
   FadeInSection,
 } from '@/presentation/components';
+import ConsultaModal from '@/presentation/components/ConsultaModal';
 import Image from 'next/image';
 import { useState, useMemo, useEffect } from 'react';
 import { useDisclosure } from '@mantine/hooks';
@@ -1079,6 +1080,30 @@ const lashesLineOptions: ServiceOption[] = [
   },
 ];
 
+const pecasLunaresOptions: ServiceOption[] = [
+  {
+    id: 'pecas-1',
+    label: 'Consulta Obligatoria',
+    contentType: 'sesion-calendario',
+    description:
+      'Consulta previa para evaluar tu piel y diseñar el patrón de pecas ideal para ti.',
+    priceLabel: 'Precio de lista del servicio:',
+    priceValue: 'AR$ 50.000.-',
+  },
+];
+
+const camouflageOptions: ServiceOption[] = [
+  {
+    id: 'camuflaje-1',
+    label: 'Consulta Obligatoria',
+    contentType: 'sesion-calendario',
+    description:
+      'Consulta previa para evaluar el trabajo a corregir y planificar el proceso de camuflaje.',
+    priceLabel: 'Precio de lista del servicio:',
+    priceValue: 'AR$ 50.000.-',
+  },
+];
+
 // Mapeo de nombres de servicios estáticos a nombres en el backend
 // Basado en los servicios reales del backend
 const SERVICE_NAME_MAPPING: Record<string, string[]> = {
@@ -1415,15 +1440,6 @@ export default function TattooCosmeticoPage() {
     }
   };
 
-  const openWhatsApp = (message: string) => {
-    const phoneNumber = '5491161592591';
-    const encodedMessage = encodeURIComponent(message);
-    window.open(
-      `https://wa.me/${phoneNumber}?text=${encodedMessage}`,
-      '_blank'
-    );
-  };
-
   const openExternalLink = (url: string) => {
     window.open(url, '_blank');
   };
@@ -1593,6 +1609,14 @@ export default function TattooCosmeticoPage() {
     options: ServiceOption[];
   } | null>(null);
 
+  // Estado para modal de consultas
+  const [consultaModalOpened, setConsultaModalOpened] = useState(false);
+  const [consultaService, setConsultaService] = useState<{
+    serviceName: string;
+    serviceKey: string;
+    consultaOptions: ServiceOption[];
+  } | null>(null);
+
   return (
     <>
       <Header />
@@ -1639,7 +1663,7 @@ export default function TattooCosmeticoPage() {
         </Box>
 
         {/* Content Section */}
-        <Box className={classes.contentSection}>
+        <Box id="consultas" className={classes.contentSection}>
           <Container size="xl">
             {/* NANOBLADING Section */}
             <FadeInSection direction="up" delay={0}>
@@ -1658,8 +1682,11 @@ export default function TattooCosmeticoPage() {
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.serviceTitle}>NANOBLADING</Text>
                       <Text className={classes.serviceTagline}>
-                        Técnica avanzada de cosmetic tattoo de cejas. Resultados
-                        hiperrealistas.
+                        Última técnica de Cosmetic Tattoo para lograr cejas
+                        híper realistas
+                      </Text>
+                      <Text className={classes.serviceConsultationNotice}>
+                        Reserva consulta si no tenes tatuaje previo.
                       </Text>
                     </Box>
                   </Box>
@@ -1676,20 +1703,38 @@ export default function TattooCosmeticoPage() {
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}
-                      onClick={() =>
-                        openWhatsApp('Quiero consultar sobre NANOBLADING')
-                      }
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'NANOBLADING',
+                          serviceKey: 'nanoblading',
+                          consultaOptions: nanobladingOptionsWithIds.filter(
+                            (opt) =>
+                              opt.contentType === 'consulta-sin-trabajo' ||
+                              opt.contentType === 'consulta-con-trabajo'
+                          ),
+                        });
+                        setConsultaModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
                     >
-                      CONSULTA
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'Consulta Obligatoria'}
                     </button>
                     <button
                       className={classes.ctaButtonReservar}
                       onClick={() => {
+                        const sessionOptions = nanobladingOptionsWithIds.filter(
+                          (opt) =>
+                            opt.contentType !== 'consulta-sin-trabajo' &&
+                            opt.contentType !== 'consulta-con-trabajo'
+                        );
+
                         console.log('📦 Opening ReservaModal with:', {
                           serviceName: 'NANOBLADING',
                           serviceKey: 'nanoblading',
-                          optionsCount: nanobladingOptionsWithIds.length,
-                          firstOptionSample: nanobladingOptionsWithIds[2], // La opción "1ª Sesión"
+                          optionsCount: sessionOptions.length,
+                          firstOptionSample: sessionOptions[0], // La opción "1ª Sesión"
                           staffConsultasId,
                           meryGarciaId,
                           employeesCount: employees.length,
@@ -1698,7 +1743,7 @@ export default function TattooCosmeticoPage() {
                         setModalService({
                           serviceName: 'NANOBLADING',
                           serviceKey: 'nanoblading',
-                          options: nanobladingOptionsWithIds,
+                          options: sessionOptions,
                         });
                         setModalOpened(true);
                       }}
@@ -1764,11 +1809,21 @@ export default function TattooCosmeticoPage() {
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}
-                      onClick={() =>
-                        openWhatsApp('Quiero consultar sobre LIP BLUSH')
-                      }
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'LIP BLUSH',
+                          serviceKey: 'lip-blush',
+                          consultaOptions: lipBlushOptionsWithIds.filter(
+                            (opt) => opt.contentType === 'sesion-calendario'
+                          ),
+                        });
+                        setConsultaModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
                     >
-                      CONSULTA
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'CONSULTA'}
                     </button>
                     <button
                       className={classes.ctaButtonReservar}
@@ -1836,7 +1891,7 @@ export default function TattooCosmeticoPage() {
                       className={classes.ctaButton}
                       onClick={() =>
                         openExternalLink(
-                          'https://merygarcia.com.ar/servicios/lip-blush'
+                          'https://merygarcia.com.ar/servicios/nanoblading'
                         )
                       }
                     >
@@ -1844,11 +1899,21 @@ export default function TattooCosmeticoPage() {
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}
-                      onClick={() =>
-                        openWhatsApp('Quiero consultar sobre LIP CAMOUFLAGE')
-                      }
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'LIP CAMOUFLAGE',
+                          serviceKey: 'lip-camouflage',
+                          consultaOptions: lipCamouflageOptionsWithIds.filter(
+                            (opt) => opt.contentType === 'sesion-calendario'
+                          ),
+                        });
+                        setConsultaModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
                     >
-                      CONSULTA
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'CONSULTA'}
                     </button>
                     <button
                       className={classes.ctaButtonReservar}
@@ -1921,11 +1986,21 @@ export default function TattooCosmeticoPage() {
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}
-                      onClick={() =>
-                        openWhatsApp('Quiero consultar sobre LASHES LINE')
-                      }
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'LASHES LINE',
+                          serviceKey: 'lashes-line',
+                          consultaOptions: lashesLineOptionsWithIds.filter(
+                            (opt) => opt.contentType === 'sesion-calendario'
+                          ),
+                        });
+                        setConsultaModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
                     >
-                      CONSULTA
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'CONSULTA'}
                     </button>
                     <button
                       className={classes.ctaButtonReservar}
@@ -2000,11 +2075,19 @@ export default function TattooCosmeticoPage() {
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}
-                      onClick={() =>
-                        openWhatsApp('Quiero consultar sobre PECAS Y LUNARES')
-                      }
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'PECAS Y LUNARES',
+                          serviceKey: 'pecas-lunares',
+                          consultaOptions: pecasLunaresOptions,
+                        });
+                        setConsultaModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
                     >
-                      CONSULTA
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'CONSULTA OBLIGATORIA'}
                     </button>
                   </Box>
                 </Box>
@@ -2038,7 +2121,7 @@ export default function TattooCosmeticoPage() {
                       className={classes.ctaButton}
                       onClick={() =>
                         openExternalLink(
-                          'https://merygarcia.com.ar/servicios/camuflaje'
+                          'https://merygarcia.com.ar/servicios/nanoblading'
                         )
                       }
                     >
@@ -2046,11 +2129,19 @@ export default function TattooCosmeticoPage() {
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}
-                      onClick={() =>
-                        openWhatsApp('Quiero consultar sobre CAMUFLAJE')
-                      }
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'CAMUFLAJE',
+                          serviceKey: 'camuflaje',
+                          consultaOptions: camouflageOptions,
+                        });
+                        setConsultaModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
                     >
-                      CONSULTA
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'CONSULTA OBLIGATORIA'}
                     </button>
                   </Box>
                 </Box>
@@ -2077,6 +2168,24 @@ export default function TattooCosmeticoPage() {
           employees={employees as Employee[]}
           staffConsultasId={staffConsultasId}
           meryGarciaId={meryGarciaId}
+        />
+      )}
+
+      {/* Modal de Consultas con Stepper */}
+      {consultaService && (
+        <ConsultaModal
+          opened={consultaModalOpened}
+          onClose={() => {
+            setConsultaModalOpened(false);
+            setConsultaService(null);
+          }}
+          serviceName={consultaService.serviceName}
+          serviceKey={consultaService.serviceKey}
+          consultaOptions={consultaService.consultaOptions}
+          services={services as ServiceEntity[]}
+          employees={employees as Employee[]}
+          meryGarciaId={meryGarciaId}
+          staffConsultasId={staffConsultasId}
         />
       )}
     </>

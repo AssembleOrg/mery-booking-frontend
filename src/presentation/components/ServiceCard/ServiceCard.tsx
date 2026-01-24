@@ -1,8 +1,6 @@
 'use client';
 
-import { Box, Text } from '@mantine/core';
 import { motion, useReducedMotion } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
 import classes from './ServiceCard.module.css';
 
@@ -15,9 +13,9 @@ interface ServiceCardProps {
 }
 
 export function ServiceCard({
+  number,
   name,
   description,
-  image,
   href = '#',
 }: ServiceCardProps) {
   const prefersReducedMotion = useReducedMotion();
@@ -26,44 +24,23 @@ export function ServiceCard({
     <motion.div
       className={classes.card}
       whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
-      transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+      transition={{ duration: 0.2 }}
     >
-      {/* Number watermark */}
-      {/* <span className={classes.number}>{number}</span> */}
-
-      {/* Image or placeholder */}
-      <motion.div
-        className={classes.imageWrapper}
-        whileHover={prefersReducedMotion ? {} : { scale: 1.08 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-      >
-        {image ? (
-          <Image
-            src={image}
-            alt={name}
-            fill
-            className={classes.image}
-            sizes="(max-width: 768px) 100vw, 33vw"
-          />
-        ) : (
-          <Box className={classes.placeholder}>[ IMG ]</Box>
-        )}
-      </motion.div>
-
-      {/* Gradient overlay */}
+      {/* Overlay sutil */}
       <div className={classes.overlay} />
 
-      {/* Content */}
+      {/* Contenido alineado a la izquierda */}
       <motion.div
         className={classes.content}
-        initial={{ y: 10, opacity: 0.9 }}
-        whileHover={prefersReducedMotion ? {} : { y: 0, opacity: 1 }}
-        transition={{ duration: 0.3 }}
+        initial={{ opacity: 0, y: 5 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.15 }}
+        viewport={{ once: true }}
       >
-        <Text component="h3" className={classes.name}>
-          {name}
-        </Text>
-        <Text className={classes.description}>{description}</Text>
+        <div className={classes.textWrapper}>
+          <h3 className={classes.name}>{name}</h3>
+          {description && <p className={classes.description}>{description}</p>}
+        </div>
       </motion.div>
     </motion.div>
   );

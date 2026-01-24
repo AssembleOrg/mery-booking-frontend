@@ -48,27 +48,38 @@
 .brandLogo {
   margin-bottom: 24px;
   display: block;
-  width: 450px;
+  width: 340px;
   height: auto;
 }
 
 @media (max-width: 1024px) {
   .brandLogo {
-    width: 375px;
+    width: 280px;
   }
 }
 
 @media (max-width: 767px) {
   .brandLogo {
-    width: 225px;
+    width: 170px;
   }
 }
 
 .address {
   font-size: 14px;
   color: var(--mg-gray);
-  line-height: 2;
+  line-height: 1.6;
   font-family: var(--font-din-light), sans-serif;
+}
+
+.addressLine,
+.hoursLine {
+  margin-bottom: 8px;
+}
+
+.addressIcon {
+  color: var(--mg-pink);
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
 /* Links Section */

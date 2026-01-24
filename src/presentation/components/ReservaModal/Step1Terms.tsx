@@ -1,6 +1,7 @@
 'use client';
 
-import { Checkbox, Text, Stack } from '@mantine/core';
+import { Checkbox, Text, Stack, Alert, Anchor } from '@mantine/core';
+import { IconAlertCircle } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import classes from './ReservaModal.module.css';
 
@@ -9,6 +10,8 @@ interface Step1TermsProps {
   onAcceptChange: (value: boolean) => void;
   onContinue: () => void;
   onCancel: () => void;
+  serviceName?: string;
+  onClose?: () => void;
 }
 
 export function Step1Terms({
@@ -16,7 +19,22 @@ export function Step1Terms({
   onAcceptChange,
   onContinue,
   onCancel,
+  serviceName,
+  onClose,
 }: Step1TermsProps) {
+  const handleConsultaClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (onClose) {
+      onClose();
+      setTimeout(() => {
+        const consultasSection = document.getElementById('consultas');
+        if (consultasSection) {
+          consultasSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -26,6 +44,21 @@ export function Step1Terms({
       className={classes.stepContainer}
     >
       <Stack gap="xl">
+        {serviceName && (
+          <Alert
+            icon={<IconAlertCircle size={16} />}
+            title="Consulta Previa Obligatoria"
+            color="pink"
+            variant="light"
+            className={classes.consultaWarning}
+          >
+            <Text size="sm">
+              Si es tu primera sesión de {serviceName}, debes realizar una{' '}
+              <strong>consulta previa obligatoria</strong> antes de reservar.
+            </Text>
+          </Alert>
+        )}
+
         <div>
           <Text className={classes.stepTitle}>Antes de reservar</Text>
           <Text className={classes.stepDescription}>

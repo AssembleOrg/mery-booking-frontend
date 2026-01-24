@@ -10,80 +10,59 @@ import {
   FadeInSection,
   StaggerContainer,
   StaggerItem,
+  ImageCrossfade,
 } from '@/presentation/components';
 import classes from './WelcomeSection.module.css';
 
 const SERVICES = [
   {
     num: '01',
-    name: 'Nanoblading',
-    desc: 'Cejas hiperrealistas',
-    image: '/images/nano-scallping.webp',
+    name: 'Nanoblading & Brow Camouflage',
+    desc: 'Cosmetic Tattoo',
+    image: '',
     href: '/tattoo-cosmetico',
   },
   {
     num: '02',
-    name: 'Lip Blush',
-    desc: 'Labios definidos',
-    image: '/images/Lip-blush-1-1-768x512.webp',
+    name: 'Lip Blush & Lip Camouflage',
+    desc: 'Cosmetic Tattoo',
+    image: '',
     href: '/tattoo-cosmetico',
   },
   {
     num: '03',
-    name: 'Lash Line',
-    desc: 'Mirada intensa',
-    image: '/images/lashes_line_b.webp',
+    name: 'Lash Line & Lash Camouflage',
+    desc: 'Cosmetic Tattoo',
+    image: '',
     href: '/tattoo-cosmetico',
   },
   {
     num: '04',
-    name: 'Pecas & Lunares',
-    desc: 'Efecto natural',
-    image: '/images/web-pecas-1-768x578.webp',
+    name: 'Freckles & Beauty Mole',
+    desc: 'Cosmetic Tattoo',
+    image: '',
     href: '/tattoo-cosmetico',
   },
   {
     num: '05',
-    name: 'Paramedical',
-    desc: 'Reconstrucción',
-    image: '/images/aereola.webp',
+    name: 'Paramedical Tattoo',
+    desc: 'Cosmetic Tattoo',
+    image: '',
     href: '/paramedical-tattoo',
   },
   {
     num: '06',
-    name: 'Styling',
-    desc: 'Diseño profesional',
-    image: '/images/estilismo-cejas.webp',
+    name: 'Brow & Lash Styling',
+    desc: '',
+    image: '',
     href: '/estilismo-de-cejas',
   },
 ];
 
 const GALLERY_IMAGES = [
-  '/images/mery1.svg',
-  '/images/mery2.svg',
   '/images/mery3.webp',
+  '/images/mery2.svg',
   '/images/mery4.webp',
-];
-
-const PHILOSOPHY_IMAGES = [
-  {
-    id: 1,
-    src: '/images/2.webp',
-    text: 'LA NATURALIDAD',
-    alt: 'Detalle y textura natural',
-  },
-  {
-    id: 2,
-    src: '/images/3.webp',
-    text: 'SIEMPRE',
-    alt: 'Mirada y expresión',
-  },
-  {
-    id: 3,
-    src: '/images/4.webp',
-    text: 'ES LA META',
-    alt: 'Resultados cicatrizados',
-  },
 ];
 
 export function WelcomeSection() {
@@ -101,48 +80,51 @@ export function WelcomeSection() {
 
   return (
     <Box className={classes.wrapper}>
-      <section className={classes.heroSection}>
-        <Box className={classes.heroImageWrapper}>
-          <Image
-            src="/images/emy-header.svg"
-            alt="Mery Garcia Cosmetic Tattoo"
-            fill
-            priority
-            className={classes.staticHeroImage}
-            sizes="100vw"
-          />
-          <div className={classes.heroOverlay} />
-        </Box>
+      <Box className={classes.heroContainer}>
+        <section className={classes.heroSection}>
+          <Box className={classes.heroImageWrapper}>
+            <ImageCrossfade
+              images={['/images/1.webp', '/images/2.webp', '/images/3.webp']}
+              interval={5000}
+              transitionDuration={1.2}
+              showIndicators={true}
+              alt="Mery Garcia Cosmetic Tattoo"
+              objectPosition="center center"
+            />
+            <div className={classes.heroOverlay} />
+          </Box>
+        </section>
 
-        <Box className={classes.heroContent}>
-          <FadeInSection direction="up" delay={0.2}>
-            <h1 className={classes.heroTitle}>
-              I didn't choose the
-              <br />
-              <span className={classes.heroTitlePink}>brow life</span>.<br />
-              <span className={classes.heroTitleItalic}>
-                The brow life{' '}
-                <span style={{ color: 'var(--mg-pink)' }}>chose me</span>.
-              </span>
-            </h1>
-            <Text className={classes.heroDescription}>
-              Más de 20 años creando resultados naturales e imperceptibles. Cada
-              trazo cuenta una historia.
-            </Text>
-            <Flex className={classes.heroButtons}>
-              <Link
-                href="/tattoo-cosmetico"
-                className={classes.heroButtonPrimary}
-              >
-                RESERVAR CITA
-              </Link>
-              <Link href="#servicios" className={classes.heroButtonSecondary}>
-                NUESTROS TRABAJOS
-              </Link>
-            </Flex>
-          </FadeInSection>
-        </Box>
-      </section>
+        <section className={classes.heroTextSection}>
+          <Box className={classes.heroContent}>
+            <FadeInSection direction="up" delay={0.2}>
+              <h1 className={classes.heroTitle}>
+                I didn't choose the
+                <br />
+                <span className={classes.heroTitlePink}>brow life</span>.<br />
+                <span className={classes.heroTitleItalic}>
+                  The brow life{' '}
+                  <span style={{ color: 'var(--mg-pink)' }}>chose me</span>.
+                </span>
+              </h1>
+              <Flex className={classes.heroButtons}>
+                <Link
+                  href="/tattoo-cosmetico"
+                  className={classes.heroButtonPrimary}
+                >
+                  RESERVAR CITA
+                </Link>
+                <Link
+                  href="#trabajos-reales"
+                  className={classes.heroButtonSecondary}
+                >
+                  NUESTROS TRABAJOS
+                </Link>
+              </Flex>
+            </FadeInSection>
+          </Box>
+        </section>
+      </Box>
 
       <section className={classes.servicesSection} id="servicios">
         <Container className={classes.servicesContainer}>
@@ -163,7 +145,7 @@ export function WelcomeSection() {
             {SERVICES.map((service) => (
               <StaggerItem key={service.num}>
                 <ServiceCard
-                  number=""
+                  number={service.num}
                   name={service.name}
                   description={service.desc}
                   image={service.image}
@@ -188,10 +170,22 @@ export function WelcomeSection() {
                 AN EVEN STRONGER <em className={classes.quoteItalic}>WOMAN.</em>
               </Text>
               <div className={classes.quoteConnector} />
+              <Text
+                className={`${classes.quoteBottom} ${classes.quoteBottomSpaced}`}
+              >
+                MÁS DE 20 AÑOS CREANDO RESULTADOS NATURALES E IMPERCEPTIBLES.
+              </Text>
+              <div className={classes.quoteHighlightWrapper}>
+                <span className={classes.quoteHighlight}>
+                  CADA TRAZO CUENTA UNA
+                </span>
+                <br className={classes.quoteBreak} />
+                <span className={classes.quoteHighlight}>HISTORIA</span>
+              </div>
             </div>
           </FadeInSection>
 
-          <div className={classes.philosophyGrid}>
+          {/* <div className={classes.philosophyGrid}>
             {PHILOSOPHY_IMAGES.map((item, index) => (
               <FadeInSection key={item.id} direction="up" delay={0.1}>
                 <div
@@ -216,11 +210,11 @@ export function WelcomeSection() {
                 </div>
               </FadeInSection>
             ))}
-          </div>
+          </div> */}
         </Container>
       </section>
 
-      <section className={classes.gallerySection}>
+      <section className={classes.gallerySection} id="trabajos-reales">
         <div className={classes.galleryHeader}>
           <FadeInSection direction="up" delay={0.2}>
             <SectionTitle

@@ -236,7 +236,7 @@
 }
 
 .buttonPrimary:hover:not(:disabled) {
-  background-color: #EBA2A8;
+  background-color: var(--mg-pink-hover);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(235, 162, 168, 0.3);
 }
@@ -265,6 +265,15 @@
 .buttonSecondary:hover {
   background-color: #F5F5F5;
   border-color: #D0D0D0;
+}
+
+/* ====================================
+   CONSULTA WARNING (Alert)
+   ==================================== */
+
+.consultaWarning {
+  margin-bottom: 20px;
+  border-left: 4px solid var(--mg-pink);
 }
 
 /* ====================================

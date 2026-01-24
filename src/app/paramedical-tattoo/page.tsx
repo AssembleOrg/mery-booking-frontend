@@ -9,6 +9,7 @@ import {
   BookingConfirmationModal,
   ReservaModal,
 } from '@/presentation/components';
+import ConsultaModal from '@/presentation/components/ConsultaModal';
 import Image from 'next/image';
 import { useState, useMemo, useEffect } from 'react';
 import { useDisclosure } from '@mantine/hooks';
@@ -719,15 +720,6 @@ export default function ParamedicalTattooPage() {
     }
   };
 
-  const openWhatsApp = (message: string) => {
-    const phoneNumber = '5491161592591';
-    const encodedMessage = encodeURIComponent(message);
-    window.open(
-      `https://wa.me/${phoneNumber}?text=${encodedMessage}`,
-      '_blank'
-    );
-  };
-
   // Helper function to enrich service options with IDs
   const enrichServiceOptions = (
     options: ServiceOption[],
@@ -799,6 +791,14 @@ export default function ParamedicalTattooPage() {
     options: ServiceOption[];
   } | null>(null);
 
+  // Estado para modal de consultas
+  const [consultaModalOpened, setConsultaModalOpened] = useState(false);
+  const [consultaService, setConsultaService] = useState<{
+    serviceName: string;
+    serviceKey: string;
+    consultaOptions: ServiceOption[];
+  } | null>(null);
+
   // Enrich service options with IDs
   const nanoScalpOptionsWithIds = useMemo(() => {
     if (services.length === 0 || !staffConsultasId || !meryGarciaId) {
@@ -867,7 +867,7 @@ export default function ParamedicalTattooPage() {
         </Box>
 
         {/* Content Sections */}
-        <Box className={classes.contentWrapper}>
+        <Box id="consultas" className={classes.contentWrapper}>
           {/* Nano Scalp Section */}
           <FadeInSection direction="up" delay={0}>
             <Box id="nano-scalp" className={classes.section}>
@@ -902,9 +902,16 @@ export default function ParamedicalTattooPage() {
                     </a>
                     <button
                       className={classes.ctaButtonSecondary}
-                      onClick={() =>
-                        openWhatsApp('Quiero consultar sobre NANO SCALP')
-                      }
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'NANO SCALP',
+                          serviceKey: 'nano-scalp',
+                          consultaOptions: nanoScalpOptionsWithIds.filter(
+                            (opt) => opt.contentType === 'consulta'
+                          ),
+                        });
+                        setConsultaModalOpened(true);
+                      }}
                     >
                       CONSULTA
                     </button>
@@ -976,11 +983,16 @@ export default function ParamedicalTattooPage() {
                     </a>
                     <button
                       className={classes.ctaButtonSecondary}
-                      onClick={() =>
-                        openWhatsApp(
-                          'Quiero consultar sobre AREOLA HARMONIZATION'
-                        )
-                      }
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'AREOLA HARMONIZATION',
+                          serviceKey: 'areola-harmonization',
+                          consultaOptions: areolaOptionsWithIds.filter(
+                            (opt) => opt.contentType === 'consulta'
+                          ),
+                        });
+                        setConsultaModalOpened(true);
+                      }}
                     >
                       CONSULTA
                     </button>
@@ -1052,11 +1064,16 @@ export default function ParamedicalTattooPage() {
                     </a>
                     <button
                       className={classes.ctaButtonSecondary}
-                      onClick={() =>
-                        openWhatsApp(
-                          'Quiero consultar sobre NIPPLE RECONSTRUCTION'
-                        )
-                      }
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'NIPPLE RECONSTRUCTION',
+                          serviceKey: 'nipple-reconstruction',
+                          consultaOptions: nippleOptionsWithIds.filter(
+                            (opt) => opt.contentType === 'consulta'
+                          ),
+                        });
+                        setConsultaModalOpened(true);
+                      }}
                     >
                       CONSULTA
                     </button>
@@ -1111,6 +1128,24 @@ export default function ParamedicalTattooPage() {
           employees={employees as Employee[]}
           staffConsultasId={staffConsultasId}
           meryGarciaId={meryGarciaId}
+        />
+      )}
+
+      {/* Modal de Consultas con Stepper */}
+      {consultaService && (
+        <ConsultaModal
+          opened={consultaModalOpened}
+          onClose={() => {
+            setConsultaModalOpened(false);
+            setConsultaService(null);
+          }}
+          serviceName={consultaService.serviceName}
+          serviceKey={consultaService.serviceKey}
+          consultaOptions={consultaService.consultaOptions}
+          services={services as ServiceEntity[]}
+          employees={employees as Employee[]}
+          meryGarciaId={meryGarciaId}
+          staffConsultasId={staffConsultasId}
         />
       )}
     </>

@@ -1,0 +1,311 @@
+.modal {
+  /* Modal styles */
+}
+
+.modalHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stepContainer {
+  padding: 0;
+}
+
+.stepTitle {
+  font-family: var(--font-avant-garde), sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--mg-dark);
+  margin-bottom: 8px;
+}
+
+.stepDescription {
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 15px;
+  color: var(--mg-gray);
+  line-height: 1.6;
+}
+
+/* Step 2: Consulta Options */
+.professionalInfo {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 14px;
+  color: var(--mg-dark);
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--mg-pink-light);
+  border-radius: 4px;
+}
+
+.serviceInfo {
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 13px;
+  color: var(--mg-gray);
+  margin-bottom: 16px;
+}
+
+.consultaOptionsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.consultaOptionCard {
+  padding: 16px;
+  border: 2px solid var(--mg-pink-lighter);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--mg-white);
+}
+
+.consultaOptionCard:hover {
+  border-color: var(--mg-pink);
+  background: var(--mg-pink-light);
+}
+
+.consultaOptionCardSelected {
+  border-color: var(--mg-pink);
+  background: var(--mg-pink-light);
+}
+
+.consultaOptionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.consultaOptionLabel {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mg-dark);
+}
+
+.consultaOptionPrice {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 14px;
+  color: var(--mg-pink);
+  font-weight: 600;
+}
+
+.consultaOptionDescription {
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 12px;
+  color: var(--mg-gray);
+}
+
+/* Professional Card */
+.professionalCard {
+  background: var(--mg-pink-light);
+  padding: 24px;
+  border-radius: 8px;
+  text-align: center;
+  border: 2px solid var(--mg-pink-lighter);
+}
+
+.professionalLabel {
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 14px;
+  color: var(--mg-gray);
+  margin-bottom: 8px;
+}
+
+.professionalName {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 20px;
+  color: var(--mg-dark);
+  font-weight: 500;
+}
+
+/* Step 4: Summary */
+.summaryCard {
+  background: var(--mg-pink-light);
+  padding: 24px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--mg-pink-lighter);
+}
+
+.summaryRow:last-child {
+  border-bottom: none;
+}
+
+.summaryLabel {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 13px;
+  color: var(--mg-gray);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.summaryValue {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 14px;
+  color: var(--mg-dark);
+  font-weight: 500;
+  text-align: right;
+}
+
+.summaryPrice {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 16px;
+  color: var(--mg-pink);
+  font-weight: 600;
+}
+
+/* ====================================
+   BUTTONS
+   ==================================== */
+
+.buttonGroup {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.buttonPrimary {
+  background-color: var(--mg-pink);
+  color: var(--mg-white);
+  border: none;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.buttonPrimary:hover:not(:disabled) {
+  background-color: var(--mg-pink-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(235, 162, 168, 0.3);
+}
+
+.buttonPrimary:disabled {
+  background-color: #E0E0E0;
+  color: #545454;
+  cursor: not-allowed;
+}
+
+.buttonSecondary {
+  background-color: transparent;
+  color: var(--mg-dark);
+  border: 1px solid #E0E0E0;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1.5;
+}
+
+.buttonSecondary:hover {
+  background-color: #F5F5F5;
+  border-color: #D0D0D0;
+}
+
+/* Modal Container */
+.container {
+  padding: 40px;
+  min-height: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  overflow: hidden;
+}
+
+.header {
+  text-align: center;
+}
+
+.title {
+  font-family: var(--font-avant-garde), sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--mg-dark);
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 16px;
+  color: var(--mg-gray);
+  margin: 0;
+}
+
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Scrollbar styling */
+.contentArea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.contentArea::-webkit-scrollbar-track {
+  background: var(--mg-pink-lighter);
+  border-radius: 3px;
+}
+
+.contentArea::-webkit-scrollbar-thumb {
+  background: var(--mg-pink);
+  border-radius: 3px;
+}
+
+.contentArea::-webkit-scrollbar-thumb:hover {
+  background: var(--mg-pink-hover);
+}
+
+/* ====================================
+   RESPONSIVE
+   ==================================== */
+
+@media (max-width: 767px) {
+  .container {
+    padding: 24px;
+    min-height: auto;
+    max-height: 90vh;
+  }
+
+  .stepTitle {
+    font-size: 20px;
+  }
+
+  .stepDescription {
+    font-size: 14px;
+  }
+
+  .buttonGroup {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+
+  .buttonPrimary,
+  .buttonSecondary {
+    width: 100%;
+  }
+}

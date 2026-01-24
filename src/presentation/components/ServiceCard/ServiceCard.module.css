@@ -1,96 +1,132 @@
+/* ========================================
+   LINK WRAPPER
+   ======================================== */
+
 .link {
   text-decoration: none;
   display: block;
 }
 
+/* ========================================
+   BASE STYLES - MOBILE FIRST
+   ======================================== */
+
 .card {
   position: relative;
   aspect-ratio: 1;
-  background: var(--mg-pink-light);
+  background: var(--mg-white);
+  border: 1px solid #e9ecef;
   overflow: hidden;
   cursor: pointer;
-}
-
-/* Number watermark */
-.number {
-  position: absolute;
-  top: -10px;
-  right: 16px;
-  font-size: 100px;
-  font-weight: 800;
-  color: var(--mg-pink-lighter);
-  line-height: 1;
-  z-index: 1;
-  font-family: var(--font-din-medium), sans-serif;
-}
-
-/* Image wrapper for animation */
-.imageWrapper {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-/* Image */
-.image {
-  object-fit: cover;
-}
-
-/* Placeholder */
-.placeholder {
-  position: absolute;
-  inset: 0;
-  background: var(--mg-pink-lighter);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--mg-gray);
-  font-size: 12px;
+  justify-content: flex-start;
+  border-radius: 0;
 }
 
-/* Gradient overlay */
+/* Pink decorative line in top-left corner */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 40px;
+  height: 2px;
+  background-color: var(--mg-pink);
+  z-index: 4;
+}
+
+.card:hover {
+  border-color: var(--mg-pink);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(235, 162, 168, 0.15);
+}
+
+/* ========================================
+   OVERLAY MINIMALISTA
+   ======================================== */
+
 .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(0deg, rgba(43, 43, 43, 0.8) 0%, transparent 60%);
+  background: linear-gradient(
+    180deg,
+    transparent 50%,
+    rgba(43, 43, 43, 0.02) 100%
+  );
   z-index: 2;
+  pointer-events: none;
 }
 
-/* Content */
+/* ========================================
+   CONTENT CONTAINER
+   ======================================== */
+
 .content {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 24px;
-  color: var(--mg-white);
+  position: relative;
   z-index: 3;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 20px;
 }
+
+.textWrapper {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ========================================
+   TIPOGRAFÍA
+   ======================================== */
 
 .name {
-  font-size: 20px;
-  font-weight: 500;
-  margin-bottom: 4px;
   font-family: var(--font-avant-garde), sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: var(--mg-dark);
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.card:hover .name {
+  color: var(--mg-pink);
 }
 
 .description {
-  font-size: 12px;
-  opacity: 0.8;
-  letter-spacing: 1px;
   font-family: var(--font-din-light), sans-serif;
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--mg-gray);
+  margin: 0;
 }
 
-/* Responsive */
+/* ========================================
+   RESPONSIVE - MOBILE
+   ======================================== */
+
 @media (max-width: 768px) {
-  .number {
-    font-size: 60px;
-    right: 12px;
-    top: 5px;
+  .card::before {
+    top: 12px;
+    left: 12px;
+    width: 32px;
   }
 
   .content {
-    padding: 16px;
+    padding: 12px;
+  }
+
+  .textWrapper {
+    gap: 4px;
   }
 
   .name {
@@ -98,6 +134,30 @@
   }
 
   .description {
-    font-size: 11px;
+    font-size: 10px;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - DESKTOP
+   ======================================== */
+
+@media (min-width: 1024px) {
+  .card::before {
+    top: 24px;
+    left: 24px;
+    width: 44px;
+  }
+
+  .content {
+    padding: 24px;
+  }
+
+  .name {
+    font-size: 22px;
+  }
+
+  .description {
+    font-size: 12px;
   }
 }

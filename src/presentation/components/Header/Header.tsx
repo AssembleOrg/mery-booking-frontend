@@ -34,7 +34,7 @@ export function Header() {
         className={`${classes.header} ${scrolled ? classes.scrolled : ''}`}
       >
         <Container size="xl" className={classes.container}>
-          <Flex justify="space-between" align="center" className={classes.flex}>
+          <Flex justify="space-between" align="center" className={classes.flex} suppressHydrationWarning>
             {/* Logo / Brand Name */}
             <Link href="/" className={classes.brand}>
               <Image

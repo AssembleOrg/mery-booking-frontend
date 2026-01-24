@@ -98,6 +98,8 @@ export function ReservaModal({
                 onAcceptChange={setAcceptedTerms}
                 onContinue={handleStepComplete}
                 onCancel={handleClose}
+                serviceName={serviceName}
+                onClose={onClose}
               />
             )}
 

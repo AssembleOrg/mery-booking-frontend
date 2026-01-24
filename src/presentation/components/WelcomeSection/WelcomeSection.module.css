@@ -4,8 +4,13 @@
   width: 100%;
 }
 
+.heroContainer {
+  position: relative;
+  width: 100%;
+}
+
 .heroSection {
-  height: 100dvh;
+  height: 55vh;
   width: 100%;
   display: flex;
   position: relative;
@@ -20,11 +25,6 @@
   height: 100%;
   z-index: 0;
   background: var(--mg-dark);
-}
-
-.staticHeroImage {
-  object-fit: cover;
-  object-position: center center;
 }
 
 .heroOverlay {
@@ -43,16 +43,19 @@
   pointer-events: none;
 }
 
+.heroTextSection {
+  padding: 40px 24px;
+  background: var(--mg-dark);
+}
+
 .heroContent {
   position: relative;
   z-index: 2;
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding: 0 24px;
   text-align: left;
   color: var(--mg-white);
 }
@@ -94,10 +97,11 @@
   font-family: var(--font-avant-garde), serif;
   font-size: 1.1em;
   margin-top: 8px;
+  color: var(--mg-white);
 }
 
 .heroDescription {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--mg-gray);
   line-height: 1.2;
   margin-bottom: 40px;
   max-width: 400px;
@@ -109,37 +113,73 @@
 .heroButtons {
   display: flex;
   gap: 16px;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .heroButtonPrimary {
-  background: var(--mg-white);
-  color: var(--mg-dark);
-  border: none;
-  padding: 18px 36px;
+  background: transparent;
+  color: var(--mg-pink);
+  border: 2px solid var(--mg-pink);
+  padding: 16px 32px;
   font-size: 11px;
   letter-spacing: 2px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   font-family: var(--font-din-medium), sans-serif;
+  text-transform: uppercase;
+}
+.heroButtonPrimary:hover {
+  background: var(--mg-pink);
+  color: var(--mg-white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(235, 162, 168, 0.3);
 }
 
 .heroButtonSecondary {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(5px);
+  background: transparent;
   color: var(--mg-white);
   border: 1px solid var(--mg-white);
-  padding: 18px 36px;
+  padding: 16px 32px;
   font-size: 11px;
   letter-spacing: 2px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   font-family: var(--font-din-medium), sans-serif;
+  text-transform: uppercase;
+}
+.heroButtonSecondary:hover {
+  background: var(--mg-white);
+  border-color: var(--mg-white);
+  color: var(--mg-dark);
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .heroTextSection {
+    background: var(--mg-dark);
+  }
+
+  .heroContent {
+    color: var(--mg-white);
+  }
+
+  .heroTitle {
+    color: var(--mg-white);
+    font-size: 2.8rem;
+  }
+
+  .heroTitlePink {
+    color: var(--mg-pink);
+  }
 }
 
 @media (min-width: 1024px) {
+  .heroContainer {
+    position: relative;
+    height: 90vh;
+  }
+
   .heroSection {
     flex-direction: row;
     align-items: center;
@@ -156,16 +196,24 @@
     z-index: 0;
   }
 
-  .staticHeroImage {
-    object-position: right top;
-  }
-
   .heroOverlay {
     display: none;
   }
 
-  .heroContent {
+  .heroTextSection {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 50%;
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    background: transparent;
+  }
+
+  .heroContent {
+    width: 100%;
     align-items: flex-start;
     text-align: left;
     padding-left: 80px;
@@ -194,6 +242,10 @@
     color: var(--mg-pink);
   }
 
+  .heroTitleItalic {
+    color: var(--mg-dark);
+  }
+
   .heroDescription {
     color: var(--mg-gray);
   }
@@ -203,26 +255,32 @@
   }
 
   .heroButtonPrimary {
-    background: var(--mg-dark);
-    color: var(--mg-white);
+    background: var(--mg-white);
+    color: var(--mg-pink);
+    border: 2px solid var(--mg-pink);
   }
   .heroButtonPrimary:hover {
     background: var(--mg-pink);
+    color: var(--mg-white);
+    border-color: var(--mg-pink);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(235, 162, 168, 0.3);
   }
 
   .heroButtonSecondary {
-    border-color: var(--mg-dark);
+    border-color: rgba(43, 43, 43, 0.3);
     color: var(--mg-dark);
     background: transparent;
   }
   .heroButtonSecondary:hover {
     background: var(--mg-dark);
     color: var(--mg-white);
+    border-color: var(--mg-dark);
   }
 }
 
 .servicesSection {
-  padding: 60px 24px;
+  padding: 60px 16px;
   position: relative;
   background: var(--mg-white);
   margin-bottom: 0;
@@ -236,13 +294,15 @@
 .servicesGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: 4px;
   margin-top: 40px;
+  max-width: 100%;
 }
 
 @media (min-width: 768px) {
   .servicesGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
   }
   .servicesSection {
     padding: 80px 40px;
@@ -252,7 +312,10 @@
 @media (min-width: 1024px) {
   .servicesGrid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    gap: 16px;
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
   }
   .servicesSection {
     padding: 100px 80px;
@@ -289,7 +352,19 @@
   height: 24px;
   background-color: var(--mg-pink);
   margin-top: 12px;
+  margin-bottom: 8px;
   opacity: 0.5;
+}
+
+.philosophyDescription {
+  color: var(--mg-gray);
+  line-height: 1.6;
+  margin-top: 20px;
+  max-width: 500px;
+  font-size: 15px;
+  font-weight: 300;
+  font-family: var(--font-din-light), sans-serif;
+  text-align: center;
 }
 
 .quoteTop,
@@ -303,20 +378,43 @@
   text-transform: uppercase;
 }
 
+.quoteBottomSpaced {
+  margin-top: 16px;
+}
+
 .quoteHighlightWrapper {
   display: inline-block;
-  margin: 2px 0;
+  margin: 8px 0;
 }
 
 .quoteHighlight {
   background-color: var(--mg-pink);
   color: var(--mg-white);
-  padding: 2px 10px;
+  padding: 8px 10px;
   font-family: var(--font-avant-garde), sans-serif;
   font-size: 16px;
   letter-spacing: 0.15em;
   font-weight: 500;
   text-transform: uppercase;
+  line-height: 1.5;
+}
+
+.quoteBreak {
+  display: block;
+  height: 4px;
+}
+
+@media (min-width: 768px) {
+  .quoteBreak {
+    display: none;
+  }
+}
+
+/* Desktop: Add small gap when highlights are inline */
+@media (min-width: 768px) {
+  .quoteHighlight + .quoteHighlight {
+    margin-left: 8px;
+  }
 }
 
 .quoteItalic {
@@ -405,6 +503,15 @@
   .quoteHighlight {
     font-size: 24px;
   }
+
+  .quoteHighlight {
+    padding: 8px 12px;
+  }
+
+  .philosophyDescription {
+    font-size: 16px;
+    margin-top: 24px;
+  }
 }
 
 .gallerySection {
@@ -462,24 +569,45 @@
 .instagramOverlay {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 6px;
   cursor: pointer;
-  transition: opacity 0.3s;
+  transition: all 0.3s ease;
+}
+
+.instagramOverlay:hover {
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .igIcon {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.instagramOverlay:hover .igIcon {
+  transform: scale(1.1);
 }
 .igText {
   font-family: var(--font-avant-garde), sans-serif;
-  font-size: 12px;
-  letter-spacing: 2px;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+@media (min-width: 768px) {
+  .igIcon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .igText {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+  }
 }
 
 .ctaSection {
