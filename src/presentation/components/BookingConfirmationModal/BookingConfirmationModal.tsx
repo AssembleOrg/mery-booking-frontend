@@ -99,7 +99,23 @@ export function BookingConfirmationModal({
     reset(); // Limpiar formulario después de confirmar
   };
 
-  const deposit = Math.round(service.priceBook * 0.8); // 80% del precio book
+  // Lógica de depósito según duración del servicio
+  const calculateDeposit = (service: Service): number => {
+    // Consultas: 100% del precio
+    if (service.duration <= 60 && service.price === 50000) {
+      return service.priceBook;
+    }
+
+    // Servicios largos (>= 120 min): AR$ 150.000
+    if (service.duration >= 120) {
+      return 150000;
+    }
+
+    // Servicios cortos (< 120 min): AR$ 100.000
+    return 100000;
+  };
+
+  const deposit = calculateDeposit(service);
   const remaining = service.priceBook - deposit;
 
   const formatDate = (date: Date) => {

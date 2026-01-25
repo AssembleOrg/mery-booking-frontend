@@ -25,8 +25,9 @@ interface DateTimeSelectorProps {
   employeeId?: string | null; // ID del empleado (opcional, puede ser null para "cualquier profesional")
   serviceId?: string | null; // ID del servicio (opcional)
   onSelectDateTime: (date: Date, time: string) => void;
-  onBack?: () => void;
-  showBackButton?: boolean;
+  selectedDate?: Date; // Fecha pre-seleccionada desde ServiceBookingForm
+  onBack?: () => void; // Callback para retroceder (opcional)
+  showBackButton?: boolean; // Mostrar botón de retroceso (opcional)
 }
 
 export function DateTimeSelector({
@@ -34,10 +35,16 @@ export function DateTimeSelector({
   employeeId,
   serviceId,
   onSelectDateTime,
+  selectedDate: preSelectedDate,
   onBack,
   showBackButton = false,
 }: DateTimeSelectorProps) {
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  // Convertir la fecha pre-seleccionada a string formato YYYY-MM-DD si existe
+  const initialDate = preSelectedDate
+    ? dayjs(preSelectedDate).format('YYYY-MM-DD')
+    : null;
+
+  const [selectedDate, setSelectedDate] = useState<string | null>(initialDate);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   // Calcular rango de fechas (hoy hasta 3 meses)
@@ -55,12 +62,25 @@ export function DateTimeSelector({
     refetch,
   } = useAvailability(employeeId ?? null, serviceId ?? null, minDate, maxDate);
 
+  // Actualizar fecha seleccionada cuando cambie la fecha pre-seleccionada
+  useEffect(() => {
+    if (preSelectedDate) {
+      const dateStr = dayjs(preSelectedDate).format('YYYY-MM-DD');
+      setSelectedDate(dateStr);
+    }
+  }, [preSelectedDate]);
+
   // Resetear fecha y hora seleccionadas cuando cambie el servicio o empleado
   // Esto asegura que cuando el usuario cambie el servicio, se limpien las selecciones anteriores
   useEffect(() => {
-    setSelectedDate(null);
-    setSelectedTime(null);
-  }, [serviceId, employeeId]);
+    // Solo resetear si no hay fecha pre-seleccionada
+    if (!preSelectedDate) {
+      setSelectedDate(null);
+      setSelectedTime(null);
+    } else {
+      setSelectedTime(null);
+    }
+  }, [serviceId, employeeId, preSelectedDate]);
 
   // Obtener slots disponibles para la fecha seleccionada
   const availableSlotsForDate = useMemo(() => {
@@ -91,6 +111,45 @@ export function DateTimeSelector({
     return !dayAvailability || !dayAvailability.hasActiveTimeSlots;
   };
 
+  // Función para calcular el nivel de disponibilidad de un día
+  const getAvailabilityLevel = (
+    date: string
+  ): 'full' | 'limited' | 'available' | 'disabled' => {
+    if (!availability) return 'disabled';
+
+    const dayData = availability.availability.find((d) => d.date === date);
+
+    // Día sin timeslots activos o día deshabilitado
+    if (!dayData || !dayData.hasActiveTimeSlots) {
+      return 'disabled';
+    }
+
+    const totalSlots = dayData.slots.length;
+    const availableSlots = dayData.slots.filter((s) => s.available).length;
+
+    if (totalSlots === 0) return 'disabled';
+
+    const percentage = (availableSlots / totalSlots) * 100;
+
+    // 0% disponibilidad = día lleno
+    if (percentage === 0) return 'full';
+    // < 40% disponibilidad = disponibilidad limitada
+    if (percentage < 40) return 'limited';
+    // >= 40% disponibilidad = buena disponibilidad
+    return 'available';
+  };
+
+  // Función para obtener información de disponibilidad para tooltips
+  const getAvailabilityInfo = (date: string) => {
+    if (!availability) return null;
+
+    const dayData = availability.availability.find((d) => d.date === date);
+    if (!dayData || !dayData.hasActiveTimeSlots) return null;
+
+    const availableCount = dayData.slots.filter((s) => s.available).length;
+    return availableCount;
+  };
+
   const handleDateChange = (date: string | null) => {
     setSelectedDate(date);
     setSelectedTime(null); // Reset time when date changes
@@ -102,18 +161,15 @@ export function DateTimeSelector({
       setSelectedTime(null);
     } else {
       setSelectedTime(timeStart);
+      // Notificar al padre con la fecha y hora seleccionadas
+      if (selectedDate) {
+        const [year, month, day] = selectedDate.split('-').map(Number);
+        const dateObj = new Date(year, month - 1, day);
+        onSelectDateTime(dateObj, timeStart);
+      }
     }
   };
 
-  const handleContinue = () => {
-    if (selectedDate && selectedTime) {
-      // Parsear la fecha manualmente para evitar problemas de zona horaria
-      // selectedDate está en formato 'YYYY-MM-DD'
-      const [year, month, day] = selectedDate.split('-').map(Number);
-      const dateObj = new Date(year, month - 1, day);
-      onSelectDateTime(dateObj, selectedTime);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -167,14 +223,75 @@ export function DateTimeSelector({
             onChange={handleDateChange}
             minDate={minDate}
             maxDate={maxDate}
-            getDayProps={(date) => ({
-              disabled: isDateDisabled(date),
-            })}
+            getDayProps={(date) => {
+              const level = getAvailabilityLevel(date);
+              const isDisabled = isDateDisabled(date);
+              const availableCount = getAvailabilityInfo(date);
+
+              // Determinar clase CSS según nivel de disponibilidad
+              let dayClass = classes.day;
+              if (level === 'full') dayClass = `${classes.day} ${classes.dayFull}`;
+              else if (level === 'limited')
+                dayClass = `${classes.day} ${classes.dayLimited}`;
+              else if (level === 'available')
+                dayClass = `${classes.day} ${classes.dayAvailable}`;
+
+              // Construir título para tooltip
+              let title = '';
+              if (isDisabled) {
+                title = 'Cerrado';
+              } else if (level === 'full') {
+                title = 'Sin turnos disponibles';
+              } else if (availableCount) {
+                title = `${availableCount} turno${availableCount !== 1 ? 's' : ''} disponible${availableCount !== 1 ? 's' : ''}`;
+              }
+
+              return {
+                disabled: isDisabled,
+                className: dayClass,
+                title,
+              };
+            }}
             classNames={{
               day: classes.day,
             }}
             size="md"
           />
+        </Box>
+
+        {/* Leyenda de disponibilidad */}
+        <Box className={classes.availabilityLegend}>
+          <div className={classes.legendItem}>
+            <div
+              className={classes.legendColor}
+              style={{ backgroundColor: '#FBE8EA' }}
+            />
+            <span>Disponible</span>
+          </div>
+
+          <div className={classes.legendItem}>
+            <div
+              className={classes.legendColor}
+              style={{ backgroundColor: '#F7CBCB' }}
+            />
+            <span>Pocos turnos</span>
+          </div>
+
+          <div className={classes.legendItem}>
+            <div
+              className={classes.legendColor}
+              style={{ backgroundColor: '#EBA2A8' }}
+            />
+            <span>Sin turnos</span>
+          </div>
+
+          <div className={classes.legendItem}>
+            <div
+              className={classes.legendColor}
+              style={{ backgroundColor: '#e9ecef' }}
+            />
+            <span>Cerrado</span>
+          </div>
         </Box>
 
         {/* Franjas horarias */}
@@ -210,32 +327,6 @@ export function DateTimeSelector({
             )}
           </Box>
         )}
-
-        {/* Botones de acción */}
-        <Stack gap="sm">
-          {selectedDate && selectedTime && (
-            <Button
-              onClick={handleContinue}
-              size="lg"
-              fullWidth
-              className={classes.continueButton}
-            >
-              CONTINUAR
-            </Button>
-          )}
-
-          {showBackButton && (
-            <Button
-              onClick={onBack}
-              size="lg"
-              fullWidth
-              variant="outline"
-              className={classes.backButton}
-            >
-              ATRÁS
-            </Button>
-          )}
-        </Stack>
       </Stack>
     </Box>
   );

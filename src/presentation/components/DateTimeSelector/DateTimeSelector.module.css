@@ -21,6 +21,12 @@
   padding: 1rem 0;
 }
 
+/* === COLORES DE BRANDING OFICIAL === */
+/* Rosa Marcario (Principal): #EBA2A8 */
+/* Rosa Claro 1: #FBE8EA */
+/* Rosa Claro 2: #F7CBCB */
+/* Gris Medio: #545454 */
+
 .day {
   font-family: var(--font-din-regular), sans-serif;
   font-weight: 400;
@@ -32,9 +38,45 @@
   background-color: rgba(247, 203, 203, 0.2);
 }
 
+/* Día con buena disponibilidad (≥40% slots) - Rosa más claro */
+.dayAvailable {
+  background-color: #FBE8EA !important;
+  color: #545454 !important;
+  font-weight: 500 !important;
+}
+
+.dayAvailable:hover {
+  background-color: #F7CBCB !important;
+}
+
+/* Día con poca disponibilidad (<40% slots) - Rosa medio */
+.dayLimited {
+  background-color: #F7CBCB !important;
+  color: #545454 !important;
+  font-weight: 600 !important;
+}
+
+.dayLimited:hover {
+  background-color: #EBA2A8 !important;
+  color: white !important;
+}
+
+/* Día completamente lleno (0% disponibilidad) - Rosa principal (marcario) */
+.dayFull {
+  background-color: #EBA2A8 !important;
+  color: white !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+.dayFull:hover {
+  background-color: rgba(235, 162, 168, 0.85) !important;
+}
+
 .day[data-selected] {
   background-color: #F7CBCB !important;
   color: white !important;
+  border: 2px solid #545454 !important;
 }
 
 .day[data-selected]:hover {
@@ -90,11 +132,11 @@
 }
 
 .continueButton:hover {
-  background-color: white;
-  color: #F7CBCB;
-  border-color: #F7CBCB;
+  background-color: #EBA2A8;
+  color: white;
+  border-color: #EBA2A8;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(247, 203, 203, 0.3);
+  box-shadow: 0 6px 20px rgba(235, 162, 168, 0.3);
 }
 
 .backButton {
@@ -114,6 +156,31 @@
   transform: translateY(-2px);
 }
 
+/* Leyenda de disponibilidad */
+.availabilityLegend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  padding: 0.5rem 0;
+  justify-content: center;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #545454;
+  font-family: var(--font-din-regular), sans-serif;
+}
+
+.legendColor {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .container {
@@ -130,12 +197,36 @@
     height: 48px;
     font-size: 0.9rem;
   }
+
+  .availabilityLegend {
+    gap: 12px;
+    font-size: 0.8rem;
+  }
+
+  .legendColor {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 @media (max-width: 480px) {
   .timeSlot {
     padding: 0.5rem 0.25rem;
     font-size: 0.75rem;
+  }
+
+  .availabilityLegend {
+    gap: 8px;
+    font-size: 0.75rem;
+  }
+
+  .legendItem {
+    gap: 6px;
+  }
+
+  .legendColor {
+    width: 12px;
+    height: 12px;
   }
 }
 

@@ -864,7 +864,7 @@ const nanobladingOptions: ServiceOption[] = [
     priceValue: 'U$S 610.-',
     priceEffective: 'U$S 420.-',
     depositLabel: ') Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 150.000.-',
     cuotasText:
       'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
@@ -892,7 +892,7 @@ const nanobladingOptions: ServiceOption[] = [
     priceValue: 'U$S 610.-',
     priceEffective: 'U$S 420.- en efectivo',
     depositLabel: ') Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 150.000.-',
     cuotasText:
       'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
@@ -901,7 +901,7 @@ const nanobladingOptions: ServiceOption[] = [
     label: 'Last Minute Booking Nanoblading (Mantenimiento)',
     contentType: 'last-minute',
     description:
-      'Reactiva tu servicio de Nanoblading. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
+      'Citas seleccionadas de último momento con 20% off. Entérate antes que nadie a través de nuestro canal de IG: https://www.instagram.com/merygarciaoficial/',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 488.-',
     priceEffective: 'U$S 336.-',
@@ -915,18 +915,33 @@ const nanobladingOptions: ServiceOption[] = [
 const lipBlushOptions: ServiceOption[] = [
   {
     id: 'lip-1',
-    label: 'Consulta previa',
-    contentType: 'sesion-calendario',
+    label: 'Consulta Obligatoria SIN trabajo previo (*)',
+    contentType: 'consulta-sin-trabajo',
     description:
-      'Un espacio reservado para saldar tus dudas y que Mery de manera personalizada pueda hacerte una demostración de diseño elegido especialmente para vos. Por favor, lee atentamente la información previa y en caso de que quieras, solicita los cuidados post de tu Lip Blush y el consentimiento informado.',
+      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'AR$ 50.000.-',
-    cuotasText:
-      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+    footerNote:
+      '(*) Espacio para que conozcas nuestro modo de trabajo, técnica y cuidados que deberás cumplir. Dibujamos los resultados que buscamos y saldamos todas tus dudas.',
+    footerNote2: 'Sin consulta previa no podremos brindarte un servicio MG.',
   },
   {
     id: 'lip-2',
-    label: '1ª Sesión',
+    label: 'Consulta Obligatoria CON trabajo previo (*)',
+    contentType: 'consulta-con-trabajo',
+    description:
+      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio.',
+    extraDescription:
+      'Se considera trabajo previo a cualquier servicio de Lip Blush o tatuaje de labios que no haya sido realizado por MG & Staff.',
+    priceLabel: 'Precio de lista del servicio:',
+    priceValue: 'AR$ 50.000.-',
+    footerNote:
+      '(*) Espacio para que conozcas nuestro modo de trabajo, técnica y cuidados que deberás cumplir. Dibujamos los resultados que buscamos y saldamos todas tus dudas.',
+    footerNote2: 'Sin consulta previa no podremos brindarte un servicio MG.',
+  },
+  {
+    id: 'lip-3',
+    label: '1ª Sesión (By Mery Garcia)',
     contentType: 'sesion-calendario',
     description:
       'Primer experiencia de Lip Blush con nosotras. Recordá que los resultados óptimos se logran con dos sesiones.',
@@ -934,12 +949,12 @@ const lipBlushOptions: ServiceOption[] = [
     priceValue: 'U$S 650.-',
     priceEffective: 'U$S 475.-',
     depositLabel: ') Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 150.000.-',
     cuotasText:
       'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
   {
-    id: 'lip-3',
+    id: 'lip-4',
     label: '2ª Sesión - Retoque',
     contentType: 'retoque-calendario',
     description:
@@ -953,7 +968,7 @@ const lipBlushOptions: ServiceOption[] = [
       'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
   {
-    id: 'lip-4',
+    id: 'lip-5',
     label: 'Mantenimiento',
     contentType: 'mantenimiento-calendario',
     description:
@@ -962,12 +977,12 @@ const lipBlushOptions: ServiceOption[] = [
     priceValue: 'U$S 650.-',
     priceEffective: 'U$S 475.-',
     depositLabel: ') Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 150.000.-',
     cuotasText:
       'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
   {
-    id: 'lip-5',
+    id: 'lip-6',
     label: 'Last Minute Booking Lip Blush (Mantenimiento)',
     contentType: 'last-minute',
     description:
@@ -1001,8 +1016,8 @@ const lipCamouflageOptions: ServiceOption[] = [
     description:
       'Servicio de corrección y mejora de trabajos previos en labios.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 600.-',
-    priceEffective: 'U$S 420.-',
+    priceValue: 'U$S 700.-',
+    priceEffective: 'U$S 500.-',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
     cuotasText:
@@ -1095,12 +1110,71 @@ const pecasLunaresOptions: ServiceOption[] = [
 const camouflageOptions: ServiceOption[] = [
   {
     id: 'camuflaje-1',
-    label: 'Consulta Obligatoria',
-    contentType: 'sesion-calendario',
+    label: 'Consulta Obligatoria SIN trabajo previo (*)',
+    contentType: 'consulta-sin-trabajo',
     description:
-      'Consulta previa para evaluar el trabajo a corregir y planificar el proceso de camuflaje.',
+      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'AR$ 50.000.-',
+    footerNote:
+      '(*) Espacio para que conozcas nuestro modo de trabajo, técnica y cuidados que deberás cumplir. Evaluamos el trabajo previo a corregir y planificamos el proceso de camuflaje.',
+    footerNote2: 'Sin consulta previa no podremos brindarte un servicio MG.',
+  },
+  {
+    id: 'camuflaje-2',
+    label: 'Consulta Obligatoria CON trabajo previo (*)',
+    contentType: 'consulta-con-trabajo',
+    description:
+      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio.',
+    extraDescription:
+      'Se considera trabajo previo a cualquier servicio de dermopigmentación, microblading o tatuaje cosmético en cejas que no haya sido realizado por MG & Staff.',
+    priceLabel: 'Precio de lista del servicio:',
+    priceValue: 'AR$ 50.000.-',
+    footerNote:
+      '(*) Espacio para que conozcas nuestro modo de trabajo, técnica y cuidados que deberás cumplir. Evaluamos el trabajo previo a corregir y planificamos el proceso de camuflaje.',
+    footerNote2: 'Sin consulta previa no podremos brindarte un servicio MG.',
+  },
+  {
+    id: 'camuflaje-3',
+    label: '1ª Sesión (By Mery Garcia)',
+    contentType: 'sesion-calendario',
+    description:
+      'Primera sesión de corrección y camuflaje de trabajos previos en cejas. El proceso puede requerir múltiples sesiones dependiendo del estado del trabajo a corregir.',
+    priceLabel: 'Precio de lista del servicio:',
+    priceValue: 'U$S 600.-',
+    priceEffective: 'U$S 420.-',
+    depositLabel: ') Valor de la seña:',
+    depositValue: 'AR$ 100.000.-',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+  },
+  {
+    id: 'camuflaje-4',
+    label: '2ª Sesión - Retoque (By Mery Garcia)',
+    contentType: 'retoque-calendario',
+    description:
+      'Completá tu servicio de Camuflaje entre 30 y 60 días después de tu primera sesión.',
+    priceLabel: 'Precio de lista del servicio:',
+    priceValue: 'U$S 400.-',
+    priceEffective: 'U$S 280.-',
+    depositLabel: ') Valor de la seña:',
+    depositValue: 'AR$ 100.000.-',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+  },
+  {
+    id: 'camuflaje-5',
+    label: 'Mantenimiento (By Mery Garcia)',
+    contentType: 'mantenimiento-calendario',
+    description:
+      'Reactiva tu servicio de Camuflaje. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
+    priceLabel: 'Precio de lista del servicio:',
+    priceValue: 'U$S 600.-',
+    priceEffective: 'U$S 420.-',
+    depositLabel: ') Valor de la seña:',
+    depositValue: 'AR$ 100.000.-',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
 ];
 
@@ -1116,6 +1190,7 @@ const SERVICE_NAME_MAPPING: Record<string, string[]> = {
   'lip-blush': ['lip blush', 'lipblush', 'lip-blush'],
   'lip-camouflage': ['lip camouflage', 'lipcamouflage', 'lip-camouflage'],
   'lashes-line': ['lashes line', 'lashesline', 'lashes-line'],
+  camuflaje: ['camuflaje de cejas', 'camuflaje cejas', 'camuflaje'],
 };
 
 // Mapeo de nombres de empleados estáticos a nombres en el backend
@@ -1493,6 +1568,56 @@ export default function TattooCosmeticoPage() {
               );
             });
           }
+        } else if (serviceKey === 'lip-blush') {
+          if (option.contentType === 'consulta-sin-trabajo') {
+            // Buscar: "Lip Blush [Consulta obligatoria] SIN trabajo previo"
+            consultaService = allServices.find((s) => {
+              const nameLower = s.name.toLowerCase();
+              return (
+                s.showOnSite &&
+                nameLower.includes('lip blush') &&
+                nameLower.includes('consulta') &&
+                nameLower.includes('sin trabajo previo')
+              );
+            });
+          } else if (option.contentType === 'consulta-con-trabajo') {
+            // Buscar: "Lip Blush [Consulta Obligatoria] CON trabajo previo"
+            consultaService = allServices.find((s) => {
+              const nameLower = s.name.toLowerCase();
+              return (
+                s.showOnSite &&
+                nameLower.includes('lip blush') &&
+                nameLower.includes('consulta') &&
+                nameLower.includes('con trabajo previo')
+              );
+            });
+          }
+        } else if (serviceKey === 'camuflaje') {
+          if (option.contentType === 'consulta-sin-trabajo') {
+            // Buscar: "Camuflaje de Cejas [Consulta obligatoria] SIN trabajo previo"
+            consultaService = allServices.find((s) => {
+              const nameLower = s.name.toLowerCase();
+              return (
+                s.showOnSite &&
+                nameLower.includes('camuflaje') &&
+                nameLower.includes('cejas') &&
+                nameLower.includes('consulta') &&
+                nameLower.includes('sin trabajo previo')
+              );
+            });
+          } else if (option.contentType === 'consulta-con-trabajo') {
+            // Buscar: "Camuflaje de Cejas [Consulta Obligatoria] CON trabajo previo"
+            consultaService = allServices.find((s) => {
+              const nameLower = s.name.toLowerCase();
+              return (
+                s.showOnSite &&
+                nameLower.includes('camuflaje') &&
+                nameLower.includes('cejas') &&
+                nameLower.includes('consulta') &&
+                nameLower.includes('con trabajo previo')
+              );
+            });
+          }
         } else if (serviceKey === 'lip-camouflage') {
           // Buscar: "Lip Camouflage [Consulta previa obligatoria]"
           // Nombre exacto del backend: "Lip Camouflage [Consulta previa obligatoria]"
@@ -1577,6 +1702,11 @@ export default function TattooCosmeticoPage() {
   const lashesLineOptionsWithIds = useMemo(() => {
     if (services.length === 0) return lashesLineOptions;
     return getOptionsWithIds(lashesLineOptions, 'lashes-line', services);
+  }, [mappedServices, mappedEmployees, services]);
+
+  const camouflageOptionsWithIds = useMemo(() => {
+    if (services.length === 0) return camouflageOptions;
+    return getOptionsWithIds(camouflageOptions, 'camuflaje', services);
   }, [mappedServices, mappedEmployees, services]);
 
   // IDs de empleados para modal de reservas
@@ -1814,7 +1944,9 @@ export default function TattooCosmeticoPage() {
                           serviceName: 'LIP BLUSH',
                           serviceKey: 'lip-blush',
                           consultaOptions: lipBlushOptionsWithIds.filter(
-                            (opt) => opt.contentType === 'sesion-calendario'
+                            (opt) =>
+                              opt.contentType === 'consulta-sin-trabajo' ||
+                              opt.contentType === 'consulta-con-trabajo'
                           ),
                         });
                         setConsultaModalOpened(true);
@@ -1823,15 +1955,20 @@ export default function TattooCosmeticoPage() {
                     >
                       {isLoadingEmployees || isLoadingServices
                         ? 'CARGANDO...'
-                        : 'CONSULTA'}
+                        : 'Consulta Obligatoria'}
                     </button>
                     <button
                       className={classes.ctaButtonReservar}
                       onClick={() => {
+                        const sessionOptions = lipBlushOptionsWithIds.filter(
+                          (opt) =>
+                            opt.contentType !== 'consulta-sin-trabajo' &&
+                            opt.contentType !== 'consulta-con-trabajo'
+                        );
                         setModalService({
                           serviceName: 'LIP BLUSH',
                           serviceKey: 'lip-blush',
-                          options: lipBlushOptionsWithIds,
+                          options: sessionOptions,
                         });
                         setModalOpened(true);
                       }}
@@ -2133,7 +2270,11 @@ export default function TattooCosmeticoPage() {
                         setConsultaService({
                           serviceName: 'CAMUFLAJE',
                           serviceKey: 'camuflaje',
-                          consultaOptions: camouflageOptions,
+                          consultaOptions: camouflageOptionsWithIds.filter(
+                            (opt) =>
+                              opt.contentType === 'consulta-sin-trabajo' ||
+                              opt.contentType === 'consulta-con-trabajo'
+                          ),
                         });
                         setConsultaModalOpened(true);
                       }}
@@ -2141,7 +2282,28 @@ export default function TattooCosmeticoPage() {
                     >
                       {isLoadingEmployees || isLoadingServices
                         ? 'CARGANDO...'
-                        : 'CONSULTA OBLIGATORIA'}
+                        : 'Consulta Obligatoria'}
+                    </button>
+                    <button
+                      className={classes.ctaButtonReservar}
+                      onClick={() => {
+                        const sessionOptions = camouflageOptionsWithIds.filter(
+                          (opt) =>
+                            opt.contentType !== 'consulta-sin-trabajo' &&
+                            opt.contentType !== 'consulta-con-trabajo'
+                        );
+                        setModalService({
+                          serviceName: 'CAMUFLAJE',
+                          serviceKey: 'camuflaje',
+                          options: sessionOptions,
+                        });
+                        setModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
+                    >
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'RESERVAR'}
                     </button>
                   </Box>
                 </Box>

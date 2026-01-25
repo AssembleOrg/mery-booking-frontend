@@ -26,6 +26,7 @@ import dayjs from 'dayjs';
 interface ServiceBookingData {
   servicio: string;
   profesional: string;
+  fecha: Date;
 }
 
 const MOCK_LOCATION = 'Mery García Office';
@@ -206,12 +207,6 @@ export default function EstilismoCejasPage() {
                       onSubmit={handleServiceSubmit}
                       onChange={handleServiceSubmit}
                       categoryId={ESTILISMO_CEJAS_CATEGORY_ID}
-                      employeeFilter={(employee) =>
-                        employee.fullName
-                          .toLowerCase()
-                          .includes('rosario staff') ||
-                        employee.fullName.toLowerCase() === 'rosario staff'
-                      }
                     />
                   </Box>
 
@@ -220,14 +215,13 @@ export default function EstilismoCejasPage() {
                       <Center py="xl" h={400}>
                         <Loader size="md" color="var(--mg-pink)" />
                       </Center>
-                    ) : currentService ? (
+                    ) : currentService && bookingData?.profesional ? (
                       <DateTimeSelector
                         serviceDuration={currentService.duration}
-                        employeeId={bookingData?.profesional || null}
+                        employeeId={bookingData.profesional}
                         serviceId={currentService.id}
                         onSelectDateTime={handleDateTimeSelect}
-                        onBack={() => {}}
-                        showBackButton={false}
+                        selectedDate={bookingData.fecha}
                       />
                     ) : (
                       <Box className={classes.infoBox}>
