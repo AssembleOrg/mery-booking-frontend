@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Table, Button, Stack, Text, Modal, TextInput, Box, Skeleton, Center, NumberInput, Checkbox, Textarea, Select, Group } from '@mantine/core';
+import { Button, Modal, TextInput, Box, Skeleton, Center, NumberInput, Checkbox, Textarea, Select, Group } from '@mantine/core';
 import { useForm, Controller } from 'react-hook-form';
 import { ServiceService, CategoryService } from '@/infrastructure/http';
 import type { ServiceEntity, CreateServiceDto, Category } from '@/infrastructure/http';
@@ -19,6 +19,16 @@ interface FormData {
   maxQuantity: number;
   urlImage: string;
 }
+
+// Helper function to get icon based on service name
+const getServiceIcon = (serviceName: string): string => {
+  const name = serviceName.toLowerCase();
+  if (name.includes('paramedical') || name.includes('camuflaje')) return 'healing';
+  if (name.includes('tattoo') || name.includes('cosmético') || name.includes('microblading')) return 'colorize';
+  if (name.includes('ceja') || name.includes('pestaña') || name.includes('estilismo')) return 'visibility';
+  if (name.includes('labial') || name.includes('lip')) return 'face_retouching_natural';
+  return 'spa';
+};
 
 export function ServicesManager() {
   const [services, setServices] = useState<ServiceEntity[]>([]);
@@ -207,38 +217,44 @@ export function ServicesManager() {
     return Array(5)
       .fill(0)
       .map((_, index) => (
-        <Table.Tr key={index}>
-          <Table.Td><Skeleton height={20} /></Table.Td>
-          <Table.Td><Skeleton height={20} /></Table.Td>
-          <Table.Td><Skeleton height={20} width={80} /></Table.Td>
-          <Table.Td><Skeleton height={20} width={100} /></Table.Td>
-          <Table.Td><Skeleton height={20} width={40} /></Table.Td>
-          <Table.Td>
+        <tr key={index} className={classes.tableRow}>
+          <td className={classes.tableCell}>
+            <div className={classes.serviceCell}>
+              <Skeleton height={40} width={40} circle />
+              <Skeleton height={20} width={150} style={{ marginLeft: '1rem' }} />
+            </div>
+          </td>
+          <td className={classes.tableCell}><Skeleton height={20} width={80} /></td>
+          <td className={classes.tableCell}><Skeleton height={20} width={100} /></td>
+          <td className={classes.tableCell}>
             <Group gap="xs">
               <Skeleton height={28} width={70} />
               <Skeleton height={28} width={70} />
             </Group>
-          </Table.Td>
-        </Table.Tr>
+          </td>
+        </tr>
       ));
   };
 
   return (
     <>
-      <Stack gap="lg">
-        <Box className={classes.header}>
-          <Text className={classes.title}>Gestión de Servicios</Text>
+      <div className={classes.container}>
+        <div className={classes.header}>
+          <h2 className={classes.title}>
+            <span className="material-icons-round">spa</span>
+            Gestión de Servicios
+          </h2>
           <Button
-            color="pink"
             onClick={handleOpenCreate}
             className={classes.createButton}
           >
-            + Nuevo Servicio
+            <span className="material-icons-round">add</span>
+            Nuevo Servicio
           </Button>
-        </Box>
+        </div>
 
         {/* Filtro de Categoría */}
-        <Box className={classes.filterContainer}>
+        <div className={classes.filterContainer}>
           <Select
             label="Filtrar por categoría"
             placeholder="Todas las categorías"
@@ -254,74 +270,78 @@ export function ServicesManager() {
             className={classes.filterSelect}
             clearable
           />
-        </Box>
+        </div>
 
-        <Box className={classes.tableContainer}>
-          <Table striped highlightOnHover className={classes.table}>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Nombre</Table.Th>
-                <Table.Th>Categoría</Table.Th>
-                <Table.Th>Duración</Table.Th>
-                <Table.Th>Precio</Table.Th>
-                <Table.Th>Visible</Table.Th>
-                <Table.Th>Acciones</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
+        <div className={classes.tableWrapper}>
+          <table className={classes.table} style={{ backgroundColor: '#ffffff' }}>
+            <thead>
+              <tr>
+                <th>Nombre del Servicio</th>
+                <th>Duración</th>
+                <th>Precio</th>
+                <th className={classes.actionsHeader}>Acciones</th>
+              </tr>
+            </thead>
+            <tbody style={{ backgroundColor: '#ffffff' }}>
               {isLoading ? (
                 renderSkeletonRows()
               ) : services.length === 0 ? (
-                <Table.Tr>
-                  <Table.Td colSpan={6}>
+                <tr>
+                  <td colSpan={4} className={classes.emptyCell}>
                     <Center py="xl">
-                      <Text c="dimmed">
+                      <span>
                         {selectedCategoryId
                           ? 'No hay servicios para esta categoría'
                           : 'No hay servicios creados'}
-                      </Text>
+                      </span>
                     </Center>
-                  </Table.Td>
-                </Table.Tr>
+                  </td>
+                </tr>
               ) : (
                 services.map((service) => (
-                  <Table.Tr key={service.id}>
-                    <Table.Td>{service.name}</Table.Td>
-                    <Table.Td>{getCategoryName(service.categoryId)}</Table.Td>
-                    <Table.Td>{service.duration} min</Table.Td>
-                    <Table.Td>AR${service.price.toLocaleString('es-AR')}</Table.Td>
-                    <Table.Td>
-                      <Text c={service.showOnSite ? 'green' : 'red'} fw={500}>
-                        {service.showOnSite ? 'Sí' : 'No'}
-                      </Text>
-                    </Table.Td>
-                    <Table.Td>
-                      <Box className={classes.actions}>
-                        <Button
-                          variant="light"
-                          color="blue"
-                          size="xs"
+                  <tr key={service.id} className={classes.tableRow} style={{ backgroundColor: '#ffffff' }}>
+                    <td className={classes.tableCell} style={{ backgroundColor: '#ffffff' }}>
+                      <div className={classes.serviceCell}>
+                        <div className={classes.iconContainer}>
+                          <span className="material-icons-round">{getServiceIcon(service.name)}</span>
+                        </div>
+                        <div className={classes.serviceInfo}>
+                          <div className={classes.serviceName}>{service.name}</div>
+                          <div className={classes.serviceDescription}>
+                            {service.description || getCategoryName(service.categoryId)}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className={classes.tableCell}>
+                      {service.duration} min
+                    </td>
+                    <td className={classes.tableCell}>
+                      ${service.price.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </td>
+                    <td className={`${classes.tableCell} ${classes.actionsCell}`}>
+                      <div className={classes.actions}>
+                        <button
+                          className={classes.editButton}
                           onClick={() => handleOpenEdit(service)}
                         >
                           Editar
-                        </Button>
-                        <Button
-                          variant="light"
-                          color="red"
-                          size="xs"
+                        </button>
+                        <button
+                          className={classes.deleteButton}
                           onClick={() => handleOpenDelete(service)}
                         >
                           Eliminar
-                        </Button>
-                      </Box>
-                    </Table.Td>
-                  </Table.Tr>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
                 ))
               )}
-            </Table.Tbody>
-          </Table>
-        </Box>
-      </Stack>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Modal Create/Edit */}
       <Modal
@@ -335,7 +355,7 @@ export function ServicesManager() {
         }}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack gap="md">
+          <Group gap="md" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
             <TextInput
               label="Nombre del servicio"
               placeholder="Ej: Corte Clásico"
@@ -491,7 +511,7 @@ export function ServicesManager() {
                 {editingService ? 'Guardar Cambios' : 'Crear Servicio'}
               </Button>
             </Box>
-          </Stack>
+          </Group>
         </form>
       </Modal>
 
@@ -510,4 +530,3 @@ export function ServicesManager() {
     </>
   );
 }
-

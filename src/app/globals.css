@@ -119,3 +119,20 @@ button.continueButton span,
 button.continueButton div {
   color: #ffffff !important;
 }
+
+/* Force white background for admin tables - override any Mantine or global styles */
+div[class*="tableWrapper"] table tbody tr {
+  background: #ffffff !important;
+}
+
+div[class*="tableWrapper"] table tbody tr td {
+  background: #ffffff !important;
+}
+
+div[class*="tableWrapper"] table tbody {
+  background: #ffffff !important;
+}
+
+div[class*="tableWrapper"] table {
+  background: #ffffff !important;
+}

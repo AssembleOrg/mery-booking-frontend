@@ -2,20 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import {
-  Table,
   Button,
-  Stack,
-  Text,
   Modal,
   Box,
   Skeleton,
   Center,
   Group,
-  Checkbox,
-  ScrollArea,
   TextInput,
-  Badge,
   Divider,
+  Text,
+  Stack,
 } from '@mantine/core';
 import { useForm } from 'react-hook-form';
 import { EmployeeService, ServiceService, CategoryService } from '@/infrastructure/http';
@@ -113,7 +109,6 @@ export function EmployeesManager() {
   const handleOpenModal = async (employee: Employee) => {
     setSelectedEmployee(employee);
     setIsModalOpen(true);
-    // Cargar servicios cuando se abre el modal
     await Promise.all([
       loadAllServices(),
       loadEmployeeServices(employee.id),
@@ -257,107 +252,145 @@ export function EmployeesManager() {
     return Array(5)
       .fill(0)
       .map((_, index) => (
-        <Table.Tr key={index}>
-          <Table.Td><Skeleton height={20} /></Table.Td>
-          <Table.Td><Skeleton height={20} /></Table.Td>
-          <Table.Td><Skeleton height={20} /></Table.Td>
-          <Table.Td>
+        <tr key={index} className={classes.tableRow}>
+          <td className={classes.tableCell}>
+            <Skeleton height={20} width={150} />
+          </td>
+          <td className={classes.tableCell}>
+            <Skeleton height={20} width={200} />
+          </td>
+          <td className={classes.tableCell}>
+            <Skeleton height={20} width={120} />
+          </td>
+          <td className={classes.tableCell}>
             <Group gap="xs">
               <Skeleton height={28} width={70} />
+              <Skeleton height={28} width={120} />
               <Skeleton height={28} width={70} />
             </Group>
-          </Table.Td>
-        </Table.Tr>
+          </td>
+        </tr>
       ));
   };
 
   return (
     <>
-      <Stack gap="lg">
-        <Box className={classes.header}>
-          <Text className={classes.title}>Gestión de Empleados</Text>
+      <div className={classes.container}>
+        <div className={classes.header}>
+          <h2 className={classes.title}>
+            <span className="material-icons-round">people</span>
+            Gestión de Empleados
+          </h2>
           <Button
-            color="pink"
             onClick={() => handleOpenEditModal()}
-            className={classes.addButton}
+            className={classes.createButton}
           >
+            <span className="material-icons-round">add</span>
             Agregar Empleado
           </Button>
-        </Box>
+        </div>
 
-        <Box className={classes.tableContainer}>
-          <Table striped highlightOnHover className={classes.table}>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Nombre</Table.Th>
-                <Table.Th>Email</Table.Th>
-                <Table.Th>Teléfono</Table.Th>
-                <Table.Th>Acciones</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
+        <div className={classes.tableWrapper}>
+          <table className={classes.table} style={{ backgroundColor: '#ffffff' }}>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th className={classes.actionsHeader}>Acciones</th>
+              </tr>
+            </thead>
+            <tbody style={{ backgroundColor: '#ffffff' }}>
               {isLoading ? (
                 renderSkeletonRows()
               ) : employees.length === 0 ? (
-                <Table.Tr>
-                  <Table.Td colSpan={4}>
+                <tr>
+                  <td colSpan={4} className={classes.emptyCell}>
                     <Center py="xl">
-                      <Text c="dimmed">No hay empleados creados</Text>
+                      <span>No hay empleados creados</span>
                     </Center>
-                  </Table.Td>
-                </Table.Tr>
+                  </td>
+                </tr>
               ) : (
                 employees.map((employee) => (
-                  <Table.Tr key={employee.id}>
-                    <Table.Td>{employee.fullName}</Table.Td>
-                    <Table.Td>{employee.email}</Table.Td>
-                    <Table.Td>{employee.phone}</Table.Td>
-                    <Table.Td>
-                      <Group gap="xs">
-                        <Button
-                          variant="light"
-                          color="blue"
-                          size="xs"
+                  <tr key={employee.id} className={classes.tableRow} style={{ backgroundColor: '#ffffff' }}>
+                    <td className={classes.tableCell} style={{ backgroundColor: '#ffffff' }}>
+                      <div className={classes.employeeCell}>
+                        <div className={classes.iconContainer}>
+                          <span className="material-icons-round">person</span>
+                        </div>
+                        <div className={classes.employeeName}>{employee.fullName}</div>
+                      </div>
+                    </td>
+                    <td className={classes.tableCell} style={{ backgroundColor: '#ffffff' }}>
+                      {employee.email}
+                    </td>
+                    <td className={classes.tableCell} style={{ backgroundColor: '#ffffff' }}>
+                      {employee.phone}
+                    </td>
+                    <td className={`${classes.tableCell} ${classes.actionsCell}`} style={{ backgroundColor: '#ffffff' }}>
+                      <div className={classes.actions}>
+                        <button
+                          className={classes.editButton}
                           onClick={() => handleOpenEditModal(employee)}
                         >
                           Editar
-                        </Button>
-                        <Button
-                          variant="light"
-                          color="pink"
-                          size="xs"
+                        </button>
+                        <button
+                          className={classes.servicesButton}
                           onClick={() => handleOpenModal(employee)}
                         >
-                          Configurar Servicios
-                        </Button>
-                        <Button
-                          variant="light"
-                          color="red"
-                          size="xs"
+                          Servicios
+                        </button>
+                        <button
+                          className={classes.deleteButton}
                           onClick={() => handleOpenDelete(employee)}
                         >
                           Eliminar
-                        </Button>
-                      </Group>
-                    </Table.Td>
-                  </Table.Tr>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
                 ))
               )}
-            </Table.Tbody>
-          </Table>
-        </Box>
-      </Stack>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Modal de Configuración de Servicios */}
       <Modal
         opened={isModalOpen}
         onClose={handleCloseModal}
-        title={`Configurar Servicios: ${selectedEmployee?.fullName || ''}`}
+        title={
+          <div className={classes.modalTitleContainer}>
+            <span className="material-icons-round">assignment</span>
+            <span>Configurar Servicios: {selectedEmployee?.fullName || ''}</span>
+          </div>
+        }
         centered
-        size="xl"
+        size="90%"
+        styles={{
+          body: {
+            padding: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          },
+          content: {
+            maxWidth: '1400px',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          },
+          inner: {
+            padding: '1rem',
+          },
+        }}
         classNames={{
           title: classes.modalTitle,
           body: classes.modalBody,
+          content: classes.modalContent,
         }}
       >
         {isLoadingServices ? (
@@ -369,94 +402,109 @@ export function EmployeesManager() {
             </Stack>
           </Center>
         ) : (
-          <Stack gap="md">
-            <Text size="sm" c="dimmed" mb="sm">
-              Selecciona los servicios que este empleado puede atender
-            </Text>
+          <div className={classes.modalContentWrapper}>
+            <div className={classes.modalHeaderSection}>
+              <Text size="sm" className={classes.modalDescription}>
+                Selecciona los servicios que este empleado puede atender
+              </Text>
+            </div>
 
-            <Divider />
-
-            <ScrollArea h={500}>
-              <Stack gap="lg">
-                {allServices.length === 0 ? (
-                  <Center py="xl">
-                    <Text c="dimmed">No hay servicios disponibles</Text>
-                  </Center>
-                ) : (
-                  (() => {
+            <div className={classes.servicesScrollContainer}>
+              {allServices.length === 0 ? (
+                <Center py="xl">
+                  <Text className={classes.emptyText}>No hay servicios disponibles</Text>
+                </Center>
+              ) : (
+                <div className={classes.servicesContent}>
+                  {(() => {
                     const groupedServices = groupServicesByCategory();
-                    return groupedServices.map(({ categoryId, categoryName, services }, index) => (
-                      <Box key={categoryId}>
-                        <Text
-                          className={classes.categoryTitle}
-                          fw={600}
-                          size="lg"
-                          mb="md"
-                          mt={index > 0 ? 'xl' : 0}
-                        >
+                    return groupedServices.map(({ categoryId, categoryName, services }) => (
+                      <Box key={categoryId} className={classes.categorySection}>
+                        <Text className={classes.categoryTitle}>
                           {categoryName}
                         </Text>
-                        <Stack gap="md">
-                          {services.map((service) => (
-                            <Box key={service.id} className={classes.serviceCard}>
-                              <Group justify="space-between" align="flex-start" wrap="nowrap">
-                                <Box style={{ flex: 1 }}>
-                                  <Checkbox
-                                    label={
-                                      <Text fw={500} size="md">
-                                        {service.name}
-                                      </Text>
-                                    }
-                                    checked={selectedServices.includes(service.id)}
-                                    onChange={() => handleServiceToggle(service.id)}
-                                    className={classes.serviceCheckbox}
-                                  />
+                        <div className={classes.servicesGrid}>
+                          {services.map((service) => {
+                            const isSelected = selectedServices.includes(service.id);
+                            return (
+                              <div
+                                key={service.id}
+                                className={`${classes.serviceCard} ${isSelected ? classes.serviceCardSelected : ''}`}
+                                onClick={() => handleServiceToggle(service.id)}
+                              >
+                                <div className={classes.serviceCardHeader}>
+                                  <div className={classes.serviceIconContainer}>
+                                    <span className="material-icons-round">
+                                      {service.name.toLowerCase().includes('paramedical') || service.name.toLowerCase().includes('camuflaje')
+                                        ? 'healing'
+                                        : service.name.toLowerCase().includes('tattoo') || service.name.toLowerCase().includes('cosmético') || service.name.toLowerCase().includes('microblading')
+                                        ? 'colorize'
+                                        : service.name.toLowerCase().includes('ceja') || service.name.toLowerCase().includes('pestaña') || service.name.toLowerCase().includes('estilismo')
+                                        ? 'visibility'
+                                        : service.name.toLowerCase().includes('labial') || service.name.toLowerCase().includes('lip')
+                                        ? 'face_retouching_natural'
+                                        : 'spa'}
+                                    </span>
+                                  </div>
+                                  <div className={classes.serviceCheckboxContainer}>
+                                    <div className={`${classes.serviceCheckbox} ${isSelected ? classes.serviceCheckboxChecked : ''}`}>
+                                      {isSelected && (
+                                        <span className="material-icons-round">check</span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className={classes.serviceCardContent}>
+                                  <Text className={classes.serviceName}>{service.name}</Text>
                                   {service.description && (
-                                    <Text size="sm" c="dimmed" mt={4} ml={28}>
+                                    <Text className={classes.serviceDescription}>
                                       {service.description}
                                     </Text>
                                   )}
-                                </Box>
-                                <Group gap="md" ml="md">
-                                  <Badge color="pink" variant="light" size="lg">
-                                    ${service.price.toLocaleString('es-AR')}
-                                  </Badge>
-                                  <Badge color="blue" variant="light" size="lg">
+                                </div>
+                                <div className={classes.serviceCardFooter}>
+                                  <div className={classes.servicePrice}>
+                                    ${service.price.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  </div>
+                                  <div className={classes.serviceDuration}>
+                                    <span className="material-icons-round">schedule</span>
                                     {service.duration} min
-                                  </Badge>
-                                </Group>
-                              </Group>
-                            </Box>
-                          ))}
-                        </Stack>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </Box>
                     ));
-                  })()
-                )}
-              </Stack>
-            </ScrollArea>
+                  })()}
+                </div>
+              )}
+            </div>
 
-            <Divider />
-
-            <Group justify="flex-end" mt="md">
-              <Button
-                variant="outline"
-                color="gray"
-                onClick={handleCloseModal}
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
-              <Button
-                color="pink"
-                onClick={handleSaveServices}
-                loading={isSubmitting}
-                size="md"
-              >
-                Guardar Cambios
-              </Button>
-            </Group>
-          </Stack>
+            <div className={classes.modalFooterSection}>
+              <Divider className={classes.divider} />
+              <Group justify="flex-end" className={classes.modalActions}>
+                <Button
+                  variant="outline"
+                  color="gray"
+                  onClick={handleCloseModal}
+                  disabled={isSubmitting}
+                  className={classes.cancelButton}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleSaveServices}
+                  loading={isSubmitting}
+                  size="md"
+                  className={classes.saveButton}
+                >
+                  Guardar Cambios
+                </Button>
+              </Group>
+            </div>
+          </div>
         )}
       </Modal>
 
@@ -464,7 +512,16 @@ export function EmployeesManager() {
       <Modal
         opened={isEditModalOpen}
         onClose={handleCloseEditModal}
-        title={isCreating ? 'Agregar Nuevo Empleado' : `Editar Empleado: ${selectedEmployee?.fullName || ''}`}
+        title={
+          <div className={classes.modalTitleContainer}>
+            <span className="material-icons-round">
+              {isCreating ? 'person_add' : 'edit'}
+            </span>
+            <span>
+              {isCreating ? 'Agregar Nuevo Empleado' : `Editar Empleado: ${selectedEmployee?.fullName || ''}`}
+            </span>
+          </div>
+        }
         centered
         size="md"
         classNames={{
@@ -509,19 +566,20 @@ export function EmployeesManager() {
               error={employeeErrors.phone?.message}
             />
 
-            <Group justify="flex-end" mt="md">
+            <Group justify="flex-end" mt="md" className={classes.modalActions}>
               <Button
                 variant="outline"
                 color="gray"
                 onClick={handleCloseEditModal}
                 disabled={isSubmittingEmployee}
+                className={classes.cancelButton}
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
-                color="pink"
                 loading={isSubmittingEmployee}
+                className={classes.saveButton}
               >
                 {isCreating ? 'Crear Empleado' : 'Guardar Cambios'}
               </Button>

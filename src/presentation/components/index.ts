@@ -8,6 +8,7 @@ export { BookingConfirmationModal } from './BookingConfirmationModal';
 export { ConfirmationModal } from './ConfirmationModal';
 export { ReservaModal } from './ReservaModal';
 export { ImageCarousel } from './ImageCarousel';
+export { PublicRescheduleBooking } from './PublicRescheduleBooking';
 
 // Editorial components
 export { SectionTitle } from './SectionTitle';

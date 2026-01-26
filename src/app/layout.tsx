@@ -102,6 +102,10 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <head>
         <ColorSchemeScript />
+        <link
+          href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+          rel="stylesheet"
+        />
       </head>
       <body
         className={`${avantGardeMedium.variable} ${avantGardeButtons.variable} ${dinLight.variable} ${dinRegular.variable} ${dinMedium.variable}`}

@@ -4,6 +4,17 @@
   width: 100%;
 }
 
+.rescheduleSection {
+  padding: 4rem 0;
+  background: #fafafa;
+}
+
+.rescheduleContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
 .heroContainer {
   position: relative;
   width: 100%;

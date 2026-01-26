@@ -28,7 +28,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { notifications } from '@mantine/notifications';
 import { BookingService, EmployeeService, ServiceService, ClientService } from '@/infrastructure/http';
 import type { Booking, BookingResponse, Employee, ServiceEntity, Client, ClientSearchResult } from '@/infrastructure/http';
-import { useCreateBooking, useCreateClient, useAvailability } from '@/presentation/hooks';
+import { useCreateBooking, useCreateClient, useAvailability, useRescheduleBooking } from '@/presentation/hooks';
 import { ConfirmationModal } from '@/presentation/components';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
@@ -73,10 +73,12 @@ export function BookingsManager() {
   const [clients, setClients] = useState<ClientSearchResult[]>([]);
   const [isLoadingClients, setIsLoadingClients] = useState(false);
   const [clientSearchQuery, setClientSearchQuery] = useState('');
+  const [rescheduleModalOpen, setRescheduleModalOpen] = useState(false);
   
   // Hooks para crear reserva y cliente
   const createBookingMutation = useCreateBooking();
   const createClientMutation = useCreateClient();
+  const rescheduleBookingMutation = useRescheduleBooking();
   
   // Formulario para crear reserva manual
   interface CreateBookingFormData {
@@ -112,6 +114,34 @@ export function BookingsManager() {
   const selectedEmployeeIdForBooking = watchCreateBooking('employeeId');
   const selectedDateForBooking = watchCreateBooking('date');
   
+  // Formulario para reagendar reserva
+  interface RescheduleBookingFormData {
+    employeeId: string;
+    serviceId: string;
+    date: Date | null;
+    startTime: string; // HH:mm
+  }
+  
+  const {
+    control: rescheduleControl,
+    handleSubmit: handleRescheduleSubmit,
+    formState: { errors: rescheduleErrors },
+    reset: resetRescheduleForm,
+    watch: watchReschedule,
+    setValue: setRescheduleValue,
+  } = useForm<RescheduleBookingFormData>({
+    defaultValues: {
+      employeeId: '',
+      serviceId: '',
+      date: null,
+      startTime: '',
+    },
+  });
+  
+  const selectedServiceIdForReschedule = watchReschedule('serviceId');
+  const selectedEmployeeIdForReschedule = watchReschedule('employeeId');
+  const selectedDateForReschedule = watchReschedule('date');
+  
   // Calcular fechas para la consulta de disponibilidad (rango de 30 días desde la fecha seleccionada)
   const availabilityMinDate = selectedDateForBooking 
     ? dayjs(selectedDateForBooking).format('YYYY-MM-DD')
@@ -120,12 +150,27 @@ export function BookingsManager() {
     ? dayjs(selectedDateForBooking).add(30, 'days').format('YYYY-MM-DD')
     : null;
   
+  const rescheduleAvailabilityMinDate = selectedDateForReschedule 
+    ? dayjs(selectedDateForReschedule).format('YYYY-MM-DD')
+    : null;
+  const rescheduleAvailabilityMaxDate = selectedDateForReschedule
+    ? dayjs(selectedDateForReschedule).add(30, 'days').format('YYYY-MM-DD')
+    : null;
+  
   // Consultar disponibilidad cuando tengamos empleado, servicio y fecha
   const { data: availability, isLoading: isLoadingAvailability } = useAvailability(
     selectedEmployeeIdForBooking || null,
     selectedServiceIdForBooking || null,
     availabilityMinDate,
     availabilityMaxDate
+  );
+  
+  // Consultar disponibilidad para reagendamiento
+  const { data: rescheduleAvailability, isLoading: isLoadingRescheduleAvailability } = useAvailability(
+    selectedEmployeeIdForReschedule || null,
+    selectedServiceIdForReschedule || null,
+    rescheduleAvailabilityMinDate,
+    rescheduleAvailabilityMaxDate
   );
   
   // Cargar clientes cuando se abre el modal (sin filtro inicial)
@@ -239,6 +284,87 @@ export function BookingsManager() {
     // Si no hay disponibilidad o no hay fecha seleccionada, devolver todas las opciones
     return allOptions;
   }, [availability, selectedDateForBooking, selectedEmployeeIdForBooking, selectedServiceIdForBooking]);
+  
+  // Generar opciones de hora para reagendamiento
+  const rescheduleTimeOptions = useMemo(() => {
+    const allOptions = [];
+    for (let hour = 10; hour <= 17; hour++) {
+      allOptions.push({ value: `${hour.toString().padStart(2, '0')}:00`, label: `${hour}:00` });
+      if (hour < 17) {
+        allOptions.push({ value: `${hour.toString().padStart(2, '0')}:30`, label: `${hour}:30` });
+      }
+    }
+    
+    // Si tenemos disponibilidad y una fecha seleccionada, filtrar las opciones
+    if (rescheduleAvailability && selectedDateForReschedule && selectedEmployeeIdForReschedule && selectedServiceIdForReschedule) {
+      const dateStr = dayjs(selectedDateForReschedule).format('YYYY-MM-DD');
+      const dayAvailability = rescheduleAvailability.availability.find(day => day.date === dateStr);
+      
+      if (dayAvailability && dayAvailability.slots) {
+        // Filtrar solo los slots disponibles
+        const availableSlots = dayAvailability.slots
+          .filter(slot => slot.available)
+          .map(slot => slot.startTime);
+        
+        return allOptions.filter(option => availableSlots.includes(option.value));
+      }
+    }
+    
+    // Si no hay disponibilidad o no hay fecha seleccionada, devolver todas las opciones
+    return allOptions;
+  }, [rescheduleAvailability, selectedDateForReschedule, selectedEmployeeIdForReschedule, selectedServiceIdForReschedule]);
+  
+  // Inicializar formulario de reagendamiento cuando se abre el modal
+  useEffect(() => {
+    if (rescheduleModalOpen && selectedBooking) {
+      // Pre-llenar con los valores actuales de la reserva
+      setRescheduleValue('employeeId', selectedBooking.employeeId);
+      setRescheduleValue('serviceId', selectedBooking.serviceId);
+      // Convertir la fecha de la reserva a Date
+      const bookingDate = dayjs(selectedBooking.localDate || selectedBooking.date).toDate();
+      setRescheduleValue('date', bookingDate);
+      setRescheduleValue('startTime', selectedBooking.localStartTime || selectedBooking.startTimeFormatted || '');
+    } else if (!rescheduleModalOpen) {
+      resetRescheduleForm();
+    }
+  }, [rescheduleModalOpen, selectedBooking, setRescheduleValue, resetRescheduleForm]);
+  
+  const onSubmitReschedule = async (data: RescheduleBookingFormData) => {
+    if (!selectedBooking || !data.date) {
+      notifications.show({
+        title: 'Error',
+        message: 'Por favor completa todos los campos',
+        color: 'red',
+      });
+      return;
+    }
+    
+    try {
+      const dateString = dayjs(data.date).format('YYYY-MM-DD');
+      await rescheduleBookingMutation.mutateAsync({
+        bookingId: selectedBooking.id,
+        data: {
+          date: dateString,
+          startTime: data.startTime,
+          employeeId: data.employeeId,
+          serviceId: data.serviceId, // Opcional para admin, pero lo incluimos
+        },
+      });
+      
+      setRescheduleModalOpen(false);
+      setBookingDetailsModalOpen(false);
+      setSelectedBooking(null);
+      resetRescheduleForm();
+      await fetchBookings();
+    } catch (error) {
+      // Los errores ya se manejan en el hook
+      console.error('Error rescheduling booking:', error);
+    }
+  };
+  
+  const handleRescheduleClick = () => {
+    setRescheduleModalOpen(true);
+  };
 
   useEffect(() => {
     initializeData();
@@ -1240,14 +1366,22 @@ export function BookingsManager() {
             </Group>
 
             {selectedBooking.status !== 'CANCELLED' && (
-              <Button
-                color="red"
-                variant="outline"
-                onClick={handleCancelBookingClick}
-                fullWidth
-              >
-                Cancelar Reserva
-              </Button>
+              <Group gap="sm" grow>
+                <Button
+                  color="blue"
+                  variant="filled"
+                  onClick={handleRescheduleClick}
+                >
+                  Reagendar Turno
+                </Button>
+                <Button
+                  color="red"
+                  variant="outline"
+                  onClick={handleCancelBookingClick}
+                >
+                  Cancelar Reserva
+                </Button>
+              </Group>
             )}
           </Stack>
         )}
@@ -1420,6 +1554,130 @@ export function BookingsManager() {
                 loading={createBookingMutation.isPending}
               >
                 Crear Reserva
+              </Button>
+            </Group>
+          </Stack>
+        </form>
+      </Modal>
+
+      {/* Modal: Reagendar reserva */}
+      <Modal
+        opened={rescheduleModalOpen}
+        onClose={() => {
+          setRescheduleModalOpen(false);
+          resetRescheduleForm();
+        }}
+        title="Reagendar Reserva"
+        size="lg"
+      >
+        <form onSubmit={handleRescheduleSubmit(onSubmitReschedule)}>
+          <Stack gap="md">
+            {/* Empleado */}
+            <Controller
+              name="employeeId"
+              control={rescheduleControl}
+              rules={{ required: 'El empleado es requerido' }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="* Empleado"
+                  placeholder="Selecciona un empleado"
+                  data={employees.map(e => ({ value: e.id, label: e.fullName }))}
+                  searchable
+                  error={rescheduleErrors.employeeId?.message}
+                />
+              )}
+            />
+
+            {/* Servicio */}
+            <Controller
+              name="serviceId"
+              control={rescheduleControl}
+              rules={{ required: 'El servicio es requerido' }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="* Servicio"
+                  placeholder="Selecciona un servicio"
+                  data={services.map(s => ({ value: s.id, label: s.name }))}
+                  searchable
+                  error={rescheduleErrors.serviceId?.message}
+                />
+              )}
+            />
+
+            {/* Fecha */}
+            <Controller
+              name="date"
+              control={rescheduleControl}
+              rules={{ required: 'La fecha es requerida' }}
+              render={({ field }) => (
+                <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 1 }}>
+                  <DatePickerInput
+                    {...field}
+                    label="* Fecha"
+                    placeholder="Selecciona una fecha"
+                    value={field.value}
+                    onChange={(date) => {
+                      field.onChange(date);
+                      // Resetear la hora cuando cambie la fecha
+                      setRescheduleValue('startTime', '');
+                    }}
+                    minDate={new Date()}
+                    error={rescheduleErrors.date?.message}
+                    locale="es"
+                  />
+                </DatesProvider>
+              )}
+            />
+
+            {/* Hora */}
+            <Controller
+              name="startTime"
+              control={rescheduleControl}
+              rules={{ 
+                required: 'La hora es requerida',
+                pattern: {
+                  value: /^([0-1][0-9]|2[0-3]):(00|30)$/,
+                  message: 'La hora debe estar en formato HH:mm y solo permite :00 o :30'
+                }
+              }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="* Hora de inicio"
+                  placeholder={
+                    isLoadingRescheduleAvailability 
+                      ? "Cargando disponibilidad..." 
+                      : !selectedDateForReschedule || !selectedEmployeeIdForReschedule || !selectedServiceIdForReschedule
+                      ? "Selecciona fecha, empleado y servicio primero"
+                      : rescheduleTimeOptions.length === 0
+                      ? "No hay horarios disponibles para esta fecha"
+                      : "Selecciona una hora"
+                  }
+                  data={rescheduleTimeOptions}
+                  error={rescheduleErrors.startTime?.message}
+                  disabled={isLoadingRescheduleAvailability || !selectedDateForReschedule || !selectedEmployeeIdForReschedule || !selectedServiceIdForReschedule || rescheduleTimeOptions.length === 0}
+                  rightSection={isLoadingRescheduleAvailability ? <Loader size="xs" /> : undefined}
+                />
+              )}
+            />
+
+            <Group justify="flex-end" mt="md">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setRescheduleModalOpen(false);
+                  resetRescheduleForm();
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                loading={rescheduleBookingMutation.isPending}
+              >
+                Reagendar Reserva
               </Button>
             </Group>
           </Stack>

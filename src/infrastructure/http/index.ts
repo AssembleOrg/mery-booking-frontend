@@ -14,6 +14,6 @@ export type { Employee, CreateEmployeeDto, UpdateEmployeeDto, WorkingDay, DayOff
 export type { EmployeeTimeSlot, CreateEmployeeTimeSlotDto, UpdateEmployeeTimeSlotDto, DayOfWeek } from './employeeTimeSlotService';
 export type { BlockedTimeSlot, CreateBlockedTimeSlotDto, UpdateBlockedTimeSlotDto } from './blockedTimeSlotService';
 export type { Service as EmployeeTimeSlotServiceType } from './employeeTimeSlotService';
-export type { Booking, BookingStatus, GetOccupiedTimeSlotsParams, CreateBookingDto, BookingResponse, AvailabilityResponse } from './bookingService';
+export type { Booking, BookingStatus, GetOccupiedTimeSlotsParams, CreateBookingDto, BookingResponse, AvailabilityResponse, RescheduleBookingDto } from './bookingService';
 export type { Client, CreateClientDto, UpdateClientDto, CreateClientPublicDto, CreateClientPublicResponse, ClientSearchResult } from './clientService';
 

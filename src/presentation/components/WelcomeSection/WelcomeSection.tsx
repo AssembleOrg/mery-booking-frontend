@@ -11,6 +11,7 @@ import {
   StaggerContainer,
   StaggerItem,
   ImageCrossfade,
+  PublicRescheduleBooking,
 } from '@/presentation/components';
 import classes from './WelcomeSection.module.css';
 
@@ -282,6 +283,15 @@ export function WelcomeSection() {
             </Link>
           </Box>
         </FadeInSection>
+      </section> */}
+
+      {/* Sección de reagendamiento público - Ocultada temporalmente */}
+      {/* <section className={classes.rescheduleSection}>
+        <Container className={classes.rescheduleContainer}>
+          <FadeInSection direction="up" delay={0.2}>
+            <PublicRescheduleBooking />
+          </FadeInSection>
+        </Container>
       </section> */}
     </Box>
   );

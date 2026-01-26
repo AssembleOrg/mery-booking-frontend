@@ -66,6 +66,7 @@ export interface CreateBookingDto {
 
 export interface BookingResponse {
   id: string;
+  bookingCode?: string; // Código único de reserva (6 caracteres alfanuméricos)
   clientId: string;
   employeeId: string;
   serviceId: string;
@@ -122,6 +123,14 @@ export interface AvailabilityResponse {
     }>;
   }>;
 }
+
+export interface RescheduleBookingDto {
+  date: string; // YYYY-MM-DD
+  startTime: string; // HH:mm
+  employeeId: string;
+  serviceId?: string; // Opcional para admin
+}
+
 
 export class BookingService {
   private static readonly BASE_PATH = '/bookings';
@@ -207,6 +216,32 @@ export class BookingService {
 
   static async cancel(id: string): Promise<BookingResponse> {
     const response = await apiClient.post<BackendResponse<BookingResponse>>(`${this.BASE_PATH}/${id}/cancel`);
+    return response.data.data;
+  }
+
+  // Reagendar reserva (admin) - sin restricción de tiempo
+  static async reschedule(id: string, data: RescheduleBookingDto): Promise<BookingResponse> {
+    const response = await apiClient.patch<BackendResponse<BookingResponse>>(
+      `${this.BASE_PATH}/${id}/reschedule`,
+      data
+    );
+    return response.data.data;
+  }
+
+  // Buscar reserva por código (público)
+  static async getByCode(bookingCode: string): Promise<BookingResponse> {
+    const response = await apiClient.get<BackendResponse<BookingResponse>>(
+      `${this.BASE_PATH}/public/${bookingCode}`
+    );
+    return response.data.data;
+  }
+
+  // Reagendar reserva (público) - requiere 48 horas de anticipación
+  static async reschedulePublic(bookingCode: string, data: RescheduleBookingDto): Promise<BookingResponse> {
+    const response = await apiClient.patch<BackendResponse<BookingResponse>>(
+      `${this.BASE_PATH}/public/${bookingCode}/reschedule`,
+      data
+    );
     return response.data.data;
   }
 }
