@@ -3,7 +3,6 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { BookingConfirmationModal } from '@/presentation/components';
-import { useCreateClient, useCreateBooking } from '@/presentation/hooks';
 import { Client } from '@/domain/entities';
 import classes from './ReservaModal.module.css';
 import type { ServiceOption } from '@/infrastructure/types/services';
@@ -21,7 +20,14 @@ interface Step4ConfirmationProps {
   services: ServiceEntity[];
   staffConsultasId?: string;
   meryGarciaId?: string;
-  onComplete: () => void;
+  onClientDataCollected: (data: {
+    name: string;
+    surname: string;
+    email: string;
+    mobile: string;
+    dni: string;
+    notes?: string;
+  }) => void;
   onBack: () => void;
 }
 
@@ -34,14 +40,10 @@ export function Step4Confirmation({
   services,
   staffConsultasId,
   meryGarciaId,
-  onComplete,
+  onClientDataCollected,
   onBack,
 }: Step4ConfirmationProps) {
   const [showConfirmation, setShowConfirmation] = useState(true);
-
-  // Hooks para crear cliente y reserva
-  const createClientMutation = useCreateClient();
-  const createBookingMutation = useCreateBooking();
 
   // Usar employeeId del selectedOption (ya viene asignado por getOptionsWithIds)
   // Solo usar fallbacks si no existe
@@ -79,60 +81,37 @@ export function Step4Confirmation({
     };
   }, [employee]);
 
-  const handleConfirmBooking = async (clientData: Client) => {
-    if (!selectedOption.serviceId || !selectedDate || !selectedTime) return;
+  const handleCollectData = async (clientData: Client) => {
+    console.log('[ReservaModal Step4] Datos del cliente recolectados:', {
+      name: clientData.name,
+      surname: clientData.surname,
+      email: clientData.email,
+      dni: clientData.dni,
+      hasMobile: !!clientData.mobile,
+      hasNotes: !!clientData.notes,
+    });
 
-    // Validar que haya un empleado seleccionado
-    if (!employeeId) {
+    if (!clientData.dni) {
+      console.error('[ReservaModal Step4] ERROR: El DNI es requerido');
       return;
     }
 
-    try {
-      // 1. Crear cliente primero
-      if (!clientData.dni) {
-        throw new Error('El DNI es requerido para completar la reserva');
-      }
-
-      const clientResponse = await createClientMutation.mutateAsync({
-        fullName: `${clientData.name} ${clientData.surname}`,
-        email: clientData.email,
-        phone: clientData.mobile,
-        dni: clientData.dni,
-      });
-
-      // 2. Crear reserva con el ID del cliente
-      const year = selectedDate.getFullYear();
-      const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-      const day = String(selectedDate.getDate()).padStart(2, '0');
-      const dateStr = `${year}-${month}-${day}`;
-
-      await createBookingMutation.mutateAsync({
-        clientId: clientResponse.id,
-        employeeId: employeeId,
-        serviceId: selectedOption.serviceId,
-        date: dateStr,
-        startTime: selectedTime,
-        quantity: 1,
-        paid: false,
-        notes: clientData.notes,
-      });
-
-      // Éxito - cerrar todo
-      handleBookingSuccess();
-    } catch (error) {
-      console.error('Error creating booking:', error);
-      // El error será manejado por los hooks de react-query
-    }
+    console.log('[ReservaModal Step4] Llamando a onClientDataCollected...');
+    // Recolectar datos y pasar al Step 5
+    onClientDataCollected({
+      name: clientData.name,
+      surname: clientData.surname,
+      email: clientData.email,
+      mobile: clientData.mobile,
+      dni: clientData.dni,
+      notes: clientData.notes,
+    });
+    console.log('[ReservaModal Step4] onClientDataCollected ejecutado exitosamente');
   };
 
   const handleConfirmationClose = () => {
     setShowConfirmation(false);
     onBack(); // Volver al paso anterior si cancela
-  };
-
-  const handleBookingSuccess = () => {
-    setShowConfirmation(false);
-    onComplete(); // Cerrar todo el modal y resetear
   };
 
   if (!serviceForModal) {
@@ -154,7 +133,7 @@ export function Step4Confirmation({
         date={selectedDate}
         time={selectedTime}
         location={MOCK_LOCATION}
-        onConfirm={handleConfirmBooking}
+        onConfirm={handleCollectData}
       />
     </motion.div>
   );

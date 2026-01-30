@@ -31,6 +31,7 @@ import { useAuth } from '@/presentation/contexts';
 import { Client } from '@/domain/entities';
 import dayjs from 'dayjs';
 import classes from './page.module.css';
+import { EMPLOYEE_IDS, CATEGORY_IDS } from '@/config/constants';
 
 // Tipos de contenido del acordeón
 type AccordionContentType =
@@ -84,11 +85,8 @@ function ConsultaContent({
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
 
-  // ID hardcodeado de "Staff Consultas" como fallback
-  const STAFF_CONSULTAS_ID = '2d283dc6-6940-46fc-9166-eb6b17b8cc0f';
-
-  // Usar el ID proporcionado o el hardcodeado como fallback
-  const effectiveStaffConsultasId = staffConsultasId || STAFF_CONSULTAS_ID;
+  // Usar el ID proporcionado o el de constantes como fallback
+  const effectiveStaffConsultasId = staffConsultasId || EMPLOYEE_IDS.STAFF_CONSULTAS;
 
   // Hooks para crear cliente y reserva
   const createClientMutation = useCreateClient();
@@ -1315,18 +1313,32 @@ function findEmployeeByName(
   return null;
 }
 
+// Fallback estático de empleados (se crea una sola vez para evitar re-renders infinitos)
+const FALLBACK_EMPLOYEES: Employee[] = [
+  {
+    id: EMPLOYEE_IDS.STAFF_CONSULTAS,
+    fullName: 'Staff Consultas',
+    email: 'info6@merygarcia.com.ar',
+    phone: '+541145303203',
+    createdAt: '2026-01-30T00:00:00.000Z',
+    updatedAt: '2026-01-30T00:00:00.000Z',
+  },
+  {
+    id: EMPLOYEE_IDS.MERY_GARCIA,
+    fullName: 'Mery Garcia',
+    email: 'info@merygarcia.com.ar',
+    phone: '+541145303203',
+    createdAt: '2026-01-30T00:00:00.000Z',
+    updatedAt: '2026-01-30T00:00:00.000Z',
+  },
+];
+
 export default function TattooCosmeticoPage() {
   const { isAuthenticated } = useAuth();
 
-  // ID hardcodeado de la categoría "Tattoo Cosmético"
-  const TATTOO_COSMETICO_CATEGORY_ID = '9a39b2f8-0d4a-4bca-bc93-b4b5d6cf2d11';
-
-  // ID hardcodeado de "Staff Consultas"
-  const STAFF_CONSULTAS_ID = '2d283dc6-6940-46fc-9166-eb6b17b8cc0f';
-
-  // Inicializar con el ID hardcodeado para que los hooks se ejecuten inmediatamente
+  // Inicializar con el ID de constantes para que los hooks se ejecuten inmediatamente
   const [cosmeticTattooCategoryId, setCosmeticTattooCategoryId] =
-    useState<string>(TATTOO_COSMETICO_CATEGORY_ID);
+    useState<string>(CATEGORY_IDS.TATTOO_COSMETICO);
   const [mappedServices, setMappedServices] = useState<
     Map<string, ServiceEntity>
   >(new Map());
@@ -1381,6 +1393,9 @@ export default function TattooCosmeticoPage() {
     error: employeesError,
   } = useEmployees(cosmeticTattooCategoryId);
 
+  // Fallback simple sin useMemo (evita re-renders infinitos)
+  const employeesWithFallback = employees.length > 0 ? employees : FALLBACK_EMPLOYEES;
+
   // Debug: Log cuando cambian los servicios o categoryId
   useEffect(() => {
     console.log('Services loading state:', {
@@ -1405,7 +1420,24 @@ export default function TattooCosmeticoPage() {
       employeesError,
       employees: employees.map((e) => ({ id: e.id, fullName: e.fullName })),
     });
+
+    // Log detallado del error si existe
+    if (employeesError) {
+      console.error('❌ Error detallado al cargar empleados:');
+      console.error('Error completo:', employeesError);
+      console.error('Error message:', employeesError?.message);
+      // Cast a any para acceder a propiedades de axios
+      console.error('Error response:', (employeesError as any)?.response);
+      console.error('Error response data:', (employeesError as any)?.response?.data);
+    }
   }, [cosmeticTattooCategoryId, employees, isLoadingEmployees, employeesError]);
+
+  // Log solo cuando se usa el fallback (evita logs repetidos en cada render)
+  useEffect(() => {
+    if (employeesError && employees.length === 0) {
+      console.warn('⚠️ Usando empleados hardcodeados como fallback');
+    }
+  }, [employeesError, employees.length]);
 
   // Mapear servicios y empleados cuando se cargan
   useEffect(() => {
@@ -1461,14 +1493,14 @@ export default function TattooCosmeticoPage() {
   }, [services]);
 
   useEffect(() => {
-    if (employees.length > 0) {
+    if (employeesWithFallback.length > 0) {
       const employeeMap = new Map<string, Employee>();
 
       // Mapear empleados
-      const meryGarcia = findEmployeeByName(employees, 'mery-garcia');
-      const staffMg = findEmployeeByName(employees, 'staff-mg');
+      const meryGarcia = findEmployeeByName(employeesWithFallback, 'mery-garcia');
+      const staffMg = findEmployeeByName(employeesWithFallback, 'staff-mg');
       // Buscar "Staff Consultas" específicamente - búsqueda flexible
-      const staffConsultas = employees.find((e) => {
+      const staffConsultas = employeesWithFallback.find((e) => {
         const nameLower = e.fullName.toLowerCase();
         return (
           nameLower.includes('staff consultas') ||
@@ -1485,12 +1517,12 @@ export default function TattooCosmeticoPage() {
       } else {
         console.warn(
           'Staff Consultas NO encontrado. Empleados disponibles:',
-          employees.map((e) => e.fullName)
+          employeesWithFallback.map((e) => e.fullName)
         );
-        // Usar ID hardcodeado como fallback si no se encuentra en la lista
-        // Crear un objeto Employee temporal con el ID hardcodeado
+        // Usar ID de constantes como fallback si no se encuentra en la lista
+        // Crear un objeto Employee temporal con el ID de constantes
         const staffConsultasFallback: Employee = {
-          id: STAFF_CONSULTAS_ID,
+          id: EMPLOYEE_IDS.STAFF_CONSULTAS,
           fullName: 'Staff Consultas',
           email: 'info6@merygarcia.com.ar',
           phone: '+541145303203',
@@ -1499,14 +1531,14 @@ export default function TattooCosmeticoPage() {
         };
         employeeMap.set('staff-consultas', staffConsultasFallback);
         console.log(
-          'Usando Staff Consultas con ID hardcodeado:',
-          STAFF_CONSULTAS_ID
+          'Usando Staff Consultas con ID de constantes:',
+          EMPLOYEE_IDS.STAFF_CONSULTAS
         );
       }
 
       setMappedEmployees(employeeMap);
     }
-  }, [employees]);
+  }, [employeesWithFallback]);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -1645,9 +1677,13 @@ export default function TattooCosmeticoPage() {
           );
         }
 
+        // Buscar Staff Consultas para asignar como employeeId
+        const staffConsultas = mappedEmployees.get('staff-consultas');
+
         return {
           ...option,
           serviceId: consultaService?.id,
+          employeeId: staffConsultas?.id, // ✅ AGREGAR employeeId para consultas
           serviceDuration: consultaService?.duration || 60,
         };
       }
@@ -1867,7 +1903,7 @@ export default function TattooCosmeticoPage() {
                           firstOptionSample: sessionOptions[0], // La opción "1ª Sesión"
                           staffConsultasId,
                           meryGarciaId,
-                          employeesCount: employees.length,
+                          employeesCount: employeesWithFallback.length,
                           servicesCount: services.length,
                         });
                         setModalService({
@@ -1898,7 +1934,7 @@ export default function TattooCosmeticoPage() {
                     }
                     meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
                     services={services}
-                    employees={employees}
+                    employees={employeesWithFallback}
                   />
                 </Box> */}
               </Box>
@@ -1993,7 +2029,7 @@ export default function TattooCosmeticoPage() {
                     }
                     meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
                     services={services}
-                    employees={employees}
+                    employees={employeesWithFallback}
                   />
                 </Box> */}
               </Box>
@@ -2083,7 +2119,7 @@ export default function TattooCosmeticoPage() {
                     }
                     meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
                     services={services}
-                    employees={employees}
+                    employees={employeesWithFallback}
                   />
                 </Box> */}
               </Box>
@@ -2170,7 +2206,7 @@ export default function TattooCosmeticoPage() {
                     }
                     meryGarciaId={mappedEmployees.get('mery-garcia')?.id}
                     services={services}
-                    employees={employees}
+                    employees={employeesWithFallback}
                   />
                 </Box> */}
               </Box>
@@ -2327,7 +2363,7 @@ export default function TattooCosmeticoPage() {
           serviceKey={modalService.serviceKey}
           serviceOptions={modalService.options}
           services={services as ServiceEntity[]}
-          employees={employees as Employee[]}
+          employees={employeesWithFallback as Employee[]}
           staffConsultasId={staffConsultasId}
           meryGarciaId={meryGarciaId}
         />
@@ -2345,7 +2381,7 @@ export default function TattooCosmeticoPage() {
           serviceKey={consultaService.serviceKey}
           consultaOptions={consultaService.consultaOptions}
           services={services as ServiceEntity[]}
-          employees={employees as Employee[]}
+          employees={employeesWithFallback as Employee[]}
           meryGarciaId={meryGarciaId}
           staffConsultasId={staffConsultasId}
         />

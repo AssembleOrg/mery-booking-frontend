@@ -30,6 +30,7 @@ import { useAuth } from '@/presentation/contexts';
 import { Client } from '@/domain/entities';
 import dayjs from 'dayjs';
 import classes from './page.module.css';
+import { CATEGORY_IDS } from '@/config/constants';
 
 // Tipos de contenido del acordeón
 type AccordionContentType = 'consulta' | 'sesion' | 'retoque' | 'mantenimiento';
@@ -649,14 +650,11 @@ const nippleOptions: ServiceOption[] = [
   },
 ];
 
-// ID hardcodeado de la categoría "Paramedical Tattoo"
-const PARAMEDICAL_TATTOO_CATEGORY_ID = '45422e67-102b-4565-9192-ef4047e16f48';
-
 export default function ParamedicalTattooPage() {
   const { isAuthenticated } = useAuth();
 
   const [paramedicalCategoryId, setParamedicalCategoryId] = useState<string>(
-    PARAMEDICAL_TATTOO_CATEGORY_ID
+    CATEGORY_IDS.PARAMEDICAL_TATTOO
   );
   const [staffConsultasId, setStaffConsultasId] = useState<
     string | undefined

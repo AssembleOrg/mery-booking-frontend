@@ -4,7 +4,7 @@ import { Box, Container, Flex, Stack, Text } from '@mantine/core';
 import {
   IconBrandInstagram,
   IconBrandWhatsapp,
-  IconMail,
+  IconCalendarEvent,
   IconMapPin,
   IconClock,
 } from '@tabler/icons-react';
@@ -38,7 +38,6 @@ const SOCIAL_LINKS = [
     href: 'https://www.instagram.com/merygarciaoficial/',
     label: 'Instagram',
   },
-  { icon: IconMail, href: 'mailto:info@merygarcia.com.ar', label: 'Email' },
 ];
 
 export function Footer() {
@@ -92,18 +91,39 @@ export function Footer() {
                   className={classes.brandLogo}
                 />
 
-                <Flex gap={8} align="flex-start" className={classes.addressLine}>
-                  <IconMapPin size={18} stroke={1.5} className={classes.addressIcon} />
+                <Flex
+                  gap={8}
+                  align="flex-start"
+                  className={classes.addressLine}
+                >
+                  <IconMapPin
+                    size={18}
+                    stroke={1.5}
+                    className={classes.addressIcon}
+                  />
                   <Text className={classes.address}>
                     Av. Melián 3646 PB 1, CABA, Argentina
                   </Text>
                 </Flex>
 
                 <Flex gap={8} align="center" className={classes.hoursLine}>
-                  <IconClock size={18} stroke={1.5} className={classes.addressIcon} />
+                  <IconClock
+                    size={18}
+                    stroke={1.5}
+                    className={classes.addressIcon}
+                  />
                   <Text className={classes.address}>
                     Martes a Sábado, 10 a 18hs
                   </Text>
+                </Flex>
+
+                <Flex gap={8} align="center" className={classes.hoursLine}>
+                  <IconCalendarEvent
+                    size={18}
+                    stroke={1.5}
+                    className={classes.addressIcon}
+                  />
+                  <Text className={classes.address}>Solo con cita previa</Text>
                 </Flex>
               </Box>
 
@@ -190,17 +210,40 @@ export function Footer() {
                     className={classes.brandLogo}
                   />
 
-                  <Flex gap={8} align="flex-start" className={classes.addressLine}>
-                    <IconMapPin size={18} stroke={1.5} className={classes.addressIcon} />
+                  <Flex
+                    gap={8}
+                    align="flex-start"
+                    className={classes.addressLine}
+                  >
+                    <IconMapPin
+                      size={18}
+                      stroke={1.5}
+                      className={classes.addressIcon}
+                    />
                     <Text className={classes.address}>
                       Av. Melián 3646 PB 1, CABA, Argentina
                     </Text>
                   </Flex>
 
                   <Flex gap={8} align="center" className={classes.hoursLine}>
-                    <IconClock size={18} stroke={1.5} className={classes.addressIcon} />
+                    <IconClock
+                      size={18}
+                      stroke={1.5}
+                      className={classes.addressIcon}
+                    />
                     <Text className={classes.address}>
                       Martes a Sábado, 10 a 18hs
+                    </Text>
+                  </Flex>
+
+                  <Flex gap={8} align="center" className={classes.hoursLine}>
+                    <IconCalendarEvent
+                      size={18}
+                      stroke={1.5}
+                      className={classes.addressIcon}
+                    />
+                    <Text className={classes.address}>
+                      Solo con cita previa
                     </Text>
                   </Flex>
                 </Box>

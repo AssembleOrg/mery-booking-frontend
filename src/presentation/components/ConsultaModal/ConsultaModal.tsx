@@ -8,6 +8,7 @@ import { Step1Terms } from '../ReservaModal/Step1Terms';
 import Step2ConsultaType from './Step2ConsultaType';
 import Step3Calendar from './Step3Calendar';
 import Step4Confirmation from './Step4Confirmation';
+import { Step5PaymentSummary } from './Step5PaymentSummary';
 import type { ServiceOption } from '@/infrastructure/types/services';
 import type { ServiceEntity, Employee } from '@/infrastructure/http';
 import classes from './ConsultaModal.module.css';
@@ -39,6 +40,14 @@ export default function ConsultaModal({
   const [selectedOption, setSelectedOption] = useState<ServiceOption | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [clientData, setClientData] = useState<{
+    name: string;
+    surname: string;
+    email: string;
+    mobile: string;
+    dni: string;
+    notes?: string;
+  } | null>(null);
 
   const handleClose = () => {
     setCurrentStep(1);
@@ -46,11 +55,13 @@ export default function ConsultaModal({
     setSelectedOption(null);
     setSelectedDate(null);
     setSelectedTime(null);
+    setClientData(null);
     onClose();
   };
 
   const handleStepComplete = () => {
-    if (currentStep < 4) {
+    if (currentStep < 5) {
+      console.log(`[ConsultaModal] Avanzando de step ${currentStep} a step ${currentStep + 1}`);
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -78,7 +89,7 @@ export default function ConsultaModal({
           <p className={classes.subtitle}>{serviceName}</p>
         </div>
 
-        <StepIndicator currentStep={currentStep} totalSteps={4} />
+        <StepIndicator currentStep={currentStep} totalSteps={5} />
 
         <div className={classes.contentArea}>
           <AnimatePresence mode="wait">
@@ -158,7 +169,44 @@ export default function ConsultaModal({
                   selectedDate={selectedDate}
                   selectedTime={selectedTime}
                   onBack={handleStepBack}
-                  onSuccess={handleClose}
+                  onClientDataCollected={(data) => {
+                    console.log('[ConsultaModal] clientData actualizado:', data);
+                    setClientData(data);
+                    console.log('[ConsultaModal] Avanzando a Step 5...');
+                    handleStepComplete();
+                  }}
+                />
+              </motion.div>
+            )}
+
+            {currentStep === 5 && selectedOption && selectedDate && selectedTime && clientData && (
+              (() => {
+                console.log('[ConsultaModal] Renderizando Step 5 con:', {
+                  currentStep,
+                  hasSelectedOption: !!selectedOption,
+                  hasSelectedDate: !!selectedDate,
+                  hasSelectedTime: !!selectedTime,
+                  hasClientData: !!clientData,
+                });
+                return null;
+              })(),
+              <motion.div
+                key="step5"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Step5PaymentSummary
+                  serviceName={serviceName}
+                  selectedOption={selectedOption}
+                  selectedDate={selectedDate}
+                  selectedTime={selectedTime}
+                  clientData={clientData}
+                  employees={employees}
+                  services={services}
+                  staffConsultasId={staffConsultasId}
+                  onBack={handleStepBack}
                 />
               </motion.div>
             )}

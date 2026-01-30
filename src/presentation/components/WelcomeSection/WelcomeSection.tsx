@@ -85,7 +85,13 @@ export function WelcomeSection() {
         <section className={classes.heroSection}>
           <Box className={classes.heroImageWrapper}>
             <ImageCrossfade
-              images={['/images/1.webp', '/images/2.webp', '/images/3.webp']}
+              images={[
+                '/loop/loop1.webp',
+                '/loop/loop2.webp',
+                '/loop/loop3.webp',
+                '/loop/loop4.webp',
+                '/loop/loop5.webp',
+              ]}
               interval={5000}
               transitionDuration={1.2}
               showIndicators={true}
@@ -100,13 +106,7 @@ export function WelcomeSection() {
           <Box className={classes.heroContent}>
             <FadeInSection direction="up" delay={0.2}>
               <h1 className={classes.heroTitle}>
-                I didn't choose the
-                <br />
-                <span className={classes.heroTitlePink}>brow life</span>.<br />
-                <span className={classes.heroTitleItalic}>
-                  The brow life{' '}
-                  <span style={{ color: 'var(--mg-pink)' }}>chose me</span>.
-                </span>
+                Art & Real <span className={classes.heroTitlePink}>Beauty</span>
               </h1>
               <Flex className={classes.heroButtons}>
                 <Link
@@ -117,7 +117,7 @@ export function WelcomeSection() {
                 </Link>
                 <Link
                   href="#trabajos-reales"
-                  className={classes.heroButtonSecondary}
+                  className={classes.heroButtonPrimary}
                 >
                   NUESTROS TRABAJOS
                 </Link>

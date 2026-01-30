@@ -8,6 +8,7 @@ import classes from './ReservaModal.module.css';
 import type { ServiceOption } from '@/infrastructure/types/services';
 import type { Employee } from '@/infrastructure/http/employeeService';
 import type { ServiceEntity } from '@/infrastructure/http/serviceService';
+import { EMPLOYEE_IDS } from '@/config/constants';
 
 interface Step3CalendarProps {
   selectedOption: ServiceOption;
@@ -34,10 +35,9 @@ export function Step3Calendar({
   onContinue,
   onBack,
 }: Step3CalendarProps) {
-  // IDs hardcoded como fallback (igual que en ConsultaContent)
-  const STAFF_CONSULTAS_FALLBACK_ID = '2d283dc6-6940-46fc-9166-eb6b17b8cc0f';
-  // ID real de Mery Garcia obtenido de la base de datos
-  const MERY_GARCIA_FALLBACK_ID = '8eda28e3-a122-4eb6-8673-356333558d78';
+  // IDs de constantes como fallback
+  const STAFF_CONSULTAS_FALLBACK_ID = EMPLOYEE_IDS.STAFF_CONSULTAS;
+  const MERY_GARCIA_FALLBACK_ID = EMPLOYEE_IDS.MERY_GARCIA;
 
   // Estado para controlar si se muestra el calendario (como en dropdown flow)
   const [showCalendar, setShowCalendar] = useState(false);

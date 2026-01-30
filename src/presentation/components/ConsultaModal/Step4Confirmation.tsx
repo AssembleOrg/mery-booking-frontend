@@ -5,8 +5,6 @@ import { Box, Text, Button } from '@mantine/core';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import { BookingConfirmationModal } from '@/presentation/components';
-import { useCreateClient } from '@/presentation/hooks/useClients';
-import { useCreateBooking } from '@/presentation/hooks/useBookings';
 import type { ServiceOption } from '@/infrastructure/types/services';
 import type { Client } from '@/domain/entities/Client';
 import classes from './ConsultaModal.module.css';
@@ -20,7 +18,14 @@ interface Step4ConfirmationProps {
   selectedDate: Date;
   selectedTime: string;
   onBack: () => void;
-  onSuccess: () => void;
+  onClientDataCollected: (data: {
+    name: string;
+    surname: string;
+    email: string;
+    mobile: string;
+    dni: string;
+    notes?: string;
+  }) => void;
 }
 
 export default function Step4Confirmation({
@@ -30,41 +35,38 @@ export default function Step4Confirmation({
   selectedDate,
   selectedTime,
   onBack,
-  onSuccess,
+  onClientDataCollected,
 }: Step4ConfirmationProps) {
   const [confirmationModalOpened, setConfirmationModalOpened] = useState(false);
-  const createClientMutation = useCreateClient();
-  const createBookingMutation = useCreateBooking();
 
   const formattedDate = dayjs(selectedDate).format("dddd D [de] MMMM, YYYY");
 
-  const handleConfirmBooking = async (clientData: Client) => {
-    try {
-      // Create client
-      const clientResponse = await createClientMutation.mutateAsync({
-        fullName: `${clientData.name} ${clientData.surname}`,
-        email: clientData.email,
-        phone: clientData.mobile,
-        dni: clientData.dni,
-      });
+  const handleCollectData = async (clientData: Client) => {
+    console.log('[ConsultaModal Step4] Datos del cliente recolectados:', {
+      name: clientData.name,
+      surname: clientData.surname,
+      email: clientData.email,
+      dni: clientData.dni,
+      hasMobile: !!clientData.mobile,
+      hasNotes: !!clientData.notes,
+    });
 
-      // Create booking
-      await createBookingMutation.mutateAsync({
-        clientId: clientResponse.id,
-        employeeId: staffConsultasId,
-        serviceId: consultaOption.serviceId!,
-        date: dayjs(selectedDate).format('YYYY-MM-DD'),
-        startTime: selectedTime,
-        quantity: 1,
-        paid: false,
-        notes: clientData.notes,
-      });
-
-      setConfirmationModalOpened(false);
-      onSuccess();
-    } catch (error) {
-      console.error('Error creating consultation booking:', error);
+    if (!clientData.dni) {
+      console.error('[ConsultaModal Step4] ERROR: El DNI es requerido');
+      return;
     }
+
+    console.log('[ConsultaModal Step4] Llamando a onClientDataCollected...');
+    // Recolectar datos y pasar al Step 5
+    onClientDataCollected({
+      name: clientData.name,
+      surname: clientData.surname,
+      email: clientData.email,
+      mobile: clientData.mobile,
+      dni: clientData.dni,
+      notes: clientData.notes,
+    });
+    console.log('[ConsultaModal Step4] onClientDataCollected ejecutado exitosamente');
   };
 
   return (
@@ -138,7 +140,7 @@ export default function Step4Confirmation({
         date={selectedDate}
         time={selectedTime}
         location="Mery García Office"
-        onConfirm={handleConfirmBooking}
+        onConfirm={handleCollectData}
       />
     </Box>
   );

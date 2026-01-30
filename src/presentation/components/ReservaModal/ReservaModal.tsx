@@ -8,6 +8,7 @@ import { Step1Terms } from './Step1Terms';
 import { Step2SessionType } from './Step2SessionType';
 import { Step3Calendar } from './Step3Calendar';
 import { Step4Confirmation } from './Step4Confirmation';
+import { Step5PaymentSummary } from './Step5PaymentSummary';
 import classes from './ReservaModal.module.css';
 import type { ServiceOption } from '@/infrastructure/types/services';
 import type { Employee } from '@/infrastructure/http/employeeService';
@@ -41,6 +42,14 @@ export function ReservaModal({
   const [selectedOption, setSelectedOption] = useState<ServiceOption | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [clientData, setClientData] = useState<{
+    name: string;
+    surname: string;
+    email: string;
+    mobile: string;
+    dni: string;
+    notes?: string;
+  } | null>(null);
 
   const handleClose = () => {
     // Reset estado al cerrar
@@ -49,11 +58,13 @@ export function ReservaModal({
     setSelectedOption(null);
     setSelectedDate(null);
     setSelectedTime(null);
+    setClientData(null);
     onClose();
   };
 
   const handleStepComplete = () => {
-    if (currentStep < 4) {
+    if (currentStep < 5) {
+      console.log(`[ReservaModal] Avanzando de step ${currentStep} a step ${currentStep + 1}`);
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -86,7 +97,7 @@ export function ReservaModal({
     >
       <div className={classes.container}>
         {/* Step Indicator */}
-        <StepIndicator currentStep={currentStep} totalSteps={4} />
+        <StepIndicator currentStep={currentStep} totalSteps={5} />
 
         {/* Content Area con AnimatePresence para transiciones */}
         <div className={classes.contentArea}>
@@ -144,7 +155,38 @@ export function ReservaModal({
                 services={services}
                 staffConsultasId={staffConsultasId}
                 meryGarciaId={meryGarciaId}
-                onComplete={handleBookingComplete}
+                onClientDataCollected={(data) => {
+                  console.log('[ReservaModal] clientData actualizado:', data);
+                  setClientData(data);
+                  console.log('[ReservaModal] Avanzando a Step 5...');
+                  handleStepComplete();
+                }}
+                onBack={handleStepBack}
+              />
+            )}
+
+            {currentStep === 5 && selectedOption && selectedDate && selectedTime && clientData && (
+              (() => {
+                console.log('[ReservaModal] Renderizando Step 5 con:', {
+                  currentStep,
+                  hasSelectedOption: !!selectedOption,
+                  hasSelectedDate: !!selectedDate,
+                  hasSelectedTime: !!selectedTime,
+                  hasClientData: !!clientData,
+                });
+                return null;
+              })(),
+              <Step5PaymentSummary
+                key="step5"
+                serviceName={serviceName}
+                selectedOption={selectedOption}
+                selectedDate={selectedDate}
+                selectedTime={selectedTime}
+                clientData={clientData}
+                employees={employees}
+                services={services}
+                staffConsultasId={staffConsultasId}
+                meryGarciaId={meryGarciaId}
                 onBack={handleStepBack}
               />
             )}

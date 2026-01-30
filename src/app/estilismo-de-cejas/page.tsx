@@ -22,6 +22,7 @@ import { Client } from '@/domain/entities';
 import type { ServiceEntity } from '@/infrastructure/http';
 import classes from './page.module.css';
 import dayjs from 'dayjs';
+import { CATEGORY_IDS } from '@/config/constants';
 
 interface ServiceBookingData {
   servicio: string;
@@ -30,7 +31,6 @@ interface ServiceBookingData {
 }
 
 const MOCK_LOCATION = 'Mery García Office';
-const ESTILISMO_CEJAS_CATEGORY_ID = '316f01a6-ef73-4b05-a322-8da598ba50aa';
 
 export default function EstilismoCejasPage() {
   const [bookingData, setBookingData] = useState<ServiceBookingData | null>(
@@ -44,7 +44,7 @@ export default function EstilismoCejasPage() {
   const createBookingMutation = useCreateBooking();
 
   const { data: services = [], isLoading: isLoadingServices } = useServices(
-    ESTILISMO_CEJAS_CATEGORY_ID
+    CATEGORY_IDS.ESTILISMO_CEJAS
   );
 
   const currentService = bookingData?.servicio
@@ -56,7 +56,7 @@ export default function EstilismoCejasPage() {
   const isLoadingService = isLoadingServices && !!bookingData?.servicio;
 
   const { data: employees = [] } = useEmployees(
-    ESTILISMO_CEJAS_CATEGORY_ID,
+    CATEGORY_IDS.ESTILISMO_CEJAS,
     bookingData?.servicio || undefined
   );
 
@@ -206,7 +206,7 @@ export default function EstilismoCejasPage() {
                     <ServiceBookingForm
                       onSubmit={handleServiceSubmit}
                       onChange={handleServiceSubmit}
-                      categoryId={ESTILISMO_CEJAS_CATEGORY_ID}
+                      categoryId={CATEGORY_IDS.ESTILISMO_CEJAS}
                     />
                   </Box>
 
