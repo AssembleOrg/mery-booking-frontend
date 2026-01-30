@@ -2,7 +2,17 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useEffect, Suspense } from 'react';
-import { Container, Title, Text, Stack, Button, Paper, Group, ThemeIcon, Loader } from '@mantine/core';
+import {
+  Container,
+  Title,
+  Text,
+  Stack,
+  Button,
+  Paper,
+  Group,
+  ThemeIcon,
+  Loader,
+} from '@mantine/core';
 import { IconCheck, IconCalendar } from '@tabler/icons-react';
 import Link from 'next/link';
 
@@ -13,7 +23,10 @@ function SuccessContent() {
   const preferenceId = searchParams.get('preference_id');
 
   useEffect(() => {
-    console.log('[Success Page] Pago exitoso. Payment ID:', paymentId || collectionId);
+    console.log(
+      '[Success Page] Pago exitoso. Payment ID:',
+      paymentId || collectionId
+    );
   }, [paymentId, collectionId]);
 
   return (
@@ -69,12 +82,7 @@ function SuccessContent() {
           </Stack>
 
           <Group gap="md" w="100%" grow>
-            <Button
-              component={Link}
-              href="/"
-              variant="light"
-              size="md"
-            >
+            <Button component={Link} href="/" variant="light" size="md">
               Volver al inicio
             </Button>
           </Group>
@@ -86,16 +94,18 @@ function SuccessContent() {
 
 export default function ReservaSuccessPage() {
   return (
-    <Suspense fallback={
-      <Container size="sm" py="xl">
-        <Paper shadow="md" p="xl" radius="md" withBorder>
-          <Stack align="center" gap="lg">
-            <Loader size="lg" />
-            <Text>Cargando...</Text>
-          </Stack>
-        </Paper>
-      </Container>
-    }>
+    <Suspense
+      fallback={
+        <Container size="sm" py="xl">
+          <Paper shadow="md" p="xl" radius="md" withBorder>
+            <Stack align="center" gap="lg">
+              <Loader size="lg" />
+              <Text>Cargando...</Text>
+            </Stack>
+          </Paper>
+        </Container>
+      }
+    >
       <SuccessContent />
     </Suspense>
   );

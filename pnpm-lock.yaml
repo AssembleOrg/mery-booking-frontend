@@ -57,6 +57,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.16
+      '@types/mercadopago':
+        specifier: ^1.5.11
+        version: 1.5.11
       '@types/node':
         specifier: ^20
         version: 20.19.24
@@ -621,6 +624,9 @@ packages:
 
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+
+  '@types/mercadopago@1.5.11':
+    resolution: {integrity: sha512-ligRLboSSLYRzwI1oE27wO+AkZXvCsq2YwBThfH5H+byqCkQEAnmr6Nl1HRAdiZCfIPK2eK0b1rgiuatjZWd2g==}
 
   '@types/node@20.19.24':
     resolution: {integrity: sha512-FE5u0ezmi6y9OZEzlJfg37mqqf6ZDSF2V/NLjUyGrR9uTZ7Sb9F7bLNZ03S4XVUNRWGA7Ck4c1kK+YnuWjl+DA==}
@@ -2742,6 +2748,8 @@ snapshots:
   '@types/json-schema@7.0.15': {}
 
   '@types/json5@0.0.29': {}
+
+  '@types/mercadopago@1.5.11': {}
 
   '@types/node@20.19.24':
     dependencies:

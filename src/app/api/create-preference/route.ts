@@ -28,16 +28,13 @@ interface CreatePreferenceRequest {
 export async function POST(request: NextRequest) {
   try {
     const body: CreatePreferenceRequest = await request.json();
-    const {
-      serviceName,
-      depositAmount,
-      clientData,
-      bookingData,
-    } = body;
+    const { serviceName, depositAmount, clientData, bookingData } = body;
 
-    console.log('[Create Preference] Creando preferencia para:', clientData.fullName);
+    console.log(
+      '[Create Preference] Generando preferencia para:',
+      clientData.fullName
+    );
 
-    // Crear preferencia con notification_url configurado
     const preference = await new Preference(client).create({
       body: {
         items: [
@@ -49,17 +46,9 @@ export async function POST(request: NextRequest) {
             currency_id: 'ARS',
           },
         ],
+        // Esto hay que cambiarlo por el clientid
         payer: {
-          name: clientData.fullName.split(' ')[0] || clientData.fullName,
-          surname: clientData.fullName.split(' ').slice(1).join(' ') || '',
-          email: clientData.email,
-          phone: {
-            number: clientData.phone,
-          },
-          identification: {
-            type: 'DNI',
-            number: clientData.dni,
-          },
+          email: 'TESTUSER8883738017904117317@TESTUSER.COM',
         },
         metadata: {
           client_data: JSON.stringify(clientData),
@@ -71,19 +60,15 @@ export async function POST(request: NextRequest) {
           pending: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/reserva/pending`,
         },
         auto_return: 'approved',
-        // 🔥 CRÍTICO: notification_url para el webhook
         notification_url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/webhook`,
       },
     });
-
-    console.log('[Create Preference] Preferencia creada:', preference.id);
 
     return NextResponse.json({
       id: preference.id,
       init_point: preference.init_point,
       sandbox_init_point: preference.sandbox_init_point,
     });
-
   } catch (error) {
     console.error('[Create Preference] Error:', error);
     return NextResponse.json(
