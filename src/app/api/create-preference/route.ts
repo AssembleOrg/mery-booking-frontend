@@ -5,62 +5,59 @@ const client = new MercadoPagoConfig({
   accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!,
 });
 
-interface CreatePreferenceRequest {
-  serviceName: string;
-  servicePrice: number;
-  serviceDuration: number;
-  depositAmount: number;
-  clientData: {
-    fullName: string;
-    email: string;
-    phone: string;
-    dni: string;
-    notes?: string;
-  };
-  bookingData: {
-    employeeId: string;
-    serviceId: string;
-    date: string;
-    startTime: string;
-  };
-}
-
 export async function POST(request: NextRequest) {
   try {
-    const body: CreatePreferenceRequest = await request.json();
-    const { serviceName, depositAmount, clientData, bookingData } = body;
+    const body = await request.json();
+    const { serviceName, depositAmount, clientData, bookingData, locale } =
+      body;
+    const effectiveLocale = locale || 'es';
 
-    console.log(
-      '[Create Preference] Generando preferencia para:',
-      clientData.fullName
+    const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL?.replace(
+      /\/$/,
+      ''
     );
+
+    if (!frontendUrl) {
+      return NextResponse.json(
+        { error: 'Falta NEXT_PUBLIC_FRONTEND_URL' },
+        { status: 500 }
+      );
+    }
 
     const preference = await new Preference(client).create({
       body: {
         items: [
           {
-            id: bookingData.serviceId,
+            id: String(bookingData.serviceId),
             title: serviceName,
             quantity: 1,
-            unit_price: depositAmount,
+            unit_price: Number(depositAmount),
             currency_id: 'ARS',
           },
         ],
-        // Esto hay que cambiarlo por el clientid
         payer: {
+          // PARA PROD: Cambia a clientData.email
           email: 'TESTUSER8883738017904117317@TESTUSER.COM',
         },
         metadata: {
-          client_data: JSON.stringify(clientData),
-          booking_data: JSON.stringify(bookingData),
+          user_fullName: clientData.fullName,
+          user_email: clientData.email,
+          user_phone: clientData.phone,
+          user_dni: clientData.dni,
+          book_empId: bookingData.employeeId,
+          book_servId: bookingData.serviceId,
+          book_date: bookingData.date,
+          book_time: bookingData.startTime,
+          book_notes: clientData.notes || '',
         },
         back_urls: {
-          success: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/reserva/success`,
-          failure: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/reserva/failure`,
-          pending: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/reserva/pending`,
+          success: `${frontendUrl}/${effectiveLocale}/reserva/success`,
+          failure: `${frontendUrl}/${effectiveLocale}/reserva/failure`,
+          pending: `${frontendUrl}/${effectiveLocale}/reserva/pending`,
         },
         auto_return: 'approved',
-        notification_url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/webhook`,
+        notification_url: `${frontendUrl}/api/webhook`,
+        statement_descriptor: 'MERY RESERVAS',
       },
     });
 
@@ -69,11 +66,8 @@ export async function POST(request: NextRequest) {
       init_point: preference.init_point,
       sandbox_init_point: preference.sandbox_init_point,
     });
-  } catch (error) {
-    console.error('[Create Preference] Error:', error);
-    return NextResponse.json(
-      { error: 'Error creating preference' },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    console.error('Error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
