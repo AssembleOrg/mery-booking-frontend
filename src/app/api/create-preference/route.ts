@@ -10,7 +10,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { serviceName, depositAmount, clientData, bookingData, locale } =
       body;
-    const effectiveLocale = locale || 'es';
 
     const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL?.replace(
       /\/$/,
@@ -35,25 +34,21 @@ export async function POST(request: NextRequest) {
             currency_id: 'ARS',
           },
         ],
-        payer: {
-          // PARA PROD: Cambia a clientData.email
-          email: 'TESTUSER8883738017904117317@TESTUSER.COM',
-        },
         metadata: {
-          user_fullName: clientData.fullName,
+          user_full_name: clientData.fullName,
           user_email: clientData.email,
           user_phone: clientData.phone,
           user_dni: clientData.dni,
-          book_empId: bookingData.employeeId,
-          book_servId: bookingData.serviceId,
+          book_emp_id: bookingData.employeeId,
+          book_serv_id: bookingData.serviceId,
           book_date: bookingData.date,
           book_time: bookingData.startTime,
           book_notes: clientData.notes || '',
         },
         back_urls: {
-          success: `${frontendUrl}/${effectiveLocale}/reserva/success`,
-          failure: `${frontendUrl}/${effectiveLocale}/reserva/failure`,
-          pending: `${frontendUrl}/${effectiveLocale}/reserva/pending`,
+          success: `${frontendUrl}/reserva/success`,
+          failure: `${frontendUrl}/reserva/failure`,
+          pending: `${frontendUrl}/reserva/pending`,
         },
         auto_return: 'approved',
         notification_url: `${frontendUrl}/api/webhook`,

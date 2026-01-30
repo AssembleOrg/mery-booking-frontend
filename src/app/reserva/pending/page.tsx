@@ -2,7 +2,16 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useEffect, Suspense } from 'react';
-import { Container, Title, Text, Stack, Button, Paper, ThemeIcon, Loader } from '@mantine/core';
+import {
+  Container,
+  Title,
+  Text,
+  Stack,
+  Button,
+  Paper,
+  ThemeIcon,
+  Loader,
+} from '@mantine/core';
 import { IconClock } from '@tabler/icons-react';
 import Link from 'next/link';
 
@@ -12,7 +21,10 @@ function PendingContent() {
   const collectionId = searchParams.get('collection_id');
 
   useEffect(() => {
-    console.log('[Pending Page] Pago pendiente. Payment ID:', paymentId || collectionId);
+    console.log(
+      '[Pending Page] Pago pendiente. Payment ID:',
+      paymentId || collectionId
+    );
   }, [paymentId, collectionId]);
 
   return (
@@ -37,10 +49,12 @@ function PendingContent() {
                 ¿Qué significa esto?
               </Text>
               <Text size="sm" c="dimmed">
-                Tu pago puede tardar hasta 48 horas en ser confirmado dependiendo del medio de pago seleccionado.
+                Tu pago puede tardar hasta 48 horas en ser confirmado
+                dependiendo del medio de pago seleccionado.
               </Text>
               <Text size="sm" c="dimmed" mt="sm">
-                Te notificaremos por email cuando el pago sea confirmado y tu reserva esté lista.
+                Te notificaremos por email cuando el pago sea confirmado y tu
+                reserva esté lista.
               </Text>
             </Stack>
           </Paper>
@@ -53,13 +67,7 @@ function PendingContent() {
             </Paper>
           )}
 
-          <Button
-            component={Link}
-            href="/"
-            variant="light"
-            size="md"
-            fullWidth
-          >
+          <Button component={Link} href="/" variant="light" size="md" fullWidth>
             Volver al inicio
           </Button>
         </Stack>
@@ -70,16 +78,18 @@ function PendingContent() {
 
 export default function ReservaPendingPage() {
   return (
-    <Suspense fallback={
-      <Container size="sm" py="xl">
-        <Paper shadow="md" p="xl" radius="md" withBorder>
-          <Stack align="center" gap="lg">
-            <Loader size="lg" />
-            <Text>Cargando...</Text>
-          </Stack>
-        </Paper>
-      </Container>
-    }>
+    <Suspense
+      fallback={
+        <Container size="sm" py="xl">
+          <Paper shadow="md" p="xl" radius="md" withBorder>
+            <Stack align="center" gap="lg">
+              <Loader size="lg" />
+              <Text>Cargando...</Text>
+            </Stack>
+          </Paper>
+        </Container>
+      }
+    >
       <PendingContent />
     </Suspense>
   );

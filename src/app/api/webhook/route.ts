@@ -29,19 +29,24 @@ export async function POST(request: NextRequest) {
       // SOLO procesar pagos aprobados
       if (payment.status === 'approved') {
         // Extraer metadata con la información de la reserva
-        const metadata = payment.metadata;
+        const metadata = payment.metadata as Record<string, string>;
 
-        if (!metadata.client_data || !metadata.booking_data) {
+        console.log('[Webhook] Metadata recibida:', metadata);
+
+        // Validar que tengamos los campos necesarios
+        if (
+          !metadata.user_full_name ||
+          !metadata.user_email ||
+          !metadata.book_emp_id ||
+          !metadata.book_serv_id
+        ) {
           console.error('[Webhook] Metadata incompleta:', metadata);
           return NextResponse.json({ received: true }, { status: 200 });
         }
 
-        const clientData = JSON.parse(metadata.client_data);
-        const bookingData = JSON.parse(metadata.booking_data);
-
         console.log(
           '[Webhook] Procesando pago aprobado. Client:',
-          clientData.fullName
+          metadata.user_full_name
         );
 
         try {
@@ -60,13 +65,15 @@ export async function POST(request: NextRequest) {
 
           // 2. Crear la reserva con paid: true
           const bookingDto: CreateBookingDto = {
-            clientId: '',
+            clientId: newClient.id,
             employeeId: metadata.book_emp_id,
             serviceId: metadata.book_serv_id,
             date: metadata.book_date,
             startTime: metadata.book_time,
             paid: true,
-            notes: metadata.book_notes,
+            notes:
+              metadata.book_notes ||
+              `Pago procesado vía MercadoPago. Payment ID: ${payment.id}`,
           };
 
           const booking = await BookingService.create(bookingDto);
