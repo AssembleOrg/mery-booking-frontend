@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MercadoPagoConfig, Payment } from 'mercadopago';
-import { ClientService, BookingService, CreateClientPublicDto, CreateBookingDto } from '@/infrastructure/http';
+import {
+  ClientService,
+  BookingService,
+  CreateClientPublicDto,
+  CreateBookingDto,
+} from '@/infrastructure/http';
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!,
@@ -24,7 +29,7 @@ export async function POST(request: NextRequest) {
       // SOLO procesar pagos aprobados
       if (payment.status === 'approved') {
         // Extraer metadata con la información de la reserva
-        const metadata = payment.metadata as Record<string, string>;
+        const metadata = payment.metadata;
 
         if (!metadata.client_data || !metadata.booking_data) {
           console.error('[Webhook] Metadata incompleta:', metadata);
@@ -34,17 +39,20 @@ export async function POST(request: NextRequest) {
         const clientData = JSON.parse(metadata.client_data);
         const bookingData = JSON.parse(metadata.booking_data);
 
-        console.log('[Webhook] Procesando pago aprobado. Client:', clientData.fullName);
+        console.log(
+          '[Webhook] Procesando pago aprobado. Client:',
+          clientData.fullName
+        );
 
         try {
           // 🔥 LÓGICA CRÍTICA: Crear cliente y booking
 
           // 1. Crear el cliente (o recuperar existente por DNI)
           const clientDto: CreateClientPublicDto = {
-            fullName: clientData.fullName,
-            email: clientData.email,
-            phone: clientData.phone,
-            dni: clientData.dni,
+            fullName: metadata.user_full_name,
+            email: metadata.user_email,
+            phone: metadata.user_phone,
+            dni: metadata.user_dni,
           };
 
           const newClient = await ClientService.createPublic(clientDto);
@@ -52,13 +60,13 @@ export async function POST(request: NextRequest) {
 
           // 2. Crear la reserva con paid: true
           const bookingDto: CreateBookingDto = {
-            clientId: newClient.id,
-            employeeId: bookingData.employeeId,
-            serviceId: bookingData.serviceId,
-            date: bookingData.date,
-            startTime: bookingData.startTime,
-            paid: true, // ✅ PAGO CONFIRMADO
-            notes: clientData.notes || `Pago procesado vía MercadoPago. Payment ID: ${payment.id}`,
+            clientId: '',
+            employeeId: metadata.book_emp_id,
+            serviceId: metadata.book_serv_id,
+            date: metadata.book_date,
+            startTime: metadata.book_time,
+            paid: true,
+            notes: metadata.book_notes,
           };
 
           const booking = await BookingService.create(bookingDto);
@@ -67,12 +75,14 @@ export async function POST(request: NextRequest) {
           // 3. (Opcional) Aquí podrías enviar email de confirmación
           // await sendConfirmationEmail(clientData.email, booking);
 
-          return NextResponse.json({
-            received: true,
-            bookingId: booking.id,
-            clientId: newClient.id,
-          }, { status: 200 });
-
+          return NextResponse.json(
+            {
+              received: true,
+              bookingId: booking.id,
+              clientId: newClient.id,
+            },
+            { status: 200 }
+          );
         } catch (error) {
           // ❌ ERROR CRÍTICO: Pago aprobado pero falló la creación
           console.error(
@@ -84,11 +94,14 @@ export async function POST(request: NextRequest) {
           // TODO: Guardar en tabla de reconciliación manual
 
           // IMPORTANTE: Aún así responder 200 para que MercadoPago no reintente
-          return NextResponse.json({
-            received: true,
-            error: 'Failed to create booking',
-            paymentId: payment.id,
-          }, { status: 200 });
+          return NextResponse.json(
+            {
+              received: true,
+              error: 'Failed to create booking',
+              paymentId: payment.id,
+            },
+            { status: 200 }
+          );
         }
       } else {
         console.log('[Webhook] Pago no aprobado. Status:', payment.status);
@@ -97,7 +110,6 @@ export async function POST(request: NextRequest) {
 
     // SIEMPRE responder 200 para que MercadoPago no reintente
     return NextResponse.json({ received: true }, { status: 200 });
-
   } catch (error) {
     console.error('[Webhook] Error general:', error);
     // Incluso con error, respondemos 200 para evitar reintentos infinitos
