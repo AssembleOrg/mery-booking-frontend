@@ -4,6 +4,7 @@ import { Box, Burger, Container, Flex, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { MenuModal } from '@/presentation/components';
 import classes from './Header.module.css';
@@ -18,6 +19,7 @@ const NAV_ITEMS = [
 export function Header() {
   const [opened, { open, close }] = useDisclosure(false);
   const [scrolled, setScrolled] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,7 +38,12 @@ export function Header() {
         <Container size="xl" className={classes.container}>
           <Flex justify="space-between" align="center" className={classes.flex} suppressHydrationWarning>
             {/* Logo / Brand Name */}
-            <Link href="/" className={classes.brand}>
+            <div
+              className={classes.brand}
+              onClick={() => router.push('/')}
+              onDoubleClick={() => router.push('/login')}
+              style={{ cursor: 'pointer' }}
+            >
               <Image
                 src="/logo-original.webp"
                 alt="Mery García Cosmetic Tattoo"
@@ -46,7 +53,7 @@ export function Header() {
                 className={classes.logo}
                 priority
               />
-            </Link>
+            </div>
 
             {/* Desktop Navigation */}
             <nav className={classes.nav}>

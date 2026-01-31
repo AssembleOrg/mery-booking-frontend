@@ -539,37 +539,53 @@
   margin-right: auto;
 }
 
-.galleryGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+/* Masonry Grid Container - GAPS MÍNIMOS + CENTRADO */
+.masonryGrid {
+  display: flex;
+  width: auto;
   padding: 0 24px;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.masonryColumn {
+  padding-left: 2px;
+  background-clip: padding-box;
+}
+
+.masonryColumn > .galleryItem {
+  margin-bottom: 2px;
 }
 
 @media (min-width: 768px) {
-  .galleryGrid {
-    grid-template-columns: repeat(4, 1fr);
+  .masonryGrid {
+    padding: 0 80px;
   }
+
+  .masonryColumn {
+    padding-left: 4px;
+  }
+
+  .masonryColumn > .galleryItem {
+    margin-bottom: 4px;
+  }
+
   .galleryHeader {
     padding: 0 80px;
-  }
-  .galleryGrid {
-    padding: 0 80px;
-    gap: 16px;
   }
 }
 
 .galleryItem {
-  aspect-ratio: 1;
   position: relative;
   overflow: hidden;
   background: var(--mg-pink-light);
 }
 
 .galleryImage {
-  object-fit: cover;
+  width: 100%;
+  height: auto;
+  display: block;
   transition: transform 0.5s ease;
 }
 
@@ -585,9 +601,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
+  padding: 4px;
 }
 
 .instagramOverlay:hover {
@@ -595,29 +612,32 @@
 }
 
 .igIcon {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
   transition: transform 0.3s ease;
+  stroke: var(--mg-dark);
 }
 
 .instagramOverlay:hover .igIcon {
   transform: scale(1.1);
 }
+
 .igText {
   font-family: var(--font-avant-garde), sans-serif;
-  font-size: 10px;
-  letter-spacing: 1px;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  color: var(--mg-dark);
 }
 
 @media (min-width: 768px) {
   .igIcon {
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
   }
 
   .igText {
-    font-size: 12px;
-    letter-spacing: 1.5px;
+    font-size: 9px;
+    letter-spacing: 1px;
   }
 }
 

@@ -6,23 +6,17 @@ import {
   Footer,
   ServiceBookingForm,
   DateTimeSelector,
-  BookingConfirmationModal,
+  ReservaModal,
   FadeInSection,
   ImageCrossfade,
 } from '@/presentation/components';
+import ConsultaModal from '@/presentation/components/ConsultaModal';
 import { useState, useMemo } from 'react';
-import { useDisclosure } from '@mantine/hooks';
-import {
-  useServices,
-  useEmployees,
-  useCreateClient,
-  useCreateBooking,
-} from '@/presentation/hooks';
-import { Client } from '@/domain/entities';
-import type { ServiceEntity } from '@/infrastructure/http';
+import { useServices, useEmployees } from '@/presentation/hooks';
+import type { ServiceEntity, Employee } from '@/infrastructure/http';
+import type { ServiceOption } from '@/infrastructure/types/services';
 import classes from './page.module.css';
-import dayjs from 'dayjs';
-import { CATEGORY_IDS } from '@/config/constants';
+import { CATEGORY_IDS, EMPLOYEE_IDS } from '@/config/constants';
 
 interface ServiceBookingData {
   servicio: string;
@@ -30,18 +24,22 @@ interface ServiceBookingData {
   fecha: Date;
 }
 
-const MOCK_LOCATION = 'Mery García Office';
-
 export default function EstilismoCejasPage() {
   const [bookingData, setBookingData] = useState<ServiceBookingData | null>(
     null
   );
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [opened, { open, close }] = useDisclosure(false);
 
-  const createClientMutation = useCreateClient();
-  const createBookingMutation = useCreateBooking();
+  // Estados para modales de reserva
+  const [reservaModalOpened, setReservaModalOpened] = useState(false);
+  const [consultaModalOpened, setConsultaModalOpened] = useState(false);
+  const [selectedService, setSelectedService] = useState<ServiceEntity | null>(
+    null
+  );
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null
+  );
 
   const { data: services = [], isLoading: isLoadingServices } = useServices(
     CATEGORY_IDS.ESTILISMO_CEJAS
@@ -64,6 +62,12 @@ export default function EstilismoCejasPage() {
     ? employees.find((e) => e.id === bookingData.profesional)
     : null;
 
+  // Detectar si un servicio es consulta
+  const isConsultaService = (service: ServiceEntity): boolean => {
+    const serviceName = service.name.toLowerCase();
+    return serviceName.includes('consulta') || serviceName.includes('asesor');
+  };
+
   const handleServiceSubmit = (data: ServiceBookingData) => {
     setBookingData(data);
     // Scroll automático hacia el calendario en mobile
@@ -78,67 +82,58 @@ export default function EstilismoCejasPage() {
   const handleDateTimeSelect = (date: Date, time: string) => {
     setSelectedDate(date);
     setSelectedTime(time);
-    open();
-  };
 
-  const handleConfirmBooking = async (clientData: Client) => {
-    if (!bookingData || !selectedDate || !selectedTime || !currentService)
-      return;
-    if (!bookingData.profesional) return;
+    if (!currentService || !currentEmployee) return;
 
-    try {
-      if (!clientData.dni) throw new Error('El DNI es requerido');
+    // Guardar servicio y empleado seleccionados
+    setSelectedService(currentService);
+    setSelectedEmployee(currentEmployee);
 
-      const client = await createClientMutation.mutateAsync({
-        fullName: `${clientData.name} ${clientData.surname}`,
-        email: clientData.email,
-        phone: clientData.mobile,
-        dni: clientData.dni,
-      } as any);
-
-      const dateString = dayjs(selectedDate).format('YYYY-MM-DD');
-      await createBookingMutation.mutateAsync({
-        clientId: client.id,
-        employeeId: bookingData.profesional,
-        serviceId: currentService.id,
-        date: dateString,
-        startTime: selectedTime,
-        quantity: 1,
-        paid: false,
-        notes: clientData.notes,
-      });
-
-      close();
-      setBookingData(null);
-      setSelectedDate(null);
-      setSelectedTime(null);
-    } catch (error) {
-      console.error('Error al crear reserva:', error);
+    // Abrir modal según tipo de servicio
+    if (isConsultaService(currentService)) {
+      setConsultaModalOpened(true);
+    } else {
+      setReservaModalOpened(true);
     }
   };
 
-  const serviceForModal = useMemo(() => {
-    if (!currentService) return null;
-    return {
-      id: currentService.id,
-      name: currentService.name,
-      slug: currentService.name.toLowerCase().replace(/\s+/g, '-'),
-      price: Number(currentService.price),
-      priceBook: Number(currentService.price),
-      duration: currentService.duration,
-      image: currentService.urlImage || '/desk.svg',
-    };
-  }, [currentService]);
+  // Crear ServiceOption para el modal de reserva
+  const serviceOptionsForModal = useMemo(() => {
+    if (!currentService) return [];
 
-  const professionalForModal = useMemo(() => {
-    if (!currentEmployee) return null;
-    return {
-      id: currentEmployee.id,
-      name: currentEmployee.fullName,
-      available: true,
-      services: [],
-    };
-  }, [currentEmployee]);
+    return [
+      {
+        id: currentService.id,
+        label: currentService.name,
+        contentType: 'sesion' as const,
+        description: `Servicio de ${currentService.name}`,
+        priceLabel: 'Precio de lista del servicio:',
+        priceValue: `AR$ ${currentService.price}.-`,
+        serviceId: currentService.id,
+        employeeId: bookingData?.profesional,
+        serviceDuration: currentService.duration,
+      },
+    ];
+  }, [currentService, bookingData?.profesional]);
+
+  // Crear ServiceOption para el modal de consulta
+  const consultaOptionsForModal = useMemo(() => {
+    if (!selectedService) return [];
+
+    return [
+      {
+        id: selectedService.id,
+        label: selectedService.name,
+        contentType: 'consulta' as const,
+        description: `Consulta de ${selectedService.name}`,
+        priceLabel: 'Precio de lista del servicio:',
+        priceValue: `AR$ ${selectedService.price}.-`,
+        serviceId: selectedService.id,
+        employeeId: EMPLOYEE_IDS.STAFF_CONSULTAS,
+        serviceDuration: selectedService.duration,
+      },
+    ];
+  }, [selectedService]);
 
   return (
     <>
@@ -249,16 +244,44 @@ export default function EstilismoCejasPage() {
 
       <Footer />
 
-      {serviceForModal && selectedDate && selectedTime && (
-        <BookingConfirmationModal
-          opened={opened}
-          onClose={close}
-          service={serviceForModal}
-          professional={professionalForModal || null}
-          date={selectedDate}
-          time={selectedTime}
-          location={MOCK_LOCATION}
-          onConfirm={handleConfirmBooking}
+      {/* Modal de Reserva para sesiones regulares */}
+      {selectedService && serviceOptionsForModal.length > 0 && (
+        <ReservaModal
+          opened={reservaModalOpened}
+          onClose={() => {
+            setReservaModalOpened(false);
+            setSelectedService(null);
+            setSelectedEmployee(null);
+            setSelectedDate(null);
+            setSelectedTime(null);
+          }}
+          serviceName={selectedService.name}
+          serviceKey={selectedService.name.toLowerCase().replace(/\s+/g, '-')}
+          serviceOptions={serviceOptionsForModal}
+          services={services as ServiceEntity[]}
+          employees={employees as Employee[]}
+          staffConsultasId={EMPLOYEE_IDS.STAFF_CONSULTAS}
+          meryGarciaId={EMPLOYEE_IDS.MERY_GARCIA}
+        />
+      )}
+
+      {/* Modal de Consulta */}
+      {selectedService && consultaOptionsForModal.length > 0 && (
+        <ConsultaModal
+          opened={consultaModalOpened}
+          onClose={() => {
+            setConsultaModalOpened(false);
+            setSelectedService(null);
+            setSelectedDate(null);
+            setSelectedTime(null);
+          }}
+          serviceName={selectedService.name}
+          serviceKey={selectedService.name.toLowerCase().replace(/\s+/g, '-')}
+          consultaOptions={consultaOptionsForModal}
+          services={services as ServiceEntity[]}
+          employees={employees as Employee[]}
+          staffConsultasId={EMPLOYEE_IDS.STAFF_CONSULTAS}
+          meryGarciaId={EMPLOYEE_IDS.MERY_GARCIA}
         />
       )}
     </>

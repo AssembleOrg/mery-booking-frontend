@@ -3,7 +3,8 @@
 import { Box, Container, Flex, Text } from '@mantine/core';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Masonry from 'react-masonry-css';
 import {
   SectionTitle,
   ServiceCard,
@@ -64,9 +65,21 @@ const GALLERY_IMAGES = [
   '/images/mery3.webp',
   '/images/mery2.svg',
   '/images/mery4.webp',
+  '/trabajo/merytrabajo9.webp',
+  '/trabajo/merytrabajoreal1.webp',
+  '/trabajo/merytrabajoreal2.webp',
+  '/trabajo/merytrabajoreal3.webp',
+  '/trabajo/merytrabajoreal4.webp',
+  '/trabajo/merytrabajoreal5.webp',
+  '/trabajo/merytrabajoreal6.webp',
+  '/trabajo/merytrabajoreal7.webp',
+  '/trabajo/merytrabajoreal8.webp',
+  '/trabajo/merytrabajoreal10.webp',
 ];
 
 export function WelcomeSection() {
+  const [imagesLoaded, setImagesLoaded] = useState(0);
+
   // Smooth Scroll Fix
   useEffect(() => {
     document.documentElement.style.scrollBehavior = 'smooth';
@@ -77,6 +90,16 @@ export function WelcomeSection() {
 
   const openInstagram = () => {
     window.open('https://www.instagram.com/merygarciaoficial/', '_blank');
+  };
+
+  const handleImageLoad = () => {
+    setImagesLoaded((prev) => prev + 1);
+  };
+
+  const breakpointColumnsObj = {
+    default: 4,
+    1024: 3,
+    768: 2,
   };
 
   return (
@@ -229,15 +252,29 @@ export function WelcomeSection() {
           </FadeInSection>
         </div>
         <FadeInSection direction="up" delay={0.3}>
-          <Box className={classes.galleryGrid}>
+          <Masonry
+            breakpointCols={breakpointColumnsObj}
+            className={classes.masonryGrid}
+            columnClassName={classes.masonryColumn}
+          >
             {GALLERY_IMAGES.map((src, i) => (
-              <Box key={i} className={classes.galleryItem}>
+              <Box
+                key={i}
+                className={classes.galleryItem}
+                style={{
+                  opacity: imagesLoaded > i ? 1 : 0,
+                  transition: 'opacity 0.3s ease',
+                }}
+              >
                 <Image
                   src={src}
                   alt={`Trabajo ${i + 1}`}
-                  fill
+                  width={600}
+                  height={600}
                   className={classes.galleryImage}
                   sizes="(max-width: 768px) 50vw, 25vw"
+                  loading="lazy"
+                  onLoad={handleImageLoad}
                 />
                 {i === GALLERY_IMAGES.length - 1 && (
                   <Box
@@ -266,7 +303,7 @@ export function WelcomeSection() {
                 )}
               </Box>
             ))}
-          </Box>
+          </Masonry>
         </FadeInSection>
       </section>
 
