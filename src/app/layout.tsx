@@ -15,14 +15,6 @@ const avantGardeMedium = localFont({
   fallback: ['system-ui', 'sans-serif'],
 });
 
-// Fuente para botones de home (.ttf)
-const avantGardeButtons = localFont({
-  src: '../../public/fonts/avantg.ttf',
-  variable: '--font-avant-garde-buttons',
-  display: 'swap',
-  fallback: ['system-ui', 'sans-serif'],
-});
-
 // Fuente para dropdowns (Poppins ExtraLight)
 const poppinsExtraLight = localFont({
   src: '../../public/fonts/Poppins-ExtraLight.ttf',
@@ -71,6 +63,27 @@ export const metadata: Metadata = {
   title: 'Mery García - Cosmetic Tattoo',
   description: 'Portal de reservas online - Cosmetic Tattoo, Estilismo de Cejas y Paramedical Tattoo',
   manifest: '/manifest.json',
+  openGraph: {
+    type: 'website',
+    locale: 'es_ES',
+    siteName: 'Mery García Booking',
+    title: 'Mery García - Cosmetic Tattoo',
+    description: 'Portal de reservas online - Cosmetic Tattoo, Estilismo de Cejas y Paramedical Tattoo',
+    images: [
+      {
+        url: '/icon0.png',
+        width: 252,
+        height: 113,
+        alt: 'Mery García - Cosmetic Tattoo',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Mery García - Cosmetic Tattoo',
+    description: 'Portal de reservas online - Cosmetic Tattoo, Estilismo de Cejas y Paramedical Tattoo',
+    images: ['/icon0.png'],
+  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -108,7 +121,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${avantGardeMedium.variable} ${avantGardeButtons.variable} ${dinLight.variable} ${dinRegular.variable} ${dinMedium.variable}`}
+        className={`${avantGardeMedium.variable} ${dinLight.variable} ${dinRegular.variable} ${dinMedium.variable}`}
         style={{ margin: 0 }}
         suppressHydrationWarning
       >

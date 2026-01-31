@@ -2,7 +2,17 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Stack, Title, Text, Paper, Group, Button, Divider, Image, Loader } from '@mantine/core';
+import {
+  Stack,
+  Title,
+  Text,
+  Paper,
+  Group,
+  Button,
+  Divider,
+  Image,
+  Loader,
+} from '@mantine/core';
 import { IconArrowLeft, IconCreditCard, IconCheck } from '@tabler/icons-react';
 import type { ServiceOption } from '@/infrastructure/types/services';
 import type { Employee } from '@/infrastructure/http/employeeService';
@@ -48,14 +58,15 @@ export function Step5PaymentSummary({
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Obtener employee y service
-  const employeeId = selectedOption.employeeId ||
+  const employeeId =
+    selectedOption.employeeId ||
     (selectedOption.contentType === 'consulta-sin-trabajo' ||
-      selectedOption.contentType === 'consulta-con-trabajo'
+    selectedOption.contentType === 'consulta-con-trabajo'
       ? staffConsultasId
       : meryGarciaId);
 
-  const employee = employees.find(e => e.id === employeeId);
-  const service = services.find(s => s.id === selectedOption.serviceId);
+  const employee = employees.find((e) => e.id === employeeId);
+  const service = services.find((s) => s.id === selectedOption.serviceId);
 
   useEffect(() => {
     console.log('[ReservaModal Step5] Componente montado');
@@ -95,12 +106,16 @@ export function Step5PaymentSummary({
     }
 
     // Servicios largos (≥120min): AR$ 150.000
+    let standardDeposit = 150000;
     if (duration >= 120) {
-      return 150000;
+      // Si el precio total es menor que el depósito estándar, cobrar 100% del precio
+      return Math.min(price, standardDeposit);
     }
 
     // Servicios cortos (<120min): AR$ 100.000
-    return 100000;
+    standardDeposit = 100000;
+    // Si el precio total es menor que el depósito estándar, cobrar 100% del precio
+    return Math.min(price, standardDeposit);
   };
 
   const depositAmount = service ? calculateDeposit(service) : 0;
@@ -167,7 +182,9 @@ export function Step5PaymentSummary({
       };
 
       console.log('[ReservaModal Step5] Payload a enviar a API:', payload);
-      console.log('[ReservaModal Step5] Iniciando llamada a /api/create-preference...');
+      console.log(
+        '[ReservaModal Step5] Iniciando llamada a /api/create-preference...'
+      );
 
       // Crear preferencia de pago
       const response = await fetch('/api/create-preference', {
@@ -202,7 +219,9 @@ export function Step5PaymentSummary({
         console.log('[ReservaModal Step5] Redirigiendo a MercadoPago...');
         window.location.href = checkoutUrl;
       } else {
-        console.error('[ReservaModal Step5] ERROR: No se recibió URL de pago en la respuesta');
+        console.error(
+          '[ReservaModal Step5] ERROR: No se recibió URL de pago en la respuesta'
+        );
         throw new Error('No se recibió URL de pago');
       }
     } catch (error) {
@@ -213,14 +232,20 @@ export function Step5PaymentSummary({
   };
 
   if (!service || !employee) {
-    console.error('[ReservaModal Step5] ERROR: Componente no puede renderizar', {
-      service: !!service,
-      serviceId: selectedOption.serviceId,
-      employee: !!employee,
-      employeeId: employeeId,
-      availableServices: services.map(s => ({ id: s.id, name: s.name })),
-      availableEmployees: employees.map(e => ({ id: e.id, name: e.fullName })),
-    });
+    console.error(
+      '[ReservaModal Step5] ERROR: Componente no puede renderizar',
+      {
+        service: !!service,
+        serviceId: selectedOption.serviceId,
+        employee: !!employee,
+        employeeId: employeeId,
+        availableServices: services.map((s) => ({ id: s.id, name: s.name })),
+        availableEmployees: employees.map((e) => ({
+          id: e.id,
+          name: e.fullName,
+        })),
+      }
+    );
     return (
       <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
         <h3>Error: No se pueden cargar los datos del servicio o profesional</h3>
@@ -345,7 +370,7 @@ export function Step5PaymentSummary({
               <Text size="md" fw={600}>
                 Depósito (Pagar ahora):
               </Text>
-              <Text size="md" fw={700} c="blue">
+              <Text size="md" fw={700} c="pink.5">
                 AR$ {depositAmount.toLocaleString('es-AR')}
               </Text>
             </Group>
@@ -372,7 +397,13 @@ export function Step5PaymentSummary({
             Volver
           </Button>
           <Button
-            leftSection={isProcessing ? <Loader size="xs" color="white" /> : <IconCreditCard size={18} />}
+            leftSection={
+              isProcessing ? (
+                <Loader size="xs" color="white" />
+              ) : (
+                <IconCreditCard size={18} />
+              )
+            }
             onClick={handlePayment}
             disabled={isProcessing}
             size="md"

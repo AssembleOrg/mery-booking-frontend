@@ -513,13 +513,13 @@ export function BookingsManager() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'ACTIVE':
-        return 'green';
+        return 'pink';
       case 'PENDING':
-        return 'yellow';
+        return 'pink';
       case 'CANCELLED':
-        return 'red';
+        return 'gray';
       case 'COMPLETED':
-        return 'blue';
+        return 'pink';
       default:
         return 'gray';
     }
@@ -946,7 +946,7 @@ export function BookingsManager() {
                                   p="xs"
                                   className={classes.bookingCard}
                                   style={{
-                                    backgroundColor: '#e3f2fd',
+                                    backgroundColor: '#FBE8EA',
                                     minHeight: height,
                                     height: duration > 1 ? height : 'auto',
                                     cursor: 'pointer',
@@ -1027,7 +1027,7 @@ export function BookingsManager() {
                             p={4}
                             className={classes.monthBookingCard}
                             style={{
-                              backgroundColor: '#e3f2fd',
+                              backgroundColor: '#FBE8EA',
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
@@ -1116,7 +1116,7 @@ export function BookingsManager() {
                                 p="xs"
                                 className={classes.bookingCard}
                                 style={{
-                                  backgroundColor: '#e3f2fd',
+                                  backgroundColor: '#FBE8EA',
                                   minHeight: height,
                                   height: duration > 1 ? height : 'auto',
                                   cursor: 'pointer',
@@ -1143,7 +1143,7 @@ export function BookingsManager() {
                                     {getStatusLabel(booking.status)}
                                   </Badge>
                                   {booking.paid && (
-                                    <Badge size="xs" color="green" variant="light">
+                                    <Badge size="xs" color="pink" variant="light">
                                       Pagado
                                     </Badge>
                                   )}
@@ -1222,7 +1222,7 @@ export function BookingsManager() {
                       </Badge>
                     </Table.Td>
                     <Table.Td>
-                      <Badge color={booking.paid ? 'green' : 'gray'} variant="light">
+                      <Badge color={booking.paid ? 'pink' : 'gray'} variant="light">
                         {booking.paid ? 'Sí' : 'No'}
                       </Badge>
                     </Table.Td>
@@ -1359,7 +1359,7 @@ export function BookingsManager() {
                 <Badge color={getStatusColor(selectedBooking.status)} variant="light">
                   {getStatusLabel(selectedBooking.status)}
                 </Badge>
-                <Badge color={selectedBooking.paid ? 'green' : 'gray'} variant="light">
+                <Badge color={selectedBooking.paid ? 'pink' : 'gray'} variant="light">
                   {selectedBooking.paid ? 'Pagado' : 'No pagado'}
                 </Badge>
               </Group>
@@ -1368,14 +1368,14 @@ export function BookingsManager() {
             {selectedBooking.status !== 'CANCELLED' && (
               <Group gap="sm" grow>
                 <Button
-                  color="blue"
+                  color="pink"
                   variant="filled"
                   onClick={handleRescheduleClick}
                 >
                   Reagendar Turno
                 </Button>
                 <Button
-                  color="red"
+                  color="dark"
                   variant="outline"
                   onClick={handleCancelBookingClick}
                 >

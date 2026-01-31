@@ -821,12 +821,12 @@ export function TimeSlotsManager() {
             disabled={isLoading || employees.length === 0}
           />
           {employees.length === 0 && !isLoading && (
-            <Alert color="yellow" mt="md" title="Sin empleados">
+            <Alert color="pink" mt="md" title="Sin empleados">
               No se encontraron empleados. Por favor, crea empleados primero.
             </Alert>
           )}
           {!selectedEmployeeId && employees.length > 0 && (
-            <Alert color="blue" mt="md" title="Selecciona un empleado">
+            <Alert color="pink" mt="md" title="Selecciona un empleado">
               Por favor, selecciona un empleado para gestionar sus franjas horarias.
             </Alert>
           )}
@@ -839,7 +839,7 @@ export function TimeSlotsManager() {
                 value="timeslots"
                 rightSection={
                   timeSlots.length > 0 ? (
-                    <Badge size="sm" color="red" variant="filled" circle>
+                    <Badge size="sm" color="pink" variant="filled" circle>
                       {timeSlots.length}
                     </Badge>
                   ) : null
@@ -851,7 +851,7 @@ export function TimeSlotsManager() {
                 value="blocked"
                 rightSection={
                   blockedTimeSlots.length > 0 ? (
-                    <Badge size="sm" color="red" variant="filled" circle>
+                    <Badge size="sm" color="pink" variant="filled" circle>
                       {blockedTimeSlots.length}
                     </Badge>
                   ) : null
@@ -904,7 +904,7 @@ export function TimeSlotsManager() {
                                   <Text fw={600} size="lg" className={classes.dayTitle}>
                                     {dayLabel}
                                   </Text>
-                                  <Badge color={isDateSpecific ? 'blue' : 'violet'} size="lg">
+                                  <Badge color={isDateSpecific ? 'pink' : 'pink'} size="lg">
                                     {slots.length} horario{slots.length !== 1 ? 's' : ''}
                                   </Badge>
                                 </Group>
@@ -924,7 +924,7 @@ export function TimeSlotsManager() {
                                           <Text fw={500} size="md">
                                             {formatTimeRange(timeSlot.startTime, timeSlot.endTime)}
                                           </Text>
-                                          <Badge color={timeSlot.isActive ? 'green' : 'gray'} size="sm">
+                                          <Badge color={timeSlot.isActive ? 'pink' : 'gray'} size="sm">
                                             {timeSlot.isActive ? 'Activo' : 'Inactivo'}
                                           </Badge>
                                         </Group>
@@ -945,7 +945,7 @@ export function TimeSlotsManager() {
                                       <Group gap="xs" ml="md">
                                         <Button
                                           variant="light"
-                                          color="violet"
+                                          color="pink"
                                           size="xs"
                                           onClick={() => handleOpenCopy(timeSlot)}
                                         >
@@ -953,7 +953,7 @@ export function TimeSlotsManager() {
                                         </Button>
                                         <Button
                                           variant="light"
-                                          color={timeSlot.isActive ? 'orange' : 'green'}
+                                          color={timeSlot.isActive ? 'pink' : 'gray'}
                                           size="xs"
                                           onClick={() => handleToggleActive(timeSlot)}
                                           loading={isToggling === timeSlot.id}
@@ -962,7 +962,7 @@ export function TimeSlotsManager() {
                                         </Button>
                                         <Button
                                           variant="light"
-                                          color="blue"
+                                          color="pink"
                                           size="xs"
                                           onClick={() => handleOpenEdit(timeSlot)}
                                         >
@@ -970,7 +970,7 @@ export function TimeSlotsManager() {
                                         </Button>
                                         <Button
                                           variant="light"
-                                          color="red"
+                                          color="dark"
                                           size="xs"
                                           onClick={() => handleOpenDelete(timeSlot)}
                                         >
@@ -995,9 +995,9 @@ export function TimeSlotsManager() {
               <Stack gap="lg">
                 <Box className={classes.header}>
                   <Text className={classes.title}>Bloqueos de Horarios</Text>
-                  <Button 
-                    color="red" 
-                    onClick={handleOpenCreateBlocked} 
+                  <Button
+                    color="dark"
+                    onClick={handleOpenCreateBlocked}
                     className={classes.createButton}
                     disabled={!selectedEmployeeId}
                   >
@@ -1034,7 +1034,7 @@ export function TimeSlotsManager() {
                                   <Text fw={600} size="lg" className={classes.dayTitle}>
                                     {dayLabel}
                                   </Text>
-                                  <Badge color={isDateSpecific ? 'red' : 'orange'} size="lg">
+                                  <Badge color={isDateSpecific ? 'pink' : 'pink'} size="lg">
                                     {slots.length} bloqueo{slots.length !== 1 ? 's' : ''}
                                   </Badge>
                                 </Group>
@@ -1054,7 +1054,7 @@ export function TimeSlotsManager() {
                                           <Text fw={500} size="md">
                                             {formatTimeRange(blocked.startTime, blocked.endTime)}
                                           </Text>
-                                          <Badge color="red" size="sm">
+                                          <Badge color="dark" size="sm">
                                             Bloqueado
                                           </Badge>
                                         </Group>
@@ -1067,7 +1067,7 @@ export function TimeSlotsManager() {
                                       <Group gap="xs" ml="md">
                                         <Button
                                           variant="light"
-                                          color="violet"
+                                          color="pink"
                                           size="xs"
                                           onClick={() => handleOpenCopyBlocked(blocked)}
                                         >
@@ -1075,7 +1075,7 @@ export function TimeSlotsManager() {
                                         </Button>
                                         <Button
                                           variant="light"
-                                          color="blue"
+                                          color="pink"
                                           size="xs"
                                           onClick={() => handleOpenEditBlocked(blocked)}
                                         >
@@ -1083,7 +1083,7 @@ export function TimeSlotsManager() {
                                         </Button>
                                         <Button
                                           variant="light"
-                                          color="red"
+                                          color="dark"
                                           size="xs"
                                           onClick={() => handleOpenDeleteBlocked(blocked)}
                                         >
@@ -1324,7 +1324,7 @@ export function TimeSlotsManager() {
                                           <Badge color="pink" variant="light" size="sm">
                                             ${service.price.toLocaleString('es-AR')}
                                           </Badge>
-                                          <Badge color="blue" variant="light" size="sm">
+                                          <Badge color="pink" variant="light" size="sm">
                                             {service.duration} min
                                           </Badge>
                                         </Group>
@@ -1558,9 +1558,9 @@ export function TimeSlotsManager() {
               <Button variant="outline" color="gray" onClick={handleCloseBlockedModal} disabled={isSubmittingBlocked}>
                 Cancelar
               </Button>
-              <Button 
-                type="submit" 
-                color="red" 
+              <Button
+                type="submit"
+                color="pink"
                 loading={isSubmittingBlocked}
               >
                 {editingBlocked && !isCopyingBlocked 

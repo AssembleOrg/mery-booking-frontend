@@ -31,7 +31,7 @@ function PendingContent() {
     <Container size="sm" py="xl">
       <Paper shadow="md" p="xl" radius="md" withBorder>
         <Stack align="center" gap="lg">
-          <ThemeIcon size={80} radius="xl" color="yellow" variant="light">
+          <ThemeIcon size={80} radius="xl" color="pink" variant="light">
             <IconClock size={48} />
           </ThemeIcon>
 

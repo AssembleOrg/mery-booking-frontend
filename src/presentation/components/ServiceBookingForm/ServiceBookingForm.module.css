@@ -62,7 +62,7 @@
   transition: all 0.3s ease;
   border: 2px solid transparent !important;
   letter-spacing: 0.08em !important;
-  font-family: var(--font-avant-garde-buttons), sans-serif !important;
+  font-family: var(--font-avant-garde), sans-serif !important;
   text-transform: uppercase !important;
   font-weight: 400 !important;
 }

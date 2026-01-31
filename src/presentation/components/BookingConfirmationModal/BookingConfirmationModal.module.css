@@ -64,7 +64,13 @@
 }
 
 .input::placeholder {
-  color: #545454;
+  color: #adb5bd;
+  opacity: 1;
+}
+
+.textarea::placeholder {
+  color: #adb5bd;
+  opacity: 1;
 }
 
 .pricingSummary {

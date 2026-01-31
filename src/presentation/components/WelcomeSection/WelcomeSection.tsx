@@ -111,7 +111,6 @@ export function WelcomeSection() {
               images={[
                 '/loop/loop1.webp',
                 '/loop/loop2.webp',
-                '/loop/loop3.webp',
                 '/loop/loop4.webp',
                 '/loop/loop5.webp',
               ]}
