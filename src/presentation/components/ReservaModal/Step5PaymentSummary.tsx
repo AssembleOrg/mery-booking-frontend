@@ -13,6 +13,7 @@ import {
   Image,
   Loader,
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { IconArrowLeft, IconCreditCard, IconCheck } from '@tabler/icons-react';
 import type { ServiceOption } from '@/infrastructure/types/services';
 import type { Employee } from '@/infrastructure/http/employeeService';
@@ -201,9 +202,42 @@ export function Step5PaymentSummary({
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('[ReservaModal Step5] ERROR en respuesta:', errorText);
-        throw new Error('Error al crear la preferencia de pago');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage =
+          errorData.message ||
+          errorData.error ||
+          'Error al crear la preferencia de pago';
+
+        console.error('[ReservaModal Step5] ERROR en respuesta:', {
+          status: response.status,
+          error: errorData,
+        });
+
+        // Manejar error 409 (slot ya ocupado)
+        if (response.status === 409) {
+          notifications.show({
+            title: 'Turno no disponible',
+            message:
+              errorMessage ||
+              'Este horario fue reservado por otra persona. Por favor, selecciona otro turno.',
+            color: 'orange',
+            autoClose: 5000,
+          });
+          setIsProcessing(false);
+          // Opcional: Volver al paso anterior para seleccionar otro turno
+          // onBack();
+          return;
+        }
+
+        // Otros errores
+        notifications.show({
+          title: 'Error',
+          message: errorMessage,
+          color: 'red',
+          autoClose: 5000,
+        });
+        setIsProcessing(false);
+        return;
       }
 
       const data = await response.json();
@@ -222,12 +256,25 @@ export function Step5PaymentSummary({
         console.error(
           '[ReservaModal Step5] ERROR: No se recibió URL de pago en la respuesta'
         );
-        throw new Error('No se recibió URL de pago');
+        notifications.show({
+          title: 'Error',
+          message: 'No se recibió URL de pago. Intenta nuevamente.',
+          color: 'red',
+          autoClose: 5000,
+        });
+        setIsProcessing(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('[ReservaModal Step5] ERROR al procesar el pago:', error);
       setIsProcessing(false);
-      // TODO: Mostrar notificación de error
+      notifications.show({
+        title: 'Error',
+        message:
+          error.message ||
+          'Ocurrió un error al procesar el pago. Intenta nuevamente.',
+        color: 'red',
+        autoClose: 5000,
+      });
     }
   };
 

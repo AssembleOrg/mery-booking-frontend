@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MercadoPagoConfig, Payment } from 'mercadopago';
-import {
-  ClientService,
-  BookingService,
-  CreateClientPublicDto,
-  CreateBookingDto,
-} from '@/infrastructure/http';
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!,
 });
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,7 +34,8 @@ export async function POST(request: NextRequest) {
           !metadata.user_full_name ||
           !metadata.user_email ||
           !metadata.book_emp_id ||
-          !metadata.book_serv_id
+          !metadata.book_serv_id ||
+          !metadata.temp_reservation_id
         ) {
           console.error('[Webhook] Metadata incompleta:', metadata);
           return NextResponse.json({ received: true }, { status: 200 });
@@ -46,65 +43,100 @@ export async function POST(request: NextRequest) {
 
         console.log(
           '[Webhook] Procesando pago aprobado. Client:',
-          metadata.user_full_name
+          metadata.user_full_name,
+          'TempReservationId:',
+          metadata.temp_reservation_id
         );
 
         try {
-          // 🔥 LÓGICA CRÍTICA: Crear cliente y booking
+          // 🔥 Llamar al endpoint del backend para crear el booking
+          // NOTA: El backend debe validar el secret internamente, no lo enviamos desde el frontend
+          
+          // Acceder a preference_id de forma segura (puede no estar en el tipo pero existe en runtime)
+          const paymentData = payment as any;
+          const preferenceId = paymentData.preference_id || paymentData.preference?.id || '';
+          const transactionAmount = paymentData.transaction_amount || paymentData.amount || 0;
+          
+          const webhookResponse = await fetch(
+            `${BACKEND_URL}/bookings/webhook`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                // El secret NO se envía desde el frontend por seguridad
+                // El backend debe validar que la petición viene de un origen confiable
+              },
+              body: JSON.stringify({
+                paymentId: String(payment.id),
+                preferenceId: preferenceId,
+                tempReservationId: metadata.temp_reservation_id,
+                amount: transactionAmount,
+                clientData: {
+                  fullName: metadata.user_full_name,
+                  email: metadata.user_email,
+                  phone: metadata.user_phone || '',
+                  dni: metadata.user_dni || '',
+                },
+                bookingData: {
+                  employeeId: metadata.book_emp_id,
+                  serviceId: metadata.book_serv_id,
+                  date: metadata.book_date,
+                  startTime: metadata.book_time,
+                  notes: metadata.book_notes || '',
+                },
+              }),
+            }
+          );
 
-          // 1. Crear el cliente (o recuperar existente por DNI)
-          const clientDto: CreateClientPublicDto = {
-            fullName: metadata.user_full_name,
-            email: metadata.user_email,
-            phone: metadata.user_phone,
-            dni: metadata.user_dni,
-          };
+          if (!webhookResponse.ok) {
+            const errorData = await webhookResponse
+              .json()
+              .catch(() => ({}));
+            console.error(
+              '[Webhook] Error del backend:',
+              webhookResponse.status,
+              errorData
+            );
 
-          const newClient = await ClientService.createPublic(clientDto);
-          console.log('[Webhook] Cliente creado/recuperado:', newClient.id);
+            // IMPORTANTE: Responder 200 para que MP no reintente infinitamente
+            // El backend debe manejar los errores y marcar el pago como "needs_manual_review"
+            return NextResponse.json(
+              {
+                received: true,
+                error: 'Backend error',
+                paymentId: payment.id,
+                status: webhookResponse.status,
+              },
+              { status: 200 }
+            );
+          }
 
-          // 2. Crear la reserva con paid: true
-          const bookingDto: CreateBookingDto = {
-            clientId: newClient.id,
-            employeeId: metadata.book_emp_id,
-            serviceId: metadata.book_serv_id,
-            date: metadata.book_date,
-            startTime: metadata.book_time,
-            paid: true,
-            notes:
-              metadata.book_notes ||
-              `Pago procesado vía MercadoPago. Payment ID: ${payment.id}`,
-          };
-
-          const booking = await BookingService.create(bookingDto);
-          console.log('[Webhook] Reserva creada exitosamente:', booking.id);
-
-          // 3. (Opcional) Aquí podrías enviar email de confirmación
-          // await sendConfirmationEmail(clientData.email, booking);
+          const webhookData = await webhookResponse.json();
+          console.log(
+            '[Webhook] Booking creado exitosamente:',
+            webhookData.data?.bookingId
+          );
 
           return NextResponse.json(
             {
               received: true,
-              bookingId: booking.id,
-              clientId: newClient.id,
+              bookingId: webhookData.data?.bookingId,
+              clientId: webhookData.data?.clientId,
             },
             { status: 200 }
           );
         } catch (error) {
           // ❌ ERROR CRÍTICO: Pago aprobado pero falló la creación
           console.error(
-            `[CRÍTICO] Pago aprobado pero fallo al crear cliente/booking. Payment ID: ${payment.id}`,
+            `[CRÍTICO] Pago aprobado pero fallo al procesar. Payment ID: ${payment.id}`,
             error
           );
-
-          // TODO: Implementar alerta al admin
-          // TODO: Guardar en tabla de reconciliación manual
 
           // IMPORTANTE: Aún así responder 200 para que MercadoPago no reintente
           return NextResponse.json(
             {
               received: true,
-              error: 'Failed to create booking',
+              error: 'Failed to process payment',
               paymentId: payment.id,
             },
             { status: 200 }
