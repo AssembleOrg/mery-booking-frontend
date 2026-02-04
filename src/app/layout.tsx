@@ -59,7 +59,10 @@ const dinMedium = localFont({
   fallback: ['system-ui', 'sans-serif'],
 });
 
+const metadataBaseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL?.replace(/\/$/, '');
+
 export const metadata: Metadata = {
+  metadataBase: metadataBaseUrl ? new URL(metadataBaseUrl) : undefined,
   title: 'Mery García - Cosmetic Tattoo',
   description: 'Portal de reservas online - Cosmetic Tattoo, Estilismo de Cejas y Paramedical Tattoo',
   manifest: '/manifest.json',
@@ -71,18 +74,18 @@ export const metadata: Metadata = {
     description: 'Portal de reservas online - Cosmetic Tattoo, Estilismo de Cejas y Paramedical Tattoo',
     images: [
       {
-        url: '/icon0.png',
-        width: 252,
-        height: 113,
+        url: '/og-image.png',
+        width: 512,
+        height: 512,
         alt: 'Mery García - Cosmetic Tattoo',
       },
     ],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Mery García - Cosmetic Tattoo',
     description: 'Portal de reservas online - Cosmetic Tattoo, Estilismo de Cejas y Paramedical Tattoo',
-    images: ['/icon0.png'],
+    images: ['/og-image.png'],
   },
   icons: {
     icon: [
@@ -104,6 +107,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: '#f9bbc4',
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({

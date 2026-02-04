@@ -4,6 +4,7 @@ import { MantineProvider, createTheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { ReactNode } from 'react';
 import { AuthProvider } from '@/presentation/contexts';
+import { useIosKeyboardDismiss } from '@/presentation/hooks/useIosKeyboardDismiss';
 import { QueryProvider } from './QueryProvider';
 
 const theme = createTheme({
@@ -33,6 +34,8 @@ interface MantineProviderWrapperProps {
 export function MantineProviderWrapper({
   children,
 }: MantineProviderWrapperProps) {
+  useIosKeyboardDismiss();
+
   return (
     <QueryProvider>
       <MantineProvider theme={theme}>
@@ -44,4 +47,3 @@ export function MantineProviderWrapper({
     </QueryProvider>
   );
 }
-

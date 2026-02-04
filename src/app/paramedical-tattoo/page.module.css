@@ -4,6 +4,7 @@
 
 .pageWrapper {
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--mg-white);
   overflow: visible; /* Necesario para que sticky funcione */
   padding-top: 80px; /* Compensar header fixed */
