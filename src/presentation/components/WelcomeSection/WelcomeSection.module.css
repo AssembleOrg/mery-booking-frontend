@@ -54,6 +54,15 @@
   pointer-events: none;
 }
 
+@media (max-width: 1023px) {
+  .heroSection {
+    height: 70vh;
+    height: 70svh;
+    min-height: 520px;
+    background: var(--mg-dark);
+  }
+}
+
 .heroTextSection {
   padding: 40px 24px;
   background: var(--mg-dark);
@@ -105,7 +114,7 @@
   display: block;
   font-style: italic;
   font-weight: 400;
-  font-family: var(--font-avant-garde), serif;
+  font-family: var(--font-stack-title);
   font-size: 1.1em;
   margin-top: 8px;
   color: var(--mg-white);
@@ -291,7 +300,10 @@
 }
 
 .servicesSection {
-  padding: 60px 16px;
+  padding-top: 60px;
+  padding-bottom: 60px;
+  padding-left: calc(24px + env(safe-area-inset-left, 0px));
+  padding-right: calc(24px + env(safe-area-inset-right, 0px));
   position: relative;
   background: var(--mg-white);
   margin-bottom: 0;
@@ -300,6 +312,8 @@
 .servicesContainer {
   max-width: 1200px;
   margin: 0 auto;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 .servicesGrid {
@@ -316,7 +330,10 @@
     gap: 12px;
   }
   .servicesSection {
-    padding: 80px 40px;
+    padding-top: 80px;
+    padding-bottom: 80px;
+    padding-left: calc(40px + env(safe-area-inset-left, 0px));
+    padding-right: calc(40px + env(safe-area-inset-right, 0px));
   }
 }
 
@@ -329,7 +346,10 @@
     margin-right: auto;
   }
   .servicesSection {
-    padding: 100px 80px;
+    padding-top: 100px;
+    padding-bottom: 100px;
+    padding-left: calc(80px + env(safe-area-inset-left, 0px));
+    padding-right: calc(80px + env(safe-area-inset-right, 0px));
   }
 }
 
@@ -396,12 +416,18 @@
 .quoteHighlightWrapper {
   display: inline-block;
   margin: 8px 0;
+  max-width: 100%;
 }
 
 .quoteHighlight {
   background-color: var(--mg-pink);
   color: var(--mg-white);
   padding: 8px 10px;
+  display: inline;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  background-clip: padding-box;
+  border-radius: 2px;
   font-family: var(--font-avant-garde), sans-serif;
   font-size: 16px;
   letter-spacing: 0.15em;
@@ -410,26 +436,20 @@
   line-height: 1.5;
 }
 
-.quoteBreak {
-  display: block;
-  height: 4px;
+.quoteNoBreak {
+  white-space: nowrap;
 }
 
-@media (min-width: 768px) {
-  .quoteBreak {
-    display: none;
-  }
-}
-
-/* Desktop: Add small gap when highlights are inline */
-@media (min-width: 768px) {
-  .quoteHighlight + .quoteHighlight {
-    margin-left: 8px;
+@media (max-width: 360px) {
+  .quoteHighlight {
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    padding: 6px 8px;
   }
 }
 
 .quoteItalic {
-  font-family: var(--font-avant-garde), serif;
+  font-family: var(--font-stack-title);
   font-style: italic;
   font-weight: 400;
 }
@@ -476,7 +496,7 @@
 }
 
 .philosophyText {
-  font-family: var(--font-avant-garde), serif;
+  font-family: var(--font-stack-title);
   color: var(--mg-pink);
   font-size: 28px;
   letter-spacing: 0.1em;

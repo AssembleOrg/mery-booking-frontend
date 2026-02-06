@@ -125,7 +125,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${avantGardeMedium.variable} ${dinLight.variable} ${dinRegular.variable} ${dinMedium.variable}`}
+        className={`${avantGardeMedium.variable} ${poppinsExtraLight.variable} ${dinLight.variable} ${dinRegular.variable} ${dinMedium.variable}`}
         style={{ margin: 0 }}
         suppressHydrationWarning
       >

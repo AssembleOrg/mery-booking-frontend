@@ -1836,15 +1836,6 @@ export default function TattooCosmeticoPage() {
               <Box id="nanoblading" className={classes.serviceBlock}>
                 <Box className={classes.serviceLayout}>
                   <Box className={classes.serviceHeader}>
-                    <Box className={classes.serviceThumbnail}>
-                      <Image
-                        src="/images/im.2-op-2-scaled-1.webp"
-                        alt="Nanoblading"
-                        width={100}
-                        height={100}
-                        className={classes.thumbnailImage}
-                      />
-                    </Box>
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.serviceTitle}>NANOBLADING</Text>
                       <Text className={classes.serviceTagline}>
@@ -1945,15 +1936,6 @@ export default function TattooCosmeticoPage() {
               <Box id="lip-blush" className={classes.serviceBlock}>
                 <Box className={classes.serviceLayout}>
                   <Box className={classes.serviceHeader}>
-                    <Box className={classes.serviceThumbnail}>
-                      <Image
-                        src="/images/Lip-blush-1-1-768x512.webp"
-                        alt="Lip Blush"
-                        width={100}
-                        height={100}
-                        className={classes.thumbnailImage}
-                      />
-                    </Box>
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.serviceTitle}>LIP BLUSH</Text>
                       <Text className={classes.serviceTagline}>
@@ -2040,15 +2022,6 @@ export default function TattooCosmeticoPage() {
               <Box id="lip-camouflage" className={classes.serviceBlock}>
                 <Box className={classes.serviceLayout}>
                   <Box className={classes.serviceHeader}>
-                    <Box className={classes.serviceThumbnail}>
-                      <Image
-                        src="/images/lim-camouflage.webp"
-                        alt="Lip Camouflage"
-                        width={100}
-                        height={100}
-                        className={classes.thumbnailImage}
-                      />
-                    </Box>
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.serviceTitle}>
                         LIP CAMOUFLAGE
@@ -2130,15 +2103,6 @@ export default function TattooCosmeticoPage() {
               <Box id="lashes-line" className={classes.serviceBlock}>
                 <Box className={classes.serviceLayout}>
                   <Box className={classes.serviceHeader}>
-                    <Box className={classes.serviceThumbnail}>
-                      <Image
-                        src="/images/lashes_line_b.webp"
-                        alt="Lashes Line"
-                        width={100}
-                        height={100}
-                        className={classes.thumbnailImage}
-                      />
-                    </Box>
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.serviceTitle}>LASHES LINE</Text>
                       <Text className={classes.serviceTagline}>
@@ -2217,15 +2181,6 @@ export default function TattooCosmeticoPage() {
               <Box id="pecas-lunares" className={classes.serviceBlock}>
                 <Box className={classes.serviceLayout}>
                   <Box className={classes.serviceHeader}>
-                    <Box className={classes.serviceThumbnail}>
-                      <Image
-                        src="/images/web-pecas-1-768x578.webp"
-                        alt="Pecas y Lunares"
-                        width={100}
-                        height={100}
-                        className={classes.thumbnailImage}
-                      />
-                    </Box>
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.serviceTitle}>
                         PECAS Y LUNARES
@@ -2272,15 +2227,6 @@ export default function TattooCosmeticoPage() {
               <Box id="camuflaje" className={classes.serviceBlock}>
                 <Box className={classes.serviceLayout}>
                   <Box className={classes.serviceHeader}>
-                    <Box className={classes.serviceThumbnail}>
-                      <Image
-                        src="/images/camuflaje.webp"
-                        alt="Camuflaje"
-                        width={100}
-                        height={100}
-                        className={classes.thumbnailImage}
-                      />
-                    </Box>
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.serviceTitle}>CAMUFLAJE</Text>
                       <Text className={classes.serviceTagline}>

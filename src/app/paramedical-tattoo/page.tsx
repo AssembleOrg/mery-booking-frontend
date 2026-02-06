@@ -10,7 +10,6 @@ import {
   ReservaModal,
 } from '@/presentation/components';
 import ConsultaModal from '@/presentation/components/ConsultaModal';
-import Image from 'next/image';
 import { useState, useMemo, useEffect } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
@@ -872,15 +871,6 @@ export default function ParamedicalTattooPage() {
               <Container size="lg" py="md">
                 <Box className={classes.sectionContent}>
                   <Box className={classes.serviceHeader}>
-                    <Box className={classes.serviceThumbnail}>
-                      <Image
-                        src="/images/nano-scallping.webp"
-                        alt="Nano Scalp"
-                        width={100}
-                        height={100}
-                        className={classes.thumbnailImage}
-                      />
-                    </Box>
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.sectionTitle}>NANO SCALP</Text>
                       <Text className={classes.serviceTagline}>
@@ -951,15 +941,6 @@ export default function ParamedicalTattooPage() {
               <Container size="lg" py="md">
                 <Box className={classes.sectionContent}>
                   <Box className={classes.serviceHeader}>
-                    <Box className={classes.serviceThumbnail}>
-                      <Image
-                        src="/images/aereola.webp"
-                        alt="Areola Harmonization"
-                        width={100}
-                        height={100}
-                        className={classes.thumbnailImage}
-                      />
-                    </Box>
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.sectionTitle}>
                         AREOLA HARMONIZATION
@@ -1032,15 +1013,6 @@ export default function ParamedicalTattooPage() {
               <Container size="lg" py="md">
                 <Box className={classes.sectionContent}>
                   <Box className={classes.serviceHeader}>
-                    <Box className={classes.serviceThumbnail}>
-                      <Image
-                        src="/images/camuflaje.webp"
-                        alt="Nipple Reconstruction"
-                        width={100}
-                        height={100}
-                        className={classes.thumbnailImage}
-                      />
-                    </Box>
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.sectionTitle}>
                         NIPPLE RECONSTRUCTION

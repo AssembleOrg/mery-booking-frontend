@@ -4,11 +4,11 @@ import { Box, Burger, Container, Flex, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { MenuModal } from '@/presentation/components';
 import classes from './Header.module.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const NAV_ITEMS = [
   { label: 'COSMETIC TATTOO', href: '/tattoo-cosmetico' },
@@ -19,20 +19,39 @@ const NAV_ITEMS = [
 export function Header() {
   const [opened, { open, close }] = useDisclosure(false);
   const [scrolled, setScrolled] = useState(false);
+  const headerRef = useRef<HTMLElement | null>(null);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+    const updateScrolled = () => {
+      const servicesSection = document.getElementById('servicios');
+
+      if (!servicesSection) {
+        setScrolled(window.scrollY > 50);
+        return;
+      }
+
+      const headerHeight =
+        headerRef.current?.getBoundingClientRect().height ?? 90;
+      const servicesTop = servicesSection.getBoundingClientRect().top;
+      setScrolled(servicesTop <= headerHeight);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+
+    updateScrolled();
+    window.addEventListener('scroll', updateScrolled, { passive: true });
+    window.addEventListener('resize', updateScrolled);
+    return () => {
+      window.removeEventListener('scroll', updateScrolled);
+      window.removeEventListener('resize', updateScrolled);
+    };
+  }, [pathname]);
 
   return (
     <>
       <Box
         component="header"
+        ref={headerRef}
         className={`${classes.header} ${scrolled ? classes.scrolled : ''}`}
       >
         <Container size="xl" className={classes.container}>

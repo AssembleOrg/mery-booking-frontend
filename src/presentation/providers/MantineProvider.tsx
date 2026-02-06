@@ -8,7 +8,11 @@ import { useIosKeyboardDismiss } from '@/presentation/hooks/useIosKeyboardDismis
 import { QueryProvider } from './QueryProvider';
 
 const theme = createTheme({
-  fontFamily: 'var(--font-avant-garde), sans-serif',
+  fontFamily:
+    "var(--font-din-light, system-ui), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+  headings: {
+    fontFamily: 'var(--font-avant-garde, sans-serif), sans-serif',
+  },
   primaryColor: 'pink',
   colors: {
     pink: [

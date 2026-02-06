@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Container, Flex, Text } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -40,7 +41,7 @@ const SERVICES = [
   },
   {
     num: '04',
-    name: 'Freckles & Beauty Mole',
+    name: 'Freckles & Beauty Mark',
     desc: 'Cosmetic Tattoo',
     image: '',
     href: '/tattoo-cosmetico',
@@ -79,6 +80,9 @@ const GALLERY_IMAGES = [
 
 export function WelcomeSection() {
   const [imagesLoaded, setImagesLoaded] = useState(0);
+  const isMobileOrTablet = useMediaQuery('(max-width: 1023px)', false, {
+    getInitialValueInEffect: true,
+  });
 
   // Smooth Scroll Fix
   useEffect(() => {
@@ -118,7 +122,7 @@ export function WelcomeSection() {
               transitionDuration={1.2}
               showIndicators={true}
               alt="Mery Garcia Cosmetic Tattoo"
-              objectPosition="center center"
+              objectPosition={isMobileOrTablet ? 'center 20%' : 'center center'}
             />
             <div className={classes.heroOverlay} />
           </Box>
@@ -184,26 +188,17 @@ export function WelcomeSection() {
         <Container size="xl" className={classes.philosophyContainer}>
           <FadeInSection direction="up" delay={0.1}>
             <div className={classes.quoteWrapper}>
-              <Text className={classes.quoteTop}>BEHIND EVERY</Text>
-              <div className={classes.quoteHighlightWrapper}>
-                <span className={classes.quoteHighlight}>STRONG BROW</span>
-                <span className={classes.quoteText}> IS</span>
-              </div>
-              <Text className={classes.quoteBottom}>
-                AN EVEN STRONGER <em className={classes.quoteItalic}>WOMAN.</em>
-              </Text>
               <div className={classes.quoteConnector} />
               <Text
                 className={`${classes.quoteBottom} ${classes.quoteBottomSpaced}`}
               >
-                MÁS DE 20 AÑOS CREANDO RESULTADOS NATURALES E IMPERCEPTIBLES.
+                MÁS DE 20 AÑOS CREANDO RESULTADOS NATURALES E HIPERREALISTAS.
               </Text>
               <div className={classes.quoteHighlightWrapper}>
                 <span className={classes.quoteHighlight}>
-                  CADA TRAZO CUENTA UNA
+                  CADA TRAZO CUENTA <wbr />
+                  <span className={classes.quoteNoBreak}>UNA HISTORIA</span>
                 </span>
-                <br className={classes.quoteBreak} />
-                <span className={classes.quoteHighlight}>HISTORIA</span>
               </div>
             </div>
           </FadeInSection>

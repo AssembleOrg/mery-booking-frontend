@@ -156,7 +156,7 @@ export default function EstilismoCejasPage() {
           <Box className={classes.heroOverlay} />
           <Box className={classes.heroContent}>
             <FadeInSection direction="up" delay={0.2}>
-              <Text className={classes.heroOverline}>MERY GARCÍA</Text>
+
               <Text className={classes.heroTitle}>
                 ESTILISMO DE
                 <br />
