@@ -1,0 +1,56 @@
+/* ====================================
+   MODAL CONTAINER
+   ==================================== */
+
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: none;
+}
+
+.modalBody {
+  padding: 0;
+}
+
+.container {
+  padding: 40px;
+  min-height: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  overflow: visible;
+}
+
+/* ====================================
+   CONTENT AREA
+   ==================================== */
+
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ====================================
+   RESPONSIVE
+   ==================================== */
+
+@media (max-width: 767px) {
+  .container {
+    padding: 20px;
+    min-height: auto;
+    max-height: 90vh;
+  }
+}

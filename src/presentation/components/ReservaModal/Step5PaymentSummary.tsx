@@ -41,6 +41,7 @@ interface Step5PaymentSummaryProps {
   services: ServiceEntity[];
   staffConsultasId?: string;
   meryGarciaId?: string;
+  selectedEmployeeId?: string;
   onBack: () => void;
 }
 
@@ -54,12 +55,14 @@ export function Step5PaymentSummary({
   services,
   staffConsultasId,
   meryGarciaId,
+  selectedEmployeeId,
   onBack,
 }: Step5PaymentSummaryProps) {
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Obtener employee y service
+  // Priorizar selectedEmployeeId de la página, luego selectedOption.employeeId, luego fallbacks
   const employeeId =
+    selectedEmployeeId ||
     selectedOption.employeeId ||
     (selectedOption.contentType === 'consulta-sin-trabajo' ||
     selectedOption.contentType === 'consulta-con-trabajo'
@@ -455,7 +458,7 @@ export function Step5PaymentSummary({
             disabled={isProcessing}
             size="md"
           >
-            {isProcessing ? 'Procesando...' : 'Pagar con MercadoPago'}
+            {isProcessing ? 'Procesando...' : 'PAGAR'}
           </Button>
         </Group>
       </Stack>

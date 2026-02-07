@@ -20,6 +20,7 @@ interface Step4ConfirmationProps {
   services: ServiceEntity[];
   staffConsultasId?: string;
   meryGarciaId?: string;
+  selectedEmployeeId?: string;
   onClientDataCollected: (data: {
     name: string;
     surname: string;
@@ -40,14 +41,15 @@ export function Step4Confirmation({
   services,
   staffConsultasId,
   meryGarciaId,
+  selectedEmployeeId,
   onClientDataCollected,
   onBack,
 }: Step4ConfirmationProps) {
   const [showConfirmation, setShowConfirmation] = useState(true);
 
-  // Usar employeeId del selectedOption (ya viene asignado por getOptionsWithIds)
-  // Solo usar fallbacks si no existe
-  const employeeId = selectedOption.employeeId ||
+  // Priorizar selectedEmployeeId de la página, luego selectedOption.employeeId, luego fallbacks
+  const employeeId = selectedEmployeeId ||
+                     selectedOption.employeeId ||
                      (selectedOption.contentType === 'consulta-sin-trabajo' ||
                       selectedOption.contentType === 'consulta-con-trabajo'
                        ? staffConsultasId

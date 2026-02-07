@@ -452,7 +452,7 @@ export function Step5PaymentSummary({
             disabled={isProcessing}
             size="md"
           >
-            {isProcessing ? 'Procesando...' : 'Pagar con MercadoPago'}
+            {isProcessing ? 'Procesando...' : 'PAGAR'}
           </Button>
         </Group>
       </Stack>

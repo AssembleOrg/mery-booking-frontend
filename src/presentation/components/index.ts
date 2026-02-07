@@ -7,6 +7,7 @@ export { DateTimeSelector } from './DateTimeSelector';
 export { BookingConfirmationModal } from './BookingConfirmationModal';
 export { ConfirmationModal } from './ConfirmationModal';
 export { ReservaModal } from './ReservaModal';
+export { EstilismoReservaModal } from './EstilismoReservaModal';
 export { ImageCarousel } from './ImageCarousel';
 export { PublicRescheduleBooking } from './PublicRescheduleBooking';
 

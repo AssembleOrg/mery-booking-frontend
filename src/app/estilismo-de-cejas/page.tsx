@@ -6,10 +6,10 @@ import {
   Footer,
   ServiceBookingForm,
   DateTimeSelector,
-  ReservaModal,
   FadeInSection,
   ImageCrossfade,
 } from '@/presentation/components';
+import { EstilismoReservaModal } from '@/presentation/components/EstilismoReservaModal';
 import ConsultaModal from '@/presentation/components/ConsultaModal';
 import { useState, useMemo } from 'react';
 import { useServices, useEmployees } from '@/presentation/hooks';
@@ -21,7 +21,6 @@ import { CATEGORY_IDS, EMPLOYEE_IDS } from '@/config/constants';
 interface ServiceBookingData {
   servicio: string;
   profesional: string;
-  fecha: Date;
 }
 
 export default function EstilismoCejasPage() {
@@ -70,13 +69,16 @@ export default function EstilismoCejasPage() {
 
   const handleServiceSubmit = (data: ServiceBookingData) => {
     setBookingData(data);
-    // Scroll automático hacia el calendario en mobile
-    setTimeout(() => {
-      const calendarElement = document.getElementById('calendar-anchor');
-      if (calendarElement) {
-        calendarElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 150);
+
+    // ONLY scroll if BOTH service AND professional are selected
+    if (data.servicio && data.profesional) {
+      setTimeout(() => {
+        const calendarElement = document.getElementById('calendar-anchor');
+        if (calendarElement) {
+          calendarElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 150);
+    }
   };
 
   const handleDateTimeSelect = (date: Date, time: string) => {
@@ -97,24 +99,6 @@ export default function EstilismoCejasPage() {
     }
   };
 
-  // Crear ServiceOption para el modal de reserva
-  const serviceOptionsForModal = useMemo(() => {
-    if (!currentService) return [];
-
-    return [
-      {
-        id: currentService.id,
-        label: currentService.name,
-        contentType: 'sesion' as const,
-        description: `Servicio de ${currentService.name}`,
-        priceLabel: 'Precio de lista del servicio:',
-        priceValue: `AR$ ${currentService.price}.-`,
-        serviceId: currentService.id,
-        employeeId: bookingData?.profesional,
-        serviceDuration: currentService.duration,
-      },
-    ];
-  }, [currentService, bookingData?.profesional]);
 
   // Crear ServiceOption para el modal de consulta
   const consultaOptionsForModal = useMemo(() => {
@@ -210,13 +194,12 @@ export default function EstilismoCejasPage() {
                       <Center py="xl" h={400}>
                         <Loader size="md" color="var(--mg-pink)" />
                       </Center>
-                    ) : currentService && bookingData?.profesional ? (
+                    ) : currentService && bookingData?.profesional && currentEmployee ? (
                       <DateTimeSelector
                         serviceDuration={currentService.duration}
                         employeeId={bookingData.profesional}
                         serviceId={currentService.id}
                         onSelectDateTime={handleDateTimeSelect}
-                        selectedDate={bookingData.fecha}
                       />
                     ) : (
                       <Box className={classes.infoBox}>
@@ -245,8 +228,8 @@ export default function EstilismoCejasPage() {
       <Footer />
 
       {/* Modal de Reserva para sesiones regulares */}
-      {selectedService && serviceOptionsForModal.length > 0 && (
-        <ReservaModal
+      {selectedService && selectedEmployee && selectedDate && selectedTime && (
+        <EstilismoReservaModal
           opened={reservaModalOpened}
           onClose={() => {
             setReservaModalOpened(false);
@@ -256,12 +239,12 @@ export default function EstilismoCejasPage() {
             setSelectedTime(null);
           }}
           serviceName={selectedService.name}
-          serviceKey={selectedService.name.toLowerCase().replace(/\s+/g, '-')}
-          serviceOptions={serviceOptionsForModal}
+          service={selectedService}
+          employee={selectedEmployee}
+          selectedDate={selectedDate}
+          selectedTime={selectedTime}
           services={services as ServiceEntity[]}
           employees={employees as Employee[]}
-          staffConsultasId={EMPLOYEE_IDS.STAFF_CONSULTAS}
-          meryGarciaId={EMPLOYEE_IDS.MERY_GARCIA}
         />
       )}
 
