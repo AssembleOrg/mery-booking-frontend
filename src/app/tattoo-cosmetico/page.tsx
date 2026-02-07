@@ -897,7 +897,7 @@ const nanobladingOptions: ServiceOption[] = [
   {
     id: 'nano-6',
     label: 'Last Minute Booking Nanoblading (Mantenimiento)',
-    contentType: 'last-minute',
+    contentType: 'mantenimiento-calendario',
     description:
       'Citas seleccionadas de último momento con 20% off. Entérate antes que nadie a través de nuestro canal de IG: https://www.instagram.com/merygarciaoficial/',
     priceLabel: 'Precio de lista del servicio:',
@@ -982,7 +982,7 @@ const lipBlushOptions: ServiceOption[] = [
   {
     id: 'lip-6',
     label: 'Last Minute Booking Lip Blush (Mantenimiento)',
-    contentType: 'last-minute',
+    contentType: 'mantenimiento-calendario',
     description:
       'Reactiva tu servicio de Lip Blush. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
     priceLabel: 'Precio de lista del servicio:',
@@ -1080,7 +1080,7 @@ const lashesLineOptions: ServiceOption[] = [
   {
     id: 'lash-5',
     label: 'Last Minute Booking Lashes Line (Mantenimiento)',
-    contentType: 'last-minute',
+    contentType: 'mantenimiento-calendario',
     description:
       'Reactiva tu servicio de Lashes Line. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
     priceLabel: 'Precio de lista del servicio:',
@@ -1160,6 +1160,9 @@ const camouflageOptions: ServiceOption[] = [
     cuotasText:
       'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
+  // COMENTADO: El servicio "Camuflaje de Cejas [Mantenimiento]" NO existe en el backend
+  // Se puede descomentar cuando se cree el servicio correspondiente
+  /*
   {
     id: 'camuflaje-5',
     label: 'Mantenimiento (By Mery Garcia)',
@@ -1174,6 +1177,7 @@ const camouflageOptions: ServiceOption[] = [
     cuotasText:
       'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
+  */
 ];
 
 // Mapeo de nombres de servicios estáticos a nombres en el backend
@@ -1561,11 +1565,6 @@ export default function TattooCosmeticoPage() {
     const meryGarcia = mappedEmployees.get('mery-garcia');
 
     return baseOptions.map((option) => {
-      // Solo agregar IDs a opciones que no sean last-minute
-      if (option.contentType === 'last-minute') {
-        return option;
-      }
-
       // Para consultas, buscar el servicio de consulta específico
       if (
         option.contentType === 'consulta-sin-trabajo' ||
@@ -1704,6 +1703,95 @@ export default function TattooCosmeticoPage() {
             ...option,
             // No asignar serviceId para que muestre el SVG de "no hay turnos"
             employeeId: meryGarcia?.id,
+          };
+        }
+
+        // Manejo especial para servicios Last Minute Booking
+        if (option.label.includes('Last Minute Booking')) {
+          let lastMinuteService: ServiceEntity | undefined;
+
+          if (option.label.includes('Nanoblading')) {
+            lastMinuteService = allServices.find((s) => {
+              const nameLower = s.name.toLowerCase();
+              return (
+                s.showOnSite &&
+                nameLower.includes('last minute booking nanoblading') &&
+                nameLower.includes('mantenimiento')
+              );
+            });
+          } else if (option.label.includes('Lip Blush')) {
+            lastMinuteService = allServices.find((s) => {
+              const nameLower = s.name.toLowerCase();
+              return (
+                s.showOnSite &&
+                nameLower.includes('last minute booking lip blush') &&
+                nameLower.includes('mantenimiento')
+              );
+            });
+          } else if (option.label.includes('Lashes Line')) {
+            lastMinuteService = allServices.find((s) => {
+              const nameLower = s.name.toLowerCase();
+              return (
+                s.showOnSite &&
+                nameLower.includes('last minute booking lashes line') &&
+                nameLower.includes('mantenimiento')
+              );
+            });
+          }
+
+          return {
+            ...option,
+            serviceId: lastMinuteService?.id,
+            employeeId: meryGarcia?.id,
+            serviceDuration: lastMinuteService?.duration || 60,
+          };
+        }
+
+        // Manejo especial para servicios de Mantenimiento regular (no Last Minute)
+        if (
+          option.label.includes('Mantenimiento') &&
+          !option.label.includes('Last Minute')
+        ) {
+          let maintenanceService: ServiceEntity | undefined;
+
+          if (serviceKey === 'nanoblading') {
+            maintenanceService = allServices.find((s) => {
+              const nameLower = s.name.toLowerCase();
+              return (
+                s.showOnSite &&
+                nameLower.includes('nanoblading') &&
+                nameLower.includes('mantenimiento') &&
+                nameLower.includes('mery garcia') &&
+                !nameLower.includes('last minute')
+              );
+            });
+          } else if (serviceKey === 'lip-blush') {
+            maintenanceService = allServices.find((s) => {
+              const nameLower = s.name.toLowerCase();
+              return (
+                s.showOnSite &&
+                nameLower.includes('lip blush') &&
+                nameLower.includes('mantenimiento') &&
+                !nameLower.includes('last minute')
+              );
+            });
+          } else if (serviceKey === 'lashes-line') {
+            maintenanceService = allServices.find((s) => {
+              const nameLower = s.name.toLowerCase();
+              return (
+                s.showOnSite &&
+                nameLower.includes('lashes line') &&
+                nameLower.includes('mantenimiento') &&
+                !nameLower.includes('last minute')
+              );
+            });
+          }
+
+          return {
+            ...option,
+            serviceId: maintenanceService?.id,
+            employeeId: meryGarcia?.id,
+            serviceDuration: maintenanceService?.duration || 60,
           };
         }
 
