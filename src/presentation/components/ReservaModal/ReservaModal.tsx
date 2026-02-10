@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Modal } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { AnimatePresence } from 'framer-motion';
 import { StepIndicator } from './StepIndicator';
 import { Step1Terms } from './Step1Terms';
@@ -37,6 +38,7 @@ export function ReservaModal({
   staffConsultasId,
   meryGarciaId,
 }: ReservaModalProps) {
+  const isMobile = useMediaQuery('(max-width: 767px)');
   const [currentStep, setCurrentStep] = useState(1);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [selectedOption, setSelectedOption] = useState<ServiceOption | null>(null);
@@ -87,7 +89,8 @@ export function ReservaModal({
       size="lg"
       centered
       padding={0}
-      radius="md"
+      radius={isMobile ? 0 : 'md'}
+      fullScreen={isMobile}
       classNames={{
         content: classes.modalContent,
         header: classes.modalHeader,

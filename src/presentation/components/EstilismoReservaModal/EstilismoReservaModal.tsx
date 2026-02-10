@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { Modal } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { AnimatePresence } from 'framer-motion';
 import { StepIndicator } from '../ReservaModal/StepIndicator';
 import { Step1Terms } from '../ReservaModal/Step1Terms';
@@ -34,6 +35,7 @@ export function EstilismoReservaModal({
   services,
   employees,
 }: EstilismoReservaModalProps) {
+  const isMobile = useMediaQuery('(max-width: 767px)');
   const [currentStep, setCurrentStep] = useState(1);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [clientData, setClientData] = useState<{
@@ -82,7 +84,8 @@ export function EstilismoReservaModal({
       size="lg"
       centered
       padding={0}
-      radius="md"
+      radius={isMobile ? 0 : 'md'}
+      fullScreen={isMobile}
       classNames={{
         content: classes.modalContent,
         header: classes.modalHeader,

@@ -26,7 +26,7 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  overflow: visible;
+  overflow: hidden;
 }
 
 /* ====================================
@@ -35,6 +35,7 @@
 
 .contentArea {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -48,9 +49,36 @@
    ==================================== */
 
 @media (max-width: 767px) {
+  .modalContent {
+    border-radius: 0 !important;
+    max-height: 100vh !important;
+    max-height: 100dvh !important;
+    height: 100% !important;
+  }
+
+  .modalBody {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
   .container {
     padding: 20px;
-    min-height: auto;
-    max-height: 90vh;
+    padding-top: calc(20px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    min-height: 100%;
+    max-height: none;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contentArea {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 }

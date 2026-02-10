@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Modal } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { AnimatePresence, motion } from 'framer-motion';
 import { StepIndicator } from '../ReservaModal/StepIndicator';
 import { Step1Terms } from '../ReservaModal/Step1Terms';
@@ -35,6 +36,7 @@ export default function ConsultaModal({
   meryGarciaId,
   staffConsultasId,
 }: ConsultaModalProps) {
+  const isMobile = useMediaQuery('(max-width: 767px)');
   const [currentStep, setCurrentStep] = useState(1);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [selectedOption, setSelectedOption] = useState<ServiceOption | null>(null);
@@ -79,9 +81,14 @@ export default function ConsultaModal({
       size="lg"
       padding={0}
       centered
+      radius={isMobile ? 0 : 'md'}
+      fullScreen={isMobile}
       closeOnClickOutside={false}
       closeOnEscape={false}
-      className={classes.modal}
+      classNames={{
+        content: classes.modalContent,
+        body: classes.modalBody,
+      }}
     >
       <div className={classes.container}>
         <div className={classes.header}>

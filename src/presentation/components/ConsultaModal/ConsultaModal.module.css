@@ -2,6 +2,19 @@
   /* Modal styles */
 }
 
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.modalBody {
+  padding: 0;
+}
+
 .modalHeader {
   display: flex;
   flex-direction: column;
@@ -231,7 +244,7 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .header {
@@ -255,11 +268,13 @@
 
 .contentArea {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 8px;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Scrollbar styling */
@@ -286,10 +301,37 @@
    ==================================== */
 
 @media (max-width: 767px) {
+  .modalContent {
+    border-radius: 0 !important;
+    max-height: 100vh !important;
+    max-height: 100dvh !important;
+    height: 100% !important;
+  }
+
+  .modalBody {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
   .container {
     padding: 20px;
-    min-height: auto;
-    max-height: 90vh;
+    padding-top: calc(20px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    min-height: 100%;
+    max-height: none;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contentArea {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 
   .stepTitle {
@@ -303,6 +345,9 @@
   .buttonGroup {
     flex-direction: column-reverse;
     gap: 12px;
+    margin-top: auto;
+    padding-top: 16px;
+    flex-shrink: 0;
   }
 
   .buttonPrimary,
@@ -317,6 +362,11 @@
 }
 
 @media (max-width: 480px) {
+  .container {
+    padding: 16px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+
   .buttonPrimary,
   .buttonSecondary {
     padding: 10px 12px !important;
