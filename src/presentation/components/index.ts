@@ -2,6 +2,7 @@ export { Header } from './Header';
 export { WelcomeSection } from './WelcomeSection';
 export { Footer } from './Footer';
 export { MenuModal } from './MenuModal';
+export { BookingEntryModal } from './BookingEntryModal';
 export { ServiceBookingForm } from './ServiceBookingForm';
 export { DateTimeSelector } from './DateTimeSelector';
 export { BookingConfirmationModal } from './BookingConfirmationModal';

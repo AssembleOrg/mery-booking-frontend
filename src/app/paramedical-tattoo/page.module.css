@@ -276,7 +276,13 @@
   text-transform: uppercase;
   font-family: var(--font-din-medium), sans-serif;
   text-decoration: none;
-  display: inline-block;
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  text-align: center;
   border-radius: 4px;
 }
 
@@ -301,6 +307,13 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   font-family: var(--font-din-medium), sans-serif;
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .ctaButtonSecondary:hover {
@@ -323,7 +336,13 @@
   text-transform: uppercase;
   font-family: var(--font-din-medium), sans-serif;
   text-decoration: none;
-  display: inline-block;
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  text-align: center;
   border-radius: 4px;
 }
 
@@ -703,8 +722,23 @@
     font-size: 14px;
   }
 
-  .ctaButton {
+  .ctaButton,
+  .ctaButtonSecondary,
+  .ctaButtonReservar {
     padding: 14px 24px;
     font-size: 10px;
+  }
+
+  .buttonsWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .buttonsWrapper > * {
+    width: 100%;
+  }
+
+  .ctaButtonReservar {
+    grid-column: 1 / -1;
   }
 }

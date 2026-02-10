@@ -87,6 +87,24 @@
   }
 }
 
+@media (max-width: 400px) {
+  .flex {
+    height: 76px;
+  }
+
+  .logo {
+    width: 170px;
+  }
+
+  .scrolled .logo {
+    width: 150px;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+}
+
 .nav {
   display: none;
   gap: 40px;

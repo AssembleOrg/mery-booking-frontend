@@ -881,7 +881,7 @@ export default function ParamedicalTattooPage() {
                   </Box>
                   <Box className={classes.buttonsWrapper}>
                     <a
-                      href="https://merygarcia.com.ar/servicios/tatuaje-paramedico"
+                      href="https://merygarcia.com.ar/servicios/tatuaje-paramedico#nano-scalp"
                       target="_blank"
                       rel="noopener noreferrer"
                       className={classes.ctaButton}
@@ -953,7 +953,7 @@ export default function ParamedicalTattooPage() {
                   </Box>
                   <Box className={classes.buttonsWrapper}>
                     <a
-                      href="https://merygarcia.com.ar/servicios/tatuaje-paramedico"
+                      href="https://merygarcia.com.ar/servicios/tatuaje-paramedico#areola-harmonization"
                       target="_blank"
                       rel="noopener noreferrer"
                       className={classes.ctaButton}
@@ -1025,7 +1025,7 @@ export default function ParamedicalTattooPage() {
                   </Box>
                   <Box className={classes.buttonsWrapper}>
                     <a
-                      href="https://merygarcia.com.ar/servicios/tatuaje-paramedico"
+                      href="https://merygarcia.com.ar/servicios/tatuaje-paramedico#nipple-reconstruction"
                       target="_blank"
                       rel="noopener noreferrer"
                       className={classes.ctaButton}

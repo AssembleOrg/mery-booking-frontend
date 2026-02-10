@@ -140,6 +140,11 @@
   background: transparent;
   color: var(--mg-pink);
   border: 2px solid var(--mg-pink);
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
   padding: 16px 32px;
   font-size: 11px;
   letter-spacing: 2px;

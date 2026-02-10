@@ -248,6 +248,30 @@
   }
 }
 
+.descriptionButton {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-top: 10px;
+  width: fit-content;
+  color: var(--mg-pink);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: var(--font-din-medium), sans-serif;
+  cursor: pointer;
+  transition: color 0.25s ease, text-decoration-color 0.25s ease;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  text-decoration-color: rgba(226, 0, 116, 0.35);
+}
+
+.descriptionButton:hover {
+  color: var(--mg-dark);
+  text-decoration-color: var(--mg-dark);
+}
+
 @media (min-width: 768px) {
   .serviceHeader {
     gap: 20px;
@@ -324,6 +348,81 @@
   margin: 8px 0 0 0;
 }
 
+.descriptionModalContent {
+  background: var(--mg-white);
+}
+
+.descriptionModalHeader {
+  padding: 18px 24px 0 24px;
+}
+
+.descriptionModalTitle {
+  font-family: var(--font-avant-garde), system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mg-dark);
+}
+
+.descriptionModalBody {
+  padding: 16px 24px 24px 24px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.descriptionModalText {
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--mg-gray);
+  margin: 0 0 14px 0;
+  white-space: normal;
+}
+
+.descriptionModalHeading {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--mg-dark);
+  margin: 18px 0 10px 0;
+}
+
+.descriptionModalDivider {
+  color: var(--mg-pink);
+  letter-spacing: 2px;
+  margin: 16px 0 6px 0;
+}
+
+.descriptionModalActions {
+  display: flex;
+  justify-content: flex-start;
+  padding-top: 6px;
+}
+
+.descriptionModalMoreButton {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--mg-pink);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: var(--font-din-medium), sans-serif;
+  cursor: pointer;
+  transition: color 0.25s ease, text-decoration-color 0.25s ease;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  text-decoration-color: rgba(226, 0, 116, 0.35);
+}
+
+.descriptionModalMoreButton:hover {
+  color: var(--mg-dark);
+  text-decoration-color: var(--mg-dark);
+}
+
 .ctaButton {
   background-color: var(--mg-pink);
   color: var(--mg-white);
@@ -337,6 +436,13 @@
   text-transform: uppercase;
   font-family: var(--font-din-medium), sans-serif;
   border-radius: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .ctaButton:hover {
@@ -359,6 +465,13 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   font-family: var(--font-din-medium), sans-serif;
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .ctaButtonSecondary:hover {
@@ -380,6 +493,13 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   font-family: var(--font-din-medium), sans-serif;
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .ctaButtonReservar:hover {
@@ -771,5 +891,18 @@
   .ctaButtonSecondary {
     padding: 14px 24px;
     font-size: 10px;
+  }
+
+  .buttonsWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .buttonsWrapper > * {
+    width: 100%;
+  }
+
+  .ctaButtonReservar {
+    grid-column: 1 / -1;
   }
 }
