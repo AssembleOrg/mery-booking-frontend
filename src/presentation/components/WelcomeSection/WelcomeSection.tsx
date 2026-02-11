@@ -130,12 +130,6 @@ const GALLERY_ITEMS: GalleryItem[] = [
     alt: 'Trabajo real',
   },
   {
-    id: 'merytrabajoreal4',
-    type: 'image',
-    src: '/trabajo/merytrabajoreal4.webp',
-    alt: 'Trabajo real',
-  },
-  {
     id: 'merytrabajoreal5',
     type: 'image',
     src: '/trabajo/merytrabajoreal5.webp',
@@ -191,6 +185,20 @@ function GalleryVideoTile({
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [shouldLoad, setShouldLoad] = useState(false);
+  const shouldLoadRef = useRef(false);
+
+  const attemptPlay = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (typeof document !== 'undefined' && document.visibilityState !== 'visible') {
+      return;
+    }
+    v.muted = true;
+    const p = v.play();
+    if (p && typeof (p as Promise<void>).catch === 'function') {
+      (p as Promise<void>).catch(() => {});
+    }
+  };
 
   useEffect(() => {
     const el = wrapperRef.current;
@@ -203,6 +211,7 @@ function GalleryVideoTile({
 
         if (entry.isIntersecting) {
           setShouldLoad(true);
+          shouldLoadRef.current = true;
         } else {
           const v = videoRef.current;
           if (v) v.pause();
@@ -220,11 +229,26 @@ function GalleryVideoTile({
     const v = videoRef.current;
     if (!v) return;
     v.load();
-    const p = v.play();
-    if (p && typeof (p as Promise<void>).catch === 'function') {
-      (p as Promise<void>).catch(() => {});
-    }
+    requestAnimationFrame(() => attemptPlay());
   }, [shouldLoad]);
+
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (!shouldLoadRef.current) return;
+      attemptPlay();
+    };
+    const onFocus = () => {
+      if (!shouldLoadRef.current) return;
+      attemptPlay();
+    };
+
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('focus', onFocus);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, []);
 
   useEffect(() => {
     onReady();
@@ -239,12 +263,15 @@ function GalleryVideoTile({
       <video
         ref={videoRef}
         className={classes.galleryVideo}
+        autoPlay
         muted
         playsInline
         loop
         preload="none"
         poster={poster}
         aria-label={alt}
+        onCanPlay={attemptPlay}
+        onLoadedData={attemptPlay}
       >
         {shouldLoad && <source src={src} type="video/mp4" />}
       </video>
