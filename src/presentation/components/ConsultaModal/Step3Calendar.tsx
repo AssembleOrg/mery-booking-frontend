@@ -162,12 +162,14 @@ export default function Step3Calendar({
 
           <div className={classes.buttonGroup}>
             <button
+              type="button"
               onClick={handleBackToStep2}
               className={classes.buttonSecondary}
             >
               ATRÁS
             </button>
             <button
+              type="button"
               onClick={handleContinue}
               disabled={!employeeId || !serviceId}
               className={classes.buttonPrimary}
@@ -206,12 +208,14 @@ export default function Step3Calendar({
 
         <div className={classes.buttonGroup}>
           <button
-            onClick={handleBackFromCalendar}
+            type="button"
+            onClick={handleBackToStep2}
             className={classes.buttonSecondary}
           >
             ATRÁS
           </button>
           <button
+            type="button"
             onClick={onContinue}
             disabled={!selectedDate || !selectedTime}
             className={classes.buttonPrimary}

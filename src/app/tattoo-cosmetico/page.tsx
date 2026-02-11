@@ -82,7 +82,7 @@ const CAMUFLAJE_MORE_INFO_URL =
 const NANOBLADING_DESCRIPTION_BLOCKS: DescriptionBlock[] = [
   {
     kind: 'paragraph',
-    text: 'Es la técnica más avanzada de cosmetic tattoo de cejas. Servicio único y exclusivo brindado por MG y su Staff. Si estás buscando mejorar la forma de tus cejas, completar o rellenar zonas donde no tenés mucho crecimiento, o nada de pelo, o donde haya cicatrices, este servicio es el indicado para vos.',
+    text: 'Es la técnica más avanzada de cosmetic tattoo de cejas. Servicio único y exclusivo brindado por Mery García. Si estás buscando mejorar la forma de tus cejas, completar o rellenar zonas donde no tenés mucho crecimiento, o nada de pelo, o donde haya cicatrices, este servicio es el indicado para vos.',
   },
   {
     kind: 'paragraph',
@@ -104,7 +104,7 @@ const NANOBLADING_DESCRIPTION_BLOCKS: DescriptionBlock[] = [
   },
   {
     kind: 'paragraph',
-    text: 'Junto con Mery y su Staff definen la forma más natural para tu rostro, el ancho y largo que quieren lograr y en ese momento te las maquilla rellenando las partes que hagan falta, de esa manera tenés una idea aproximada de cómo quedaría.',
+    text: 'Junto con Mery definen la forma más natural para tu rostro, el ancho y largo que quieren lograr y en ese momento te las maquilla rellenando las partes que hagan falta, de esa manera tenés una idea aproximada de cómo quedaría.',
   },
   {
     kind: 'paragraph',
@@ -116,7 +116,7 @@ const NANOBLADING_DESCRIPTION_BLOCKS: DescriptionBlock[] = [
   },
   {
     kind: 'paragraph',
-    text: 'Este se divide en 2 partes: La 1.º sesión, y de ser necesario un retoque o 2.ª sesión, ésta se realizará entre los 30 y 60 días (no antes ni después); con el fin de evaluar el trabajo final cicatrizado 100% teniendo en cuenta el resultado y el deseo de la persona.',
+    text: 'Este se divide en 2 partes: La 1.º sesión y una 2.ª sesión de retoque, ésta se realizará entre los 30 y 60 días (no antes ni después); con el fin de evaluar el trabajo final cicatrizado 100% teniendo en cuenta el resultado y el deseo de la persona.',
   },
   {
     kind: 'paragraph',

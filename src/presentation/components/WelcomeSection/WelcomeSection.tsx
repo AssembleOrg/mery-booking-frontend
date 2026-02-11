@@ -1,10 +1,10 @@
 'use client';
 
-import { Box, Container, Flex, Text } from '@mantine/core';
+import { Box, Container, Flex, Modal, Text } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Masonry from 'react-masonry-css';
 import {
   BookingEntryModal,
@@ -63,24 +63,201 @@ const SERVICES = [
   },
 ];
 
-const GALLERY_IMAGES = [
-  '/images/mery3.webp',
-  '/images/mery2.svg',
-  '/images/mery4.webp',
-  '/trabajo/merytrabajo9.webp',
-  '/trabajo/merytrabajoreal1.webp',
-  '/trabajo/merytrabajoreal2.webp',
-  '/trabajo/merytrabajoreal3.webp',
-  '/trabajo/merytrabajoreal4.webp',
-  '/trabajo/merytrabajoreal5.webp',
-  '/trabajo/merytrabajoreal6.webp',
-  '/trabajo/merytrabajoreal7.webp',
-  '/trabajo/merytrabajoreal8.webp',
-  '/trabajo/merytrabajoreal10.webp',
+type GalleryItem =
+  | {
+      id: string;
+      type: 'image';
+      src: string;
+      alt: string;
+      instagramOverlay?: boolean;
+    }
+  | {
+      id: string;
+      type: 'video';
+      src: string;
+      poster: string;
+      alt: string;
+      aspectRatio?: string;
+    }
+  | {
+      id: string;
+      type: 'sensitiveImage';
+      blurSrc: string;
+      fullSrc: string;
+      alt: string;
+    };
+
+const GALLERY_ITEMS: GalleryItem[] = [
+  { id: 'mery3', type: 'image', src: '/images/mery3.webp', alt: 'Trabajo real' },
+  { id: 'mery2', type: 'image', src: '/images/mery2.svg', alt: 'Trabajo real' },
+  { id: 'mery4', type: 'image', src: '/images/mery4.webp', alt: 'Trabajo real' },
+  {
+    id: 'merytrabajo9',
+    type: 'image',
+    src: '/trabajo/merytrabajo9.webp',
+    alt: 'Trabajo real',
+  },
+  {
+    id: 'merytrabajo11',
+    type: 'image',
+    src: '/trabajo/merytrabajo11.webp',
+    alt: 'Trabajo real',
+  },
+  {
+    id: 'video-trabajo',
+    type: 'video',
+    src: '/trabajo/video-trabajo.mp4',
+    poster: '/trabajo/merytrabajo11.webp',
+    alt: 'Video de trabajo real',
+    aspectRatio: '4 / 5',
+  },
+  {
+    id: 'merytrabajoreal1',
+    type: 'image',
+    src: '/trabajo/merytrabajoreal1.webp',
+    alt: 'Trabajo real',
+  },
+  {
+    id: 'merytrabajoreal2',
+    type: 'image',
+    src: '/trabajo/merytrabajoreal2.webp',
+    alt: 'Trabajo real',
+  },
+  {
+    id: 'merytrabajoreal3',
+    type: 'image',
+    src: '/trabajo/merytrabajoreal3.webp',
+    alt: 'Trabajo real',
+  },
+  {
+    id: 'merytrabajoreal4',
+    type: 'image',
+    src: '/trabajo/merytrabajoreal4.webp',
+    alt: 'Trabajo real',
+  },
+  {
+    id: 'merytrabajoreal5',
+    type: 'image',
+    src: '/trabajo/merytrabajoreal5.webp',
+    alt: 'Trabajo real',
+  },
+  {
+    id: 'merytrabajoreal6',
+    type: 'image',
+    src: '/trabajo/merytrabajoreal6.webp',
+    alt: 'Trabajo real',
+  },
+  {
+    id: 'merytrabajoreal7',
+    type: 'image',
+    src: '/trabajo/merytrabajoreal7.webp',
+    alt: 'Trabajo real',
+  },
+  {
+    id: 'merytrabajoreal8',
+    type: 'image',
+    src: '/trabajo/merytrabajoreal8.webp',
+    alt: 'Trabajo real',
+  },
+  {
+    id: 'paramedical-preview',
+    type: 'sensitiveImage',
+    blurSrc: '/trabajo/pezon-conblur.webp',
+    fullSrc: '/trabajo/pezon-sinblur.webp',
+    alt: 'Resultado paramedical (areola)',
+  },
+  {
+    id: 'merytrabajoreal10',
+    type: 'image',
+    src: '/trabajo/merytrabajoreal10.webp',
+    alt: 'Trabajo real',
+    instagramOverlay: true,
+  },
 ];
 
+function GalleryVideoTile({
+  src,
+  poster,
+  alt,
+  aspectRatio,
+  onReady,
+}: {
+  src: string;
+  poster: string;
+  alt: string;
+  aspectRatio?: string;
+  onReady: () => void;
+}) {
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
+
+        if (entry.isIntersecting) {
+          setShouldLoad(true);
+        } else {
+          const v = videoRef.current;
+          if (v) v.pause();
+        }
+      },
+      { rootMargin: '200px 0px', threshold: 0.01 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!shouldLoad) return;
+    const v = videoRef.current;
+    if (!v) return;
+    v.load();
+    const p = v.play();
+    if (p && typeof (p as Promise<void>).catch === 'function') {
+      (p as Promise<void>).catch(() => {});
+    }
+  }, [shouldLoad]);
+
+  useEffect(() => {
+    onReady();
+  }, [onReady]);
+
+  return (
+    <div
+      ref={wrapperRef}
+      className={classes.videoFrame}
+      style={{ aspectRatio: aspectRatio ?? '4 / 5' }}
+    >
+      <video
+        ref={videoRef}
+        className={classes.galleryVideo}
+        muted
+        playsInline
+        loop
+        preload="none"
+        poster={poster}
+        aria-label={alt}
+      >
+        {shouldLoad && <source src={src} type="video/mp4" />}
+      </video>
+    </div>
+  );
+}
+
 export function WelcomeSection() {
-  const [imagesLoaded, setImagesLoaded] = useState(0);
+  const [loadedById, setLoadedById] = useState<Record<string, true>>({});
+  const [sensitiveModal, setSensitiveModal] = useState<{
+    src: string;
+    alt: string;
+  } | null>(null);
   const [bookingEntryOpened, { open: openBookingEntry, close: closeBookingEntry }] =
     useDisclosure(false);
   const isMobileOrTablet = useMediaQuery('(max-width: 1023px)', false, {
@@ -99,8 +276,8 @@ export function WelcomeSection() {
     window.open('https://www.instagram.com/merygarciaoficial/', '_blank');
   };
 
-  const handleImageLoad = () => {
-    setImagesLoaded((prev) => prev + 1);
+  const markLoaded = (id: string) => {
+    setLoadedById((prev) => (prev[id] ? prev : { ...prev, [id]: true }));
   };
 
   const breakpointColumnsObj = {
@@ -112,6 +289,26 @@ export function WelcomeSection() {
   return (
     <Box className={classes.wrapper}>
       <BookingEntryModal opened={bookingEntryOpened} onClose={closeBookingEntry} />
+      <Modal
+        opened={!!sensitiveModal}
+        onClose={() => setSensitiveModal(null)}
+        centered
+        size="lg"
+        keepMounted={false}
+        withCloseButton
+        title="Resultado paramedical"
+      >
+        {sensitiveModal && (
+          <Image
+            src={sensitiveModal.src}
+            alt={sensitiveModal.alt}
+            width={900}
+            height={900}
+            className={classes.sensitiveModalImage}
+            sizes="(max-width: 768px) 90vw, 900px"
+          />
+        )}
+      </Modal>
       <Box className={classes.heroContainer}>
         <section className={classes.heroSection}>
           <Box className={classes.heroImageWrapper}>
@@ -256,52 +453,98 @@ export function WelcomeSection() {
             className={classes.masonryGrid}
             columnClassName={classes.masonryColumn}
           >
-            {GALLERY_IMAGES.map((src, i) => (
-              <Box
-                key={i}
-                className={classes.galleryItem}
-                style={{
-                  opacity: imagesLoaded > i ? 1 : 0,
-                  transition: 'opacity 0.3s ease',
-                }}
-              >
-                <Image
-                  src={src}
-                  alt={`Trabajo ${i + 1}`}
-                  width={600}
-                  height={600}
-                  className={classes.galleryImage}
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                  loading="lazy"
-                  onLoad={handleImageLoad}
-                />
-                {i === GALLERY_IMAGES.length - 1 && (
-                  <Box
-                    className={classes.instagramOverlay}
-                    onClick={openInstagram}
-                  >
-                    <svg
-                      className={classes.igIcon}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    >
-                      <rect x="2" y="2" width="20" height="20" rx="5" />
-                      <circle cx="12" cy="12" r="4" />
-                      <circle
-                        cx="18"
-                        cy="6"
-                        r="1.5"
-                        fill="currentColor"
-                        stroke="none"
+            {GALLERY_ITEMS.map((item) => {
+              const isLoaded = item.type === 'video' ? true : !!loadedById[item.id];
+
+              return (
+                <Box
+                  key={item.id}
+                  className={classes.galleryItem}
+                  style={{
+                    opacity: isLoaded ? 1 : 0,
+                    transition: 'opacity 0.3s ease',
+                  }}
+                >
+                  {item.type === 'image' && (
+                    <Image
+                      src={item.src}
+                      alt={item.alt}
+                      width={600}
+                      height={600}
+                      className={classes.galleryImage}
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      loading="lazy"
+                      onLoad={() => markLoaded(item.id)}
+                    />
+                  )}
+
+                  {item.type === 'video' && (
+                    <GalleryVideoTile
+                      src={item.src}
+                      poster={item.poster}
+                      alt={item.alt}
+                      aspectRatio={item.aspectRatio}
+                      onReady={() => markLoaded(item.id)}
+                    />
+                  )}
+
+                  {item.type === 'sensitiveImage' && (
+                    <>
+                      <Image
+                        src={item.blurSrc}
+                        alt={item.alt}
+                        width={600}
+                        height={600}
+                        className={classes.galleryImage}
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        loading="lazy"
+                        onLoad={() => markLoaded(item.id)}
                       />
-                    </svg>
-                    <Text className={classes.igText}>@MERYGARCIAOFICIAL</Text>
-                  </Box>
-                )}
-              </Box>
-            ))}
+                      <button
+                        type="button"
+                        className={classes.sensitiveOverlay}
+                        onClick={() =>
+                          setSensitiveModal({ src: item.fullSrc, alt: item.alt })
+                        }
+                      >
+                        <span className={classes.sensitiveOverlayTitle}>
+                          Ver resultado
+                        </span>
+                        <span className={classes.sensitiveOverlaySubtitle}>
+                          Contenido sensible
+                        </span>
+                      </button>
+                    </>
+                  )}
+
+                  {item.type === 'image' && item.instagramOverlay && (
+                    <Box
+                      className={classes.instagramOverlay}
+                      onClick={openInstagram}
+                    >
+                      <svg
+                        className={classes.igIcon}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                      >
+                        <rect x="2" y="2" width="20" height="20" rx="5" />
+                        <circle cx="12" cy="12" r="4" />
+                        <circle
+                          cx="18"
+                          cy="6"
+                          r="1.5"
+                          fill="currentColor"
+                          stroke="none"
+                        />
+                      </svg>
+                      <Text className={classes.igText}>@MERYGARCIAOFICIAL</Text>
+                    </Box>
+                  )}
+                </Box>
+              );
+            })}
           </Masonry>
         </FadeInSection>
       </section>
