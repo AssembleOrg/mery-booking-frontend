@@ -10,6 +10,7 @@ import { Step5PaymentSummary } from '../ReservaModal/Step5PaymentSummary';
 import classes from './EstilismoReservaModal.module.css';
 import type { ServiceOption } from '@/infrastructure/types/services';
 import type { Employee, ServiceEntity } from '@/infrastructure/http';
+import { getEstilismoListPriceArs } from '@/config/estilismoPricing';
 
 interface EstilismoReservaModalProps {
   opened: boolean;
@@ -55,6 +56,10 @@ export function EstilismoReservaModal({
     serviceDuration: service.duration,
     priceValue: `AR$ ${service.price}.-`,
   }), [service, employee]);
+
+  const informationalListPriceArs = useMemo(() => {
+    return getEstilismoListPriceArs(service.name);
+  }, [service.name]);
 
   const handleClose = () => {
     setCurrentStep(1);
@@ -106,6 +111,7 @@ export function EstilismoReservaModal({
                 onCancel={handleClose}
                 serviceName={serviceName}
                 onClose={onClose}
+                showConsultaWarning={false}
               />
             )}
 
@@ -138,6 +144,7 @@ export function EstilismoReservaModal({
                 employees={employees}
                 services={services}
                 selectedEmployeeId={employee.id}
+                informationalListPriceArs={informationalListPriceArs ?? undefined}
                 onBack={handleStepBack}
               />
             )}

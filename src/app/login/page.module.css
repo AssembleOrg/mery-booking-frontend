@@ -24,8 +24,10 @@
 }
 
 .logo {
-  width: auto;
-  height: 60px;
+  width: min(260px, 100%);
+  height: auto;
+  object-fit: contain;
+  display: block;
 }
 
 .paper {
@@ -84,8 +86,12 @@
     padding: 1rem 0.5rem;
   }
 
+  .logoContainer {
+    margin-bottom: 1.25rem;
+  }
+
   .logo {
-    height: 50px;
+    width: min(220px, 100%);
   }
 
   .title {
@@ -94,5 +100,11 @@
 
   .paper {
     padding: 1.5rem !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .logo {
+    width: min(200px, 100%);
   }
 }

@@ -99,30 +99,7 @@ export function BookingConfirmationModal({
     reset(); // Limpiar formulario después de confirmar
   };
 
-  // Lógica de depósito según duración del servicio
-  const calculateDeposit = (service: Service): number => {
-    const price = service.priceBook;
-
-    // Consultas: 100% del precio
-    if (service.duration <= 60 && service.price === 50000) {
-      return price;
-    }
-
-    // Servicios largos (>= 120 min): AR$ 150.000
-    let standardDeposit = 150000;
-    if (service.duration >= 120) {
-      // Si el precio total es menor que el depósito estándar, cobrar 100% del precio
-      return Math.min(price, standardDeposit);
-    }
-
-    // Servicios cortos (< 120 min): AR$ 100.000
-    standardDeposit = 100000;
-    // Si el precio total es menor que el depósito estándar, cobrar 100% del precio
-    return Math.min(price, standardDeposit);
-  };
-
-  const deposit = calculateDeposit(service);
-  const remaining = service.priceBook - deposit;
+  const deposit = service.priceBook;
 
   const formatDate = (date: Date) => {
     // Usar los componentes de la fecha directamente para evitar problemas de timezone
@@ -375,23 +352,10 @@ export function BookingConfirmationModal({
             <Box className={classes.pricingSummary}>
               <Flex justify="space-between" mb="xs">
                 <Text size="sm" fw={400}>
-                  Precio base:
+                  Seña:
                 </Text>
                 <Text size="sm" fw={600}>
-                  AR${service.price.toLocaleString('es-AR')}
-                </Text>
-              </Flex>
-
-              <Flex
-                justify="space-between"
-                mb="xs"
-                className={classes.totalRow}
-              >
-                <Text size="md" fw={500}>
-                  Coste total:
-                </Text>
-                <Text size="md" fw={600} c="pink.6">
-                  AR${service.priceBook.toLocaleString('es-AR')}
+                  AR${deposit.toLocaleString('es-AR')}
                 </Text>
               </Flex>
 
@@ -404,15 +368,6 @@ export function BookingConfirmationModal({
                 </Text>
                 <Text size="sm" fw={600} c="pink.5">
                   AR${deposit.toLocaleString('es-AR')}
-                </Text>
-              </Flex>
-
-              <Flex justify="space-between">
-                <Text size="sm" fw={400}>
-                  A pagar
-                </Text>
-                <Text size="sm" fw={600}>
-                  AR${remaining.toLocaleString('es-AR')}
                 </Text>
               </Flex>
             </Box>

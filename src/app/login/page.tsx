@@ -76,6 +76,7 @@ export default function LoginPage() {
               alt="Mery García"
               width={200}
               height={70}
+              sizes="(max-width: 400px) 200px, (max-width: 480px) 220px, 260px"
               priority
               className={classes.logo}
               style={{ cursor: 'pointer' }}

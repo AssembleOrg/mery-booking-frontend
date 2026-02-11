@@ -17,7 +17,7 @@ const BOOKING_OPTIONS = [
     href: '/tattoo-cosmetico',
   },
   {
-    title: 'Estilismo de Cejas',
+    title: 'Estilismo de Cejas & Pestañas',
     description: 'Laminado, perfilado y tratamientos',
     href: '/estilismo-de-cejas',
   },

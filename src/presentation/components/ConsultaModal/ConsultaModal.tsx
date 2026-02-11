@@ -29,6 +29,7 @@ export default function ConsultaModal({
   opened,
   onClose,
   serviceName,
+  serviceKey,
   consultaOptions,
   services,
   employees,
@@ -199,6 +200,7 @@ export default function ConsultaModal({
               >
                 <Step5PaymentSummary
                   serviceName={serviceName}
+                  serviceKey={serviceKey}
                   selectedOption={selectedOption}
                   selectedDate={selectedDate}
                   selectedTime={selectedTime}

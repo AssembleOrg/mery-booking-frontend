@@ -10,7 +10,7 @@ import {
   ReservaModal,
 } from '@/presentation/components';
 import ConsultaModal from '@/presentation/components/ConsultaModal';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
 import {
@@ -25,14 +25,12 @@ import {
   type ServiceEntity,
   type Employee,
 } from '@/infrastructure/http';
+import type { AccordionContentType } from '@/infrastructure/types/services';
 import { useAuth } from '@/presentation/contexts';
 import { Client } from '@/domain/entities';
 import dayjs from 'dayjs';
 import classes from './page.module.css';
 import { CATEGORY_IDS } from '@/config/constants';
-
-// Tipos de contenido del acordeón
-type AccordionContentType = 'consulta' | 'sesion' | 'retoque' | 'mantenimiento';
 
 interface ServiceOption {
   id: string;
@@ -301,7 +299,13 @@ function SesionContent({
               {' '}
               {option.depositLabel}{' '}
               <span className={classes.depositValue}>
-                {option.depositValue}
+                {(() => {
+                  if (currentService) {
+                    return `AR$ ${Number(currentService.price).toLocaleString('es-AR')}.-`;
+                  }
+
+                  return option.depositValue;
+                })()}
               </span>
             </>
           )}
@@ -651,6 +655,7 @@ const nippleOptions: ServiceOption[] = [
 
 export default function ParamedicalTattooPage() {
   const { isAuthenticated } = useAuth();
+  const stickyNavRef = useRef<HTMLDivElement | null>(null);
 
   const [paramedicalCategoryId, setParamedicalCategoryId] = useState<string>(
     CATEGORY_IDS.PARAMEDICAL_TATTOO
@@ -713,7 +718,15 @@ export default function ParamedicalTattooPage() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const headerHeight =
+        document.querySelector('header')?.getBoundingClientRect().height ?? 0;
+      const stickyNavHeight =
+        stickyNavRef.current?.getBoundingClientRect().height ?? 0;
+      const extraSpacing = 12;
+      const topOffset = headerHeight + stickyNavHeight + extraSpacing;
+      const targetY = element.getBoundingClientRect().top + window.scrollY;
+
+      window.scrollTo({ top: Math.max(0, targetY - topOffset), behavior: 'smooth' });
     }
   };
 
@@ -842,7 +855,7 @@ export default function ParamedicalTattooPage() {
 
       <Box className={classes.pageWrapper}>
         {/* Sticky Navigation */}
-        <Box className={classes.heroNav}>
+        <Box ref={stickyNavRef} className={classes.heroNav}>
           <Box
             className={classes.navButton}
             onClick={() => scrollToSection('nano-scalp')}

@@ -148,7 +148,7 @@ export function WelcomeSection() {
                 </button>
                 <Link
                   href="#trabajos-reales"
-                  className={classes.heroButtonPrimary}
+                  className={`${classes.heroButtonPrimary} ${classes.heroButtonNarrow}`}
                 >
                   NUESTROS TRABAJOS
                 </Link>

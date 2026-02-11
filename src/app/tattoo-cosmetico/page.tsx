@@ -19,7 +19,7 @@ import {
 } from '@/presentation/components';
 import ConsultaModal from '@/presentation/components/ConsultaModal';
 import Image from 'next/image';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
 import {
@@ -35,20 +35,12 @@ import {
   type ServiceEntity,
   type Employee,
 } from '@/infrastructure/http';
+import type { AccordionContentType } from '@/infrastructure/types/services';
 import { useAuth } from '@/presentation/contexts';
 import { Client } from '@/domain/entities';
 import dayjs from 'dayjs';
 import classes from './page.module.css';
 import { EMPLOYEE_IDS, CATEGORY_IDS } from '@/config/constants';
-
-// Tipos de contenido del acordeón
-type AccordionContentType =
-  | 'consulta-sin-trabajo'
-  | 'consulta-con-trabajo'
-  | 'sesion-calendario'
-  | 'retoque-calendario'
-  | 'mantenimiento-calendario'
-  | 'last-minute';
 
 interface ServiceOption {
   id: string;
@@ -65,6 +57,7 @@ interface ServiceOption {
   footerNote?: string;
   footerNote2?: string;
   cuotasText?: string;
+  serviceKey?: string;
   serviceId?: string; // ID del servicio en el backend
   employeeId?: string; // ID del empleado en el backend
   serviceDuration?: number; // Duración del servicio en minutos
@@ -746,7 +739,18 @@ function SesionCalendarioContent({
           <>
             {' '}
             {option.depositLabel}{' '}
-            <span className={classes.depositValue}>{option.depositValue}</span>
+            <span className={classes.depositValue}>
+              {(() => {
+                const serviceForDeposit = services?.find(
+                  (s) => s.id === option.serviceId
+                );
+                if (serviceForDeposit) {
+                  return `AR$ ${Number(serviceForDeposit.price).toLocaleString('es-AR')}.-`;
+                }
+
+                return option.depositValue;
+              })()}
+            </span>
           </>
         )}
       </Text>
@@ -851,7 +855,13 @@ function SesionCalendarioContent({
 }
 
 // Componente para Last Minute (sin disponibilidad)
-function LastMinuteContent({ option }: { option: ServiceOption }) {
+function LastMinuteContent({
+  option,
+  services,
+}: {
+  option: ServiceOption;
+  services?: ServiceEntity[];
+}) {
   return (
     <Box className={classes.accordionPanelContent}>
       <Text className={classes.panelDescription}>{option.description}</Text>
@@ -871,7 +881,18 @@ function LastMinuteContent({ option }: { option: ServiceOption }) {
           <>
             {' '}
             {option.depositLabel}{' '}
-            <span className={classes.depositValue}>{option.depositValue}</span>
+            <span className={classes.depositValue}>
+              {(() => {
+                const serviceForDeposit = services?.find(
+                  (s) => s.id === option.serviceId
+                );
+                if (serviceForDeposit) {
+                  return `AR$ ${Number(serviceForDeposit.price).toLocaleString('es-AR')}.-`;
+                }
+
+                return option.depositValue;
+              })()}
+            </span>
           </>
         )}
       </Text>
@@ -935,7 +956,7 @@ function AccordionItem({
           />
         );
       case 'last-minute':
-        return <LastMinuteContent option={option} />;
+        return <LastMinuteContent option={option} services={services} />;
       default:
         return null;
     }
@@ -1513,6 +1534,7 @@ const FALLBACK_EMPLOYEES: Employee[] = [
 
 export default function TattooCosmeticoPage() {
   const { isAuthenticated } = useAuth();
+  const stickyNavRef = useRef<HTMLDivElement | null>(null);
   const [nanobladingDescriptionOpened, { open: openNanobladingDescription, close: closeNanobladingDescription }] =
     useDisclosure(false);
   const [camuflajeDescriptionOpened, { open: openCamuflajeDescription, close: closeCamuflajeDescription }] =
@@ -1731,7 +1753,15 @@ export default function TattooCosmeticoPage() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const headerHeight =
+        document.querySelector('header')?.getBoundingClientRect().height ?? 0;
+      const stickyNavHeight =
+        stickyNavRef.current?.getBoundingClientRect().height ?? 0;
+      const extraSpacing = 12;
+      const topOffset = headerHeight + stickyNavHeight + extraSpacing;
+      const targetY = element.getBoundingClientRect().top + window.scrollY;
+
+      window.scrollTo({ top: Math.max(0, targetY - topOffset), behavior: 'smooth' });
     }
   };
 
@@ -1749,6 +1779,7 @@ export default function TattooCosmeticoPage() {
     const meryGarcia = mappedEmployees.get('mery-garcia');
 
     return baseOptions.map((option) => {
+      const optionWithKey = { ...option, serviceKey };
       // Para consultas, buscar el servicio de consulta específico
       if (
         option.contentType === 'consulta-sin-trabajo' ||
@@ -1864,7 +1895,7 @@ export default function TattooCosmeticoPage() {
         const staffConsultas = mappedEmployees.get('staff-consultas');
 
         return {
-          ...option,
+          ...optionWithKey,
           serviceId: consultaService?.id,
           employeeId: staffConsultas?.id, // ✅ AGREGAR employeeId para consultas
           serviceDuration: consultaService?.duration || 60,
@@ -1884,7 +1915,7 @@ export default function TattooCosmeticoPage() {
           option.label === 'Consulta previa'
         ) {
           return {
-            ...option,
+            ...optionWithKey,
             // No asignar serviceId para que muestre el SVG de "no hay turnos"
             employeeId: meryGarcia?.id,
           };
@@ -1924,7 +1955,7 @@ export default function TattooCosmeticoPage() {
           }
 
           return {
-            ...option,
+            ...optionWithKey,
             serviceId: lastMinuteService?.id,
             employeeId: meryGarcia?.id,
             serviceDuration: lastMinuteService?.duration || 60,
@@ -1972,7 +2003,7 @@ export default function TattooCosmeticoPage() {
           }
 
           return {
-            ...option,
+            ...optionWithKey,
             serviceId: maintenanceService?.id,
             employeeId: meryGarcia?.id,
             serviceDuration: maintenanceService?.duration || 60,
@@ -1980,14 +2011,14 @@ export default function TattooCosmeticoPage() {
         }
 
         return {
-          ...option,
+          ...optionWithKey,
           serviceId: service?.id,
           employeeId: meryGarcia?.id,
           serviceDuration: service?.duration,
         };
       }
 
-      return option;
+      return optionWithKey;
     });
   };
 
@@ -2267,7 +2298,7 @@ export default function TattooCosmeticoPage() {
 
       <Box className={classes.pageWrapper}>
         {/* Sub Menu Navigation - STICKY */}
-        <Box className={classes.subMenuNav}>
+        <Box ref={stickyNavRef} className={classes.subMenuNav}>
           <Box
             className={classes.subMenuItem}
             onClick={() => scrollToSection('nanoblading')}
