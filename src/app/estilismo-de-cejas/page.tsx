@@ -10,13 +10,12 @@ import {
   ImageCrossfade,
 } from '@/presentation/components';
 import { EstilismoReservaModal } from '@/presentation/components/EstilismoReservaModal';
-import ConsultaModal from '@/presentation/components/ConsultaModal';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useServices, useEmployees } from '@/presentation/hooks';
 import type { ServiceEntity, Employee } from '@/infrastructure/http';
-import type { ServiceOption } from '@/infrastructure/types/services';
 import classes from './page.module.css';
 import { CATEGORY_IDS, EMPLOYEE_IDS } from '@/config/constants';
+import { formatArs, getEstilismoListPriceArs } from '@/config/estilismoPricing';
 
 interface ServiceBookingData {
   servicio: string;
@@ -32,7 +31,6 @@ export default function EstilismoCejasPage() {
 
   // Estados para modales de reserva
   const [reservaModalOpened, setReservaModalOpened] = useState(false);
-  const [consultaModalOpened, setConsultaModalOpened] = useState(false);
   const [selectedService, setSelectedService] = useState<ServiceEntity | null>(
     null
   );
@@ -61,11 +59,9 @@ export default function EstilismoCejasPage() {
     ? employees.find((e) => e.id === bookingData.profesional)
     : null;
 
-  // Detectar si un servicio es consulta
-  const isConsultaService = (service: ServiceEntity): boolean => {
-    const serviceName = service.name.toLowerCase();
-    return serviceName.includes('consulta') || serviceName.includes('asesor');
-  };
+  const informationalListPriceArs = currentService
+    ? getEstilismoListPriceArs(currentService.name)
+    : null;
 
   const handleServiceSubmit = (data: ServiceBookingData) => {
     setBookingData(data);
@@ -92,33 +88,8 @@ export default function EstilismoCejasPage() {
     setSelectedEmployee(currentEmployee);
 
     // Abrir modal según tipo de servicio
-    if (isConsultaService(currentService)) {
-      setConsultaModalOpened(true);
-    } else {
-      setReservaModalOpened(true);
-    }
+    setReservaModalOpened(true);
   };
-
-
-  // Crear ServiceOption para el modal de consulta
-  const consultaOptionsForModal = useMemo(() => {
-    if (!selectedService) return [];
-
-    return [
-      {
-        id: selectedService.id,
-        label: selectedService.name,
-        contentType: 'consulta' as const,
-        description: `Consulta de ${selectedService.name}`,
-        priceLabel: 'Precio de lista del servicio:',
-        priceValue: `AR$ ${selectedService.price}.-`,
-        serviceId: selectedService.id,
-        employeeId: EMPLOYEE_IDS.STAFF_CONSULTAS,
-        serviceDuration: selectedService.duration,
-      },
-    ];
-  }, [selectedService]);
-
   return (
     <>
       <Header />
@@ -134,7 +105,7 @@ export default function EstilismoCejasPage() {
             interval={6000}
             transitionDuration={1.0}
             className={classes.heroImage}
-            alt="Estilismo de Cejas"
+            alt="Estilismo de Cejas & Pestañas"
             objectPosition="center"
           />
           <Box className={classes.heroOverlay} />
@@ -187,6 +158,14 @@ export default function EstilismoCejasPage() {
                       onChange={handleServiceSubmit}
                       categoryId={CATEGORY_IDS.ESTILISMO_CEJAS}
                     />
+                    {typeof informationalListPriceArs === 'number' && (
+                      <Text mt="md" size="sm" c="dimmed">
+                        Precio de lista:{' '}
+                        <Text component="span" c="dark" fw={500}>
+                          {formatArs(informationalListPriceArs)}
+                        </Text>
+                      </Text>
+                    )}
                   </Box>
 
                   <Box id="calendar-anchor" className={classes.calendarColumn}>
@@ -248,25 +227,6 @@ export default function EstilismoCejasPage() {
         />
       )}
 
-      {/* Modal de Consulta */}
-      {selectedService && consultaOptionsForModal.length > 0 && (
-        <ConsultaModal
-          opened={consultaModalOpened}
-          onClose={() => {
-            setConsultaModalOpened(false);
-            setSelectedService(null);
-            setSelectedDate(null);
-            setSelectedTime(null);
-          }}
-          serviceName={selectedService.name}
-          serviceKey={selectedService.name.toLowerCase().replace(/\s+/g, '-')}
-          consultaOptions={consultaOptionsForModal}
-          services={services as ServiceEntity[]}
-          employees={employees as Employee[]}
-          staffConsultasId={EMPLOYEE_IDS.STAFF_CONSULTAS}
-          meryGarciaId={EMPLOYEE_IDS.MERY_GARCIA}
-        />
-      )}
     </>
   );
 }

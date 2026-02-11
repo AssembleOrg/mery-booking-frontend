@@ -87,6 +87,24 @@
   }
 }
 
+@media (max-width: 400px) {
+  .flex {
+    height: 76px;
+  }
+
+  .logo {
+    width: 170px;
+  }
+
+  .scrolled .logo {
+    width: 150px;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+}
+
 .nav {
   display: none;
   gap: 40px;
@@ -111,6 +129,11 @@
   background: var(--mg-dark);
   color: var(--mg-white);
   border: none;
+  appearance: none;
+  cursor: pointer;
+  line-height: 1;
+  align-items: center;
+  justify-content: center;
   padding: 14px 32px;
   font-size: 10px;
   letter-spacing: 2px;
@@ -140,7 +163,7 @@
     display: flex;
   }
   .ctaButton {
-    display: block;
+    display: inline-flex;
   }
   .menuButton {
     display: none;

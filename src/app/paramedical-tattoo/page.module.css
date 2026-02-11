@@ -110,10 +110,26 @@
   margin: 0;
 }
 
+.heroNav::-webkit-scrollbar {
+  display: none;
+}
+
 /* Responsive: ajustar posición del sticky nav en mobile */
 @media (max-width: 767px) {
   .heroNav {
     top: 64px; /* Altura del header en mobile */
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    scrollbar-width: none;
+  }
+
+  .navButton {
+    min-height: 44px;
+    padding: 10px 12px;
   }
 }
 
@@ -131,6 +147,7 @@
   font-family: var(--font-din-medium), sans-serif;
   padding: 8px 12px;
   border-radius: 4px;
+  white-space: nowrap;
 }
 
 .navButton:hover {
@@ -276,7 +293,13 @@
   text-transform: uppercase;
   font-family: var(--font-din-medium), sans-serif;
   text-decoration: none;
-  display: inline-block;
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  text-align: center;
   border-radius: 4px;
 }
 
@@ -301,6 +324,13 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   font-family: var(--font-din-medium), sans-serif;
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .ctaButtonSecondary:hover {
@@ -323,7 +353,13 @@
   text-transform: uppercase;
   font-family: var(--font-din-medium), sans-serif;
   text-decoration: none;
-  display: inline-block;
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  text-align: center;
   border-radius: 4px;
 }
 
@@ -673,16 +709,21 @@
   }
 
   .heroNav {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 24px;
-    align-items: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    margin-top: 0;
+    align-items: stretch;
   }
 
   .navButton {
     font-size: 10px;
-    padding: 8px 0;
+    min-height: 44px;
+    padding: 10px 12px;
     justify-content: center;
     text-align: center;
   }
@@ -703,8 +744,23 @@
     font-size: 14px;
   }
 
-  .ctaButton {
+  .ctaButton,
+  .ctaButtonSecondary,
+  .ctaButtonReservar {
     padding: 14px 24px;
     font-size: 10px;
+  }
+
+  .buttonsWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .buttonsWrapper > * {
+    width: 100%;
+  }
+
+  .ctaButtonReservar {
+    grid-column: 1 / -1;
   }
 }

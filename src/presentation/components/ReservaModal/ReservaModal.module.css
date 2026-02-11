@@ -210,6 +210,13 @@
   margin-top: 4px;
 }
 
+.optionPriceEffective {
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 14px;
+  color: var(--mg-pink-hover);
+  font-weight: 400;
+}
+
 .optionDescription {
   font-family: var(--font-din-light), sans-serif;
   font-size: 13px;

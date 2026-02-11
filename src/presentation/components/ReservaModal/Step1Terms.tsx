@@ -12,6 +12,7 @@ interface Step1TermsProps {
   onCancel: () => void;
   serviceName?: string;
   onClose?: () => void;
+  showConsultaWarning?: boolean;
 }
 
 export function Step1Terms({
@@ -21,6 +22,7 @@ export function Step1Terms({
   onCancel,
   serviceName,
   onClose,
+  showConsultaWarning = true,
 }: Step1TermsProps) {
   const handleConsultaClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -44,7 +46,7 @@ export function Step1Terms({
       className={classes.stepContainer}
     >
       <Stack gap="xl">
-        {serviceName && (
+        {showConsultaWarning && serviceName && (
           <Alert
             icon={<IconAlertCircle size={16} />}
             title="Consulta Previa Obligatoria"

@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { MenuModal } from '@/presentation/components';
+import { BookingEntryModal, MenuModal } from '@/presentation/components';
 import classes from './Header.module.css';
 import { useEffect, useRef, useState } from 'react';
 
@@ -18,6 +18,8 @@ const NAV_ITEMS = [
 
 export function Header() {
   const [opened, { open, close }] = useDisclosure(false);
+  const [bookingEntryOpened, { open: openBookingEntry, close: closeBookingEntry }] =
+    useDisclosure(false);
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLElement | null>(null);
   const router = useRouter();
@@ -49,6 +51,7 @@ export function Header() {
 
   return (
     <>
+      <BookingEntryModal opened={bookingEntryOpened} onClose={closeBookingEntry} />
       <Box
         component="header"
         ref={headerRef}
@@ -90,9 +93,13 @@ export function Header() {
             </nav>
 
             {/* CTA Button - Desktop */}
-            <Link href="/tattoo-cosmetico" className={classes.ctaButton}>
+            <button
+              type="button"
+              className={classes.ctaButton}
+              onClick={openBookingEntry}
+            >
               RESERVAR
-            </Link>
+            </button>
 
             {/* Mobile Menu Button */}
             <Flex

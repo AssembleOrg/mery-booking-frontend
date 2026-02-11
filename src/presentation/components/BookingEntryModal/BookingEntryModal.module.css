@@ -1,0 +1,121 @@
+.container {
+  padding: 2px 2px 0;
+}
+
+.header {
+  padding: 16px 18px 0;
+}
+
+.headerTitle {
+  font-family: var(--font-din-medium, system-ui);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: #2b2b2b;
+}
+
+.body {
+  padding: 10px 18px calc(18px + env(safe-area-inset-bottom, 0px));
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.subtitle {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-family: var(--font-din-light, system-ui);
+  color: rgba(43, 43, 43, 0.7);
+}
+
+.options {
+  width: 100%;
+}
+
+.optionCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 56px;
+  padding: 12px 12px;
+  border-radius: 14px;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(43, 43, 43, 0.12);
+  color: #2b2b2b;
+  touch-action: manipulation;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 180ms ease, box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.optionCard::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 32px;
+  height: 2px;
+  background-color: var(--mg-pink);
+  opacity: 0.7;
+}
+
+.optionCard::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 55%,
+    rgba(43, 43, 43, 0.02) 100%
+  );
+  pointer-events: none;
+}
+
+.optionCard:hover {
+  border-color: var(--mg-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(235, 162, 168, 0.15);
+}
+
+.optionCard:active {
+  border-color: var(--mg-pink);
+  transform: translateY(1px);
+  box-shadow: 0 6px 18px rgba(235, 162, 168, 0.14);
+}
+
+.optionCard:focus-visible {
+  outline: 2px solid var(--mg-pink, #eba2a8);
+  outline-offset: 3px;
+}
+
+.optionTitle {
+  font-family: var(--font-din-medium, system-ui);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.optionDescription {
+  font-size: 13px;
+  color: rgba(43, 43, 43, 0.7);
+}
+
+.optionCard:hover .optionTitle,
+.optionCard:active .optionTitle {
+  color: var(--mg-pink);
+}
+
+@media (min-width: 769px) {
+  .container {
+    padding: 2px 2px 0;
+  }
+
+  .optionCard::before {
+    top: 14px;
+    left: 14px;
+    width: 36px;
+  }
+}

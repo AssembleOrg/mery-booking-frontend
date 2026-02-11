@@ -33,6 +33,7 @@ interface ClientData {
 
 interface Step5PaymentSummaryProps {
   serviceName: string;
+  serviceKey?: string;
   selectedOption: ServiceOption;
   selectedDate: Date;
   selectedTime: string;
@@ -45,6 +46,7 @@ interface Step5PaymentSummaryProps {
 
 export function Step5PaymentSummary({
   serviceName,
+  serviceKey,
   selectedOption,
   selectedDate,
   selectedTime,
@@ -88,32 +90,7 @@ export function Step5PaymentSummary({
     });
   }, []);
 
-  // Calcular depósito (misma lógica que BookingConfirmationModal)
-  const calculateDeposit = (serviceData: ServiceEntity): number => {
-    const price = Number(serviceData.price);
-    const duration = serviceData.duration;
-
-    // Consultas (≤60min, $50.000): 100% del precio
-    if (duration <= 60 && price === 50000) {
-      return price;
-    }
-
-    // Servicios largos (≥120min): AR$ 150.000
-    let standardDeposit = 150000;
-    if (duration >= 120) {
-      // Si el precio total es menor que el depósito estándar, cobrar 100% del precio
-      return Math.min(price, standardDeposit);
-    }
-
-    // Servicios cortos (<120min): AR$ 100.000
-    standardDeposit = 100000;
-    // Si el precio total es menor que el depósito estándar, cobrar 100% del precio
-    return Math.min(price, standardDeposit);
-  };
-
-  const depositAmount = service ? calculateDeposit(service) : 0;
-  const totalPrice = service ? Number(service.price) : 0;
-  const remainingAmount = totalPrice - depositAmount;
+  const depositAmount = service ? Number(service.price) : 0;
 
   const formattedDate = useMemo(() => {
     const day = selectedDate.getDate();
@@ -156,7 +133,7 @@ export function Step5PaymentSummary({
 
       const payload = {
         serviceName: service.name,
-        servicePrice: totalPrice,
+        servicePrice: depositAmount,
         serviceDuration: service.duration,
         depositAmount: depositAmount,
         clientData: {
@@ -398,17 +375,6 @@ export function Step5PaymentSummary({
             </Text>
 
             <Group justify="space-between">
-              <Text size="sm" c="dimmed">
-                Precio base:
-              </Text>
-              <Text size="sm" fw={500}>
-                AR$ {totalPrice.toLocaleString('es-AR')}
-              </Text>
-            </Group>
-
-            <Divider />
-
-            <Group justify="space-between">
               <Text size="md" fw={600}>
                 Depósito (Pagar ahora):
               </Text>
@@ -416,17 +382,6 @@ export function Step5PaymentSummary({
                 AR$ {depositAmount.toLocaleString('es-AR')}
               </Text>
             </Group>
-
-            {remainingAmount > 0 && (
-              <Group justify="space-between">
-                <Text size="sm" c="dimmed">
-                  A pagar en consulta:
-                </Text>
-                <Text size="sm" fw={500}>
-                  AR$ {remainingAmount.toLocaleString('es-AR')}
-                </Text>
-              </Group>
-            )}
           </Stack>
         </Paper>
 

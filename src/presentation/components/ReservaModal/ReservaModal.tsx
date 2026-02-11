@@ -182,6 +182,7 @@ export function ReservaModal({
               <Step5PaymentSummary
                 key="step5"
                 serviceName={serviceName}
+                serviceKey={serviceKey}
                 selectedOption={selectedOption}
                 selectedDate={selectedDate}
                 selectedTime={selectedTime}

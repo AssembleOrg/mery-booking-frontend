@@ -1,12 +1,13 @@
 'use client';
 
 import { Box, Container, Flex, Text } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import Masonry from 'react-masonry-css';
 import {
+  BookingEntryModal,
   SectionTitle,
   ServiceCard,
   FadeInSection,
@@ -56,7 +57,7 @@ const SERVICES = [
   {
     num: '06',
     name: 'Brow & Lash Styling',
-    desc: '',
+    desc: '\u00A0',
     image: '',
     href: '/estilismo-de-cejas',
   },
@@ -80,6 +81,8 @@ const GALLERY_IMAGES = [
 
 export function WelcomeSection() {
   const [imagesLoaded, setImagesLoaded] = useState(0);
+  const [bookingEntryOpened, { open: openBookingEntry, close: closeBookingEntry }] =
+    useDisclosure(false);
   const isMobileOrTablet = useMediaQuery('(max-width: 1023px)', false, {
     getInitialValueInEffect: true,
   });
@@ -108,15 +111,16 @@ export function WelcomeSection() {
 
   return (
     <Box className={classes.wrapper}>
+      <BookingEntryModal opened={bookingEntryOpened} onClose={closeBookingEntry} />
       <Box className={classes.heroContainer}>
         <section className={classes.heroSection}>
           <Box className={classes.heroImageWrapper}>
             <ImageCrossfade
               images={[
+                '/loop/loop4.webp',
                 '/loop/loop1.webp',
                 '/loop/loop2.webp',
-                '/loop/loop4.webp',
-                '/loop/loop5.webp',
+                '/images/image-soft-blur.jpg',
               ]}
               interval={5000}
               transitionDuration={1.2}
@@ -135,15 +139,16 @@ export function WelcomeSection() {
                 Art & Real <span className={classes.heroTitlePink}>Beauty</span>
               </h1>
               <Flex className={classes.heroButtons}>
-                <Link
-                  href="/tattoo-cosmetico"
+                <button
+                  type="button"
                   className={classes.heroButtonPrimary}
+                  onClick={openBookingEntry}
                 >
                   RESERVAR CITA
-                </Link>
+                </button>
                 <Link
                   href="#trabajos-reales"
-                  className={classes.heroButtonPrimary}
+                  className={`${classes.heroButtonPrimary} ${classes.heroButtonNarrow}`}
                 >
                   NUESTROS TRABAJOS
                 </Link>
