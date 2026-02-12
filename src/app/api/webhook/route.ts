@@ -7,6 +7,25 @@ const client = new MercadoPagoConfig({
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
+async function getPaymentWithRetry(paymentId: number, retries = 3, delayMs = 2000) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await new Payment(client).get({ id: paymentId });
+    } catch (error) {
+      const err = error instanceof Error ? error : null;
+      const status = (error as { status?: number })?.status;
+      const isNotFound = status === 404 || err?.message?.includes('not_found');
+      if (isNotFound && attempt < retries) {
+        console.log(`[Webhook] Pago no encontrado aún, reintento ${attempt}/${retries} en ${delayMs}ms...`);
+        await new Promise((r) => setTimeout(r, delayMs));
+      } else {
+        throw error;
+      }
+    }
+  }
+  throw new Error('Payment not found after retries');
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -15,10 +34,10 @@ export async function POST(request: NextRequest) {
 
     // MercadoPago envía notificaciones de tipo 'payment'
     if (body.type === 'payment') {
-      const paymentId = body.data.id;
+      const paymentId = Number(body.data.id);
 
-      // Obtener información completa del pago desde MercadoPago
-      const payment = await new Payment(client).get({ id: paymentId });
+      // Obtener información completa del pago desde MercadoPago (con reintentos por race condition)
+      const payment = await getPaymentWithRetry(paymentId);
 
       console.log('[Webhook] Estado del pago:', payment.status);
 
@@ -50,22 +69,31 @@ export async function POST(request: NextRequest) {
 
         try {
           // 🔥 Llamar al endpoint del backend para crear el booking
-          // NOTA: El backend debe validar el secret internamente, no lo enviamos desde el frontend
+          // El webhook secret se envía desde el servidor (API route), no se expone al cliente
           
           // Acceder a preference_id de forma segura (puede no estar en el tipo pero existe en runtime)
           const paymentData = payment as any;
           const preferenceId = paymentData.preference_id || paymentData.preference?.id || '';
           const transactionAmount = paymentData.transaction_amount || paymentData.amount || 0;
           
+          // Preparar headers con el webhook secret
+          const headers: Record<string, string> = {
+            'Content-Type': 'application/json',
+          };
+          
+          // Agregar webhook secret si está configurado
+          const webhookSecret = process.env.MERCADOPAGO_WEBHOOK_SECRET;
+          if (webhookSecret) {
+            headers['X-Webhook-Secret'] = webhookSecret;
+          } else {
+            console.warn('[Webhook] MERCADOPAGO_WEBHOOK_SECRET no está configurado');
+          }
+          
           const webhookResponse = await fetch(
             `${BACKEND_URL}/bookings/webhook`,
             {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                // El secret NO se envía desde el frontend por seguridad
-                // El backend debe validar que la petición viene de un origen confiable
-              },
+              headers,
               body: JSON.stringify({
                 paymentId: String(payment.id),
                 preferenceId: preferenceId,

@@ -226,8 +226,8 @@ export function Step5PaymentSummary({
       console.log('[ReservaModal Step5] Datos de MercadoPago recibidos:', data);
 
       // Redirigir a MercadoPago
-      // En producción usar init_point, en desarrollo sandbox_init_point
-      const checkoutUrl = data.sandbox_init_point || data.init_point;
+      // La URL correcta ya viene determinada por el backend según MERCADOPAGO_USE_SANDBOX
+      const checkoutUrl = data.init_point;
 
       console.log('[ReservaModal Step5] URL de checkout:', checkoutUrl);
 

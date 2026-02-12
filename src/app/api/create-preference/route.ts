@@ -155,10 +155,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Determinar si usar sandbox basado en variable de entorno
+    const useSandbox = process.env.MERCADOPAGO_USE_SANDBOX === 'true';
+    const checkoutUrl = useSandbox
+      ? preference.sandbox_init_point
+      : preference.init_point;
+
+    console.log(
+      `[create-preference] Modo: ${useSandbox ? 'SANDBOX' : 'PRODUCCIÓN'}`
+    );
+
     return NextResponse.json({
       id: preference.id,
-      init_point: preference.init_point,
-      sandbox_init_point: preference.sandbox_init_point,
+      init_point: checkoutUrl, // URL correcta según el entorno
       tempReservationId, // Incluir para referencia
     });
   } catch (error: any) {
