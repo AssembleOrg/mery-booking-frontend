@@ -1240,7 +1240,7 @@ const lashesLineOptions: ServiceOption[] = [
     priceValue: 'U$S 480.-',
     priceEffective: 'U$S 320',
     depositLabel: ') Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 150.000.-',
     cuotasText:
       'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
@@ -1268,7 +1268,7 @@ const lashesLineOptions: ServiceOption[] = [
     priceValue: 'U$S 480.-',
     priceEffective: 'U$S 320',
     depositLabel: ') Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 150.000.-',
     cuotasText:
       'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
@@ -1334,24 +1334,10 @@ const camouflageOptions: ServiceOption[] = [
     description:
       'Primera sesión de corrección y camuflaje de trabajos previos en cejas. El proceso puede requerir múltiples sesiones dependiendo del estado del trabajo a corregir.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 600.-',
+    priceValue: 'U$S 710.-',
     priceEffective: 'U$S 475',
     depositLabel: ') Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
-    cuotasText:
-      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
-  },
-  {
-    id: 'camuflaje-4',
-    label: '2ª Sesión - Retoque (By Mery Garcia)',
-    contentType: 'retoque-calendario',
-    description:
-      'Completá tu servicio de Camuflaje entre 30 y 60 días después de tu primera sesión.',
-    priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 400.-',
-    priceEffective: 'U$S 180',
-    depositLabel: ') Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 150.000.-',
     cuotasText:
       'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },

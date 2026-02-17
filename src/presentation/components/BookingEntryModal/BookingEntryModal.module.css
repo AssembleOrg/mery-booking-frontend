@@ -108,6 +108,33 @@
   color: var(--mg-pink);
 }
 
+.optionCardComingSoon {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+@keyframes badgeRingBreath {
+  0%, 100% { box-shadow: 0 0 0 0px rgba(235, 162, 168, 0); }
+  50%      { box-shadow: 0 0 0 5px rgba(235, 162, 168, 0.18); }
+}
+
+.comingSoonBadge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 4px 10px;
+  background: var(--mg-pink);
+  color: white;
+  font-family: var(--font-din-medium, system-ui);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 8px;
+  z-index: 1;
+  animation: badgeRingBreath 2.5s ease-in-out infinite;
+}
+
 @media (min-width: 769px) {
   .container {
     padding: 2px 2px 0;

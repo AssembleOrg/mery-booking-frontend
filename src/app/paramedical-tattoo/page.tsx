@@ -560,7 +560,7 @@ const areolaOptions: ServiceOption[] = [
     description:
       'Primera sesión de Areola Camouflage con Mery García. Recordá que los resultados óptimos se logran con dos sesiones.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 480.-',
+    priceValue: 'U$S 560.-',
     priceEffective: 'U$S 420.-',
     depositLabel: 'Valor de la seña:',
     depositValue: 'AR$ 150.000.-',
@@ -573,7 +573,7 @@ const areolaOptions: ServiceOption[] = [
     contentType: 'retoque',
     description: 'Completá tu servicio 6 semanas después de tu primera sesión.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 250.-',
+    priceValue: 'U$S 317.-',
     priceEffective: 'U$S 220.-',
     depositLabel: 'Valor de la seña:',
     depositValue: 'AR$ 100.000.-',

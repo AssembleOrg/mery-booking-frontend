@@ -12,19 +12,25 @@ interface BookingEntryModalProps {
 
 const BOOKING_OPTIONS = [
   {
-    title: 'Tattoo Cosmético',
-    description: 'Cejas, labios, pecas y más',
+    title: 'Cosmetic Tattoo',
+    description: 'Cejas, labios, pecas y líneas de pestañas híper realistas.',
     href: '/tattoo-cosmetico',
   },
   {
     title: 'Estilismo de Cejas & Pestañas',
-    description: 'Laminado, perfilado y tratamientos',
+    description: 'Laminado, modelado, brow y lash refill',
     href: '/estilismo-de-cejas',
   },
   {
     title: 'Paramedical Tattoo',
-    description: 'Camuflajes y procedimientos reconstructivos',
+    description: 'Arte y salud.',
     href: '/paramedical-tattoo',
+  },
+  {
+    title: 'Epitesis CAP',
+    description: 'Prótesis híper realistas complejo areola/pezón.',
+    href: '#',
+    comingSoon: true,
   },
 ] as const;
 
@@ -34,17 +40,34 @@ function BookingEntryContent({ onClose }: { onClose: () => void }) {
       <Text className={classes.subtitle}>Elegí una categoría</Text>
 
       <Stack gap={10} className={classes.options}>
-        {BOOKING_OPTIONS.map((option) => (
-          <Link
-            key={option.href}
-            href={option.href}
-            className={classes.optionCard}
-            onClick={onClose}
-          >
-            <span className={classes.optionTitle}>{option.title}</span>
-            <span className={classes.optionDescription}>{option.description}</span>
-          </Link>
-        ))}
+        {BOOKING_OPTIONS.map((option) => {
+          const isComingSoon = 'comingSoon' in option && option.comingSoon;
+
+          if (isComingSoon) {
+            return (
+              <div
+                key={option.title}
+                className={`${classes.optionCard} ${classes.optionCardComingSoon}`}
+              >
+                <span className={classes.comingSoonBadge}>Coming Soon</span>
+                <span className={classes.optionTitle}>{option.title}</span>
+                <span className={classes.optionDescription}>{option.description}</span>
+              </div>
+            );
+          }
+
+          return (
+            <Link
+              key={option.href}
+              href={option.href}
+              className={classes.optionCard}
+              onClick={onClose}
+            >
+              <span className={classes.optionTitle}>{option.title}</span>
+              <span className={classes.optionDescription}>{option.description}</span>
+            </Link>
+          );
+        })}
       </Stack>
     </Box>
   );
