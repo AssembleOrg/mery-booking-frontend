@@ -1678,11 +1678,20 @@ export default function TattooCosmeticoPage() {
             s.name.toLowerCase().includes('1° sesión')
         ) || findServiceByName(services, 'lashes-line');
 
+      const camuflajeService =
+        services.find(
+          (s) =>
+            s.showOnSite &&
+            s.name.toLowerCase().includes('camuflaje') &&
+            s.name.toLowerCase().includes('1')
+        ) || findServiceByName(services, 'camuflaje');
+
       if (nanobladingService) serviceMap.set('nanoblading', nanobladingService);
       if (lipBlushService) serviceMap.set('lip-blush', lipBlushService);
       if (lipCamouflageService)
         serviceMap.set('lip-camouflage', lipCamouflageService);
       if (lashesLineService) serviceMap.set('lashes-line', lashesLineService);
+      if (camuflajeService) serviceMap.set('camuflaje', camuflajeService);
 
       setMappedServices(serviceMap);
     }
@@ -1838,7 +1847,6 @@ export default function TattooCosmeticoPage() {
               );
             });
           } else if (option.contentType === 'consulta-con-trabajo') {
-            // Buscar: "Camuflaje de Cejas [Consulta Obligatoria] CON trabajo previo"
             consultaService = allServices.find((s) => {
               const nameLower = s.name.toLowerCase();
               return (
