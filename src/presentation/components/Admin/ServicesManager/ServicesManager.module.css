@@ -1,67 +1,62 @@
+/* ── Layout ── */
 .container {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  padding: 1.5rem 2rem;
+  background: transparent;
 }
 
 .header {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-@media (min-width: 640px) {
-  .header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .title {
   font-family: var(--font-avant-garde), sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #2B2B2B;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--mg-dark);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  letter-spacing: 0.05em;
+  gap: 0.375rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0;
 }
 
 .title .material-icons-round {
-  color: #8B1538;
-  font-size: 1.75rem;
+  color: var(--mg-pink);
+  font-size: 1.125rem;
 }
 
+/* ── Create Button ── */
 .createButton {
-  background: #8B1538 !important;
+  background: var(--mg-pink) !important;
   color: white !important;
   border: none !important;
-  padding: 0.625rem 1.5rem !important;
-  border-radius: 8px !important;
+  padding: 0 0.875rem !important;
+  height: 32px !important;
+  border-radius: 6px !important;
   font-family: var(--font-avant-garde), sans-serif !important;
   font-weight: 500 !important;
-  font-size: 0.875rem !important;
+  font-size: 0.75rem !important;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.15s;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  letter-spacing: 0.05em;
+  gap: 0.375rem;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
 }
 
 .createButton:hover {
-  background: #6d0f2a !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transform: translateY(-1px);
+  background: var(--mg-pink-hover) !important;
 }
 
 .createButton .material-icons-round {
-  font-size: 1.125rem;
+  font-size: 1rem;
 }
 
 .createButton :global(.mantine-Button-label),
@@ -69,76 +64,49 @@
   color: white !important;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.375rem;
 }
 
+/* ── Filter ── */
 .filterContainer {
-  background: #ffffff;
-  padding: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .filterSelect {
-  max-width: 350px;
+  max-width: 280px;
 }
 
+/* ── Table ── */
 .tableWrapper {
   overflow-x: auto;
-  border-radius: 8px;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 6px;
   border: 1px solid #e5e7eb;
-  background: #ffffff;
+  background: var(--mg-white);
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
   font-family: var(--font-avant-garde), sans-serif;
-  background: #ffffff !important;
-}
-
-.table tbody {
-  background: #ffffff !important;
-}
-
-.table tbody tr {
-  background: #ffffff !important;
-}
-
-.table tbody tr:hover {
-  background: #fafafa !important;
-}
-
-.table tbody tr td {
-  background: #ffffff !important;
-}
-
-.table tbody tr:hover td {
-  background: #fafafa !important;
+  background: var(--mg-white);
+  min-width: 520px;
 }
 
 .table thead tr {
-  background-color: #F7CBCB;
+  background-color: var(--mg-pink-lighter);
 }
 
 .table thead th {
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 0.875rem;
   text-align: left;
-  font-size: 0.875rem;
+  font-size: 0.6875rem;
   font-weight: 600;
-  color: #8B1538;
+  color: var(--mg-dark);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   border-bottom: 1px solid #e5e7eb;
-}
-
-.table thead th:first-child {
-  border-top-left-radius: 8px;
-}
-
-.table thead th:last-child {
-  border-top-right-radius: 8px;
+  white-space: nowrap;
 }
 
 .actionsHeader {
@@ -146,42 +114,37 @@
 }
 
 .tableRow {
-  background-color: #ffffff !important;
-  transition: background-color 0.2s;
   border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.1s;
 }
 
 .tableRow:hover {
-  background-color: #fafafa !important;
+  background-color: #fafafa;
 }
 
-.tableRow td {
-  background-color: #ffffff !important;
-}
-
-.tableRow:hover td {
-  background-color: #fafafa !important;
+.tableRow:last-child {
+  border-bottom: none;
 }
 
 .tableCell {
-  padding: 1rem 1.5rem;
-  font-size: 0.875rem;
-  color: #545454;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
+  color: var(--mg-gray);
   white-space: nowrap;
-  background-color: #ffffff !important;
 }
 
+/* ── Cell content ── */
 .serviceCell {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.625rem;
 }
 
 .iconContainer {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 1.75rem;
+  height: 1.75rem;
   flex-shrink: 0;
-  background: rgba(247, 203, 203, 0.3);
+  background: var(--mg-pink-light);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -189,58 +152,59 @@
 }
 
 .iconContainer .material-icons-round {
-  color: #EBA2A8;
-  font-size: 1.125rem;
+  color: var(--mg-pink);
+  font-size: 0.875rem;
 }
 
 .serviceInfo {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.125rem;
 }
 
 .serviceName {
   font-weight: 500;
-  color: #2B2B2B;
-  font-size: 0.875rem;
+  color: var(--mg-dark);
+  font-size: 0.8125rem;
 }
 
 .serviceDescription {
-  font-size: 0.75rem;
-  color: #545454;
+  font-size: 0.6875rem;
+  color: var(--mg-gray);
 }
 
+/* ── Action buttons ── */
 .actionsCell {
   text-align: right;
 }
 
 .actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.375rem;
   justify-content: flex-end;
-  flex-wrap: wrap;
 }
 
 .editButton,
 .deleteButton {
-  padding: 0.375rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.875rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
   font-weight: 500;
   font-family: var(--font-avant-garde), sans-serif;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.15s;
   border: none;
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .editButton {
-  background: #dbeafe;
-  color: #2563eb;
+  background: var(--mg-pink-light);
+  color: var(--mg-dark);
 }
 
 .editButton:hover {
-  background: #bfdbfe;
+  background: var(--mg-pink-lighter);
 }
 
 .deleteButton {
@@ -252,17 +216,20 @@
   background: #fecaca;
 }
 
+/* ── Empty / Loading ── */
 .emptyCell {
   text-align: center;
-  padding: 3rem 1.5rem;
-  color: #545454;
+  padding: 1.5rem;
+  color: var(--mg-gray);
+  font-size: 0.8125rem;
 }
 
+/* ── Modal ── */
 .modalTitle {
   font-family: var(--font-avant-garde), sans-serif;
   font-weight: 500;
-  font-size: 1.25rem;
-  color: #2B2B2B;
+  font-size: 1rem;
+  color: var(--mg-dark);
 }
 
 .formRow {
@@ -277,12 +244,8 @@
   justify-content: flex-end;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
-
+/* ── Responsive ── */
+@media (max-width: 480px) {
   .header {
     flex-direction: column;
     align-items: stretch;
@@ -297,40 +260,6 @@
     max-width: 100%;
   }
 
-  .tableWrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .table thead th,
-  .tableCell {
-    padding: 0.75rem 1rem;
-    font-size: 0.8125rem;
-  }
-
-  .serviceCell {
-    gap: 0.75rem;
-  }
-
-  .iconContainer {
-    width: 2rem;
-    height: 2rem;
-  }
-
-  .iconContainer .material-icons-round {
-    font-size: 1rem;
-  }
-
-  .actions {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .editButton,
-  .deleteButton {
-    width: 100%;
-  }
-
   .formRow {
     flex-direction: column;
   }
@@ -341,19 +270,5 @@
 
   .modalActions button {
     width: 100%;
-  }
-}
-
-@media (max-width: 640px) {
-  .title {
-    font-size: 1.25rem;
-  }
-
-  .serviceName {
-    font-size: 0.8125rem;
-  }
-
-  .serviceDescription {
-    font-size: 0.6875rem;
   }
 }

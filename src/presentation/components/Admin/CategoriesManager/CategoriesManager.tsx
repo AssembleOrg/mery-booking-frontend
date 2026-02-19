@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button, Modal, TextInput, Box, Skeleton, Center, Group } from '@mantine/core';
+import { Button, Modal, TextInput, Box, Skeleton, Group } from '@mantine/core';
 import { useForm } from 'react-hook-form';
 import { CategoryService } from '@/infrastructure/http';
 import type { Category, CreateCategoryDto } from '@/infrastructure/http';
@@ -143,7 +143,7 @@ export function CategoriesManager() {
         </div>
 
         <div className={classes.tableWrapper}>
-          <table className={classes.table} style={{ backgroundColor: '#ffffff' }}>
+          <table className={classes.table}>
             <thead>
               <tr>
                 <th>Nombre</th>
@@ -151,21 +151,19 @@ export function CategoriesManager() {
                 <th className={classes.actionsHeader}>Acciones</th>
               </tr>
             </thead>
-            <tbody style={{ backgroundColor: '#ffffff' }}>
+            <tbody>
               {isLoading ? (
                 renderSkeletonRows()
               ) : categories.length === 0 ? (
                 <tr>
                   <td colSpan={3} className={classes.emptyCell}>
-                    <Center py="xl">
-                      <span>No hay categorías creadas</span>
-                    </Center>
+                    No hay categorías creadas
                   </td>
                 </tr>
               ) : (
                 categories.map((category) => (
-                  <tr key={category.id} className={classes.tableRow} style={{ backgroundColor: '#ffffff' }}>
-                    <td className={classes.tableCell} style={{ backgroundColor: '#ffffff' }}>
+                  <tr key={category.id} className={classes.tableRow}>
+                    <td className={classes.tableCell}>
                       <div className={classes.categoryCell}>
                         <div className={classes.iconContainer}>
                           <span className="material-icons-round">folder</span>

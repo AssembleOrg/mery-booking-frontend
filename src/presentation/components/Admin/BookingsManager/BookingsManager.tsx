@@ -984,10 +984,19 @@ export function BookingsManager() {
 
               {/* Días de la semana */}
               <Box className={classes.weekDaysHeader}>
-                {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day) => (
-                  <Box key={day} className={classes.weekDayHeader}>
+                {[
+                  { full: 'Lun', short: 'L' },
+                  { full: 'Mar', short: 'M' },
+                  { full: 'Mié', short: 'X' },
+                  { full: 'Jue', short: 'J' },
+                  { full: 'Vie', short: 'V' },
+                  { full: 'Sáb', short: 'S' },
+                  { full: 'Dom', short: 'D' },
+                ].map((day) => (
+                  <Box key={day.full} className={classes.weekDayHeader}>
                     <Text fw={500} size="sm">
-                      {day}
+                      <span className={classes.weekDayFull}>{day.full}</span>
+                      <span className={classes.weekDayShort}>{day.short}</span>
                     </Text>
                   </Box>
                 ))}
@@ -1020,43 +1029,51 @@ export function BookingsManager() {
                       >
                         {day.getDate()}
                       </Text>
-                      <Stack gap={2} mt={4}>
-                        {visibleBookings.map((booking) => (
-                          <Paper
-                            key={booking.id}
-                            p={4}
-                            className={classes.monthBookingCard}
-                            style={{
-                              backgroundColor: '#FBE8EA',
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleBookingClick(booking);
-                            }}
-                          >
-                            <Text 
-                              size="xs" 
-                              fw={500} 
-                              lineClamp={1}
-                              style={{ cursor: 'pointer' }}
-                              title={booking.client?.fullName || 'Cliente'}
+                      {/* Dot indicator — visible only on mobile */}
+                      {dayBookings.length > 0 && (
+                        <Box className={classes.dayDotIndicator} />
+                      )}
+
+                      {/* Full booking cards — visible only on desktop */}
+                      <Box className={classes.monthCardsDesktop}>
+                        <Stack gap={2} mt={4}>
+                          {visibleBookings.map((booking) => (
+                            <Paper
+                              key={booking.id}
+                              p={4}
+                              className={classes.monthBookingCard}
+                              style={{
+                                backgroundColor: '#FBE8EA',
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleBookingClick(booking);
+                              }}
                             >
-                              {truncateText(booking.client?.fullName || 'Sin nombre', 15)}
+                              <Text
+                                size="xs"
+                                fw={500}
+                                lineClamp={1}
+                                style={{ cursor: 'pointer' }}
+                                title={booking.client?.fullName || 'Cliente'}
+                              >
+                                {truncateText(booking.client?.fullName || 'Sin nombre', 15)}
+                              </Text>
+                              <Text size="xs" c="dimmed" lineClamp={1}>
+                                {getBookingStartTime(booking)}-{getBookingEndTime(booking)}
+                              </Text>
+                              <Text size="xs" c="dimmed" lineClamp={1}>
+                                {booking.service?.name || 'Sin servicio'}
+                              </Text>
+                            </Paper>
+                          ))}
+                          {moreCount > 0 && (
+                            <Text size="xs" c="dimmed" fw={500} mt={2}>
+                              +{moreCount} más
                             </Text>
-                            <Text size="xs" c="dimmed" lineClamp={1}>
-                              {getBookingStartTime(booking)}-{getBookingEndTime(booking)}
-                            </Text>
-                            <Text size="xs" c="dimmed" lineClamp={1}>
-                              {booking.service?.name || 'Sin servicio'}
-                            </Text>
-                          </Paper>
-                        ))}
-                        {moreCount > 0 && (
-                          <Text size="xs" c="dimmed" fw={500} mt={2}>
-                            +{moreCount} más
-                          </Text>
-                        )}
-                      </Stack>
+                          )}
+                        </Stack>
+                      </Box>
                     </Box>
                   );
                 })}

@@ -291,7 +291,7 @@ export function EmployeesManager() {
         </div>
 
         <div className={classes.tableWrapper}>
-          <table className={classes.table} style={{ backgroundColor: '#ffffff' }}>
+          <table className={classes.table}>
             <thead>
               <tr>
                 <th>Nombre</th>
@@ -300,21 +300,19 @@ export function EmployeesManager() {
                 <th className={classes.actionsHeader}>Acciones</th>
               </tr>
             </thead>
-            <tbody style={{ backgroundColor: '#ffffff' }}>
+            <tbody>
               {isLoading ? (
                 renderSkeletonRows()
               ) : employees.length === 0 ? (
                 <tr>
                   <td colSpan={4} className={classes.emptyCell}>
-                    <Center py="xl">
-                      <span>No hay empleados creados</span>
-                    </Center>
+                    No hay empleados creados
                   </td>
                 </tr>
               ) : (
                 employees.map((employee) => (
-                  <tr key={employee.id} className={classes.tableRow} style={{ backgroundColor: '#ffffff' }}>
-                    <td className={classes.tableCell} style={{ backgroundColor: '#ffffff' }}>
+                  <tr key={employee.id} className={classes.tableRow}>
+                    <td className={classes.tableCell}>
                       <div className={classes.employeeCell}>
                         <div className={classes.iconContainer}>
                           <span className="material-icons-round">person</span>
@@ -322,13 +320,13 @@ export function EmployeesManager() {
                         <div className={classes.employeeName}>{employee.fullName}</div>
                       </div>
                     </td>
-                    <td className={classes.tableCell} style={{ backgroundColor: '#ffffff' }}>
+                    <td className={classes.tableCell}>
                       {employee.email}
                     </td>
-                    <td className={classes.tableCell} style={{ backgroundColor: '#ffffff' }}>
+                    <td className={classes.tableCell}>
                       {employee.phone}
                     </td>
-                    <td className={`${classes.tableCell} ${classes.actionsCell}`} style={{ backgroundColor: '#ffffff' }}>
+                    <td className={`${classes.tableCell} ${classes.actionsCell}`}>
                       <div className={classes.actions}>
                         <button
                           className={classes.editButton}

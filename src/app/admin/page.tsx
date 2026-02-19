@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Container, Tabs, Box, Text, Button } from '@mantine/core';
+import { Tabs, Box, Text, Button } from '@mantine/core';
 import { useAuth } from '@/presentation/contexts';
 import { CategoriesManager } from '@/presentation/components/Admin/CategoriesManager';
 import { ServicesManager } from '@/presentation/components/Admin/ServicesManager';
@@ -44,31 +44,25 @@ export default function AdminPage() {
     <Box className={classes.pageWrapper}>
       {/* Header */}
       <Box className={classes.adminHeader}>
-        <Container size="xl">
-          <Box className={classes.headerContent}>
-            <Box>
-              <Text className={classes.welcomeText}>
-                Bienvenido, <Text component="span" fw={600}>{user?.fullName}</Text>
-              </Text>
-              <Text className={classes.roleText}>
-                Panel de Administración
-              </Text>
-            </Box>
-            <Button
-              variant="outline"
-              color="gray"
-              onClick={logout}
-              className={classes.logoutButton}
-            >
-              Cerrar Sesión
-            </Button>
-          </Box>
-        </Container>
+        <Box className={classes.headerContent}>
+          <Text className={classes.welcomeText}>
+            {user?.fullName}
+          </Text>
+          <Button
+            variant="subtle"
+            color="gray"
+            size="xs"
+            onClick={logout}
+            className={classes.logoutButton}
+          >
+            Cerrar sesión
+          </Button>
+        </Box>
       </Box>
 
       {/* Main Content */}
-      <Container size="xl" py="xl">
-        <Tabs value={activeTab} onChange={handleTabChange} className={classes.tabs}>
+      <Box className={classes.mainContent}>
+        <Tabs value={activeTab} onChange={handleTabChange} className={classes.tabsWrapper}>
           <Tabs.List className={classes.tabsList}>
             <Tabs.Tab value="categories" className={classes.tab}>
               Categorías
@@ -77,7 +71,7 @@ export default function AdminPage() {
               Servicios
             </Tabs.Tab>
             <Tabs.Tab value="timeslots" className={classes.tab}>
-              Franja Horaria
+              Franjas
             </Tabs.Tab>
             <Tabs.Tab value="employees" className={classes.tab}>
               Empleados
@@ -88,29 +82,28 @@ export default function AdminPage() {
           </Tabs.List>
 
           <Box className={classes.tabContent}>
-            <Tabs.Panel value="categories" pt="xl">
+            <Tabs.Panel value="categories">
               {activeTab === 'categories' && <CategoriesManager />}
             </Tabs.Panel>
 
-            <Tabs.Panel value="services" pt="xl">
+            <Tabs.Panel value="services">
               {activeTab === 'services' && <ServicesManager />}
             </Tabs.Panel>
 
-            <Tabs.Panel value="timeslots" pt="xl">
+            <Tabs.Panel value="timeslots">
               {activeTab === 'timeslots' && <TimeSlotsManager />}
             </Tabs.Panel>
 
-            <Tabs.Panel value="employees" pt="xl">
+            <Tabs.Panel value="employees">
               {activeTab === 'employees' && <EmployeesManager />}
             </Tabs.Panel>
 
-            <Tabs.Panel value="bookings" pt="xl">
+            <Tabs.Panel value="bookings">
               {activeTab === 'bookings' && <BookingsManager />}
             </Tabs.Panel>
           </Box>
         </Tabs>
-      </Container>
+      </Box>
     </Box>
   );
 }
-

@@ -918,7 +918,7 @@ export function TimeSlotsManager() {
                               <Stack gap="xs" mt="xs" p="sm" className={classes.timeSlotsList}>
                                 {slots.map((timeSlot) => (
                                   <Box key={timeSlot.id} className={classes.timeSlotCard}>
-                                    <Group justify="space-between" align="flex-start" wrap="nowrap">
+                                    <Box className={classes.timeSlotInner}>
                                       <Box style={{ flex: 1 }}>
                                         <Group gap="md" mb="xs">
                                           <Text fw={500} size="md">
@@ -942,7 +942,7 @@ export function TimeSlotsManager() {
                                           </Text>
                                         )}
                                       </Box>
-                                      <Group gap="xs" ml="md">
+                                      <Box className={classes.timeSlotActions}>
                                         <Button
                                           variant="light"
                                           color="pink"
@@ -976,8 +976,8 @@ export function TimeSlotsManager() {
                                         >
                                           Eliminar
                                         </Button>
-                                      </Group>
-                                    </Group>
+                                      </Box>
+                                    </Box>
                                   </Box>
                                 ))}
                               </Stack>
@@ -1048,7 +1048,7 @@ export function TimeSlotsManager() {
                               <Stack gap="xs" mt="xs" p="sm" className={classes.timeSlotsList}>
                                 {slots.map((blocked) => (
                                   <Box key={blocked.id} className={classes.timeSlotCard}>
-                                    <Group justify="space-between" align="flex-start" wrap="nowrap">
+                                    <Box className={classes.timeSlotInner}>
                                       <Box style={{ flex: 1 }}>
                                         <Group gap="md" mb="xs">
                                           <Text fw={500} size="md">
@@ -1064,7 +1064,7 @@ export function TimeSlotsManager() {
                                           </Text>
                                         )}
                                       </Box>
-                                      <Group gap="xs" ml="md">
+                                      <Box className={classes.timeSlotActions}>
                                         <Button
                                           variant="light"
                                           color="pink"
@@ -1089,8 +1089,8 @@ export function TimeSlotsManager() {
                                         >
                                           Eliminar
                                         </Button>
-                                      </Group>
-                                    </Group>
+                                      </Box>
+                                    </Box>
                                   </Box>
                                 ))}
                               </Stack>
