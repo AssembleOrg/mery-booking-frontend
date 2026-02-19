@@ -504,7 +504,7 @@ const nanoScalpOptions: ServiceOption[] = [
     description:
       'Primera sesión de Nano Scalp con Mery García. Recordá que los resultados óptimos se logran con dos sesiones.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 520.-',
+    priceValue: 'U$S 650.-',
     priceEffective: 'U$S 450.-',
     depositLabel: 'Valor de la seña:',
     depositValue: 'AR$ 150.000.-',
@@ -518,7 +518,7 @@ const nanoScalpOptions: ServiceOption[] = [
     description:
       'Completá tu servicio de entre 30 y 60 días después de tu primera sesión.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 520.-',
+    priceValue: 'U$S 650.-',
     priceEffective: 'U$S 450.-',
     depositLabel: 'Valor de la seña:',
     depositValue: 'AR$ 150.000.-',
@@ -532,7 +532,7 @@ const nanoScalpOptions: ServiceOption[] = [
     description:
       'Reactiva tu servicio de Nano Scalp. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 520.-',
+    priceValue: 'U$S 650.-',
     priceEffective: 'U$S 450.-',
     depositLabel: 'Valor de la seña:',
     depositValue: 'AR$ 150.000.-',
