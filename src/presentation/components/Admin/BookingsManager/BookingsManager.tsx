@@ -22,6 +22,7 @@ import {
   Textarea,
   Checkbox,
   Loader,
+  Switch,
 } from '@mantine/core';
 import { DatePickerInput, DateValue, DatesProvider } from '@mantine/dates';
 import { useForm, Controller } from 'react-hook-form';
@@ -74,7 +75,8 @@ export function BookingsManager() {
   const [isLoadingClients, setIsLoadingClients] = useState(false);
   const [clientSearchQuery, setClientSearchQuery] = useState('');
   const [rescheduleModalOpen, setRescheduleModalOpen] = useState(false);
-  
+  const [isUpdatingPaid, setIsUpdatingPaid] = useState(false);
+
   // Hooks para crear reserva y cliente
   const createBookingMutation = useCreateBooking();
   const createClientMutation = useCreateClient();
@@ -364,6 +366,32 @@ export function BookingsManager() {
   
   const handleRescheduleClick = () => {
     setRescheduleModalOpen(true);
+  };
+
+  const handleTogglePaid = async (newPaidValue: boolean) => {
+    if (!selectedBooking) return;
+    try {
+      setIsUpdatingPaid(true);
+      const updated = await BookingService.update(selectedBooking.id, { paid: newPaidValue });
+      setSelectedBooking(updated);
+      // Refrescar la lista
+      await fetchBookings();
+      // Toast de éxito
+      notifications.show({
+        title: newPaidValue ? 'Marcada como pagada' : 'Marcada como no pagada',
+        message: 'El estado de pago se actualizó correctamente',
+        color: 'green',
+      });
+    } catch (error) {
+      console.error('Error updating payment status:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Error al actualizar el estado de pago',
+        color: 'red',
+      });
+    } finally {
+      setIsUpdatingPaid(false);
+    }
   };
 
   useEffect(() => {
@@ -1376,11 +1404,30 @@ export function BookingsManager() {
                 <Badge color={getStatusColor(selectedBooking.status)} variant="light">
                   {getStatusLabel(selectedBooking.status)}
                 </Badge>
-                <Badge color={selectedBooking.paid ? 'pink' : 'gray'} variant="light">
-                  {selectedBooking.paid ? 'Pagado' : 'No pagado'}
-                </Badge>
               </Group>
             </Group>
+
+            <Group gap="xs" align="center">
+              <Switch
+                checked={selectedBooking.paid}
+                onChange={(e) => handleTogglePaid(e.currentTarget.checked)}
+                disabled={
+                  isUpdatingPaid ||
+                  selectedBooking.status === 'CANCELLED' ||
+                  dayjs(getBookingDate(selectedBooking)).isBefore(dayjs(), 'day')
+                }
+                color="pink"
+                label={selectedBooking.paid ? 'Pagado' : 'No pagado'}
+              />
+              {isUpdatingPaid && <Loader size="xs" />}
+            </Group>
+
+            {dayjs(getBookingDate(selectedBooking)).isBefore(dayjs(), 'day') &&
+              selectedBooking.status !== 'CANCELLED' && (
+              <Text size="xs" c="dimmed">
+                No se puede editar el pago de reservas pasadas
+              </Text>
+            )}
 
             {selectedBooking.status !== 'CANCELLED' && (
               <Group gap="sm" grow>

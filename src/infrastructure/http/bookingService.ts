@@ -131,6 +131,11 @@ export interface RescheduleBookingDto {
   serviceId?: string; // Opcional para admin
 }
 
+export interface UpdateBookingDto {
+  paid?: boolean;
+  notes?: string;
+}
+
 
 export class BookingService {
   private static readonly BASE_PATH = '/bookings';
@@ -240,6 +245,15 @@ export class BookingService {
   static async reschedulePublic(bookingCode: string, data: RescheduleBookingDto): Promise<BookingResponse> {
     const response = await apiClient.patch<BackendResponse<BookingResponse>>(
       `${this.BASE_PATH}/public/${bookingCode}/reschedule`,
+      data
+    );
+    return response.data.data;
+  }
+
+  // Actualizar reserva (admin) - puede actualizar estado de pago y notas
+  static async update(id: string, data: UpdateBookingDto): Promise<BookingResponse> {
+    const response = await apiClient.patch<BackendResponse<BookingResponse>>(
+      `${this.BASE_PATH}/${id}`,
       data
     );
     return response.data.data;
