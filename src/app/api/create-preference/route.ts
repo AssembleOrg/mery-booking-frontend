@@ -44,7 +44,6 @@ export async function POST(request: NextRequest) {
             email: clientData.email,
             phone: clientData.phone,
             dni: clientData.dni,
-            notes: clientData.notes,
           },
           expirationMinutes: 15, // 15 minutos para completar el pago
           notes: clientData.notes,

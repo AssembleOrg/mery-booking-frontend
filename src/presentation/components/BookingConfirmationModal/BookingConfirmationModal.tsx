@@ -129,7 +129,7 @@ export function BookingConfirmationModal({
         body: classes.modalBody,
       }}
       withCloseButton={false}
-      trapFocus={true}
+      trapFocus={false}
       closeOnEscape={false}
       closeOnClickOutside={false}
     >

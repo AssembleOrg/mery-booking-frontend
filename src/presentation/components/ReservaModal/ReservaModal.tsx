@@ -52,6 +52,7 @@ export function ReservaModal({
     dni: string;
     notes?: string;
   } | null>(null);
+  const [confirmationModalOpened, setConfirmationModalOpened] = useState(false);
 
   const handleClose = () => {
     // Reset estado al cerrar
@@ -61,6 +62,7 @@ export function ReservaModal({
     setSelectedDate(null);
     setSelectedTime(null);
     setClientData(null);
+    setConfirmationModalOpened(false);
     onClose();
   };
 
@@ -158,13 +160,14 @@ export function ReservaModal({
                 services={services}
                 staffConsultasId={staffConsultasId}
                 meryGarciaId={meryGarciaId}
+                confirmationModalOpened={confirmationModalOpened}
+                onConfirmationModalClose={() => setConfirmationModalOpened(false)}
                 onClientDataCollected={(data) => {
                   console.log('[ReservaModal] clientData actualizado:', data);
                   setClientData(data);
                   console.log('[ReservaModal] Avanzando a Step 5...');
                   handleStepComplete();
                 }}
-                onBack={handleStepBack}
               />
             )}
 
@@ -196,6 +199,21 @@ export function ReservaModal({
             )}
           </AnimatePresence>
         </div>
+
+        {currentStep === 4 && (
+          <div className={classes.buttonGroup}>
+            <button type="button" onClick={handleStepBack} className={classes.buttonSecondary}>
+              ATRÁS
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmationModalOpened(true)}
+              className={classes.buttonPrimary}
+            >
+              CONFIRMAR RESERVA
+            </button>
+          </div>
+        )}
       </div>
     </Modal>
   );

@@ -383,6 +383,55 @@
 }
 
 /* ====================================
+   SUMMARY CARD (STEP 4)
+   ==================================== */
+
+.summaryCard {
+  background: #FAFAFA;
+  border: 1px solid #F0E4E6;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid #F5ECEE;
+}
+
+.summaryRow:last-child {
+  border-bottom: none;
+}
+
+.summaryLabel {
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 14px;
+  color: var(--mg-gray);
+  flex-shrink: 0;
+}
+
+.summaryValue {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 14px;
+  color: var(--mg-dark);
+  text-align: right;
+}
+
+.summaryPrice {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 16px;
+  color: var(--mg-pink);
+  font-weight: 600;
+  text-align: right;
+}
+
+/* ====================================
    WHATSAPP BUTTON (Scar Camouflage)
    ==================================== */
 

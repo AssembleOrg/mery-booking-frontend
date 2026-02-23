@@ -47,6 +47,7 @@ export function EstilismoReservaModal({
     dni: string;
     notes?: string;
   } | null>(null);
+  const [confirmationModalOpened, setConfirmationModalOpened] = useState(false);
 
   // Construir ServiceOption a partir de los datos recibidos
   const serviceOption: ServiceOption = useMemo(() => ({
@@ -67,6 +68,7 @@ export function EstilismoReservaModal({
     setCurrentStep(1);
     setAcceptedTerms(false);
     setClientData(null);
+    setConfirmationModalOpened(false);
     onClose();
   };
 
@@ -128,11 +130,12 @@ export function EstilismoReservaModal({
                 employees={employees}
                 services={services}
                 selectedEmployeeId={employee.id}
+                confirmationModalOpened={confirmationModalOpened}
+                onConfirmationModalClose={() => setConfirmationModalOpened(false)}
                 onClientDataCollected={(data) => {
                   setClientData(data);
                   handleStepComplete();
                 }}
-                onBack={handleStepBack}
               />
             )}
 
@@ -153,6 +156,21 @@ export function EstilismoReservaModal({
             )}
           </AnimatePresence>
         </div>
+
+        {currentStep === 2 && (
+          <div className={classes.buttonGroup}>
+            <button type="button" onClick={handleStepBack} className={classes.buttonSecondary}>
+              ATRÁS
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmationModalOpened(true)}
+              className={classes.buttonPrimary}
+            >
+              CONFIRMAR RESERVA
+            </button>
+          </div>
+        )}
       </div>
     </Modal>
   );

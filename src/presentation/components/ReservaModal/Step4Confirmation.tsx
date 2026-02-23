@@ -1,13 +1,17 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { useMemo } from 'react';
+import { Box, Text } from '@mantine/core';
+import dayjs from 'dayjs';
+import 'dayjs/locale/es';
 import { BookingConfirmationModal } from '@/presentation/components';
 import { Client } from '@/domain/entities';
 import classes from './ReservaModal.module.css';
 import type { ServiceOption } from '@/infrastructure/types/services';
 import type { Employee } from '@/infrastructure/http/employeeService';
 import type { ServiceEntity } from '@/infrastructure/http/serviceService';
+
+dayjs.locale('es');
 
 const MOCK_LOCATION = 'Mery García Office';
 
@@ -21,6 +25,8 @@ interface Step4ConfirmationProps {
   staffConsultasId?: string;
   meryGarciaId?: string;
   selectedEmployeeId?: string;
+  confirmationModalOpened: boolean;
+  onConfirmationModalClose: () => void;
   onClientDataCollected: (data: {
     name: string;
     surname: string;
@@ -29,7 +35,6 @@ interface Step4ConfirmationProps {
     dni: string;
     notes?: string;
   }) => void;
-  onBack: () => void;
 }
 
 export function Step4Confirmation({
@@ -42,11 +47,10 @@ export function Step4Confirmation({
   staffConsultasId,
   meryGarciaId,
   selectedEmployeeId,
+  confirmationModalOpened,
+  onConfirmationModalClose,
   onClientDataCollected,
-  onBack,
 }: Step4ConfirmationProps) {
-  const [showConfirmation, setShowConfirmation] = useState(true);
-
   // Priorizar selectedEmployeeId de la página, luego selectedOption.employeeId, luego fallbacks
   const employeeId = selectedEmployeeId ||
                      selectedOption.employeeId ||
@@ -99,7 +103,6 @@ export function Step4Confirmation({
     }
 
     console.log('[ReservaModal Step4] Llamando a onClientDataCollected...');
-    // Recolectar datos y pasar al Step 5
     onClientDataCollected({
       name: clientData.name,
       surname: clientData.surname,
@@ -111,25 +114,55 @@ export function Step4Confirmation({
     console.log('[ReservaModal Step4] onClientDataCollected ejecutado exitosamente');
   };
 
-  const handleConfirmationClose = () => {
-    setShowConfirmation(false);
-    onBack(); // Volver al paso anterior si cancela
-  };
+  const formattedDate = dayjs(selectedDate).format("dddd D [de] MMMM, YYYY");
 
   if (!serviceForModal) {
     return null;
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.2 }}
-    >
+    <Box className={classes.stepContainer}>
+      <Text className={classes.stepTitle}>Confirma tu reserva</Text>
+
+      <div className={classes.summaryCard}>
+        <div className={classes.summaryRow}>
+          <Text className={classes.summaryLabel}>Servicio:</Text>
+          <Text className={classes.summaryValue}>{serviceName}</Text>
+        </div>
+
+        <div className={classes.summaryRow}>
+          <Text className={classes.summaryLabel}>Opción:</Text>
+          <Text className={classes.summaryValue}>{selectedOption.label}</Text>
+        </div>
+
+        {employee && (
+          <div className={classes.summaryRow}>
+            <Text className={classes.summaryLabel}>Profesional:</Text>
+            <Text className={classes.summaryValue}>{employee.fullName}</Text>
+          </div>
+        )}
+
+        <div className={classes.summaryRow}>
+          <Text className={classes.summaryLabel}>Fecha:</Text>
+          <Text className={classes.summaryValue}>{formattedDate}</Text>
+        </div>
+
+        <div className={classes.summaryRow}>
+          <Text className={classes.summaryLabel}>Hora:</Text>
+          <Text className={classes.summaryValue}>{selectedTime}</Text>
+        </div>
+
+        <div className={classes.summaryRow}>
+          <Text className={classes.summaryLabel}>Seña (a pagar ahora):</Text>
+          <Text className={classes.summaryPrice}>
+            AR$ {service ? Number(service.price).toLocaleString('es-AR') : ''}
+          </Text>
+        </div>
+      </div>
+
       <BookingConfirmationModal
-        opened={showConfirmation}
-        onClose={handleConfirmationClose}
+        opened={confirmationModalOpened}
+        onClose={onConfirmationModalClose}
         service={serviceForModal}
         professional={professionalForModal || null}
         date={selectedDate}
@@ -137,6 +170,6 @@ export function Step4Confirmation({
         location={MOCK_LOCATION}
         onConfirm={handleCollectData}
       />
-    </motion.div>
+    </Box>
   );
 }
