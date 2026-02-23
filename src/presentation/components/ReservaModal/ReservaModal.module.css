@@ -383,6 +383,44 @@
 }
 
 /* ====================================
+   WHATSAPP BUTTON (Scar Camouflage)
+   ==================================== */
+
+.whatsappButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--mg-pink);
+  color: #fff;
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  text-transform: none;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(235, 162, 168, 0.4);
+  transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease;
+}
+
+.whatsappButton:hover {
+  background: var(--mg-pink-hover);
+  box-shadow: 0 4px 14px rgba(235, 162, 168, 0.5);
+  transform: translateY(-1px);
+  color: #fff;
+}
+
+.whatsappButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(235, 162, 168, 0.3);
+}
+
+/* ====================================
    PROFESSIONAL SELECTION CARD
    ==================================== */
 

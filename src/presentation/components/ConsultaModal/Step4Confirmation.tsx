@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { Box, Text, Button } from '@mantine/core';
+import { Box, Text } from '@mantine/core';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import { BookingConfirmationModal } from '@/presentation/components';
@@ -17,7 +16,8 @@ interface Step4ConfirmationProps {
   staffConsultasId: string;
   selectedDate: Date;
   selectedTime: string;
-  onBack: () => void;
+  confirmationModalOpened: boolean;
+  onConfirmationModalClose: () => void;
   onClientDataCollected: (data: {
     name: string;
     surname: string;
@@ -34,10 +34,10 @@ export default function Step4Confirmation({
   staffConsultasId,
   selectedDate,
   selectedTime,
-  onBack,
+  confirmationModalOpened,
+  onConfirmationModalClose,
   onClientDataCollected,
 }: Step4ConfirmationProps) {
-  const [confirmationModalOpened, setConfirmationModalOpened] = useState(false);
 
   const formattedDate = dayjs(selectedDate).format("dddd D [de] MMMM, YYYY");
 
@@ -107,21 +107,9 @@ export default function Step4Confirmation({
         </div>
       </div>
 
-      <div className={classes.buttonGroup}>
-        <button onClick={onBack} className={classes.buttonSecondary}>
-          ATRÁS
-        </button>
-        <button
-          onClick={() => setConfirmationModalOpened(true)}
-          className={classes.buttonPrimary}
-        >
-          CONFIRMAR CONSULTA
-        </button>
-      </div>
-
       <BookingConfirmationModal
         opened={confirmationModalOpened}
-        onClose={() => setConfirmationModalOpened(false)}
+        onClose={onConfirmationModalClose}
         service={{
           id: consultaOption.serviceId || '',
           name: serviceName,

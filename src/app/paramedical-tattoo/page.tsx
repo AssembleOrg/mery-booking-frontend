@@ -596,6 +596,7 @@ const areolaOptions: ServiceOption[] = [
   },
 ];
 
+/*
 const nippleOptions: ServiceOption[] = [
   {
     id: 'nipple-consulta',
@@ -650,6 +651,23 @@ const nippleOptions: ServiceOption[] = [
     depositValue: 'AR$ 150.000.-',
     serviceName: 'Nipple Reconstruction Mantenimiento',
     serviceDuration: 120,
+  },
+];
+*/
+
+const scarCamouflageOptions: ServiceOption[] = [
+  {
+    id: 'scar-consulta',
+    label: 'Scar Camouflage Consulta previa Obligatoria',
+    contentType: 'consulta',
+    description:
+      'Disimula la apariencia de las cicatrices, haciendo que se mezclen con el tono de la piel circundante sin perder realismo y naturalidad. Esta técnica implica la implantación de pigmentos en la zona de la cicatriz para igualar el color y minimizar su visibilidad. En caso de patillas por intervenciones, ideal para recuperar los contornos post intervención quirúrgica.Para evaluar si podemos realizar tu servicio, debés enviar una foto de la zona antes de la consulta al WhatsApp de recepción: 54 9 11 6159-259 ',
+    priceLabel: 'Valor de la seña:',
+    priceValue: 'AR$ 50.000.-',
+    footerNote:
+      '(*) El precio final del servicio varía entre U$S 200 y U$S 400 según la zona a tratar. La seña se abona al reservar la consulta.',
+    serviceName: 'Scar Camouflage Consulta',
+    serviceDuration: 60,
   },
 ];
 
@@ -744,7 +762,10 @@ export default function ParamedicalTattooPage() {
         const consultaService = allServices.find((s) => {
           const nameLower = s.name.toLowerCase();
           const optionNameLower = option.serviceName!.toLowerCase();
-          return s.showOnSite && nameLower.includes(optionNameLower);
+          return (
+            s.showOnSite &&
+            (nameLower.includes(optionNameLower) || optionNameLower.includes(nameLower))
+          );
         });
 
         return {
@@ -765,7 +786,10 @@ export default function ParamedicalTattooPage() {
           if (!option.serviceName) return false;
           const nameLower = s.name.toLowerCase();
           const optionNameLower = option.serviceName.toLowerCase();
-          return s.showOnSite && nameLower.includes(optionNameLower);
+          return (
+            s.showOnSite &&
+            (nameLower.includes(optionNameLower) || optionNameLower.includes(nameLower))
+          );
         });
 
         return {
@@ -836,6 +860,20 @@ export default function ParamedicalTattooPage() {
     );
   }, [services, staffConsultasId, meryGarciaId]);
 
+  const scarCamouflageOptionsWithIds = useMemo(() => {
+    if (services.length === 0 || !staffConsultasId) {
+      return scarCamouflageOptions;
+    }
+    return enrichServiceOptions(
+      scarCamouflageOptions,
+      'scar-camouflage',
+      services,
+      staffConsultasId,
+      meryGarciaId
+    );
+  }, [services, staffConsultasId, meryGarciaId]);
+
+  /*
   const nippleOptionsWithIds = useMemo(() => {
     if (services.length === 0 || !staffConsultasId || !meryGarciaId) {
       return nippleOptions;
@@ -848,6 +886,7 @@ export default function ParamedicalTattooPage() {
       meryGarciaId
     );
   }, [services, staffConsultasId, meryGarciaId]);
+  */
 
   return (
     <>
@@ -870,10 +909,16 @@ export default function ParamedicalTattooPage() {
           </Box>
           <Box
             className={classes.navButton}
+            onClick={() => scrollToSection('scar-camouflage')}
+          >
+            <span>SCAR</span>
+          </Box>
+          {/* <Box
+            className={classes.navButton}
             onClick={() => scrollToSection('nipple-reconstruction')}
           >
             <span>NIPPLE</span>
-          </Box>
+          </Box> */}
         </Box>
 
         {/* Content Sections */}
@@ -887,7 +932,7 @@ export default function ParamedicalTattooPage() {
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.sectionTitle}>NANO SCALP</Text>
                       <Text className={classes.serviceTagline}>
-                        Tatuaje cosmético de cuero cabelludo. Efecto de mayor
+                        Cosmetic Tattoo de cuero cabelludo. Efecto de mayor
                         densidad capilar.
                       </Text>
                     </Box>
@@ -1020,8 +1065,67 @@ export default function ParamedicalTattooPage() {
             </Box>
           </FadeInSection>
 
-          {/* Nipple Reconstruction Section */}
+          {/* Scar Camouflage Section */}
           <FadeInSection direction="up" delay={0.2}>
+            <Box id="scar-camouflage" className={classes.section}>
+              <Container size="lg" py="md">
+                <Box className={classes.sectionContent}>
+                  <Box className={classes.serviceHeader}>
+                    <Box className={classes.serviceTitleWrapper}>
+                      <Text className={classes.sectionTitle}>
+                        SCAR CAMOUFLAGE
+                      </Text>
+                      <Text className={classes.serviceTagline}>
+                        Cosmetic Tattoo para disimular cicatrices. Precio
+                        variable según caso: U$S 200 - U$S 400.
+                      </Text>
+                    </Box>
+                  </Box>
+                  <Box className={classes.buttonsWrapper}>
+                    <a
+                      href="https://merygarcia.com.ar/servicios/tatuaje-paramedico#scar-camouflage"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={classes.ctaButton}
+                    >
+                      MÁS INFO AQUÍ
+                    </a>
+                    <button
+                      className={classes.ctaButtonSecondary}
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'SCAR CAMOUFLAGE',
+                          serviceKey: 'scar-camouflage',
+                          consultaOptions: scarCamouflageOptionsWithIds.filter(
+                            (opt) => opt.contentType === 'consulta'
+                          ),
+                        });
+                        setConsultaModalOpened(true);
+                      }}
+                    >
+                      CONSULTA
+                    </button>
+                  </Box>
+
+                  <Box className={classes.optionsSection}>
+                    <Text className={classes.optionsTitle}>
+                      Seleccioná la opción deseada para solicitar tu cita:
+                    </Text>
+                    <ServiceAccordion
+                      options={scarCamouflageOptions}
+                      staffConsultasId={staffConsultasId}
+                      meryGarciaId={meryGarciaId}
+                      services={services as ServiceEntity[]}
+                      employees={employees as Employee[]}
+                    />
+                  </Box>
+                </Box>
+              </Container>
+            </Box>
+          </FadeInSection>
+
+          {/* Nipple Reconstruction Section - COMMENTED OUT */}
+          {/* <FadeInSection direction="up" delay={0.2}>
             <Box id="nipple-reconstruction" className={classes.section}>
               <Container size="lg" py="md">
                 <Box className={classes.sectionContent}>
@@ -1031,7 +1135,7 @@ export default function ParamedicalTattooPage() {
                         NIPPLE RECONSTRUCTION
                       </Text>
                       <Text className={classes.serviceTagline}>
-                        Tatuaje cosmético 3D para reconstrucción y corrección de
+                        Cosmetic Tattoo 3D para reconstrucción y corrección de
                         asimetrías.
                       </Text>
                     </Box>
@@ -1090,7 +1194,7 @@ export default function ParamedicalTattooPage() {
                 </Box>
               </Container>
             </Box>
-          </FadeInSection>
+          </FadeInSection> */}
         </Box>
       </Box>
 

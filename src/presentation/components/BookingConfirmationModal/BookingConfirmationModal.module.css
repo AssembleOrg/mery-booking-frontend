@@ -130,3 +130,14 @@
   }
 }
 
+@media (max-width: 480px) {
+  .cancelButton,
+  .confirmButton {
+    font-size: 0.78rem !important;
+    padding: 8px 10px !important;
+    min-height: 36px !important;
+    height: 36px !important;
+    letter-spacing: 0.03em;
+  }
+}
+

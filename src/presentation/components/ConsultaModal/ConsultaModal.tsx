@@ -51,6 +51,9 @@ export default function ConsultaModal({
     dni: string;
     notes?: string;
   } | null>(null);
+  const [step3ShowCalendar, setStep3ShowCalendar] = useState(false);
+  const [step3CanContinue, setStep3CanContinue] = useState(false);
+  const [confirmationModalOpened, setConfirmationModalOpened] = useState(false);
 
   const handleClose = () => {
     setCurrentStep(1);
@@ -59,6 +62,9 @@ export default function ConsultaModal({
     setSelectedDate(null);
     setSelectedTime(null);
     setClientData(null);
+    setStep3ShowCalendar(false);
+    setStep3CanContinue(false);
+    setConfirmationModalOpened(false);
     onClose();
   };
 
@@ -71,7 +77,27 @@ export default function ConsultaModal({
 
   const handleStepBack = () => {
     if (currentStep > 1) {
+      if (currentStep === 3) {
+        setStep3ShowCalendar(false);
+        setStep3CanContinue(false);
+      }
       setCurrentStep((prev) => prev - 1);
+    }
+  };
+
+  const handleStep3Back = () => {
+    if (step3ShowCalendar) {
+      setStep3ShowCalendar(false);
+    } else {
+      handleStepBack();
+    }
+  };
+
+  const handleStep3Continue = () => {
+    if (!step3ShowCalendar) {
+      setStep3ShowCalendar(true);
+    } else {
+      handleStepComplete();
     }
   };
 
@@ -86,13 +112,23 @@ export default function ConsultaModal({
       fullScreen={isMobile}
       closeOnClickOutside={false}
       closeOnEscape={false}
+      withCloseButton={false}
       classNames={{
         content: classes.modalContent,
+        header: classes.modalHeader,
         body: classes.modalBody,
       }}
     >
       <div className={classes.container}>
         <div className={classes.header}>
+          <button
+            type="button"
+            onClick={handleClose}
+            className={classes.closeButton}
+            aria-label="Cerrar"
+          >
+            ✕
+          </button>
           <h2 className={classes.title}>Reserva tu Consulta</h2>
           <p className={classes.subtitle}>{serviceName}</p>
         </div>
@@ -114,6 +150,7 @@ export default function ConsultaModal({
                   onAcceptChange={setAcceptedTerms}
                   onCancel={handleClose}
                   onContinue={handleStepComplete}
+                  serviceKey={serviceKey}
                 />
               </motion.div>
             )}
@@ -130,8 +167,6 @@ export default function ConsultaModal({
                   consultaOptions={consultaOptions}
                   selectedOption={selectedOption}
                   onSelectOption={setSelectedOption}
-                  onBack={handleStepBack}
-                  onContinue={handleStepComplete}
                 />
               </motion.div>
             )}
@@ -156,8 +191,8 @@ export default function ConsultaModal({
                     setSelectedDate(date);
                     setSelectedTime(time);
                   }}
-                  onContinue={handleStepComplete}
-                  onBack={handleStepBack}
+                  showCalendar={step3ShowCalendar}
+                  onCanContinueChange={setStep3CanContinue}
                 />
               </motion.div>
             )}
@@ -176,7 +211,8 @@ export default function ConsultaModal({
                   staffConsultasId={staffConsultasId || ''}
                   selectedDate={selectedDate}
                   selectedTime={selectedTime}
-                  onBack={handleStepBack}
+                  confirmationModalOpened={confirmationModalOpened}
+                  onConfirmationModalClose={() => setConfirmationModalOpened(false)}
                   onClientDataCollected={(data) => {
                     console.log('[ConsultaModal] clientData actualizado:', data);
                     setClientData(data);
@@ -221,6 +257,51 @@ export default function ConsultaModal({
             )}
           </AnimatePresence>
         </div>
+
+        {currentStep === 2 && (
+          <div className={classes.buttonGroup}>
+            <button type="button" onClick={handleStepBack} className={classes.buttonSecondary}>
+              ATRÁS
+            </button>
+            <button
+              type="button"
+              onClick={handleStepComplete}
+              disabled={!selectedOption}
+              className={classes.buttonPrimary}
+            >
+              CONTINUAR
+            </button>
+          </div>
+        )}
+        {currentStep === 3 && (
+          <div className={classes.buttonGroup}>
+            <button type="button" onClick={handleStep3Back} className={classes.buttonSecondary}>
+              ATRÁS
+            </button>
+            <button
+              type="button"
+              onClick={handleStep3Continue}
+              disabled={!step3CanContinue}
+              className={classes.buttonPrimary}
+            >
+              CONTINUAR
+            </button>
+          </div>
+        )}
+        {currentStep === 4 && (
+          <div className={classes.buttonGroup}>
+            <button type="button" onClick={handleStepBack} className={classes.buttonSecondary}>
+              ATRÁS
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmationModalOpened(true)}
+              className={classes.buttonPrimary}
+            >
+              CONFIRMAR CONSULTA
+            </button>
+          </div>
+        )}
       </div>
     </Modal>
   );

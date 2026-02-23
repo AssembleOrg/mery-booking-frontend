@@ -8,16 +8,12 @@ interface Step2ConsultaTypeProps {
   consultaOptions: ServiceOption[];
   selectedOption: ServiceOption | null;
   onSelectOption: (option: ServiceOption) => void;
-  onBack: () => void;
-  onContinue: () => void;
 }
 
 export default function Step2ConsultaType({
   consultaOptions,
   selectedOption,
   onSelectOption,
-  onBack,
-  onContinue,
 }: Step2ConsultaTypeProps) {
   return (
     <Box className={classes.stepContainer}>
@@ -65,18 +61,6 @@ export default function Step2ConsultaType({
         ))}
       </div>
 
-      <div className={classes.buttonGroup}>
-        <button onClick={onBack} className={classes.buttonSecondary}>
-          ATRÁS
-        </button>
-        <button
-          onClick={onContinue}
-          disabled={!selectedOption}
-          className={classes.buttonPrimary}
-        >
-          CONTINUAR
-        </button>
-      </div>
     </Box>
   );
 }
