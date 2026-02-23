@@ -256,7 +256,7 @@ export function DateTimeSelector({
               day: classes.day,
             }}
             style={{ maxWidth: '100%' }}
-            size="md"
+            size="sm"
           />
         </Box>
 

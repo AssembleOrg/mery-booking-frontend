@@ -20,7 +20,7 @@
   justify-content: center;
   padding: 1rem 0;
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* === COLORES DE BRANDING OFICIAL === */
@@ -219,6 +219,12 @@
 @media (max-width: 480px) {
   .container {
     padding: 1rem 0.75rem;
+  }
+
+  .calendarWrapper {
+    padding: 0.5rem 0;
+    overflow: visible;
+    width: 100%;
   }
 
   .timeSlot {
