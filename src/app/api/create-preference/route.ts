@@ -90,8 +90,14 @@ export async function POST(request: NextRequest) {
 
     // 🔥 PASO 2: Crear preferencia en Mercado Pago con temp_reservation_id
     console.log('[create-preference] Creando preferencia en Mercado Pago...');
+    const now = new Date();
+    const expirationDate = new Date(now.getTime() + 14 * 60 * 1000); // 14 minutos
+
     const preference = await new Preference(client).create({
       body: {
+        expires: true,
+        expiration_date_from: now.toISOString(),
+        expiration_date_to: expirationDate.toISOString(),
         items: [
           {
             id: String(bookingData.serviceId),
