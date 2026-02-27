@@ -22,6 +22,7 @@ import {
 } from '@/presentation/hooks';
 import {
   CategoryService,
+  EmployeeService,
   type ServiceEntity,
   type Employee,
 } from '@/infrastructure/http';
@@ -45,6 +46,9 @@ interface ServiceOption {
   footerNote?: string;
   serviceName?: string; // Nombre del servicio en la BD
   serviceDuration?: number;
+  serviceId?: string;
+  employeeId?: string;
+  servicePrice?: number;
 }
 
 // Componente para contenido de Consulta
@@ -682,6 +686,8 @@ export default function ParamedicalTattooPage() {
     string | undefined
   >();
   const [meryGarciaId, setMeryGarciaId] = useState<string | undefined>();
+  // Mapa de serviceId → Employee[] (todos los empleados asignados a ese servicio, via API)
+  const [serviceEmployees, setServiceEmployees] = useState<Map<string, Employee[]>>(new Map());
 
   // Fetch category ID (solo si está autenticado)
   useEffect(() => {
@@ -717,21 +723,46 @@ export default function ParamedicalTattooPage() {
   // Find Staff Consultas and Mery Garcia IDs
   useEffect(() => {
     if (employees.length > 0) {
-      const staffConsultas = employees.find(
-        (e) =>
-          e.fullName.toLowerCase().includes('staff consultas') ||
-          e.fullName.toLowerCase().includes('consultas')
-      );
       const meryGarcia = employees.find(
         (e) =>
           e.fullName.toLowerCase().includes('mery garcia') ||
           e.fullName.toLowerCase().includes('mery garcía')
       );
 
-      if (staffConsultas) setStaffConsultasId(staffConsultas.id);
       if (meryGarcia) setMeryGarciaId(meryGarcia.id);
     }
   }, [employees]);
+
+  // Resolver los empleados asignados a CADA servicio via API.
+  // Evita búsqueda por nombre (fragile con duplicados o renombres).
+  useEffect(() => {
+    if (services.length === 0 || !paramedicalCategoryId) return;
+
+    const visibleServices = services.filter((s) => s.showOnSite);
+    if (visibleServices.length === 0) return;
+
+    const resolveServiceEmployees = async () => {
+      const newMap = new Map<string, Employee[]>();
+      await Promise.all(
+        visibleServices.map(async (service) => {
+          try {
+            const assigned = await EmployeeService.getAllPublic(
+              paramedicalCategoryId,
+              service.id
+            );
+            if (assigned.length > 0) {
+              newMap.set(service.id, assigned as Employee[]);
+            }
+          } catch (error) {
+            console.error(`Error resolviendo empleados para servicio ${service.name}:`, error);
+          }
+        })
+      );
+      setServiceEmployees(newMap);
+    };
+
+    resolveServiceEmployees();
+  }, [services, paramedicalCategoryId]);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -768,11 +799,17 @@ export default function ParamedicalTattooPage() {
           );
         });
 
+        // Usar el empleado asignado al servicio específico via API
+        const resolvedEmployeeId = consultaService?.id
+          ? serviceEmployees.get(consultaService.id)?.[0]?.id
+          : undefined;
+
         return {
           ...option,
           serviceId: consultaService?.id,
-          employeeId: staffId, // Staff Consultas
+          employeeId: resolvedEmployeeId,
           serviceDuration: consultaService?.duration || option.serviceDuration,
+          servicePrice: consultaService?.price,
         };
       }
 
@@ -795,8 +832,11 @@ export default function ParamedicalTattooPage() {
         return {
           ...option,
           serviceId: service?.id,
-          employeeId: meryId, // Mery Garcia
+          employeeId: service?.id
+            ? serviceEmployees.get(service.id)?.[0]?.id
+            : undefined,
           serviceDuration: service?.duration || option.serviceDuration,
+          servicePrice: service?.price,
         };
       }
 
@@ -835,7 +875,7 @@ export default function ParamedicalTattooPage() {
 
   // Enrich service options with IDs
   const nanoScalpOptionsWithIds = useMemo(() => {
-    if (services.length === 0 || !staffConsultasId || !meryGarciaId) {
+    if (services.length === 0 || !meryGarciaId) {
       return nanoScalpOptions;
     }
     return enrichServiceOptions(
@@ -845,10 +885,10 @@ export default function ParamedicalTattooPage() {
       staffConsultasId,
       meryGarciaId
     );
-  }, [services, staffConsultasId, meryGarciaId]);
+  }, [services, staffConsultasId, meryGarciaId, serviceEmployees]);
 
   const areolaOptionsWithIds = useMemo(() => {
-    if (services.length === 0 || !staffConsultasId || !meryGarciaId) {
+    if (services.length === 0 || !meryGarciaId) {
       return areolaOptions;
     }
     return enrichServiceOptions(
@@ -858,10 +898,10 @@ export default function ParamedicalTattooPage() {
       staffConsultasId,
       meryGarciaId
     );
-  }, [services, staffConsultasId, meryGarciaId]);
+  }, [services, staffConsultasId, meryGarciaId, serviceEmployees]);
 
   const scarCamouflageOptionsWithIds = useMemo(() => {
-    if (services.length === 0 || !staffConsultasId) {
+    if (services.length === 0) {
       return scarCamouflageOptions;
     }
     return enrichServiceOptions(
@@ -871,7 +911,7 @@ export default function ParamedicalTattooPage() {
       staffConsultasId,
       meryGarciaId
     );
-  }, [services, staffConsultasId, meryGarciaId]);
+  }, [services, staffConsultasId, meryGarciaId, serviceEmployees]);
 
   /*
   const nippleOptionsWithIds = useMemo(() => {
@@ -1233,6 +1273,7 @@ export default function ParamedicalTattooPage() {
           employees={employees as Employee[]}
           meryGarciaId={meryGarciaId}
           staffConsultasId={staffConsultasId}
+          serviceEmployees={serviceEmployees}
         />
       )}
     </>

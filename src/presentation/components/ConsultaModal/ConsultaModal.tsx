@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Modal } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -24,6 +24,7 @@ interface ConsultaModalProps {
   employees: Employee[];
   meryGarciaId?: string;
   staffConsultasId?: string;
+  serviceEmployees?: Map<string, Employee[]>;
 }
 
 export default function ConsultaModal({
@@ -36,6 +37,7 @@ export default function ConsultaModal({
   employees,
   meryGarciaId,
   staffConsultasId,
+  serviceEmployees,
 }: ConsultaModalProps) {
   const isMobile = useMediaQuery('(max-width: 767px)');
   const [currentStep, setCurrentStep] = useState(1);
@@ -53,6 +55,16 @@ export default function ConsultaModal({
   } | null>(null);
   const [step3ShowCalendar, setStep3ShowCalendar] = useState(false);
   const [step3CanContinue, setStep3CanContinue] = useState(false);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
+
+  // Nombre del profesional seleccionado (para mostrar en Step 4)
+  const selectedProfessionalName = useMemo(() => {
+    const empId = selectedEmployeeId || selectedOption?.employeeId;
+    if (!empId || !serviceEmployees || !selectedOption?.serviceId) return undefined;
+    const available = serviceEmployees.get(selectedOption.serviceId) ?? [];
+    const found = available.find((e) => e.id === empId);
+    return found?.fullName;
+  }, [selectedEmployeeId, selectedOption, serviceEmployees]);
   const [confirmationModalOpened, setConfirmationModalOpened] = useState(false);
 
   const handleClose = () => {
@@ -64,6 +76,7 @@ export default function ConsultaModal({
     setClientData(null);
     setStep3ShowCalendar(false);
     setStep3CanContinue(false);
+    setSelectedEmployeeId(null);
     setConfirmationModalOpened(false);
     onClose();
   };
@@ -80,6 +93,7 @@ export default function ConsultaModal({
       if (currentStep === 3) {
         setStep3ShowCalendar(false);
         setStep3CanContinue(false);
+        setSelectedEmployeeId(null);
       }
       setCurrentStep((prev) => prev - 1);
     }
@@ -185,6 +199,13 @@ export default function ConsultaModal({
                   services={services}
                   staffConsultasId={staffConsultasId}
                   meryGarciaId={meryGarciaId}
+                  availableEmployees={
+                    selectedOption.serviceId && serviceEmployees
+                      ? (serviceEmployees.get(selectedOption.serviceId) ?? [])
+                      : []
+                  }
+                  selectedEmployeeId={selectedEmployeeId}
+                  onEmployeeSelect={setSelectedEmployeeId}
                   selectedDate={selectedDate}
                   selectedTime={selectedTime}
                   onSelectDateTime={(date, time) => {
@@ -209,6 +230,7 @@ export default function ConsultaModal({
                   serviceName={serviceName}
                   consultaOption={selectedOption}
                   staffConsultasId={staffConsultasId || ''}
+                  professionalName={selectedProfessionalName}
                   selectedDate={selectedDate}
                   selectedTime={selectedTime}
                   confirmationModalOpened={confirmationModalOpened}

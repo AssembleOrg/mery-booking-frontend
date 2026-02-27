@@ -14,6 +14,7 @@ import {
   Stack,
 } from '@mantine/core';
 import { useForm } from 'react-hook-form';
+import { notifications } from '@mantine/notifications';
 import { EmployeeService, ServiceService, CategoryService } from '@/infrastructure/http';
 import type { Employee, ServiceEntity, CreateEmployeeDto, UpdateEmployeeDto, Category } from '@/infrastructure/http';
 import { ConfirmationModal } from '@/presentation/components';
@@ -220,8 +221,18 @@ export function EmployeesManager() {
       await EmployeeService.assignServices(selectedEmployee.id, selectedServices);
       await initializeData();
       handleCloseModal();
+      notifications.show({
+        title: 'Servicios guardados',
+        message: 'Los servicios del empleado se han actualizado correctamente',
+        color: 'green',
+      });
     } catch (error) {
       console.error('Error saving services:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'No se pudieron guardar los servicios',
+        color: 'red',
+      });
     } finally {
       setIsSubmitting(false);
     }

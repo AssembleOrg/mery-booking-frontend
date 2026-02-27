@@ -31,6 +31,7 @@ import {
 } from '@/presentation/hooks';
 import {
   CategoryService,
+  EmployeeService,
   type Category,
   type ServiceEntity,
   type Employee,
@@ -61,6 +62,7 @@ interface ServiceOption {
   serviceId?: string; // ID del servicio en el backend
   employeeId?: string; // ID del empleado en el backend
   serviceDuration?: number; // Duración del servicio en minutos
+  servicePrice?: number; // Precio del servicio en el backend
 }
 
 interface AccordionItemProps {
@@ -1541,6 +1543,8 @@ export default function TattooCosmeticoPage() {
   const [mappedEmployees, setMappedEmployees] = useState<Map<string, Employee>>(
     new Map()
   );
+  // Mapa de serviceId → Employee[] (todos los empleados asignados a ese servicio, via API)
+  const [serviceEmployees, setServiceEmployees] = useState<Map<string, Employee[]>>(new Map());
 
   // Obtener categorías para encontrar "Cosmetic Tattoo" o "Tattoo Cosmético"
   // Si está autenticado, obtener dinámicamente desde la API
@@ -1745,6 +1749,37 @@ export default function TattooCosmeticoPage() {
     }
   }, [employeesWithFallback]);
 
+  // Resolver los empleados asignados a CADA servicio via API.
+  // Evita búsqueda por nombre (fragile con duplicados o renombres).
+  useEffect(() => {
+    if (services.length === 0 || !cosmeticTattooCategoryId) return;
+
+    const visibleServices = services.filter((s) => s.showOnSite);
+    if (visibleServices.length === 0) return;
+
+    const resolveServiceEmployees = async () => {
+      const newMap = new Map<string, Employee[]>();
+      await Promise.all(
+        visibleServices.map(async (service) => {
+          try {
+            const assigned = await EmployeeService.getAllPublic(
+              cosmeticTattooCategoryId,
+              service.id
+            );
+            if (assigned.length > 0) {
+              newMap.set(service.id, assigned as Employee[]);
+            }
+          } catch (error) {
+            console.error(`Error resolviendo empleados para servicio ${service.name}:`, error);
+          }
+        })
+      );
+      setServiceEmployees(newMap);
+    };
+
+    resolveServiceEmployees();
+  }, [services, cosmeticTattooCategoryId]);
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -1771,7 +1806,6 @@ export default function TattooCosmeticoPage() {
     allServices: ServiceEntity[]
   ): ServiceOption[] => {
     const service = mappedServices.get(serviceKey);
-    const meryGarcia = mappedEmployees.get('mery-garcia');
 
     return baseOptions.map((option) => {
       const optionWithKey = { ...option, serviceKey };
@@ -1885,14 +1919,17 @@ export default function TattooCosmeticoPage() {
           );
         }
 
-        // Buscar Staff Consultas para asignar como employeeId
-        const staffConsultas = mappedEmployees.get('staff-consultas');
+        // Usar el empleado asignado al servicio específico via API
+        const resolvedEmployeeId = consultaService?.id
+          ? serviceEmployees.get(consultaService.id)?.[0]?.id
+          : undefined;
 
         return {
           ...optionWithKey,
           serviceId: consultaService?.id,
-          employeeId: staffConsultas?.id, // ✅ AGREGAR employeeId para consultas
+          employeeId: resolvedEmployeeId,
           serviceDuration: consultaService?.duration || 60,
+          servicePrice: consultaService?.price,
         };
       }
 
@@ -1911,7 +1948,6 @@ export default function TattooCosmeticoPage() {
           return {
             ...optionWithKey,
             // No asignar serviceId para que muestre el SVG de "no hay turnos"
-            employeeId: meryGarcia?.id,
           };
         }
 
@@ -1951,8 +1987,11 @@ export default function TattooCosmeticoPage() {
           return {
             ...optionWithKey,
             serviceId: lastMinuteService?.id,
-            employeeId: meryGarcia?.id,
+            employeeId: lastMinuteService?.id
+              ? serviceEmployees.get(lastMinuteService.id)?.[0]?.id
+              : undefined,
             serviceDuration: lastMinuteService?.duration || 60,
+            servicePrice: lastMinuteService?.price,
           };
         }
 
@@ -1999,16 +2038,22 @@ export default function TattooCosmeticoPage() {
           return {
             ...optionWithKey,
             serviceId: maintenanceService?.id,
-            employeeId: meryGarcia?.id,
+            employeeId: maintenanceService?.id
+              ? serviceEmployees.get(maintenanceService.id)?.[0]?.id
+              : undefined,
             serviceDuration: maintenanceService?.duration || 60,
+            servicePrice: maintenanceService?.price,
           };
         }
 
         return {
           ...optionWithKey,
           serviceId: service?.id,
-          employeeId: meryGarcia?.id,
+          employeeId: service?.id
+            ? serviceEmployees.get(service.id)?.[0]?.id
+            : undefined,
           serviceDuration: service?.duration,
+          servicePrice: service?.price,
         };
       }
 
@@ -2020,29 +2065,29 @@ export default function TattooCosmeticoPage() {
   const nanobladingOptionsWithIds = useMemo(() => {
     if (services.length === 0) return nanobladingOptions;
     return getOptionsWithIds(nanobladingOptions, 'nanoblading', services);
-  }, [mappedServices, mappedEmployees, services]);
+  }, [mappedServices, mappedEmployees, services, serviceEmployees]);
 
   const lipBlushOptionsWithIds = useMemo(() => {
     if (services.length === 0) return lipBlushOptions;
     return getOptionsWithIds(lipBlushOptions, 'lip-blush', services);
-  }, [mappedServices, mappedEmployees, services]);
+  }, [mappedServices, mappedEmployees, services, serviceEmployees]);
 
   const lipCamouflageOptionsWithIds = useMemo(() => {
     if (services.length === 0) return lipCamouflageOptions;
     return getOptionsWithIds(lipCamouflageOptions, 'lip-camouflage', services);
-  }, [mappedServices, mappedEmployees, services]);
+  }, [mappedServices, mappedEmployees, services, serviceEmployees]);
 
   const lashesLineOptionsWithIds = useMemo(() => {
     if (services.length === 0) return lashesLineOptions;
     return getOptionsWithIds(lashesLineOptions, 'lashes-line', services);
-  }, [mappedServices, mappedEmployees, services]);
+  }, [mappedServices, mappedEmployees, services, serviceEmployees]);
 
   const camouflageOptionsWithIds = useMemo(() => {
     if (services.length === 0) return camouflageOptions;
     return getOptionsWithIds(camouflageOptions, 'camuflaje', services);
-  }, [mappedServices, mappedEmployees, services]);
+  }, [mappedServices, mappedEmployees, services, serviceEmployees]);
 
-  // IDs de empleados para modal de reservas
+  // IDs de empleados para modal de reservas (fallback para props del modal)
   const staffConsultasId = useMemo(() => {
     return mappedEmployees.get('staff-consultas')?.id;
   }, [mappedEmployees]);
@@ -2857,6 +2902,7 @@ export default function TattooCosmeticoPage() {
           employees={employeesWithFallback as Employee[]}
           meryGarciaId={meryGarciaId}
           staffConsultasId={staffConsultasId}
+          serviceEmployees={serviceEmployees}
         />
       )}
     </>

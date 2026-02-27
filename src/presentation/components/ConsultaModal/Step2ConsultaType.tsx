@@ -44,9 +44,11 @@ export default function Step2ConsultaType({
                   <Text className={classes.consultaOptionLabel}>
                     {option.label}
                   </Text>
-                  {option.priceValue && (
+                  {(option.servicePrice !== undefined || option.priceValue) && (
                     <Text className={classes.consultaOptionPrice}>
-                      {option.priceValue}
+                      {option.servicePrice !== undefined
+                        ? `AR$ ${option.servicePrice.toLocaleString('es-AR')}.-`
+                        : option.priceValue}
                     </Text>
                   )}
                   {option.description && (

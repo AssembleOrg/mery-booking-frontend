@@ -8,7 +8,6 @@ import classes from './ConsultaModal.module.css';
 import type { ServiceOption } from '@/infrastructure/types/services';
 import type { Employee } from '@/infrastructure/http/employeeService';
 import type { ServiceEntity } from '@/infrastructure/http/serviceService';
-import { EMPLOYEE_IDS } from '@/config/constants';
 
 interface Step3CalendarProps {
   selectedOption: ServiceOption;
@@ -16,6 +15,9 @@ interface Step3CalendarProps {
   services: ServiceEntity[];
   staffConsultasId?: string;
   meryGarciaId?: string;
+  availableEmployees: Employee[];
+  selectedEmployeeId: string | null;
+  onEmployeeSelect: (id: string) => void;
   selectedDate: Date | null;
   selectedTime: string | null;
   onSelectDateTime: (date: Date, time: string) => void;
@@ -25,104 +27,70 @@ interface Step3CalendarProps {
 
 export default function Step3Calendar({
   selectedOption,
-  employees,
   services,
-  staffConsultasId,
-  meryGarciaId,
+  availableEmployees,
+  selectedEmployeeId,
+  onEmployeeSelect,
   selectedDate,
   selectedTime,
   onSelectDateTime,
   showCalendar,
   onCanContinueChange,
 }: Step3CalendarProps) {
-  // IDs de constantes como fallback
-  const STAFF_CONSULTAS_FALLBACK_ID = EMPLOYEE_IDS.STAFF_CONSULTAS;
-  const MERY_GARCIA_FALLBACK_ID = EMPLOYEE_IDS.MERY_GARCIA;
-
-  // Buscar service dinámicamente por label (como FALLBACK)
+  // CLAVE: Usar selectedOption.serviceId PRIMERO, fallback a búsqueda dinámica
   const currentService = useMemo(() => {
-    if (!selectedOption.label || services.length === 0) return null;
-
+    if (selectedOption.serviceId || !selectedOption.label || services.length === 0) return null;
     return services.find((s) => {
       const nameLower = s.name.toLowerCase();
       const labelLower = selectedOption.label.toLowerCase();
-      return (
-        s.showOnSite &&
-        (nameLower.includes(labelLower) || labelLower.includes(nameLower))
-      );
+      return s.showOnSite && (nameLower.includes(labelLower) || labelLower.includes(nameLower));
     });
-  }, [selectedOption.label, services]);
+  }, [selectedOption.serviceId, selectedOption.label, services]);
 
-  // Determinar employeeId dinámicamente con fallbacks
-  const employeeId = useMemo(() => {
-    if (selectedOption.employeeId) return selectedOption.employeeId;
-
-    if (
-      selectedOption.contentType === 'consulta-sin-trabajo' ||
-      selectedOption.contentType === 'consulta-con-trabajo' ||
-      selectedOption.contentType === 'consulta'
-    ) {
-      return staffConsultasId || STAFF_CONSULTAS_FALLBACK_ID;
-    }
-
-    return meryGarciaId || MERY_GARCIA_FALLBACK_ID;
-  }, [selectedOption, staffConsultasId, meryGarciaId]);
-
-  // CLAVE: Usar selectedOption.serviceId PRIMERO, fallback a búsqueda dinámica
   const serviceId = selectedOption.serviceId || currentService?.id || null;
-  const serviceDuration =
-    selectedOption.serviceDuration || currentService?.duration || 60;
+  const serviceDuration = selectedOption.serviceDuration || currentService?.duration || 60;
 
-  // Determinar nombre del profesional
-  const professionalName = useMemo(() => {
-    if (
-      employeeId === staffConsultasId ||
-      employeeId === STAFF_CONSULTAS_FALLBACK_ID
-    )
-      return 'Staff Consultas';
-    if (employeeId === meryGarciaId || employeeId === MERY_GARCIA_FALLBACK_ID)
-      return 'Mery Garcia';
+  // employeeId efectivo: lo que seleccionó el usuario > lo que viene en la opción > primero disponible
+  const effectiveEmployeeId = useMemo(() => {
+    if (selectedEmployeeId) return selectedEmployeeId;
+    if (selectedOption.employeeId) return selectedOption.employeeId;
+    if (availableEmployees.length > 0) return availableEmployees[0].id;
+    return null;
+  }, [selectedEmployeeId, selectedOption.employeeId, availableEmployees]);
 
-    const employee = employees.find((e) => e.id === employeeId);
-    return employee?.fullName || 'Profesional';
-  }, [employeeId, staffConsultasId, meryGarciaId, employees]);
+  // Auto-seleccionar cuando hay exactamente 1 empleado y no hay selección aún
+  useEffect(() => {
+    if (!selectedEmployeeId && availableEmployees.length === 1) {
+      onEmployeeSelect(availableEmployees[0].id);
+    }
+  }, [availableEmployees, selectedEmployeeId]);
+
+  // Reportar al shell si se puede continuar
+  useEffect(() => {
+    if (!showCalendar) {
+      // En la pantalla de selección de profesional, se puede continuar si hay employeeId y serviceId
+      onCanContinueChange(!!effectiveEmployeeId && !!serviceId);
+    } else {
+      onCanContinueChange(!!selectedDate && !!selectedTime);
+    }
+  }, [showCalendar, effectiveEmployeeId, serviceId, selectedDate, selectedTime]);
 
   // Debug log
   useEffect(() => {
     console.log('🔍 ConsultaModal Step3Calendar Debug:', {
       'selectedOption.id': selectedOption.id,
       'selectedOption.label': selectedOption.label,
-      'selectedOption.contentType': selectedOption.contentType,
       'selectedOption.serviceId': selectedOption.serviceId,
       'selectedOption.employeeId': selectedOption.employeeId,
-      'selectedOption.serviceDuration': selectedOption.serviceDuration,
-      'props.staffConsultasId': staffConsultasId,
-      'props.meryGarciaId': meryGarciaId,
-      'employees.length': employees.length,
-      'services.length': services.length,
-      'calculated employeeId': employeeId,
-      'calculated serviceId': serviceId,
-      'calculated professionalName': professionalName,
+      'availableEmployees.length': availableEmployees.length,
+      'availableEmployees': availableEmployees.map(e => `${e.fullName} (${e.id})`),
+      'selectedEmployeeId': selectedEmployeeId,
+      'effectiveEmployeeId': effectiveEmployeeId,
+      'serviceId': serviceId,
     });
-  }, [
-    selectedOption,
-    employeeId,
-    serviceId,
-    professionalName,
-    staffConsultasId,
-    meryGarciaId,
-    employees.length,
-    services.length,
-  ]);
+  }, [selectedOption, availableEmployees, selectedEmployeeId, effectiveEmployeeId, serviceId]);
 
-  // Reportar al shell si se puede continuar
-  useEffect(() => {
-    if (!showCalendar) {
-      onCanContinueChange(!!employeeId && !!serviceId);
-    } else {
-      onCanContinueChange(!!selectedDate && !!selectedTime);
-    }
-  }, [showCalendar, employeeId, serviceId, selectedDate, selectedTime]);
+  const hasMultipleEmployees = availableEmployees.length > 1;
 
   // ESTADO 1: Selección de Profesional (ANTES del calendario)
   if (!showCalendar) {
@@ -136,17 +104,43 @@ export default function Step3Calendar({
       >
         <Stack gap="xl">
           <div>
-            <Text className={classes.stepTitle}>Seleccionar profesional</Text>
+            <Text className={classes.stepTitle}>
+              {hasMultipleEmployees ? 'Elegí tu profesional' : 'Profesional asignado'}
+            </Text>
             <Text className={classes.stepDescription}>
-              Confirmá el profesional asignado para este servicio
+              {hasMultipleEmployees
+                ? 'Seleccioná el profesional de tu preferencia para este servicio'
+                : 'Confirmá el profesional asignado para este servicio'}
             </Text>
           </div>
 
-          {/* Professional Card */}
-          <div className={classes.professionalCard}>
-            <Text className={classes.professionalLabel}>Profesional:</Text>
-            <Text className={classes.professionalName}>{professionalName}</Text>
-          </div>
+          {hasMultipleEmployees ? (
+            // Selector de profesionales cuando hay más de uno
+            <div className={classes.employeeSelector}>
+              {availableEmployees.map((emp) => (
+                <button
+                  key={emp.id}
+                  type="button"
+                  className={`${classes.employeeCard} ${
+                    (selectedEmployeeId || effectiveEmployeeId) === emp.id
+                      ? classes.employeeCardSelected
+                      : ''
+                  }`}
+                  onClick={() => onEmployeeSelect(emp.id)}
+                >
+                  <Text className={classes.professionalName}>{emp.fullName}</Text>
+                </button>
+              ))}
+            </div>
+          ) : (
+            // Card fija cuando hay un solo profesional
+            <div className={classes.professionalCard}>
+              <Text className={classes.professionalLabel}>Profesional:</Text>
+              <Text className={classes.professionalName}>
+                {availableEmployees[0]?.fullName || 'Profesional'}
+              </Text>
+            </div>
+          )}
         </Stack>
       </motion.div>
     );
@@ -170,7 +164,7 @@ export default function Step3Calendar({
         </div>
 
         <DateTimeSelector
-          employeeId={employeeId}
+          employeeId={effectiveEmployeeId}
           serviceId={serviceId}
           serviceDuration={serviceDuration}
           onSelectDateTime={onSelectDateTime}

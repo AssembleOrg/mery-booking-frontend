@@ -31,4 +31,5 @@ export interface ServiceOption {
   serviceId?: string; // ID del servicio en el backend
   employeeId?: string; // ID del empleado en el backend
   serviceDuration?: number; // Duración del servicio en minutos
+  servicePrice?: number; // Precio del servicio en el backend
 }

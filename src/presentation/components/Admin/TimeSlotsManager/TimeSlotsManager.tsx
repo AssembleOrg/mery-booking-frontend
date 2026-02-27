@@ -166,7 +166,7 @@ export function TimeSlotsManager() {
       
       // Cargar servicios en paralelo (opcional para el dropdown)
       try {
-        const servicesResponse = await ServiceService.getAllVisible();
+        const servicesResponse = await ServiceService.getAllWithoutPagination();
         if (Array.isArray(servicesResponse)) {
           setServices(servicesResponse);
         } else {

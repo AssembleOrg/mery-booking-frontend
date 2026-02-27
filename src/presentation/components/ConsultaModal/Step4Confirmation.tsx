@@ -14,6 +14,7 @@ interface Step4ConfirmationProps {
   serviceName: string;
   consultaOption: ServiceOption;
   staffConsultasId: string;
+  professionalName?: string;
   selectedDate: Date;
   selectedTime: string;
   confirmationModalOpened: boolean;
@@ -32,6 +33,7 @@ export default function Step4Confirmation({
   serviceName,
   consultaOption,
   staffConsultasId,
+  professionalName,
   selectedDate,
   selectedTime,
   confirmationModalOpened,
@@ -86,7 +88,7 @@ export default function Step4Confirmation({
 
         <div className={classes.summaryRow}>
           <Text className={classes.summaryLabel}>Profesional:</Text>
-          <Text className={classes.summaryValue}>Staff Consultas</Text>
+          <Text className={classes.summaryValue}>{professionalName || 'Staff Consultas'}</Text>
         </div>
 
         <div className={classes.summaryRow}>
@@ -100,9 +102,11 @@ export default function Step4Confirmation({
         </div>
 
         <div className={classes.summaryRow}>
-          <Text className={classes.summaryLabel}>Precio:</Text>
+          <Text className={classes.summaryLabel}>Valor de la seña:</Text>
           <Text className={classes.summaryPrice}>
-            {consultaOption.priceValue}
+            {consultaOption.servicePrice !== undefined
+              ? `AR$ ${consultaOption.servicePrice.toLocaleString('es-AR')}.-`
+              : consultaOption.priceValue}
           </Text>
         </div>
       </div>
@@ -114,8 +118,8 @@ export default function Step4Confirmation({
           id: consultaOption.serviceId || '',
           name: serviceName,
           slug: serviceName.toLowerCase().replace(/\s+/g, '-'),
-          price: 50000,
-          priceBook: 50000,
+          price: consultaOption.servicePrice || 50000,
+          priceBook: consultaOption.servicePrice || 50000,
           duration: consultaOption.serviceDuration || 60,
           image: '/desk.svg',
         }}
