@@ -66,7 +66,7 @@ export function Step1Terms({
               la viabilidad del tratamiento.
             </Text>
             <a
-              href="https://wa.me/549116159259?text=Hola%2C%20quiero%20enviar%20una%20foto%20para%20consulta%20de%20Scar%20Camouflage"
+              href="https://wa.me/5491161592591?text=Hola%2C%20quiero%20enviar%20una%20foto%20para%20consulta%20de%20Scar%20Camouflage"
               target="_blank"
               rel="noopener noreferrer"
               className={classes.whatsappButton}

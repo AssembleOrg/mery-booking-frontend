@@ -208,6 +208,8 @@ const LIP_CAMOUFLAGE_DESCRIPTION_BLOCKS: DescriptionBlock[] = [
 ];
 
 const FRECKLES_MORE_INFO_URL = 'https://merygarcia.com.ar/servicios/pecas-lunares';
+const LASH_CAMOUFLAGE_MORE_INFO_URL =
+  'https://merygarcia.com.ar/servicios/styling-pestanas#lashes-camouflage';
 
 const FRECKLES_DESCRIPTION_BLOCKS: DescriptionBlock[] = [
   {
@@ -760,6 +762,10 @@ function SesionCalendarioContent({
         <Text className={classes.panelCuotas}>{option.cuotasText}</Text>
       )}
 
+      {option.promoText && (
+        <Text className={classes.promoText}>{option.promoText}</Text>
+      )}
+
       {!showCalendar ? (
         <>
           {/* Mostrar profesional seleccionado (Mery Garcia) - no editable */}
@@ -816,10 +822,6 @@ function SesionCalendarioContent({
             </Box>
           )}
         </>
-      )}
-
-      {option.promoText && (
-        <Text className={classes.promoText}>{option.promoText}</Text>
       )}
 
       {/* Modal de Confirmación */}
@@ -1096,7 +1098,7 @@ const nanobladingOptions: ServiceOption[] = [
     label: 'Last Minute Booking Nanoblading (Mantenimiento)',
     contentType: 'mantenimiento-calendario',
     description:
-      'Citas seleccionadas de último momento con 20% off. Entérate antes que nadie a través de nuestro canal de IG: https://www.instagram.com/merygarciaoficial/',
+      'Citas seleccionadas de último momento con 20% off. Entérate antes que nadie a través de nuestro canal de IG: https://www.instagram.com/merygarciaoficial/ Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 488.-',
     priceEffective: 'U$S 450',
@@ -1181,7 +1183,7 @@ const lipBlushOptions: ServiceOption[] = [
     label: 'Last Minute Booking Lip Blush (Mantenimiento)',
     contentType: 'mantenimiento-calendario',
     description:
-      'Reactiva tu servicio de Lip Blush. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
+      'Reactiva tu servicio de Lip Blush. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión. Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 520.-',
     priceEffective: 'U$S 475',
@@ -1224,7 +1226,7 @@ const lashesLineOptions: ServiceOption[] = [
   {
     id: 'lash-1',
     label: 'Consulta previa',
-    contentType: 'sesion-calendario',
+    contentType: 'consulta-con-trabajo',
     description:
       'Un espacio reservado para saldar tus dudas y que Mery Garcia & Staff de manera personalizada pueda hacerte una demostración de diseño elegido especialmente para vos.',
     priceLabel: 'Precio de lista del servicio:',
@@ -1237,7 +1239,7 @@ const lashesLineOptions: ServiceOption[] = [
     label: '1ª Sesión',
     contentType: 'sesion-calendario',
     description:
-      'Primer experiencia de Lashes Line con nosotras. Recordá que los resultados óptimos se logran con dos sesiones.',
+      'Primer experiencia de Lash Line con nosotras. Recordá que los resultados óptimos se logran con dos sesiones.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 480.-',
     priceEffective: 'U$S 320',
@@ -1251,7 +1253,7 @@ const lashesLineOptions: ServiceOption[] = [
     label: '2ª Sesión - Retoque',
     contentType: 'retoque-calendario',
     description:
-      'Completá tu servicio de Lashes Line entre 30 y 60 días después de tu primera sesión.',
+      'Completá tu servicio de Lash Line entre 30 y 60 días después de tu primera sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 317.-',
     priceEffective: 'U$S 180',
@@ -1265,7 +1267,7 @@ const lashesLineOptions: ServiceOption[] = [
     label: 'Mantenimiento',
     contentType: 'mantenimiento-calendario',
     description:
-      'Reactiva tu servicio de Lashes Line. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
+      'Reactiva tu servicio de Lash Line. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 480.-',
     priceEffective: 'U$S 320',
@@ -1276,10 +1278,10 @@ const lashesLineOptions: ServiceOption[] = [
   },
   {
     id: 'lash-5',
-    label: 'Last Minute Booking Lashes Line (Mantenimiento)',
+    label: 'Last Minute Booking Lash Line (Mantenimiento)',
     contentType: 'mantenimiento-calendario',
     description:
-      'Reactiva tu servicio de Lashes Line. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
+      'Reactiva tu servicio de Lash Line. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión. Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 384.-',
     priceEffective: 'U$S 320',
@@ -1290,11 +1292,39 @@ const lashesLineOptions: ServiceOption[] = [
   },
 ];
 
+const lashCamouflageOptions: ServiceOption[] = [
+  {
+    id: 'lashcam-1',
+    label: 'Consulta Obligatoria (*)',
+    contentType: 'consulta-con-trabajo',
+    description:
+      'Tu consulta con Mery & Staff MG es un tiempo que dedicamos exclusivamente a saldar todas tus dudas. Ese día se te pedirá una seña quedando a cuenta de tu primera sesión, la misma no es reembolsable y no congela el valor de tu servicio.',
+    priceLabel: 'Precio de la consulta:',
+    priceValue: 'AR$ 50.000.-',
+    footerNote: '(*) En la etapa de consulta podremos indicarte qué tipo de servicio necesitas para lograr más realismo y elegancia.',
+    footerNote2: 'Sin consulta previa no podremos brindarte un servicio MG.',
+  },
+  {
+    id: 'lashcam-2',
+    label: '1ª Sesión (By Mery Garcia)',
+    contentType: 'sesion-calendario',
+    description:
+      'Es un servicio que combina despigmentación, corrección de color, textura y estructura para MEJORAR EL ASPECTO de un trabajo mal hecho o deteriorado tanto de dermopigmentación como de un tatuaje de otro lugar.',
+    priceLabel: 'Precio de lista del servicio:',
+    priceValue: 'U$S 700.-',
+    priceEffective: 'U$S 500',
+    depositLabel: ') Valor de la seña:',
+    depositValue: 'AR$ 150.000.-',
+    cuotasText:
+      'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
+  },
+];
+
 const pecasLunaresOptions: ServiceOption[] = [
   {
     id: 'pecas-1',
     label: 'Consulta Obligatoria',
-    contentType: 'sesion-calendario',
+    contentType: 'consulta-sin-trabajo',
     description:
       'Consulta previa para evaluar tu piel y diseñar el patrón de pecas ideal para ti.',
     priceLabel: 'Precio de lista del servicio:',
@@ -1374,8 +1404,10 @@ const SERVICE_NAME_MAPPING: Record<string, string[]> = {
   ],
   'lip-blush': ['lip blush', 'lipblush', 'lip-blush'],
   'lip-camouflage': ['lip camouflage', 'lipcamouflage', 'lip-camouflage'],
-  'lashes-line': ['lashes line', 'lashesline', 'lashes-line'],
+  'lashes-line': ['lashes line', 'lashesline', 'lashes-line', 'lash line'],
   camuflaje: ['camuflaje de cejas', 'camuflaje cejas', 'camuflaje'],
+  'lash-camouflage': ['lash camouflage', 'lashcamouflage', 'lash-camouflage'],
+  'pecas-lunares': ['pecas', 'lunares', 'freckles', 'pecas y lunares'],
 };
 
 // Mapeo de nombres de empleados estáticos a nombres en el backend
@@ -1673,7 +1705,7 @@ export default function TattooCosmeticoPage() {
             s.name.toLowerCase().includes('mery garcia')
         ) || findServiceByName(services, 'lip-camouflage');
 
-      // Para Lashes Line: buscar "Lashes Line [1° Sesión]"
+      // Para Lash Line: buscar "Lashes Line [1° Sesión]"
       const lashesLineService =
         services.find(
           (s) =>
@@ -1690,12 +1722,25 @@ export default function TattooCosmeticoPage() {
             s.name.toLowerCase().includes('1')
         ) || findServiceByName(services, 'camuflaje');
 
+      // Para Lash Camouflage: buscar "Lash Camouflaje 1° Sesión (By Mery García)"
+      // Nota: el nombre en el backend tiene typo "Camouflaje" con j
+      const lashCamouflageService =
+        services.find(
+          (s) =>
+            s.showOnSite &&
+            (s.name.toLowerCase().includes('lash camouflaje') ||
+              s.name.toLowerCase().includes('lash camouflage')) &&
+            s.name.toLowerCase().includes('sesión')
+        ) || findServiceByName(services, 'lash-camouflage');
+
       if (nanobladingService) serviceMap.set('nanoblading', nanobladingService);
       if (lipBlushService) serviceMap.set('lip-blush', lipBlushService);
       if (lipCamouflageService)
         serviceMap.set('lip-camouflage', lipCamouflageService);
       if (lashesLineService) serviceMap.set('lashes-line', lashesLineService);
       if (camuflajeService) serviceMap.set('camuflaje', camuflajeService);
+      if (lashCamouflageService)
+        serviceMap.set('lash-camouflage', lashCamouflageService);
 
       setMappedServices(serviceMap);
     }
@@ -1903,6 +1948,36 @@ export default function TattooCosmeticoPage() {
               nameLower.includes('consulta previa obligatoria')
             );
           });
+        } else if (serviceKey === 'lash-camouflage') {
+          // Buscar: "Lash Camouflage Consulta Previa"
+          consultaService = allServices.find((s) => {
+            const nameLower = s.name.toLowerCase();
+            return (
+              s.showOnSite &&
+              nameLower.includes('lash camouflage') &&
+              nameLower.includes('consulta')
+            );
+          });
+        } else if (serviceKey === 'lashes-line') {
+          // Buscar: "Lashes Line [Consulta opcional]"
+          consultaService = allServices.find((s) => {
+            const nameLower = s.name.toLowerCase();
+            return (
+              s.showOnSite &&
+              (nameLower.includes('lashes line') || nameLower.includes('lash line')) &&
+              nameLower.includes('consulta')
+            );
+          });
+        } else if (serviceKey === 'pecas-lunares') {
+          // Buscar: "Pecas y Lunares Consulta"
+          consultaService = allServices.find((s) => {
+            const nameLower = s.name.toLowerCase();
+            return (
+              s.showOnSite &&
+              (nameLower.includes('pecas') || nameLower.includes('freckles')) &&
+              nameLower.includes('consulta')
+            );
+          });
         }
 
         // Debug: Log si no se encuentra el servicio
@@ -1934,23 +2009,11 @@ export default function TattooCosmeticoPage() {
       }
 
       // Para servicios con calendario, usar el servicio mapeado y Mery Garcia
-      // EXCEPCIÓN: "Consulta previa" de Lashes Line no debe tener serviceId para mostrar "no hay turnos"
       if (
         option.contentType === 'sesion-calendario' ||
         option.contentType === 'retoque-calendario' ||
         option.contentType === 'mantenimiento-calendario'
       ) {
-        // Si es "Consulta previa" de Lashes Line, no asignar serviceId
-        if (
-          serviceKey === 'lashes-line' &&
-          option.label === 'Consulta previa'
-        ) {
-          return {
-            ...optionWithKey,
-            // No asignar serviceId para que muestre el SVG de "no hay turnos"
-          };
-        }
-
         // Manejo especial para servicios Last Minute Booking
         if (option.label.includes('Last Minute Booking')) {
           let lastMinuteService: ServiceEntity | undefined;
@@ -1973,7 +2036,7 @@ export default function TattooCosmeticoPage() {
                 nameLower.includes('mantenimiento')
               );
             });
-          } else if (option.label.includes('Lashes Line')) {
+          } else if (option.label.includes('Lash Line')) {
             lastMinuteService = allServices.find((s) => {
               const nameLower = s.name.toLowerCase();
               return (
@@ -2080,6 +2143,11 @@ export default function TattooCosmeticoPage() {
   const lashesLineOptionsWithIds = useMemo(() => {
     if (services.length === 0) return lashesLineOptions;
     return getOptionsWithIds(lashesLineOptions, 'lashes-line', services);
+  }, [mappedServices, mappedEmployees, services, serviceEmployees]);
+
+  const lashCamouflageOptionsWithIds = useMemo(() => {
+    if (services.length === 0) return lashCamouflageOptions;
+    return getOptionsWithIds(lashCamouflageOptions, 'lash-camouflage', services);
   }, [mappedServices, mappedEmployees, services, serviceEmployees]);
 
   const camouflageOptionsWithIds = useMemo(() => {
@@ -2346,6 +2414,12 @@ export default function TattooCosmeticoPage() {
           </Box>
           <Box
             className={classes.subMenuItem}
+            onClick={() => scrollToSection('camuflaje')}
+          >
+            <span>BROW CAMOUFLAGE</span>
+          </Box>
+          <Box
+            className={classes.subMenuItem}
             onClick={() => scrollToSection('lip-blush')}
           >
             <span>LIP BLUSH</span>
@@ -2360,19 +2434,19 @@ export default function TattooCosmeticoPage() {
             className={classes.subMenuItem}
             onClick={() => scrollToSection('lashes-line')}
           >
-            <span>LASHES LINE</span>
+            <span>LASH LINE</span>
+          </Box>
+          <Box
+            className={classes.subMenuItem}
+            onClick={() => scrollToSection('lash-camouflage')}
+          >
+            <span>LASH CAMOUFLAGE</span>
           </Box>
           <Box
             className={classes.subMenuItem}
             onClick={() => scrollToSection('pecas-lunares')}
           >
             <span>FRECKLES</span>
-          </Box>
-          <Box
-            className={classes.subMenuItem}
-            onClick={() => scrollToSection('camuflaje')}
-          >
-            <span>CAMUFLAJE</span>
           </Box>
         </Box>
 
@@ -2481,6 +2555,81 @@ export default function TattooCosmeticoPage() {
                     employees={employeesWithFallback}
                   />
                 </Box> */}
+              </Box>
+            </FadeInSection>
+
+            {/* BROW CAMOUFLAGE Section */}
+            <FadeInSection direction="up" delay={0.05}>
+              <Box id="camuflaje" className={classes.serviceBlock}>
+                <Box className={classes.serviceLayout}>
+                  <Box className={classes.serviceHeader}>
+                    <Box className={classes.serviceTitleWrapper}>
+                      <Text className={classes.serviceTitle}>BROW CAMOUFLAGE</Text>
+                      <Text className={classes.serviceTagline}>
+                        Corrección de trabajos previos de dermopigmentación o
+                        microblading.
+                      </Text>
+                      <button
+                        type="button"
+                        className={classes.descriptionButton}
+                        onClick={openCamuflajeDescription}
+                      >
+                        VER DESCRIPCIÓN COMPLETA
+                      </button>
+                    </Box>
+                  </Box>
+                  <Box className={classes.buttonsWrapper}>
+                    <button
+                      className={classes.ctaButton}
+                      onClick={() =>
+                        openExternalLink(CAMUFLAJE_MORE_INFO_URL)
+                      }
+                    >
+                      MÁS INFO AQUÍ
+                    </button>
+                    <button
+                      className={classes.ctaButtonSecondary}
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'BROW CAMOUFLAGE',
+                          serviceKey: 'camuflaje',
+                          consultaOptions: camouflageOptionsWithIds.filter(
+                            (opt) =>
+                              opt.contentType === 'consulta-sin-trabajo' ||
+                              opt.contentType === 'consulta-con-trabajo'
+                          ),
+                        });
+                        setConsultaModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
+                    >
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'Consulta Obligatoria'}
+                    </button>
+                    <button
+                      className={classes.ctaButtonReservar}
+                      onClick={() => {
+                        const sessionOptions = camouflageOptionsWithIds.filter(
+                          (opt) =>
+                            opt.contentType !== 'consulta-sin-trabajo' &&
+                            opt.contentType !== 'consulta-con-trabajo'
+                        );
+                        setModalService({
+                          serviceName: 'BROW CAMOUFLAGE',
+                          serviceKey: 'camuflaje',
+                          options: sessionOptions,
+                        });
+                        setModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
+                    >
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'RESERVAR'}
+                    </button>
+                  </Box>
+                </Box>
               </Box>
             </FadeInSection>
 
@@ -2611,7 +2760,7 @@ export default function TattooCosmeticoPage() {
                           serviceName: 'LIP CAMOUFLAGE',
                           serviceKey: 'lip-camouflage',
                           consultaOptions: lipCamouflageOptionsWithIds.filter(
-                            (opt) => opt.contentType === 'sesion-calendario'
+                            (opt) => opt.id === 'lipcam-1'
                           ),
                         });
                         setConsultaModalOpened(true);
@@ -2628,7 +2777,9 @@ export default function TattooCosmeticoPage() {
                         setModalService({
                           serviceName: 'LIP CAMOUFLAGE',
                           serviceKey: 'lip-camouflage',
-                          options: lipCamouflageOptionsWithIds,
+                          options: lipCamouflageOptionsWithIds.filter(
+                            (opt) => opt.id !== 'lipcam-1'
+                          ),
                         });
                         setModalOpened(true);
                       }}
@@ -2659,13 +2810,13 @@ export default function TattooCosmeticoPage() {
               </Box>
             </FadeInSection>
 
-            {/* LASHES LINE Section */}
+            {/* LASH LINE Section */}
             <FadeInSection direction="up" delay={0.2}>
               <Box id="lashes-line" className={classes.serviceBlock}>
                 <Box className={classes.serviceLayout}>
                   <Box className={classes.serviceHeader}>
                     <Box className={classes.serviceTitleWrapper}>
-                      <Text className={classes.serviceTitle}>LASHES LINE</Text>
+                      <Text className={classes.serviceTitle}>LASH LINE</Text>
                       <Text className={classes.serviceTagline}>
                         Efecto natural de mayor volumen y densidad en pestañas.
                       </Text>
@@ -2686,10 +2837,10 @@ export default function TattooCosmeticoPage() {
                       className={classes.ctaButtonSecondary}
                       onClick={() => {
                         setConsultaService({
-                          serviceName: 'LASHES LINE',
+                          serviceName: 'LASH LINE',
                           serviceKey: 'lashes-line',
                           consultaOptions: lashesLineOptionsWithIds.filter(
-                            (opt) => opt.contentType === 'sesion-calendario'
+                            (opt) => opt.id === 'lash-1'
                           ),
                         });
                         setConsultaModalOpened(true);
@@ -2704,9 +2855,11 @@ export default function TattooCosmeticoPage() {
                       className={classes.ctaButtonReservar}
                       onClick={() => {
                         setModalService({
-                          serviceName: 'LASHES LINE',
+                          serviceName: 'LASH LINE',
                           serviceKey: 'lashes-line',
-                          options: lashesLineOptionsWithIds,
+                          options: lashesLineOptionsWithIds.filter(
+                            (opt) => opt.id !== 'lash-1'
+                          ),
                         });
                         setModalOpened(true);
                       }}
@@ -2737,8 +2890,68 @@ export default function TattooCosmeticoPage() {
               </Box>
             </FadeInSection>
 
-            {/* PECAS Y LUNARES Section */}
+            {/* LASH CAMOUFLAGE Section */}
             <FadeInSection direction="up" delay={0.25}>
+              <Box id="lash-camouflage" className={classes.serviceBlock}>
+                <Box className={classes.serviceLayout}>
+                  <Box className={classes.serviceHeader}>
+                    <Box className={classes.serviceTitleWrapper}>
+                      <Text className={classes.serviceTitle}>LASH CAMOUFLAGE</Text>
+                      <Text className={classes.serviceTagline}>
+                        Corrección de trabajos previos en pestañas.
+                      </Text>
+                    </Box>
+                  </Box>
+                  <Box className={classes.buttonsWrapper}>
+                    <button
+                      className={classes.ctaButton}
+                      onClick={() => openExternalLink(LASH_CAMOUFLAGE_MORE_INFO_URL)}
+                    >
+                      MÁS INFO AQUÍ
+                    </button>
+                    <button
+                      className={classes.ctaButtonSecondary}
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'LASH CAMOUFLAGE',
+                          serviceKey: 'lash-camouflage',
+                          consultaOptions: lashCamouflageOptionsWithIds.filter(
+                            (opt) => opt.id === 'lashcam-1'
+                          ),
+                        });
+                        setConsultaModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
+                    >
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'Consulta Obligatoria'}
+                    </button>
+                    <button
+                      className={classes.ctaButtonReservar}
+                      onClick={() => {
+                        setModalService({
+                          serviceName: 'LASH CAMOUFLAGE',
+                          serviceKey: 'lash-camouflage',
+                          options: lashCamouflageOptionsWithIds.filter(
+                            (opt) => opt.id !== 'lashcam-1'
+                          ),
+                        });
+                        setModalOpened(true);
+                      }}
+                      disabled={isLoadingEmployees || isLoadingServices}
+                    >
+                      {isLoadingEmployees || isLoadingServices
+                        ? 'CARGANDO...'
+                        : 'RESERVAR'}
+                    </button>
+                  </Box>
+                </Box>
+              </Box>
+            </FadeInSection>
+
+            {/* PECAS Y LUNARES Section */}
+            <FadeInSection direction="up" delay={0.3}>
               <Box id="pecas-lunares" className={classes.serviceBlock}>
                 <Box className={classes.serviceLayout}>
                   <Box className={classes.serviceHeader}>
@@ -2783,81 +2996,6 @@ export default function TattooCosmeticoPage() {
                       {isLoadingEmployees || isLoadingServices
                         ? 'CARGANDO...'
                         : 'CONSULTA OBLIGATORIA'}
-                    </button>
-                  </Box>
-                </Box>
-              </Box>
-            </FadeInSection>
-
-            {/* CAMUFLAJE Section */}
-            <FadeInSection direction="up" delay={0.3}>
-              <Box id="camuflaje" className={classes.serviceBlock}>
-                <Box className={classes.serviceLayout}>
-                  <Box className={classes.serviceHeader}>
-                    <Box className={classes.serviceTitleWrapper}>
-                      <Text className={classes.serviceTitle}>CAMUFLAJE</Text>
-                      <Text className={classes.serviceTagline}>
-                        Corrección de trabajos previos de dermopigmentación o
-                        microblading.
-                      </Text>
-                      <button
-                        type="button"
-                        className={classes.descriptionButton}
-                        onClick={openCamuflajeDescription}
-                      >
-                        VER DESCRIPCIÓN COMPLETA
-                      </button>
-                    </Box>
-                  </Box>
-                  <Box className={classes.buttonsWrapper}>
-                    <button
-                      className={classes.ctaButton}
-                      onClick={() =>
-                        openExternalLink(CAMUFLAJE_MORE_INFO_URL)
-                      }
-                    >
-                      MÁS INFO AQUÍ
-                    </button>
-                    <button
-                      className={classes.ctaButtonSecondary}
-                      onClick={() => {
-                        setConsultaService({
-                          serviceName: 'CAMUFLAJE',
-                          serviceKey: 'camuflaje',
-                          consultaOptions: camouflageOptionsWithIds.filter(
-                            (opt) =>
-                              opt.contentType === 'consulta-sin-trabajo' ||
-                              opt.contentType === 'consulta-con-trabajo'
-                          ),
-                        });
-                        setConsultaModalOpened(true);
-                      }}
-                      disabled={isLoadingEmployees || isLoadingServices}
-                    >
-                      {isLoadingEmployees || isLoadingServices
-                        ? 'CARGANDO...'
-                        : 'Consulta Obligatoria'}
-                    </button>
-                    <button
-                      className={classes.ctaButtonReservar}
-                      onClick={() => {
-                        const sessionOptions = camouflageOptionsWithIds.filter(
-                          (opt) =>
-                            opt.contentType !== 'consulta-sin-trabajo' &&
-                            opt.contentType !== 'consulta-con-trabajo'
-                        );
-                        setModalService({
-                          serviceName: 'CAMUFLAJE',
-                          serviceKey: 'camuflaje',
-                          options: sessionOptions,
-                        });
-                        setModalOpened(true);
-                      }}
-                      disabled={isLoadingEmployees || isLoadingServices}
-                    >
-                      {isLoadingEmployees || isLoadingServices
-                        ? 'CARGANDO...'
-                        : 'RESERVAR'}
                     </button>
                   </Box>
                 </Box>

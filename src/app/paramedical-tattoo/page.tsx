@@ -665,7 +665,7 @@ const scarCamouflageOptions: ServiceOption[] = [
     label: 'Scar Camouflage Consulta previa Obligatoria',
     contentType: 'consulta',
     description:
-      'Disimula la apariencia de las cicatrices, haciendo que se mezclen con el tono de la piel circundante sin perder realismo y naturalidad. Esta técnica implica la implantación de pigmentos en la zona de la cicatriz para igualar el color y minimizar su visibilidad. En caso de patillas por intervenciones, ideal para recuperar los contornos post intervención quirúrgica.Para evaluar si podemos realizar tu servicio, debés enviar una foto de la zona antes de la consulta al WhatsApp de recepción: 54 9 11 6159-259 ',
+      'Disimula la apariencia de las cicatrices, haciendo que se mezclen con todos los tonos de la piel circundante. Esta técnica implica la implantación de pigmentos en la zona de la cicatriz para igualar el color y minimizar su visibilidad. Ideal para recuperar el contorno de tu rostro en la zona de patillas, camuflando la cicatriz.Para evaluar si podemos realizar tu servicio, debés enviar una foto de la zona antes de la consulta al WhatsApp de recepción: 54 9 11 6159-2591 ',
     priceLabel: 'Valor de la seña:',
     priceValue: 'AR$ 50.000.-',
     footerNote:
@@ -1007,7 +1007,9 @@ export default function ParamedicalTattooPage() {
                         setModalService({
                           serviceName: 'NANO SCALP',
                           serviceKey: 'nano-scalp',
-                          options: nanoScalpOptionsWithIds,
+                          options: nanoScalpOptionsWithIds.filter(
+                            (opt) => opt.contentType !== 'consulta'
+                          ),
                         });
                         setModalOpened(true);
                       }}
@@ -1079,7 +1081,9 @@ export default function ParamedicalTattooPage() {
                         setModalService({
                           serviceName: 'AREOLA HARMONIZATION',
                           serviceKey: 'areola-harmonization',
-                          options: areolaOptionsWithIds,
+                          options: areolaOptionsWithIds.filter(
+                            (opt) => opt.contentType !== 'consulta'
+                          ),
                         });
                         setModalOpened(true);
                       }}
