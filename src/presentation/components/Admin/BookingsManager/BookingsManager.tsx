@@ -1363,8 +1363,8 @@ export function BookingsManager() {
                 {formatDateString(getBookingDate(selectedBooking))}
               </Text>
               <Text size="md" fw={600}>
-                {getBookingStartTime(selectedBooking)} - {getBookingEndTime(selectedBooking)}
-              </Text>
+              {getBookingStartTime(selectedBooking)} - {getBookingEndTime(selectedBooking)}
+            </Text>
             </Box>
 
             <Divider />
@@ -1477,7 +1477,6 @@ export function BookingsManager() {
                   searchable
                   searchValue={clientSearchQuery}
                   onSearchChange={setClientSearchQuery}
-                  disabled={isLoadingClients}
                   error={createBookingErrors.clientId?.message}
                   nothingFoundMessage={isLoadingClients ? "Buscando..." : "No se encontraron clientes"}
                   rightSection={isLoadingClients ? <Loader size="xs" /> : undefined}
