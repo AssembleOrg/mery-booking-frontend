@@ -779,6 +779,17 @@ export default function ParamedicalTattooPage() {
     }
   };
 
+  // Al montar, hacer scroll al anchor si viene en la URL
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (!hash) return;
+    const sectionId = hash.slice(1);
+    const timer = setTimeout(() => {
+      scrollToSection(sectionId);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Helper function to enrich service options with IDs
   const enrichServiceOptions = (
     options: ServiceOption[],
