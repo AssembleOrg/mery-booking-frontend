@@ -6,6 +6,7 @@ export interface Client {
   fullName: string;
   email: string;
   phone: string;
+  dni?: string;
   totalBooked: number;
   nextBooked: string | null;
   lastBooked: string | null;
@@ -30,6 +31,7 @@ export interface CreateClientDto {
   fullName: string;
   email: string;
   phone: string;
+  dni?: string;
 }
 
 export interface CreateClientPublicDto {
@@ -56,6 +58,7 @@ export interface UpdateClientDto {
   fullName?: string;
   email?: string;
   phone?: string;
+  dni?: string;
 }
 
 // Formato de respuesta del backend
@@ -74,16 +77,17 @@ export class ClientService {
     if (page) params.append('page', page.toString());
     if (limit) params.append('limit', limit.toString());
 
-    const response = await apiClient.get<BackendResponse<Client[]>>(
+    const response = await apiClient.get<BackendResponse<{ data: Client[]; total: number } | Client[]>>(
       `${this.BASE_PATH}?${params.toString()}`
     );
-    
-    const clientsArray = response.data.data;
-    
-    return {
-      data: clientsArray,
-      total: clientsArray.length,
-    };
+
+    const responseData = response.data.data;
+
+    if (Array.isArray(responseData)) {
+      return { data: responseData, total: responseData.length };
+    } else {
+      return { data: responseData.data, total: responseData.total };
+    }
   }
 
   static async getById(id: string): Promise<Client> {

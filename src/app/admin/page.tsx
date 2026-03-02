@@ -9,6 +9,7 @@ import { ServicesManager } from '@/presentation/components/Admin/ServicesManager
 import { TimeSlotsManager } from '@/presentation/components/Admin/TimeSlotsManager';
 import { EmployeesManager } from '@/presentation/components/Admin/EmployeesManager';
 import { BookingsManager } from '@/presentation/components/Admin/BookingsManager';
+import { ClientsManager } from '@/presentation/components/Admin/ClientsManager';
 import classes from './page.module.css';
 
 export default function AdminPage() {
@@ -79,6 +80,9 @@ export default function AdminPage() {
             <Tabs.Tab value="bookings" className={classes.tab}>
               Reservas
             </Tabs.Tab>
+            <Tabs.Tab value="clients" className={classes.tab}>
+              Clientes
+            </Tabs.Tab>
           </Tabs.List>
 
           <Box className={classes.tabContent}>
@@ -100,6 +104,10 @@ export default function AdminPage() {
 
             <Tabs.Panel value="bookings">
               {activeTab === 'bookings' && <BookingsManager />}
+            </Tabs.Panel>
+
+            <Tabs.Panel value="clients">
+              {activeTab === 'clients' && <ClientsManager />}
             </Tabs.Panel>
           </Box>
         </Tabs>
