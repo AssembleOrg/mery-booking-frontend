@@ -20,15 +20,13 @@ import {
   ActionIcon,
   TextInput,
   Textarea,
-  Checkbox,
   Loader,
-  Switch,
 } from '@mantine/core';
 import { DatePickerInput, DateValue, DatesProvider } from '@mantine/dates';
 import { useForm, Controller } from 'react-hook-form';
 import { notifications } from '@mantine/notifications';
 import { BookingService, EmployeeService, ServiceService, ClientService } from '@/infrastructure/http';
-import type { Booking, BookingResponse, Employee, ServiceEntity, Client, ClientSearchResult } from '@/infrastructure/http';
+import type { Booking, BookingResponse, Employee, ServiceEntity, Client, ClientSearchResult, PaidStatus } from '@/infrastructure/http';
 import { useCreateBooking, useCreateClient, useAvailability, useRescheduleBooking } from '@/presentation/hooks';
 import { ConfirmationModal } from '@/presentation/components';
 import dayjs from 'dayjs';
@@ -75,7 +73,9 @@ export function BookingsManager() {
   const [isLoadingClients, setIsLoadingClients] = useState(false);
   const [clientSearchQuery, setClientSearchQuery] = useState('');
   const [rescheduleModalOpen, setRescheduleModalOpen] = useState(false);
-  const [isUpdatingPaid, setIsUpdatingPaid] = useState(false);
+  const [paidStatusModalOpen, setPaidStatusModalOpen] = useState(false);
+  const [pendingPaidStatus, setPendingPaidStatus] = useState<PaidStatus | null>(null);
+  const [isUpdatingPaidStatus, setIsUpdatingPaidStatus] = useState(false);
 
   // Hooks para crear reserva y cliente
   const createBookingMutation = useCreateBooking();
@@ -90,7 +90,7 @@ export function BookingsManager() {
     date: Date | null;
     startTime: string; // HH:mm
     notes: string;
-    paid: boolean;
+    paidStatus: PaidStatus;
   }
   
   const {
@@ -108,7 +108,7 @@ export function BookingsManager() {
       date: null,
       startTime: '',
       notes: '',
-      paid: false,
+      paidStatus: 'UNPAID',
     },
   });
   
@@ -245,7 +245,7 @@ export function BookingsManager() {
         date: dateString,
         startTime: data.startTime,
         quantity: 1,
-        paid: data.paid,
+        paidStatus: data.paidStatus,
         notes: data.notes || undefined,
       });
       
@@ -368,20 +368,26 @@ export function BookingsManager() {
     setRescheduleModalOpen(true);
   };
 
-  const handleTogglePaid = async (newPaidValue: boolean) => {
-    if (!selectedBooking) return;
+  const handlePaidStatusChange = (value: string | null) => {
+    if (!value || value === selectedBooking?.paidStatus) return;
+    setPendingPaidStatus(value as PaidStatus);
+    setPaidStatusModalOpen(true);
+  };
+
+  const handleConfirmPaidStatusChange = async () => {
+    if (!selectedBooking || !pendingPaidStatus) return;
     try {
-      setIsUpdatingPaid(true);
-      const updated = await BookingService.update(selectedBooking.id, { paid: newPaidValue });
+      setIsUpdatingPaidStatus(true);
+      const updated = await BookingService.changePaidStatus(selectedBooking.id, pendingPaidStatus);
       setSelectedBooking(updated);
-      // Refrescar la lista
       await fetchBookings();
-      // Toast de éxito
       notifications.show({
-        title: newPaidValue ? 'Marcada como pagada' : 'Marcada como no pagada',
-        message: 'El estado de pago se actualizó correctamente',
+        title: 'Estado de pago actualizado',
+        message: getPaidStatusLabel(pendingPaidStatus),
         color: 'green',
       });
+      setPaidStatusModalOpen(false);
+      setPendingPaidStatus(null);
     } catch (error) {
       console.error('Error updating payment status:', error);
       notifications.show({
@@ -390,7 +396,7 @@ export function BookingsManager() {
         color: 'red',
       });
     } finally {
-      setIsUpdatingPaid(false);
+      setIsUpdatingPaidStatus(false);
     }
   };
 
@@ -565,6 +571,24 @@ export function BookingsManager() {
         return 'Completada';
       default:
         return status;
+    }
+  };
+
+  const getPaidStatusLabel = (status: string) => {
+    switch (status) {
+      case 'PAID': return 'Pagado';
+      case 'PARTIALLY_PAID': return 'Seña / Parcial';
+      case 'UNPAID': return 'Sin pago';
+      default: return status;
+    }
+  };
+
+  const getPaidStatusColor = (status: string) => {
+    switch (status) {
+      case 'PAID': return 'green';
+      case 'PARTIALLY_PAID': return 'yellow';
+      case 'UNPAID': return 'red';
+      default: return 'gray';
     }
   };
 
@@ -1407,27 +1431,28 @@ export function BookingsManager() {
               </Group>
             </Group>
 
-            <Group gap="xs" align="center">
-              <Switch
-                checked={selectedBooking.paid}
-                onChange={(e) => handleTogglePaid(e.currentTarget.checked)}
-                disabled={
-                  isUpdatingPaid ||
-                  selectedBooking.status === 'CANCELLED' ||
-                  dayjs(getBookingDate(selectedBooking)).isBefore(dayjs(), 'day')
-                }
-                color="pink"
-                label={selectedBooking.paid ? 'Pagado' : 'No pagado'}
+            <Box>
+              <Text size="sm" fw={500} c="dimmed" mb={6}>Estado de pago</Text>
+              <Group gap="xs" align="center">
+                <Badge color={getPaidStatusColor(selectedBooking.paidStatus)} variant="light">
+                  {getPaidStatusLabel(selectedBooking.paidStatus)}
+                </Badge>
+              </Group>
+              <Select
+                mt="xs"
+                data={[
+                  { value: 'UNPAID', label: 'Sin pago' },
+                  { value: 'PARTIALLY_PAID', label: 'Seña / Parcial' },
+                  { value: 'PAID', label: 'Pagado' },
+                ]}
+                value={selectedBooking.paidStatus}
+                onChange={handlePaidStatusChange}
+                disabled={isUpdatingPaidStatus || selectedBooking.status === 'CANCELLED'}
+                size="sm"
+                w={180}
               />
-              {isUpdatingPaid && <Loader size="xs" />}
-            </Group>
-
-            {dayjs(getBookingDate(selectedBooking)).isBefore(dayjs(), 'day') &&
-              selectedBooking.status !== 'CANCELLED' && (
-              <Text size="xs" c="dimmed">
-                No se puede editar el pago de reservas pasadas
-              </Text>
-            )}
+              {isUpdatingPaidStatus && <Loader size="xs" />}
+            </Box>
 
             {selectedBooking.status !== 'CANCELLED' && (
               <Group gap="sm" grow>
@@ -1589,15 +1614,19 @@ export function BookingsManager() {
               )}
             />
 
-            {/* Pagado */}
+            {/* Estado de pago */}
             <Controller
-              name="paid"
+              name="paidStatus"
               control={createBookingControl}
               render={({ field }) => (
-                <Checkbox
-                  checked={field.value}
-                  onChange={(e) => field.onChange(e.currentTarget.checked)}
-                  label="Reserva pagada"
+                <Select
+                  {...field}
+                  label="Estado de pago"
+                  data={[
+                    { value: 'UNPAID', label: 'Sin pago' },
+                    { value: 'PARTIALLY_PAID', label: 'Seña / Parcial' },
+                    { value: 'PAID', label: 'Pagado' },
+                  ]}
                 />
               )}
             />
@@ -1753,7 +1782,7 @@ export function BookingsManager() {
         onClose={() => setCancelConfirmationModalOpen(false)}
         onConfirm={handleConfirmCancelBooking}
         title="Cancelar Reserva"
-        message={selectedBooking 
+        message={selectedBooking
           ? `¿Estás seguro de que deseas cancelar la reserva de "${selectedBooking.client?.fullName || 'Cliente'}" para el ${formatDateString(getBookingDate(selectedBooking))} a las ${getBookingStartTime(selectedBooking)}?`
           : '¿Estás seguro de que deseas cancelar esta reserva?'
         }
@@ -1761,6 +1790,22 @@ export function BookingsManager() {
         confirmButtonText="Cancelar Reserva"
         confirmButtonColor="red"
         isLoading={isCancelling}
+      />
+
+      {/* Modal: Confirmación de cambio de estado de pago */}
+      <ConfirmationModal
+        opened={paidStatusModalOpen}
+        onClose={() => {
+          setPaidStatusModalOpen(false);
+          setPendingPaidStatus(null);
+        }}
+        onConfirm={handleConfirmPaidStatusChange}
+        title="Cambiar estado de pago"
+        message={`¿Confirmar cambio a "${pendingPaidStatus ? getPaidStatusLabel(pendingPaidStatus) : ''}"?`}
+        confirmationWord="confirmar"
+        confirmButtonText="Confirmar"
+        confirmButtonColor="pink"
+        isLoading={isUpdatingPaidStatus}
       />
     </Stack>
   );

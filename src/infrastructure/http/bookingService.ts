@@ -1,6 +1,7 @@
 import apiClient from './apiClient';
 
 export type BookingStatus = 'PENDING' | 'ACTIVE' | 'CANCELLED' | 'COMPLETED';
+export type PaidStatus = 'UNPAID' | 'PARTIALLY_PAID' | 'PAID';
 
 export interface Booking {
   id: string;
@@ -60,7 +61,7 @@ export interface CreateBookingDto {
   date: string; // YYYY-MM-DD
   startTime: string; // HH:mm (solo :00 o :30)
   quantity?: number;
-  paid?: boolean;
+  paidStatus?: PaidStatus;
   notes?: string;
 }
 
@@ -80,6 +81,7 @@ export interface BookingResponse {
   localEndTime: string; // HH:mm (hora local de fin)
   quantity: number;
   paid: boolean;
+  paidStatus: PaidStatus;
   status: BookingStatus;
   notes?: string;
   client?: {
@@ -255,6 +257,15 @@ export class BookingService {
     const response = await apiClient.patch<BackendResponse<BookingResponse>>(
       `${this.BASE_PATH}/${id}`,
       data
+    );
+    return response.data.data;
+  }
+
+  // Cambiar estado de pago (admin) - UNPAID | PARTIALLY_PAID | PAID
+  static async changePaidStatus(id: string, paidStatus: PaidStatus): Promise<BookingResponse> {
+    const response = await apiClient.patch<BackendResponse<BookingResponse>>(
+      `${this.BASE_PATH}/${id}/paid-status`,
+      { paidStatus }
     );
     return response.data.data;
   }

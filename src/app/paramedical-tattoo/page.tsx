@@ -112,7 +112,7 @@ function ConsultaContent({
         date: dateString,
         startTime: selectedTime,
         quantity: 1,
-        paid: false,
+        paidStatus: 'UNPAID',
         notes: clientData.notes,
       });
 
@@ -261,7 +261,7 @@ function SesionContent({
         date: dateString,
         startTime: selectedTime,
         quantity: 1,
-        paid: false,
+        paidStatus: 'UNPAID',
         notes: clientData.notes,
       });
 

@@ -309,7 +309,7 @@ function ConsultaContent({
         date: dateString,
         startTime: selectedTime,
         quantity: 1,
-        paid: false,
+        paidStatus: 'UNPAID',
         notes: clientData.notes,
       });
 
@@ -648,7 +648,7 @@ function SesionCalendarioContent({
         date: dateString,
         startTime: selectedTime,
         quantity: 1,
-        paid: false,
+        paidStatus: 'UNPAID',
         notes: clientData.notes,
       });
 
