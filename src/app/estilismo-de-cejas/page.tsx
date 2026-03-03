@@ -51,7 +51,7 @@ export default function EstilismoCejasPage() {
   const isLoadingService = isLoadingServices && !!bookingData?.servicio;
 
   const { data: employees = [] } = useEmployees(
-    CATEGORY_IDS.ESTILISMO_CEJAS,
+    bookingData?.servicio ? CATEGORY_IDS.ESTILISMO_CEJAS : undefined,
     bookingData?.servicio || undefined
   );
 

@@ -9,4 +9,5 @@ export const CATEGORY_IDS = {
   TATTOO_COSMETICO: '9a39b2f8-0d4a-4bca-bc93-b4b5d6cf2d11',
   ESTILISMO_CEJAS: '316f01a6-ef73-4b05-a322-8da598ba50aa',
   PARAMEDICAL_TATTOO: '45422e67-102b-4565-9192-ef4047e16f48',
+  EPITESIS_CAP: '7cfbc1e8-8eb2-41cc-a8de-a3b0ecce30c4',
 } as const;

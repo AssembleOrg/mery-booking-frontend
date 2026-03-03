@@ -79,7 +79,25 @@ export function Step1Terms({
           </Alert>
         )}
 
-        {showConsultaWarning && serviceName && serviceKey !== 'scar-camouflage' && (
+        {serviceKey === 'epitesis-cap' && (
+          <Alert
+            color="pink"
+            variant="light"
+            icon={<IconAlertCircle size={16} />}
+            title="Antes de continuar — Epitesis CAP"
+          >
+            <Text size="sm" mb={6}>
+              <strong>Requisito médico:</strong> Es indispensable contar con el{' '}
+              <strong>aval de tu médico</strong> para poder realizar este servicio.
+            </Text>
+            <Text size="sm">
+              La consulta inicial es el primer paso: nos conoceremos, analizaremos tu caso
+              y evaluaremos si podemos acompañarte en el proceso.
+            </Text>
+          </Alert>
+        )}
+
+        {showConsultaWarning && serviceName && serviceKey !== 'scar-camouflage' && serviceKey !== 'epitesis-cap' && (
           <Alert
             icon={<IconAlertCircle size={16} />}
             title="Consulta Previa Obligatoria"
