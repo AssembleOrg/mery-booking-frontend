@@ -88,21 +88,10 @@ export function Step4Confirmation({
   }, [employee]);
 
   const handleCollectData = async (clientData: Client) => {
-    console.log('[ReservaModal Step4] Datos del cliente recolectados:', {
-      name: clientData.name,
-      surname: clientData.surname,
-      email: clientData.email,
-      dni: clientData.dni,
-      hasMobile: !!clientData.mobile,
-      hasNotes: !!clientData.notes,
-    });
-
     if (!clientData.dni) {
-      console.error('[ReservaModal Step4] ERROR: El DNI es requerido');
       return;
     }
 
-    console.log('[ReservaModal Step4] Llamando a onClientDataCollected...');
     onClientDataCollected({
       name: clientData.name,
       surname: clientData.surname,
@@ -111,7 +100,6 @@ export function Step4Confirmation({
       dni: clientData.dni,
       notes: clientData.notes,
     });
-    console.log('[ReservaModal Step4] onClientDataCollected ejecutado exitosamente');
   };
 
   const formattedDate = dayjs(selectedDate).format("dddd D [de] MMMM, YYYY");

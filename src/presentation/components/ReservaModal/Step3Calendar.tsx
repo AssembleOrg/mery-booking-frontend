@@ -91,34 +91,6 @@ export function Step3Calendar({
     return employee?.fullName || 'Profesional';
   }, [employeeId, staffConsultasId, meryGarciaId, employees]);
 
-  // Debug log
-  useEffect(() => {
-    console.log('🔍 Step3Calendar Debug:', {
-      'selectedOption.id': selectedOption.id,
-      'selectedOption.label': selectedOption.label,
-      'selectedOption.contentType': selectedOption.contentType,
-      'selectedOption.serviceId': selectedOption.serviceId,
-      'selectedOption.employeeId': selectedOption.employeeId,
-      'selectedOption.serviceDuration': selectedOption.serviceDuration,
-      'props.staffConsultasId': staffConsultasId,
-      'props.meryGarciaId': meryGarciaId,
-      'employees.length': employees.length,
-      'services.length': services.length,
-      'calculated employeeId': employeeId,
-      'calculated serviceId': serviceId,
-      'calculated professionalName': professionalName,
-    });
-  }, [
-    selectedOption,
-    employeeId,
-    serviceId,
-    professionalName,
-    staffConsultasId,
-    meryGarciaId,
-    employees.length,
-    services.length,
-  ]);
-
   // Handler para mostrar el calendario
   const handleContinue = () => {
     if (employeeId && serviceId) {

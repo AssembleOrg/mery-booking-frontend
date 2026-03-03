@@ -68,7 +68,6 @@ export function ReservaModal({
 
   const handleStepComplete = () => {
     if (currentStep < 5) {
-      console.log(`[ReservaModal] Avanzando de step ${currentStep} a step ${currentStep + 1}`);
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -163,25 +162,13 @@ export function ReservaModal({
                 confirmationModalOpened={confirmationModalOpened}
                 onConfirmationModalClose={() => setConfirmationModalOpened(false)}
                 onClientDataCollected={(data) => {
-                  console.log('[ReservaModal] clientData actualizado:', data);
                   setClientData(data);
-                  console.log('[ReservaModal] Avanzando a Step 5...');
                   handleStepComplete();
                 }}
               />
             )}
 
             {currentStep === 5 && selectedOption && selectedDate && selectedTime && clientData && (
-              (() => {
-                console.log('[ReservaModal] Renderizando Step 5 con:', {
-                  currentStep,
-                  hasSelectedOption: !!selectedOption,
-                  hasSelectedDate: !!selectedDate,
-                  hasSelectedTime: !!selectedTime,
-                  hasClientData: !!clientData,
-                });
-                return null;
-              })(),
               <Step5PaymentSummary
                 key="step5"
                 serviceName={serviceName}

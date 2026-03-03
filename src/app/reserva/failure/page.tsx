@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, Suspense } from 'react';
+import { Suspense } from 'react';
 import { Container, Title, Text, Stack, Button, Paper, ThemeIcon, Loader } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 import Link from 'next/link';
@@ -11,9 +11,6 @@ function FailureContent() {
   const paymentId = searchParams.get('payment_id');
   const collectionId = searchParams.get('collection_id');
 
-  useEffect(() => {
-    console.log('[Failure Page] Pago rechazado. Payment ID:', paymentId || collectionId);
-  }, [paymentId, collectionId]);
 
   return (
     <Container size="sm" py="xl">

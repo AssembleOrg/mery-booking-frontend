@@ -25,8 +25,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 🔥 PASO 1: Crear pre-reserva temporal (bloquea el slot)
-    console.log('[create-preference] Creando pre-reserva temporal...');
+    // PASO 1: Crear pre-reserva temporal (bloquea el slot)
     const tempReservationResponse = await fetch(
       `${BACKEND_URL}/temp-reservations`,
       {
@@ -66,11 +65,6 @@ export async function POST(request: NextRequest) {
     }
 
     if (!tempReservationResponse.ok) {
-      const errorText = await tempReservationResponse.text();
-      console.error(
-        '[create-preference] Error al crear pre-reserva:',
-        errorText
-      );
       return NextResponse.json(
         {
           error: 'Error al crear la pre-reserva',
@@ -83,13 +77,7 @@ export async function POST(request: NextRequest) {
     const tempReservationData = await tempReservationResponse.json();
     const tempReservationId = tempReservationData.data.id;
 
-    console.log(
-      '[create-preference] Pre-reserva creada:',
-      tempReservationId
-    );
-
-    // 🔥 PASO 2: Crear preferencia en Mercado Pago con temp_reservation_id
-    console.log('[create-preference] Creando preferencia en Mercado Pago...');
+    // PASO 2: Crear preferencia en Mercado Pago con temp_reservation_id
     const now = new Date();
     const expirationDate = new Date(now.getTime() + 14 * 60 * 1000); // 14 minutos
 
@@ -130,12 +118,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log(
-      '[create-preference] Preferencia creada:',
-      preference.id
-    );
-
-    // 🔥 PASO 3: Vincular preferencia con pre-reserva (opcional pero recomendado)
+    // PASO 3: Vincular preferencia con pre-reserva (opcional pero recomendado)
     try {
       await fetch(
         `${BACKEND_URL}/temp-reservations/${tempReservationId}/preference`,
@@ -149,15 +132,8 @@ export async function POST(request: NextRequest) {
           }),
         }
       );
-      console.log(
-        '[create-preference] Preferencia vinculada a pre-reserva'
-      );
     } catch (linkError) {
-      // No crítico, solo loguear
-      console.warn(
-        '[create-preference] No se pudo vincular preferencia:',
-        linkError
-      );
+      // No crítico - vinculación opcional
     }
 
     // Determinar si usar sandbox basado en variable de entorno
@@ -166,17 +142,12 @@ export async function POST(request: NextRequest) {
       ? preference.sandbox_init_point
       : preference.init_point;
 
-    console.log(
-      `[create-preference] Modo: ${useSandbox ? 'SANDBOX' : 'PRODUCCIÓN'}`
-    );
-
     return NextResponse.json({
       id: preference.id,
       init_point: checkoutUrl, // URL correcta según el entorno
       tempReservationId, // Incluir para referencia
     });
   } catch (error: any) {
-    console.error('[create-preference] Error:', error);
     return NextResponse.json(
       {
         error: error.message || 'Error al procesar la solicitud',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   Stack,
@@ -76,33 +76,6 @@ export function Step5PaymentSummary({
   const employee = employees.find((e) => e.id === employeeId);
   const service = services.find((s) => s.id === selectedOption.serviceId);
 
-  useEffect(() => {
-    console.log('[ReservaModal Step5] Componente montado');
-    console.log('[ReservaModal Step5] Props recibidas:', {
-      serviceName,
-      selectedOption: {
-        label: selectedOption.label,
-        serviceId: selectedOption.serviceId,
-        employeeId: selectedOption.employeeId,
-        contentType: selectedOption.contentType,
-      },
-      selectedDate: selectedDate.toISOString(),
-      selectedTime,
-      clientData,
-      employeesCount: employees.length,
-      servicesCount: services.length,
-      staffConsultasId,
-      meryGarciaId,
-    });
-    console.log('[ReservaModal Step5] Validación de datos:', {
-      employeeIdCalculado: employeeId,
-      employeeEncontrado: !!employee,
-      employeeName: employee?.fullName || 'NO ENCONTRADO',
-      serviceEncontrado: !!service,
-      serviceName: service?.name || 'NO ENCONTRADO',
-    });
-  }, []);
-
   const depositAmount = service ? Number(service.price) : 0;
 
   const formattedDate = useMemo(() => {
@@ -120,22 +93,11 @@ export function Step5PaymentSummary({
   }, [selectedDate]);
 
   const handlePayment = async () => {
-    console.log('[ReservaModal Step5] handlePayment iniciado');
-    console.log('[ReservaModal Step5] Validación previa:', {
-      service: !!service,
-      employeeId: !!employeeId,
-    });
-
     if (!service || !employeeId) {
-      console.error('[ReservaModal Step5] ERROR: Faltan datos críticos', {
-        service: !!service,
-        employeeId: !!employeeId,
-      });
       return;
     }
 
     setIsProcessing(true);
-    console.log('[ReservaModal Step5] Estado isProcessing = true');
 
     try {
       // Formatear fecha para el backend
@@ -164,11 +126,6 @@ export function Step5PaymentSummary({
         },
       };
 
-      console.log('[ReservaModal Step5] Payload a enviar a API:', payload);
-      console.log(
-        '[ReservaModal Step5] Iniciando llamada a /api/create-preference...'
-      );
-
       // Crear preferencia de pago
       const response = await fetch('/api/create-preference', {
         method: 'POST',
@@ -178,22 +135,12 @@ export function Step5PaymentSummary({
         body: JSON.stringify(payload),
       });
 
-      console.log('[ReservaModal Step5] Respuesta recibida:', {
-        status: response.status,
-        ok: response.ok,
-      });
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         const errorMessage =
           errorData.message ||
           errorData.error ||
           'Error al crear la preferencia de pago';
-
-        console.error('[ReservaModal Step5] ERROR en respuesta:', {
-          status: response.status,
-          error: errorData,
-        });
 
         // Manejar error 409 (slot ya ocupado)
         if (response.status === 409) {
@@ -223,21 +170,13 @@ export function Step5PaymentSummary({
       }
 
       const data = await response.json();
-      console.log('[ReservaModal Step5] Datos de MercadoPago recibidos:', data);
 
       // Redirigir a MercadoPago
-      // La URL correcta ya viene determinada por el backend según MERCADOPAGO_USE_SANDBOX
       const checkoutUrl = data.init_point;
 
-      console.log('[ReservaModal Step5] URL de checkout:', checkoutUrl);
-
       if (checkoutUrl) {
-        console.log('[ReservaModal Step5] Redirigiendo a MercadoPago...');
         window.location.href = checkoutUrl;
       } else {
-        console.error(
-          '[ReservaModal Step5] ERROR: No se recibió URL de pago en la respuesta'
-        );
         notifications.show({
           title: 'Error',
           message: 'No se recibió URL de pago. Intenta nuevamente.',
@@ -247,7 +186,6 @@ export function Step5PaymentSummary({
         setIsProcessing(false);
       }
     } catch (error: any) {
-      console.error('[ReservaModal Step5] ERROR al procesar el pago:', error);
       setIsProcessing(false);
       notifications.show({
         title: 'Error',
@@ -261,26 +199,9 @@ export function Step5PaymentSummary({
   };
 
   if (!service || !employee) {
-    console.error(
-      '[ReservaModal Step5] ERROR: Componente no puede renderizar',
-      {
-        service: !!service,
-        serviceId: selectedOption.serviceId,
-        employee: !!employee,
-        employeeId: employeeId,
-        availableServices: services.map((s) => ({ id: s.id, name: s.name })),
-        availableEmployees: employees.map((e) => ({
-          id: e.id,
-          name: e.fullName,
-        })),
-      }
-    );
     return (
       <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
         <h3>Error: No se pueden cargar los datos del servicio o profesional</h3>
-        <p>Service encontrado: {service ? 'Sí' : 'No'}</p>
-        <p>Employee encontrado: {employee ? 'Sí' : 'No'}</p>
-        <p>Ver consola para más detalles</p>
         <Button onClick={onBack}>Volver</Button>
       </div>
     );

@@ -16,7 +16,6 @@ async function getPaymentWithRetry(paymentId: number, retries = 3, delayMs = 200
       const status = (error as { status?: number })?.status;
       const isNotFound = status === 404 || err?.message?.includes('not_found');
       if (isNotFound && attempt < retries) {
-        console.log(`[Webhook] Pago no encontrado aún, reintento ${attempt}/${retries} en ${delayMs}ms...`);
         await new Promise((r) => setTimeout(r, delayMs));
       } else {
         throw error;
@@ -30,8 +29,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    console.log('[Webhook] Notificación recibida:', body);
-
     // MercadoPago envía notificaciones de tipo 'payment'
     if (body.type === 'payment') {
       const paymentId = Number(body.data.id);
@@ -39,14 +36,10 @@ export async function POST(request: NextRequest) {
       // Obtener información completa del pago desde MercadoPago (con reintentos por race condition)
       const payment = await getPaymentWithRetry(paymentId);
 
-      console.log('[Webhook] Estado del pago:', payment.status);
-
       // SOLO procesar pagos aprobados
       if (payment.status === 'approved') {
         // Extraer metadata con la información de la reserva
         const metadata = payment.metadata as Record<string, string>;
-
-        console.log('[Webhook] Metadata recibida:', metadata);
 
         // Validar que tengamos los campos necesarios
         if (
@@ -56,16 +49,8 @@ export async function POST(request: NextRequest) {
           !metadata.book_serv_id ||
           !metadata.temp_reservation_id
         ) {
-          console.error('[Webhook] Metadata incompleta:', metadata);
           return NextResponse.json({ received: true }, { status: 200 });
         }
-
-        console.log(
-          '[Webhook] Procesando pago aprobado. Client:',
-          metadata.user_full_name,
-          'TempReservationId:',
-          metadata.temp_reservation_id
-        );
 
         try {
           // 🔥 Llamar al endpoint del backend para crear el booking
@@ -85,8 +70,6 @@ export async function POST(request: NextRequest) {
           const webhookSecret = process.env.MERCADOPAGO_WEBHOOK_SECRET;
           if (webhookSecret) {
             headers['X-Webhook-Secret'] = webhookSecret;
-          } else {
-            console.warn('[Webhook] MERCADOPAGO_WEBHOOK_SECRET no está configurado');
           }
           
           const webhookResponse = await fetch(
@@ -117,15 +100,6 @@ export async function POST(request: NextRequest) {
           );
 
           if (!webhookResponse.ok) {
-            const errorData = await webhookResponse
-              .json()
-              .catch(() => ({}));
-            console.error(
-              '[Webhook] Error del backend:',
-              webhookResponse.status,
-              errorData
-            );
-
             // IMPORTANTE: Responder 200 para que MP no reintente infinitamente
             // El backend debe manejar los errores y marcar el pago como "needs_manual_review"
             return NextResponse.json(
@@ -140,10 +114,6 @@ export async function POST(request: NextRequest) {
           }
 
           const webhookData = await webhookResponse.json();
-          console.log(
-            '[Webhook] Booking creado exitosamente:',
-            webhookData.data?.bookingId
-          );
 
           return NextResponse.json(
             {
@@ -154,12 +124,6 @@ export async function POST(request: NextRequest) {
             { status: 200 }
           );
         } catch (error) {
-          // ❌ ERROR CRÍTICO: Pago aprobado pero falló la creación
-          console.error(
-            `[CRÍTICO] Pago aprobado pero fallo al procesar. Payment ID: ${payment.id}`,
-            error
-          );
-
           // IMPORTANTE: Aún así responder 200 para que MercadoPago no reintente
           return NextResponse.json(
             {
@@ -171,14 +135,12 @@ export async function POST(request: NextRequest) {
           );
         }
       } else {
-        console.log('[Webhook] Pago no aprobado. Status:', payment.status);
       }
     }
 
     // SIEMPRE responder 200 para que MercadoPago no reintente
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (error) {
-    console.error('[Webhook] Error general:', error);
     // Incluso con error, respondemos 200 para evitar reintentos infinitos
     return NextResponse.json({ error: 'Internal error' }, { status: 200 });
   }
