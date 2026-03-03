@@ -219,11 +219,12 @@
 @media (max-width: 480px) {
   .container {
     padding: 1rem 0.75rem;
+    overflow-x: hidden;
   }
 
   .calendarWrapper {
     padding: 0.5rem 0;
-    overflow: visible;
+    overflow-x: auto;
     width: 100%;
   }
 
