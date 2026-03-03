@@ -4,10 +4,15 @@ import { MantineProvider, createTheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { ReactNode } from 'react';
 import { AuthProvider } from '@/presentation/contexts';
+import { useIosKeyboardDismiss } from '@/presentation/hooks/useIosKeyboardDismiss';
 import { QueryProvider } from './QueryProvider';
 
 const theme = createTheme({
-  fontFamily: 'var(--font-avant-garde), sans-serif',
+  fontFamily:
+    "var(--font-din-light, system-ui), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+  headings: {
+    fontFamily: 'var(--font-avant-garde, sans-serif), sans-serif',
+  },
   primaryColor: 'pink',
   colors: {
     pink: [
@@ -33,6 +38,8 @@ interface MantineProviderWrapperProps {
 export function MantineProviderWrapper({
   children,
 }: MantineProviderWrapperProps) {
+  useIosKeyboardDismiss();
+
   return (
     <QueryProvider>
       <MantineProvider theme={theme}>
@@ -44,4 +51,3 @@ export function MantineProviderWrapper({
     </QueryProvider>
   );
 }
-

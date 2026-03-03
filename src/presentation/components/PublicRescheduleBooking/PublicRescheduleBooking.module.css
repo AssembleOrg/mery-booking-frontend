@@ -1,0 +1,24 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #ffffff;
+}
+
+.codeInput {
+  width: 100%;
+  max-width: 300px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+.searchButton {
+  background: #8B1538;
+  color: white;
+  font-weight: 500;
+}
+
+.searchButton:hover {
+  background: #6d0f2a;
+}

@@ -15,14 +15,6 @@ const avantGardeMedium = localFont({
   fallback: ['system-ui', 'sans-serif'],
 });
 
-// Fuente para botones de home (.ttf)
-const avantGardeButtons = localFont({
-  src: '../../public/fonts/avantg.ttf',
-  variable: '--font-avant-garde-buttons',
-  display: 'swap',
-  fallback: ['system-ui', 'sans-serif'],
-});
-
 // Fuente para dropdowns (Poppins ExtraLight)
 const poppinsExtraLight = localFont({
   src: '../../public/fonts/Poppins-ExtraLight.ttf',
@@ -67,10 +59,34 @@ const dinMedium = localFont({
   fallback: ['system-ui', 'sans-serif'],
 });
 
+const metadataBaseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL?.replace(/\/$/, '');
+
 export const metadata: Metadata = {
+  metadataBase: metadataBaseUrl ? new URL(metadataBaseUrl) : undefined,
   title: 'Mery García - Cosmetic Tattoo',
   description: 'Portal de reservas online - Cosmetic Tattoo, Estilismo de Cejas y Paramedical Tattoo',
   manifest: '/manifest.json',
+  openGraph: {
+    type: 'website',
+    locale: 'es_ES',
+    siteName: 'Mery García Booking',
+    title: 'Mery García - Cosmetic Tattoo',
+    description: 'Portal de reservas online - Cosmetic Tattoo, Estilismo de Cejas y Paramedical Tattoo',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 512,
+        height: 512,
+        alt: 'Mery García - Cosmetic Tattoo',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Mery García - Cosmetic Tattoo',
+    description: 'Portal de reservas online - Cosmetic Tattoo, Estilismo de Cejas y Paramedical Tattoo',
+    images: ['/og-image.png'],
+  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -91,6 +107,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: '#f9bbc4',
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
@@ -102,9 +119,13 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <head>
         <ColorSchemeScript />
+        <link
+          href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+          rel="stylesheet"
+        />
       </head>
       <body
-        className={`${avantGardeMedium.variable} ${avantGardeButtons.variable} ${dinLight.variable} ${dinRegular.variable} ${dinMedium.variable}`}
+        className={`${avantGardeMedium.variable} ${poppinsExtraLight.variable} ${dinLight.variable} ${dinRegular.variable} ${dinMedium.variable}`}
         style={{ margin: 0 }}
         suppressHydrationWarning
       >

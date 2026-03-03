@@ -1,14 +1,17 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { useMemo } from 'react';
+import { Box, Text } from '@mantine/core';
+import dayjs from 'dayjs';
+import 'dayjs/locale/es';
 import { BookingConfirmationModal } from '@/presentation/components';
-import { useCreateClient, useCreateBooking } from '@/presentation/hooks';
 import { Client } from '@/domain/entities';
 import classes from './ReservaModal.module.css';
 import type { ServiceOption } from '@/infrastructure/types/services';
 import type { Employee } from '@/infrastructure/http/employeeService';
 import type { ServiceEntity } from '@/infrastructure/http/serviceService';
+
+dayjs.locale('es');
 
 const MOCK_LOCATION = 'Mery García Office';
 
@@ -21,8 +24,17 @@ interface Step4ConfirmationProps {
   services: ServiceEntity[];
   staffConsultasId?: string;
   meryGarciaId?: string;
-  onComplete: () => void;
-  onBack: () => void;
+  selectedEmployeeId?: string;
+  confirmationModalOpened: boolean;
+  onConfirmationModalClose: () => void;
+  onClientDataCollected: (data: {
+    name: string;
+    surname: string;
+    email: string;
+    mobile: string;
+    dni: string;
+    notes?: string;
+  }) => void;
 }
 
 export function Step4Confirmation({
@@ -34,18 +46,14 @@ export function Step4Confirmation({
   services,
   staffConsultasId,
   meryGarciaId,
-  onComplete,
-  onBack,
+  selectedEmployeeId,
+  confirmationModalOpened,
+  onConfirmationModalClose,
+  onClientDataCollected,
 }: Step4ConfirmationProps) {
-  const [showConfirmation, setShowConfirmation] = useState(true);
-
-  // Hooks para crear cliente y reserva
-  const createClientMutation = useCreateClient();
-  const createBookingMutation = useCreateBooking();
-
-  // Usar employeeId del selectedOption (ya viene asignado por getOptionsWithIds)
-  // Solo usar fallbacks si no existe
-  const employeeId = selectedOption.employeeId ||
+  // Priorizar selectedEmployeeId de la página, luego selectedOption.employeeId, luego fallbacks
+  const employeeId = selectedEmployeeId ||
+                     selectedOption.employeeId ||
                      (selectedOption.contentType === 'consulta-sin-trabajo' ||
                       selectedOption.contentType === 'consulta-con-trabajo'
                        ? staffConsultasId
@@ -79,83 +87,89 @@ export function Step4Confirmation({
     };
   }, [employee]);
 
-  const handleConfirmBooking = async (clientData: Client) => {
-    if (!selectedOption.serviceId || !selectedDate || !selectedTime) return;
+  const handleCollectData = async (clientData: Client) => {
+    console.log('[ReservaModal Step4] Datos del cliente recolectados:', {
+      name: clientData.name,
+      surname: clientData.surname,
+      email: clientData.email,
+      dni: clientData.dni,
+      hasMobile: !!clientData.mobile,
+      hasNotes: !!clientData.notes,
+    });
 
-    // Validar que haya un empleado seleccionado
-    if (!employeeId) {
+    if (!clientData.dni) {
+      console.error('[ReservaModal Step4] ERROR: El DNI es requerido');
       return;
     }
 
-    try {
-      // 1. Crear cliente primero
-      if (!clientData.dni) {
-        throw new Error('El DNI es requerido para completar la reserva');
-      }
-
-      const clientResponse = await createClientMutation.mutateAsync({
-        fullName: `${clientData.name} ${clientData.surname}`,
-        email: clientData.email,
-        phone: clientData.mobile,
-        dni: clientData.dni,
-      });
-
-      // 2. Crear reserva con el ID del cliente
-      const year = selectedDate.getFullYear();
-      const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-      const day = String(selectedDate.getDate()).padStart(2, '0');
-      const dateStr = `${year}-${month}-${day}`;
-
-      await createBookingMutation.mutateAsync({
-        clientId: clientResponse.id,
-        employeeId: employeeId,
-        serviceId: selectedOption.serviceId,
-        date: dateStr,
-        startTime: selectedTime,
-        quantity: 1,
-        paid: false,
-        notes: clientData.notes,
-      });
-
-      // Éxito - cerrar todo
-      handleBookingSuccess();
-    } catch (error) {
-      console.error('Error creating booking:', error);
-      // El error será manejado por los hooks de react-query
-    }
+    console.log('[ReservaModal Step4] Llamando a onClientDataCollected...');
+    onClientDataCollected({
+      name: clientData.name,
+      surname: clientData.surname,
+      email: clientData.email,
+      mobile: clientData.mobile,
+      dni: clientData.dni,
+      notes: clientData.notes,
+    });
+    console.log('[ReservaModal Step4] onClientDataCollected ejecutado exitosamente');
   };
 
-  const handleConfirmationClose = () => {
-    setShowConfirmation(false);
-    onBack(); // Volver al paso anterior si cancela
-  };
-
-  const handleBookingSuccess = () => {
-    setShowConfirmation(false);
-    onComplete(); // Cerrar todo el modal y resetear
-  };
+  const formattedDate = dayjs(selectedDate).format("dddd D [de] MMMM, YYYY");
 
   if (!serviceForModal) {
     return null;
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.2 }}
-    >
+    <Box className={classes.stepContainer}>
+      <Text className={classes.stepTitle}>Confirma tu reserva</Text>
+
+      <div className={classes.summaryCard}>
+        <div className={classes.summaryRow}>
+          <Text className={classes.summaryLabel}>Servicio:</Text>
+          <Text className={classes.summaryValue}>{serviceName}</Text>
+        </div>
+
+        <div className={classes.summaryRow}>
+          <Text className={classes.summaryLabel}>Opción:</Text>
+          <Text className={classes.summaryValue}>{selectedOption.label}</Text>
+        </div>
+
+        {employee && (
+          <div className={classes.summaryRow}>
+            <Text className={classes.summaryLabel}>Profesional:</Text>
+            <Text className={classes.summaryValue}>{employee.fullName}</Text>
+          </div>
+        )}
+
+        <div className={classes.summaryRow}>
+          <Text className={classes.summaryLabel}>Fecha:</Text>
+          <Text className={classes.summaryValue}>{formattedDate}</Text>
+        </div>
+
+        <div className={classes.summaryRow}>
+          <Text className={classes.summaryLabel}>Hora:</Text>
+          <Text className={classes.summaryValue}>{selectedTime}</Text>
+        </div>
+
+        <div className={classes.summaryRow}>
+          <Text className={classes.summaryLabel}>Seña (a pagar ahora):</Text>
+          <Text className={classes.summaryPrice}>
+            AR$ {service ? Number(service.price).toLocaleString('es-AR') : ''}
+          </Text>
+        </div>
+      </div>
+
       <BookingConfirmationModal
-        opened={showConfirmation}
-        onClose={handleConfirmationClose}
+        opened={confirmationModalOpened}
+        onClose={onConfirmationModalClose}
         service={serviceForModal}
         professional={professionalForModal || null}
         date={selectedDate}
         time={selectedTime}
         location={MOCK_LOCATION}
-        onConfirm={handleConfirmBooking}
+        onConfirm={handleCollectData}
       />
-    </motion.div>
+    </Box>
   );
 }

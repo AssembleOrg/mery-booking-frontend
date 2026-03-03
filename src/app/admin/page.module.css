@@ -1,11 +1,7 @@
 .pageWrapper {
   min-height: 100vh;
-  background: linear-gradient(
-    to bottom,
-    #ffffff 0%,
-    #FBE8EA 50%,
-    #ffffff 100%
-  );
+  min-height: 100dvh;
+  background: #f5f5f5;
 }
 
 .loadingContainer {
@@ -13,113 +9,113 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .adminHeader {
-  background: linear-gradient(135deg, #F7CBCB 0%, #EBA2A8 100%);
-  padding: 2rem 0;
-  box-shadow: 0 4px 12px rgba(247, 203, 203, 0.2);
+  background: var(--mg-white);
+  border-bottom: 1px solid var(--mg-pink-lighter);
+  padding: 0 1rem;
+  height: 48px;
+  display: flex;
+  align-items: center;
 }
 
 .headerContent {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  width: 100%;
   gap: 1rem;
 }
 
 .welcomeText {
   font-family: var(--font-avant-garde), sans-serif;
-  font-size: 1.5rem;
-  font-weight: 300;
-  color: white;
-  letter-spacing: 0.05em;
-}
-
-.roleText {
-  font-family: var(--font-avant-garde), sans-serif;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--mg-gray);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .logoutButton {
-  border-color: white;
-  color: white;
   font-family: var(--font-avant-garde), sans-serif;
-  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  height: 28px;
+  padding: 0 0.75rem;
 }
 
-.logoutButton:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: white;
+.mainContent {
+  padding: 0.75rem 1rem 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.tabs {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+.tabsWrapper {
+  background: var(--mg-white);
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
   overflow: hidden;
 }
 
 .tabsList {
-  border-bottom: 2px solid #f0f0f0;
-  padding: 0 1rem;
   background: #fafafa;
+  border-bottom: 1px solid #e5e7eb;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  flex-wrap: nowrap;
+  padding: 0 0.5rem;
+}
+
+.tabsList::-webkit-scrollbar {
+  display: none;
 }
 
 .tab {
   font-family: var(--font-avant-garde), sans-serif;
-  font-size: 1rem;
+  font-size: 0.8125rem;
   font-weight: 500;
-  letter-spacing: 0.05em;
-  padding: 1rem 1.5rem;
-  transition: all 0.3s ease;
+  letter-spacing: 0.04em;
+  padding: 0.625rem 1rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.15s;
 }
 
 .tab[data-active] {
-  color: #F7CBCB;
-  border-bottom-color: #F7CBCB;
-}
-
-.tab:hover {
-  background-color: rgba(247, 203, 203, 0.05);
+  color: var(--mg-pink);
+  border-bottom-color: var(--mg-pink);
 }
 
 .tabContent {
-  padding: 1.5rem;
+  padding: 1rem;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   .adminHeader {
-    padding: 1.5rem 0;
+    padding: 0 1.5rem;
   }
 
-  .headerContent {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .logoutButton {
-    width: 100%;
-  }
-
-  .welcomeText {
-    font-size: 1.25rem;
-  }
-
-  .tabsList {
-    padding: 0;
-  }
-
-  .tab {
-    font-size: 0.9rem;
-    padding: 0.875rem 1rem;
+  .mainContent {
+    padding: 1rem 1.5rem 2rem;
   }
 
   .tabContent {
-    padding: 1rem;
+    padding: 1.25rem;
+  }
+
+  .tab {
+    padding: 0.75rem 1.25rem;
   }
 }
 
+@media (min-width: 1200px) {
+  .mainContent {
+    padding: 1rem 2rem 2rem;
+  }
+}

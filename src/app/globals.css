@@ -4,16 +4,25 @@
 :root {
   /* Colores del Brand Manual */
   --mg-pink: #EBA2A8;
+  --mg-pink-hover: #d89196;
   --mg-pink-light: #FBE8EA;
   --mg-pink-lighter: #F7CBCB;
   --mg-dark: #2B2B2B;
   --mg-gray: #545454;
   --mg-white: #FFFFFF;
 
+  /* Defaults de fuentes (evita caídas a serif/Times si alguna var no existe) */
+  --font-avant-garde: system-ui;
+  --font-din-light: system-ui;
+  --font-din-regular: system-ui;
+  --font-din-medium: system-ui;
+  --font-poppins-extralight: system-ui;
+
   /* Espaciado editorial */
   --section-padding: 140px 80px;
   --section-padding-mobile: 60px 24px;
   --header-padding: 24px 48px;
+  --header-height: 90px;
 
   /* Tipografía editorial */
   --text-overline: 11px;
@@ -29,30 +38,41 @@
   --ls-widest: 0.3em;
 
   /* Font stacks semánticos */
-  --font-stack-title: var(--font-avant-garde), sans-serif;
-  --font-stack-body: var(--font-din-light), sans-serif;
-  --font-stack-ui: var(--font-din-regular), sans-serif;
-  --font-stack-emphasis: var(--font-din-medium), sans-serif;
+  --font-stack-title: var(--font-avant-garde, system-ui), system-ui, sans-serif;
+  --font-stack-body: var(--font-din-light, system-ui), system-ui, sans-serif;
+  --font-stack-ui: var(--font-din-regular, system-ui), system-ui, sans-serif;
+  --font-stack-emphasis: var(--font-din-medium, system-ui), system-ui, sans-serif;
 }
 
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
 body {
   max-width: 100vw;
+  overscroll-behavior-y: none;
   /* overflow-x: hidden; */ /* Comentado - rompía position: sticky en navegación interna */
 }
 
 body {
-  font-family: var(--font-din-light), -apple-system, BlinkMacSystemFont,
+  font-family: var(--font-din-light, system-ui), system-ui, -apple-system,
+    BlinkMacSystemFont,
     'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
     'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@supports (-webkit-touch-callout: none) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
 }
 
 a {
@@ -117,4 +137,21 @@ button.continueButton .mantine-Button-inner > *,
 button.continueButton span,
 button.continueButton div {
   color: #ffffff !important;
+}
+
+/* Force white background for admin tables - override any Mantine or global styles */
+div[class*="tableWrapper"] table tbody tr {
+  background: #ffffff !important;
+}
+
+div[class*="tableWrapper"] table tbody tr td {
+  background: #ffffff !important;
+}
+
+div[class*="tableWrapper"] table tbody {
+  background: #ffffff !important;
+}
+
+div[class*="tableWrapper"] table {
+  background: #ffffff !important;
 }

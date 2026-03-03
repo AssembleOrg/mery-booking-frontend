@@ -4,7 +4,9 @@ import { Box, Container, Flex, Stack, Text } from '@mantine/core';
 import {
   IconBrandInstagram,
   IconBrandWhatsapp,
-  IconMail,
+  IconCalendarEvent,
+  IconMapPin,
+  IconClock,
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -14,13 +16,6 @@ import {
   ANIMATION_EASING,
 } from '@/presentation/lib/animations';
 import classes from './Footer.module.css';
-
-const SERVICES = [
-  { label: 'Nanoblading', href: '/tattoo-cosmetico' },
-  { label: 'Lip Blush', href: '/tattoo-cosmetico' },
-  { label: 'Lash Line', href: '/tattoo-cosmetico' },
-  { label: 'Pecas & Lunares', href: '/tattoo-cosmetico' },
-];
 
 const INFO_LINKS = [
   { label: 'Precios', href: 'https://merygarcia.com.ar/asesoramiento-express' },
@@ -43,7 +38,6 @@ const SOCIAL_LINKS = [
     href: 'https://www.instagram.com/merygarciaoficial/',
     label: 'Instagram',
   },
-  { icon: IconMail, href: 'mailto:info@merygarcia.com.ar', label: 'Email' },
 ];
 
 export function Footer() {
@@ -96,30 +90,44 @@ export function Footer() {
                   height={94}
                   className={classes.brandLogo}
                 />
-                <Text className={classes.address}>
-                  Av. Melián 3646 PB 1<br />
-                  CABA, Argentina
-                  <br />
-                  Martes a Sábado, 10 a 18hs
-                </Text>
+
+                <Flex
+                  gap={8}
+                  align="flex-start"
+                  className={classes.addressLine}
+                >
+                  <IconMapPin
+                    size={18}
+                    stroke={1.5}
+                    className={classes.addressIcon}
+                  />
+                  <Text className={classes.address}>
+                    Av. Melián 3646 PB 1, CABA, Argentina
+                  </Text>
+                </Flex>
+
+                <Flex gap={8} align="center" className={classes.hoursLine}>
+                  <IconClock
+                    size={18}
+                    stroke={1.5}
+                    className={classes.addressIcon}
+                  />
+                  <Text className={classes.address}>
+                    Martes a Sábado, 10 a 18hs
+                  </Text>
+                </Flex>
+
+                <Flex gap={8} align="center" className={classes.hoursLine}>
+                  <IconCalendarEvent
+                    size={18}
+                    stroke={1.5}
+                    className={classes.addressIcon}
+                  />
+                  <Text className={classes.address}>Solo con cita previa</Text>
+                </Flex>
               </Box>
 
               <Flex className={classes.linksSection}>
-                <Box className={classes.linkColumn}>
-                  <Text className={classes.columnTitle}>SERVICIOS</Text>
-                  <Stack gap={0}>
-                    {SERVICES.map((item) => (
-                      <Link
-                        key={item.label}
-                        href={item.href}
-                        className={classes.link}
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
-                  </Stack>
-                </Box>
-
                 <Box className={classes.linkColumn}>
                   <Text className={classes.columnTitle}>INFO</Text>
                   <Stack gap={0}>
@@ -201,35 +209,48 @@ export function Footer() {
                     height={94}
                     className={classes.brandLogo}
                   />
-                  <Text className={classes.address}>
-                    Av. Melián 3646 PB 1<br />
-                    CABA, Argentina
-                    <br />
-                    Martes a Sábado, 10 a 18hs
-                  </Text>
+
+                  <Flex
+                    gap={8}
+                    align="flex-start"
+                    className={classes.addressLine}
+                  >
+                    <IconMapPin
+                      size={18}
+                      stroke={1.5}
+                      className={classes.addressIcon}
+                    />
+                    <Text className={classes.address}>
+                      Av. Melián 3646 PB 1, CABA, Argentina
+                    </Text>
+                  </Flex>
+
+                  <Flex gap={8} align="center" className={classes.hoursLine}>
+                    <IconClock
+                      size={18}
+                      stroke={1.5}
+                      className={classes.addressIcon}
+                    />
+                    <Text className={classes.address}>
+                      Martes a Sábado, 10 a 18hs
+                    </Text>
+                  </Flex>
+
+                  <Flex gap={8} align="center" className={classes.hoursLine}>
+                    <IconCalendarEvent
+                      size={18}
+                      stroke={1.5}
+                      className={classes.addressIcon}
+                    />
+                    <Text className={classes.address}>
+                      Solo con cita previa
+                    </Text>
+                  </Flex>
                 </Box>
               </motion.div>
 
               {/* Right - Links */}
               <Flex className={classes.linksSection}>
-                {/* Services */}
-                <motion.div variants={itemVariants}>
-                  <Box className={classes.linkColumn}>
-                    <Text className={classes.columnTitle}>SERVICIOS</Text>
-                    <Stack gap={0}>
-                      {SERVICES.map((item) => (
-                        <Link
-                          key={item.label}
-                          href={item.href}
-                          className={classes.link}
-                        >
-                          {item.label}
-                        </Link>
-                      ))}
-                    </Stack>
-                  </Box>
-                </motion.div>
-
                 {/* Info */}
                 <motion.div variants={itemVariants}>
                   <Box className={classes.linkColumn}>

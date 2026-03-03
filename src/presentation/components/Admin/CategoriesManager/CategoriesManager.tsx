@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Table, Button, Stack, Text, Modal, TextInput, Box, Skeleton, Center, Group } from '@mantine/core';
+import { Button, Modal, TextInput, Box, Skeleton, Group } from '@mantine/core';
 import { useForm } from 'react-hook-form';
 import { CategoryService } from '@/infrastructure/http';
 import type { Category, CreateCategoryDto } from '@/infrastructure/http';
@@ -107,91 +107,100 @@ export function CategoriesManager() {
     return Array(5)
       .fill(0)
       .map((_, index) => (
-        <Table.Tr key={index}>
-          <Table.Td><Skeleton height={20} /></Table.Td>
-          <Table.Td><Skeleton height={20} width={200} /></Table.Td>
-          <Table.Td>
+        <tr key={index} className={classes.tableRow}>
+          <td className={classes.tableCell}>
+            <div className={classes.categoryCell}>
+              <Skeleton height={40} width={40} circle />
+              <Skeleton height={20} width={150} style={{ marginLeft: '1rem' }} />
+            </div>
+          </td>
+          <td className={classes.tableCell}><Skeleton height={20} width={200} /></td>
+          <td className={classes.tableCell}>
             <Group gap="xs">
               <Skeleton height={28} width={70} />
               <Skeleton height={28} width={70} />
             </Group>
-          </Table.Td>
-        </Table.Tr>
+          </td>
+        </tr>
       ));
   };
 
   return (
     <>
-      <Stack gap="lg">
-        <Box className={classes.header}>
-          <Text className={classes.title}>Gestión de Categorías</Text>
+      <div className={classes.container}>
+        <div className={classes.header}>
+          <h2 className={classes.title}>
+            <span className="material-icons-round">category</span>
+            Gestión de Categorías
+          </h2>
           <Button
-            color="pink"
             onClick={handleOpenCreate}
             className={classes.createButton}
           >
-            + Nueva Categoría
+            <span className="material-icons-round">add</span>
+            Nueva Categoría
           </Button>
-        </Box>
+        </div>
 
-        <Box className={classes.tableContainer}>
-          <Table striped highlightOnHover className={classes.table}>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Nombre</Table.Th>
-                <Table.Th>Fecha de Creación</Table.Th>
-                <Table.Th>Acciones</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
+        <div className={classes.tableWrapper}>
+          <table className={classes.table}>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Fecha de Creación</th>
+                <th className={classes.actionsHeader}>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
               {isLoading ? (
                 renderSkeletonRows()
               ) : categories.length === 0 ? (
-                <Table.Tr>
-                  <Table.Td colSpan={3}>
-                    <Center py="xl">
-                      <Text c="dimmed">No hay categorías creadas</Text>
-                    </Center>
-                  </Table.Td>
-                </Table.Tr>
+                <tr>
+                  <td colSpan={3} className={classes.emptyCell}>
+                    No hay categorías creadas
+                  </td>
+                </tr>
               ) : (
                 categories.map((category) => (
-                  <Table.Tr key={category.id}>
-                    <Table.Td>{category.name}</Table.Td>
-                    <Table.Td>
+                  <tr key={category.id} className={classes.tableRow}>
+                    <td className={classes.tableCell}>
+                      <div className={classes.categoryCell}>
+                        <div className={classes.iconContainer}>
+                          <span className="material-icons-round">folder</span>
+                        </div>
+                        <div className={classes.categoryName}>{category.name}</div>
+                      </div>
+                    </td>
+                    <td className={classes.tableCell}>
                       {new Date(category.createdAt).toLocaleDateString('es-AR', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',
                       })}
-                    </Table.Td>
-                    <Table.Td>
-                      <Box className={classes.actions}>
-                        <Button
-                          variant="light"
-                          color="blue"
-                          size="xs"
+                    </td>
+                    <td className={`${classes.tableCell} ${classes.actionsCell}`}>
+                      <div className={classes.actions}>
+                        <button
+                          className={classes.editButton}
                           onClick={() => handleOpenEdit(category)}
                         >
                           Editar
-                        </Button>
-                        <Button
-                          variant="light"
-                          color="red"
-                          size="xs"
+                        </button>
+                        <button
+                          className={classes.deleteButton}
                           onClick={() => handleOpenDelete(category)}
                         >
                           Eliminar
-                        </Button>
-                      </Box>
-                    </Table.Td>
-                  </Table.Tr>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
                 ))
               )}
-            </Table.Tbody>
-          </Table>
-        </Box>
-      </Stack>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Modal Create/Edit */}
       <Modal
@@ -204,7 +213,7 @@ export function CategoriesManager() {
         }}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack gap="md">
+          <Group gap="md" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
             <TextInput
               label="Nombre de la categoría"
               placeholder="Ej: Cortes de Cabello"
@@ -235,7 +244,7 @@ export function CategoriesManager() {
                 {editingCategory ? 'Guardar Cambios' : 'Crear Categoría'}
               </Button>
             </Box>
-          </Stack>
+          </Group>
         </form>
       </Modal>
 
@@ -254,4 +263,3 @@ export function CategoriesManager() {
     </>
   );
 }
-

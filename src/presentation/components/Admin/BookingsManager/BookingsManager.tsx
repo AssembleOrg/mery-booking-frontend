@@ -20,15 +20,14 @@ import {
   ActionIcon,
   TextInput,
   Textarea,
-  Checkbox,
   Loader,
 } from '@mantine/core';
 import { DatePickerInput, DateValue, DatesProvider } from '@mantine/dates';
 import { useForm, Controller } from 'react-hook-form';
 import { notifications } from '@mantine/notifications';
 import { BookingService, EmployeeService, ServiceService, ClientService } from '@/infrastructure/http';
-import type { Booking, BookingResponse, Employee, ServiceEntity, Client, ClientSearchResult } from '@/infrastructure/http';
-import { useCreateBooking, useCreateClient, useAvailability } from '@/presentation/hooks';
+import type { Booking, BookingResponse, Employee, ServiceEntity, Client, ClientSearchResult, PaidStatus } from '@/infrastructure/http';
+import { useCreateBooking, useCreateClient, useAvailability, useRescheduleBooking } from '@/presentation/hooks';
 import { ConfirmationModal } from '@/presentation/components';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
@@ -73,10 +72,15 @@ export function BookingsManager() {
   const [clients, setClients] = useState<ClientSearchResult[]>([]);
   const [isLoadingClients, setIsLoadingClients] = useState(false);
   const [clientSearchQuery, setClientSearchQuery] = useState('');
-  
+  const [rescheduleModalOpen, setRescheduleModalOpen] = useState(false);
+  const [paidStatusModalOpen, setPaidStatusModalOpen] = useState(false);
+  const [pendingPaidStatus, setPendingPaidStatus] = useState<PaidStatus | null>(null);
+  const [isUpdatingPaidStatus, setIsUpdatingPaidStatus] = useState(false);
+
   // Hooks para crear reserva y cliente
   const createBookingMutation = useCreateBooking();
   const createClientMutation = useCreateClient();
+  const rescheduleBookingMutation = useRescheduleBooking();
   
   // Formulario para crear reserva manual
   interface CreateBookingFormData {
@@ -86,7 +90,7 @@ export function BookingsManager() {
     date: Date | null;
     startTime: string; // HH:mm
     notes: string;
-    paid: boolean;
+    paidStatus: PaidStatus;
   }
   
   const {
@@ -104,13 +108,41 @@ export function BookingsManager() {
       date: null,
       startTime: '',
       notes: '',
-      paid: false,
+      paidStatus: 'UNPAID',
     },
   });
   
   const selectedServiceIdForBooking = watchCreateBooking('serviceId');
   const selectedEmployeeIdForBooking = watchCreateBooking('employeeId');
   const selectedDateForBooking = watchCreateBooking('date');
+  
+  // Formulario para reagendar reserva
+  interface RescheduleBookingFormData {
+    employeeId: string;
+    serviceId: string;
+    date: Date | null;
+    startTime: string; // HH:mm
+  }
+  
+  const {
+    control: rescheduleControl,
+    handleSubmit: handleRescheduleSubmit,
+    formState: { errors: rescheduleErrors },
+    reset: resetRescheduleForm,
+    watch: watchReschedule,
+    setValue: setRescheduleValue,
+  } = useForm<RescheduleBookingFormData>({
+    defaultValues: {
+      employeeId: '',
+      serviceId: '',
+      date: null,
+      startTime: '',
+    },
+  });
+  
+  const selectedServiceIdForReschedule = watchReschedule('serviceId');
+  const selectedEmployeeIdForReschedule = watchReschedule('employeeId');
+  const selectedDateForReschedule = watchReschedule('date');
   
   // Calcular fechas para la consulta de disponibilidad (rango de 30 días desde la fecha seleccionada)
   const availabilityMinDate = selectedDateForBooking 
@@ -120,12 +152,27 @@ export function BookingsManager() {
     ? dayjs(selectedDateForBooking).add(30, 'days').format('YYYY-MM-DD')
     : null;
   
+  const rescheduleAvailabilityMinDate = selectedDateForReschedule 
+    ? dayjs(selectedDateForReschedule).format('YYYY-MM-DD')
+    : null;
+  const rescheduleAvailabilityMaxDate = selectedDateForReschedule
+    ? dayjs(selectedDateForReschedule).add(30, 'days').format('YYYY-MM-DD')
+    : null;
+  
   // Consultar disponibilidad cuando tengamos empleado, servicio y fecha
   const { data: availability, isLoading: isLoadingAvailability } = useAvailability(
     selectedEmployeeIdForBooking || null,
     selectedServiceIdForBooking || null,
     availabilityMinDate,
     availabilityMaxDate
+  );
+  
+  // Consultar disponibilidad para reagendamiento
+  const { data: rescheduleAvailability, isLoading: isLoadingRescheduleAvailability } = useAvailability(
+    selectedEmployeeIdForReschedule || null,
+    selectedServiceIdForReschedule || null,
+    rescheduleAvailabilityMinDate,
+    rescheduleAvailabilityMaxDate
   );
   
   // Cargar clientes cuando se abre el modal (sin filtro inicial)
@@ -198,7 +245,7 @@ export function BookingsManager() {
         date: dateString,
         startTime: data.startTime,
         quantity: 1,
-        paid: data.paid,
+        paidStatus: data.paidStatus,
         notes: data.notes || undefined,
       });
       
@@ -239,6 +286,119 @@ export function BookingsManager() {
     // Si no hay disponibilidad o no hay fecha seleccionada, devolver todas las opciones
     return allOptions;
   }, [availability, selectedDateForBooking, selectedEmployeeIdForBooking, selectedServiceIdForBooking]);
+  
+  // Generar opciones de hora para reagendamiento
+  const rescheduleTimeOptions = useMemo(() => {
+    const allOptions = [];
+    for (let hour = 10; hour <= 17; hour++) {
+      allOptions.push({ value: `${hour.toString().padStart(2, '0')}:00`, label: `${hour}:00` });
+      if (hour < 17) {
+        allOptions.push({ value: `${hour.toString().padStart(2, '0')}:30`, label: `${hour}:30` });
+      }
+    }
+    
+    // Si tenemos disponibilidad y una fecha seleccionada, filtrar las opciones
+    if (rescheduleAvailability && selectedDateForReschedule && selectedEmployeeIdForReschedule && selectedServiceIdForReschedule) {
+      const dateStr = dayjs(selectedDateForReschedule).format('YYYY-MM-DD');
+      const dayAvailability = rescheduleAvailability.availability.find(day => day.date === dateStr);
+      
+      if (dayAvailability && dayAvailability.slots) {
+        // Filtrar solo los slots disponibles
+        const availableSlots = dayAvailability.slots
+          .filter(slot => slot.available)
+          .map(slot => slot.startTime);
+        
+        return allOptions.filter(option => availableSlots.includes(option.value));
+      }
+    }
+    
+    // Si no hay disponibilidad o no hay fecha seleccionada, devolver todas las opciones
+    return allOptions;
+  }, [rescheduleAvailability, selectedDateForReschedule, selectedEmployeeIdForReschedule, selectedServiceIdForReschedule]);
+  
+  // Inicializar formulario de reagendamiento cuando se abre el modal
+  useEffect(() => {
+    if (rescheduleModalOpen && selectedBooking) {
+      // Pre-llenar con los valores actuales de la reserva
+      setRescheduleValue('employeeId', selectedBooking.employeeId);
+      setRescheduleValue('serviceId', selectedBooking.serviceId);
+      // Convertir la fecha de la reserva a Date
+      const bookingDate = dayjs(selectedBooking.localDate || selectedBooking.date).toDate();
+      setRescheduleValue('date', bookingDate);
+      setRescheduleValue('startTime', selectedBooking.localStartTime || selectedBooking.startTimeFormatted || '');
+    } else if (!rescheduleModalOpen) {
+      resetRescheduleForm();
+    }
+  }, [rescheduleModalOpen, selectedBooking, setRescheduleValue, resetRescheduleForm]);
+  
+  const onSubmitReschedule = async (data: RescheduleBookingFormData) => {
+    if (!selectedBooking || !data.date) {
+      notifications.show({
+        title: 'Error',
+        message: 'Por favor completa todos los campos',
+        color: 'red',
+      });
+      return;
+    }
+    
+    try {
+      const dateString = dayjs(data.date).format('YYYY-MM-DD');
+      await rescheduleBookingMutation.mutateAsync({
+        bookingId: selectedBooking.id,
+        data: {
+          date: dateString,
+          startTime: data.startTime,
+          employeeId: data.employeeId,
+          serviceId: data.serviceId, // Opcional para admin, pero lo incluimos
+        },
+      });
+      
+      setRescheduleModalOpen(false);
+      setBookingDetailsModalOpen(false);
+      setSelectedBooking(null);
+      resetRescheduleForm();
+      await fetchBookings();
+    } catch (error) {
+      // Los errores ya se manejan en el hook
+      console.error('Error rescheduling booking:', error);
+    }
+  };
+  
+  const handleRescheduleClick = () => {
+    setRescheduleModalOpen(true);
+  };
+
+  const handlePaidStatusChange = (value: string | null) => {
+    if (!value || value === selectedBooking?.paidStatus) return;
+    setPendingPaidStatus(value as PaidStatus);
+    setPaidStatusModalOpen(true);
+  };
+
+  const handleConfirmPaidStatusChange = async () => {
+    if (!selectedBooking || !pendingPaidStatus) return;
+    try {
+      setIsUpdatingPaidStatus(true);
+      const updated = await BookingService.changePaidStatus(selectedBooking.id, pendingPaidStatus);
+      setSelectedBooking(updated);
+      await fetchBookings();
+      notifications.show({
+        title: 'Estado de pago actualizado',
+        message: getPaidStatusLabel(pendingPaidStatus),
+        color: 'green',
+      });
+      setPaidStatusModalOpen(false);
+      setPendingPaidStatus(null);
+    } catch (error) {
+      console.error('Error updating payment status:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Error al actualizar el estado de pago',
+        color: 'red',
+      });
+    } finally {
+      setIsUpdatingPaidStatus(false);
+    }
+  };
 
   useEffect(() => {
     initializeData();
@@ -387,13 +547,13 @@ export function BookingsManager() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'ACTIVE':
-        return 'green';
+        return 'pink';
       case 'PENDING':
-        return 'yellow';
+        return 'pink';
       case 'CANCELLED':
-        return 'red';
+        return 'gray';
       case 'COMPLETED':
-        return 'blue';
+        return 'pink';
       default:
         return 'gray';
     }
@@ -411,6 +571,24 @@ export function BookingsManager() {
         return 'Completada';
       default:
         return status;
+    }
+  };
+
+  const getPaidStatusLabel = (status: string) => {
+    switch (status) {
+      case 'PAID': return 'Pagado';
+      case 'PARTIALLY_PAID': return 'Seña / Parcial';
+      case 'UNPAID': return 'Sin pago';
+      default: return status;
+    }
+  };
+
+  const getPaidStatusColor = (status: string) => {
+    switch (status) {
+      case 'PAID': return 'green';
+      case 'PARTIALLY_PAID': return 'yellow';
+      case 'UNPAID': return 'red';
+      default: return 'gray';
     }
   };
 
@@ -820,7 +998,7 @@ export function BookingsManager() {
                                   p="xs"
                                   className={classes.bookingCard}
                                   style={{
-                                    backgroundColor: '#e3f2fd',
+                                    backgroundColor: '#FBE8EA',
                                     minHeight: height,
                                     height: duration > 1 ? height : 'auto',
                                     cursor: 'pointer',
@@ -858,10 +1036,19 @@ export function BookingsManager() {
 
               {/* Días de la semana */}
               <Box className={classes.weekDaysHeader}>
-                {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day) => (
-                  <Box key={day} className={classes.weekDayHeader}>
+                {[
+                  { full: 'Lun', short: 'L' },
+                  { full: 'Mar', short: 'M' },
+                  { full: 'Mié', short: 'X' },
+                  { full: 'Jue', short: 'J' },
+                  { full: 'Vie', short: 'V' },
+                  { full: 'Sáb', short: 'S' },
+                  { full: 'Dom', short: 'D' },
+                ].map((day) => (
+                  <Box key={day.full} className={classes.weekDayHeader}>
                     <Text fw={500} size="sm">
-                      {day}
+                      <span className={classes.weekDayFull}>{day.full}</span>
+                      <span className={classes.weekDayShort}>{day.short}</span>
                     </Text>
                   </Box>
                 ))}
@@ -894,43 +1081,51 @@ export function BookingsManager() {
                       >
                         {day.getDate()}
                       </Text>
-                      <Stack gap={2} mt={4}>
-                        {visibleBookings.map((booking) => (
-                          <Paper
-                            key={booking.id}
-                            p={4}
-                            className={classes.monthBookingCard}
-                            style={{
-                              backgroundColor: '#e3f2fd',
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleBookingClick(booking);
-                            }}
-                          >
-                            <Text 
-                              size="xs" 
-                              fw={500} 
-                              lineClamp={1}
-                              style={{ cursor: 'pointer' }}
-                              title={booking.client?.fullName || 'Cliente'}
+                      {/* Dot indicator — visible only on mobile */}
+                      {dayBookings.length > 0 && (
+                        <Box className={classes.dayDotIndicator} />
+                      )}
+
+                      {/* Full booking cards — visible only on desktop */}
+                      <Box className={classes.monthCardsDesktop}>
+                        <Stack gap={2} mt={4}>
+                          {visibleBookings.map((booking) => (
+                            <Paper
+                              key={booking.id}
+                              p={4}
+                              className={classes.monthBookingCard}
+                              style={{
+                                backgroundColor: '#FBE8EA',
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleBookingClick(booking);
+                              }}
                             >
-                              {truncateText(booking.client?.fullName || 'Sin nombre', 15)}
+                              <Text
+                                size="xs"
+                                fw={500}
+                                lineClamp={1}
+                                style={{ cursor: 'pointer' }}
+                                title={booking.client?.fullName || 'Cliente'}
+                              >
+                                {truncateText(booking.client?.fullName || 'Sin nombre', 15)}
+                              </Text>
+                              <Text size="xs" c="dimmed" lineClamp={1}>
+                                {getBookingStartTime(booking)}-{getBookingEndTime(booking)}
+                              </Text>
+                              <Text size="xs" c="dimmed" lineClamp={1}>
+                                {booking.service?.name || 'Sin servicio'}
+                              </Text>
+                            </Paper>
+                          ))}
+                          {moreCount > 0 && (
+                            <Text size="xs" c="dimmed" fw={500} mt={2}>
+                              +{moreCount} más
                             </Text>
-                            <Text size="xs" c="dimmed" lineClamp={1}>
-                              {getBookingStartTime(booking)}-{getBookingEndTime(booking)}
-                            </Text>
-                            <Text size="xs" c="dimmed" lineClamp={1}>
-                              {booking.service?.name || 'Sin servicio'}
-                            </Text>
-                          </Paper>
-                        ))}
-                        {moreCount > 0 && (
-                          <Text size="xs" c="dimmed" fw={500} mt={2}>
-                            +{moreCount} más
-                          </Text>
-                        )}
-                      </Stack>
+                          )}
+                        </Stack>
+                      </Box>
                     </Box>
                   );
                 })}
@@ -990,7 +1185,7 @@ export function BookingsManager() {
                                 p="xs"
                                 className={classes.bookingCard}
                                 style={{
-                                  backgroundColor: '#e3f2fd',
+                                  backgroundColor: '#FBE8EA',
                                   minHeight: height,
                                   height: duration > 1 ? height : 'auto',
                                   cursor: 'pointer',
@@ -1017,7 +1212,7 @@ export function BookingsManager() {
                                     {getStatusLabel(booking.status)}
                                   </Badge>
                                   {booking.paid && (
-                                    <Badge size="xs" color="green" variant="light">
+                                    <Badge size="xs" color="pink" variant="light">
                                       Pagado
                                     </Badge>
                                   )}
@@ -1096,7 +1291,7 @@ export function BookingsManager() {
                       </Badge>
                     </Table.Td>
                     <Table.Td>
-                      <Badge color={booking.paid ? 'green' : 'gray'} variant="light">
+                      <Badge color={booking.paid ? 'pink' : 'gray'} variant="light">
                         {booking.paid ? 'Sí' : 'No'}
                       </Badge>
                     </Table.Td>
@@ -1192,8 +1387,8 @@ export function BookingsManager() {
                 {formatDateString(getBookingDate(selectedBooking))}
               </Text>
               <Text size="md" fw={600}>
-                {getBookingStartTime(selectedBooking)} - {getBookingEndTime(selectedBooking)}
-              </Text>
+              {getBookingStartTime(selectedBooking)} - {getBookingEndTime(selectedBooking)}
+            </Text>
             </Box>
 
             <Divider />
@@ -1233,21 +1428,49 @@ export function BookingsManager() {
                 <Badge color={getStatusColor(selectedBooking.status)} variant="light">
                   {getStatusLabel(selectedBooking.status)}
                 </Badge>
-                <Badge color={selectedBooking.paid ? 'green' : 'gray'} variant="light">
-                  {selectedBooking.paid ? 'Pagado' : 'No pagado'}
-                </Badge>
               </Group>
             </Group>
 
+            <Box>
+              <Text size="sm" fw={500} c="dimmed" mb={6}>Estado de pago</Text>
+              <Group gap="xs" align="center">
+                <Badge color={getPaidStatusColor(selectedBooking.paidStatus)} variant="light">
+                  {getPaidStatusLabel(selectedBooking.paidStatus)}
+                </Badge>
+              </Group>
+              <Select
+                mt="xs"
+                data={[
+                  { value: 'UNPAID', label: 'Sin pago' },
+                  { value: 'PARTIALLY_PAID', label: 'Seña / Parcial' },
+                  { value: 'PAID', label: 'Pagado' },
+                ]}
+                value={selectedBooking.paidStatus}
+                onChange={handlePaidStatusChange}
+                disabled={isUpdatingPaidStatus || selectedBooking.status === 'CANCELLED'}
+                size="sm"
+                w={180}
+              />
+              {isUpdatingPaidStatus && <Loader size="xs" />}
+            </Box>
+
             {selectedBooking.status !== 'CANCELLED' && (
-              <Button
-                color="red"
-                variant="outline"
-                onClick={handleCancelBookingClick}
-                fullWidth
-              >
-                Cancelar Reserva
-              </Button>
+              <Group gap="sm" grow>
+                <Button
+                  color="pink"
+                  variant="filled"
+                  onClick={handleRescheduleClick}
+                >
+                  Reagendar Turno
+                </Button>
+                <Button
+                  color="dark"
+                  variant="outline"
+                  onClick={handleCancelBookingClick}
+                >
+                  Cancelar Reserva
+                </Button>
+              </Group>
             )}
           </Stack>
         )}
@@ -1279,7 +1502,6 @@ export function BookingsManager() {
                   searchable
                   searchValue={clientSearchQuery}
                   onSearchChange={setClientSearchQuery}
-                  disabled={isLoadingClients}
                   error={createBookingErrors.clientId?.message}
                   nothingFoundMessage={isLoadingClients ? "Buscando..." : "No se encontraron clientes"}
                   rightSection={isLoadingClients ? <Loader size="xs" /> : undefined}
@@ -1392,15 +1614,19 @@ export function BookingsManager() {
               )}
             />
 
-            {/* Pagado */}
+            {/* Estado de pago */}
             <Controller
-              name="paid"
+              name="paidStatus"
               control={createBookingControl}
               render={({ field }) => (
-                <Checkbox
-                  checked={field.value}
-                  onChange={(e) => field.onChange(e.currentTarget.checked)}
-                  label="Reserva pagada"
+                <Select
+                  {...field}
+                  label="Estado de pago"
+                  data={[
+                    { value: 'UNPAID', label: 'Sin pago' },
+                    { value: 'PARTIALLY_PAID', label: 'Seña / Parcial' },
+                    { value: 'PAID', label: 'Pagado' },
+                  ]}
                 />
               )}
             />
@@ -1426,13 +1652,137 @@ export function BookingsManager() {
         </form>
       </Modal>
 
+      {/* Modal: Reagendar reserva */}
+      <Modal
+        opened={rescheduleModalOpen}
+        onClose={() => {
+          setRescheduleModalOpen(false);
+          resetRescheduleForm();
+        }}
+        title="Reagendar Reserva"
+        size="lg"
+      >
+        <form onSubmit={handleRescheduleSubmit(onSubmitReschedule)}>
+          <Stack gap="md">
+            {/* Empleado */}
+            <Controller
+              name="employeeId"
+              control={rescheduleControl}
+              rules={{ required: 'El empleado es requerido' }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="* Empleado"
+                  placeholder="Selecciona un empleado"
+                  data={employees.map(e => ({ value: e.id, label: e.fullName }))}
+                  searchable
+                  error={rescheduleErrors.employeeId?.message}
+                />
+              )}
+            />
+
+            {/* Servicio */}
+            <Controller
+              name="serviceId"
+              control={rescheduleControl}
+              rules={{ required: 'El servicio es requerido' }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="* Servicio"
+                  placeholder="Selecciona un servicio"
+                  data={services.map(s => ({ value: s.id, label: s.name }))}
+                  searchable
+                  error={rescheduleErrors.serviceId?.message}
+                />
+              )}
+            />
+
+            {/* Fecha */}
+            <Controller
+              name="date"
+              control={rescheduleControl}
+              rules={{ required: 'La fecha es requerida' }}
+              render={({ field }) => (
+                <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 1 }}>
+                  <DatePickerInput
+                    {...field}
+                    label="* Fecha"
+                    placeholder="Selecciona una fecha"
+                    value={field.value}
+                    onChange={(date) => {
+                      field.onChange(date);
+                      // Resetear la hora cuando cambie la fecha
+                      setRescheduleValue('startTime', '');
+                    }}
+                    minDate={new Date()}
+                    error={rescheduleErrors.date?.message}
+                    locale="es"
+                  />
+                </DatesProvider>
+              )}
+            />
+
+            {/* Hora */}
+            <Controller
+              name="startTime"
+              control={rescheduleControl}
+              rules={{ 
+                required: 'La hora es requerida',
+                pattern: {
+                  value: /^([0-1][0-9]|2[0-3]):(00|30)$/,
+                  message: 'La hora debe estar en formato HH:mm y solo permite :00 o :30'
+                }
+              }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label="* Hora de inicio"
+                  placeholder={
+                    isLoadingRescheduleAvailability 
+                      ? "Cargando disponibilidad..." 
+                      : !selectedDateForReschedule || !selectedEmployeeIdForReschedule || !selectedServiceIdForReschedule
+                      ? "Selecciona fecha, empleado y servicio primero"
+                      : rescheduleTimeOptions.length === 0
+                      ? "No hay horarios disponibles para esta fecha"
+                      : "Selecciona una hora"
+                  }
+                  data={rescheduleTimeOptions}
+                  error={rescheduleErrors.startTime?.message}
+                  disabled={isLoadingRescheduleAvailability || !selectedDateForReschedule || !selectedEmployeeIdForReschedule || !selectedServiceIdForReschedule || rescheduleTimeOptions.length === 0}
+                  rightSection={isLoadingRescheduleAvailability ? <Loader size="xs" /> : undefined}
+                />
+              )}
+            />
+
+            <Group justify="flex-end" mt="md">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setRescheduleModalOpen(false);
+                  resetRescheduleForm();
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                loading={rescheduleBookingMutation.isPending}
+              >
+                Reagendar Reserva
+              </Button>
+            </Group>
+          </Stack>
+        </form>
+      </Modal>
+
       {/* Modal: Confirmación de cancelación */}
       <ConfirmationModal
         opened={cancelConfirmationModalOpen}
         onClose={() => setCancelConfirmationModalOpen(false)}
         onConfirm={handleConfirmCancelBooking}
         title="Cancelar Reserva"
-        message={selectedBooking 
+        message={selectedBooking
           ? `¿Estás seguro de que deseas cancelar la reserva de "${selectedBooking.client?.fullName || 'Cliente'}" para el ${formatDateString(getBookingDate(selectedBooking))} a las ${getBookingStartTime(selectedBooking)}?`
           : '¿Estás seguro de que deseas cancelar esta reserva?'
         }
@@ -1440,6 +1790,22 @@ export function BookingsManager() {
         confirmButtonText="Cancelar Reserva"
         confirmButtonColor="red"
         isLoading={isCancelling}
+      />
+
+      {/* Modal: Confirmación de cambio de estado de pago */}
+      <ConfirmationModal
+        opened={paidStatusModalOpen}
+        onClose={() => {
+          setPaidStatusModalOpen(false);
+          setPendingPaidStatus(null);
+        }}
+        onConfirm={handleConfirmPaidStatusChange}
+        title="Cambiar estado de pago"
+        message={`¿Confirmar cambio a "${pendingPaidStatus ? getPaidStatusLabel(pendingPaidStatus) : ''}"?`}
+        confirmationWord="confirmar"
+        confirmButtonText="Confirmar"
+        confirmButtonColor="pink"
+        isLoading={isUpdatingPaidStatus}
       />
     </Stack>
   );

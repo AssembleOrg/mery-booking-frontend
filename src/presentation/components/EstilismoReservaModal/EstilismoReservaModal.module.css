@@ -1,0 +1,138 @@
+/* ====================================
+   MODAL CONTAINER
+   ==================================== */
+
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: none;
+}
+
+.modalBody {
+  padding: 0;
+}
+
+.container {
+  padding: 40px;
+  min-height: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  overflow: hidden;
+}
+
+/* ====================================
+   CONTENT AREA
+   ==================================== */
+
+.contentArea {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ====================================
+   BUTTONS
+   ==================================== */
+
+.buttonGroup {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.buttonPrimary {
+  background-color: var(--mg-pink);
+  color: var(--mg-white);
+  border: none;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.buttonPrimary:hover:not(:disabled) {
+  background-color: var(--mg-pink-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(235, 162, 168, 0.3);
+}
+
+.buttonSecondary {
+  background-color: transparent;
+  color: var(--mg-dark);
+  border: 1px solid #E0E0E0;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1.5;
+}
+
+.buttonSecondary:hover {
+  background-color: #F5F5F5;
+  border-color: #D0D0D0;
+}
+
+/* ====================================
+   RESPONSIVE
+   ==================================== */
+
+@media (max-width: 767px) {
+  .modalContent {
+    border-radius: 0 !important;
+    max-height: 100vh !important;
+    max-height: 100dvh !important;
+    height: 100% !important;
+  }
+
+  .modalBody {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .container {
+    padding: 20px;
+    padding-top: calc(20px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    min-height: 100%;
+    max-height: none;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contentArea {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+}

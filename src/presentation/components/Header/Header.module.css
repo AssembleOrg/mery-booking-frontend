@@ -4,6 +4,7 @@
   left: 0;
   right: 0;
   z-index: 100;
+  padding-top: env(safe-area-inset-top, 0px);
   background: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 0.4) 0%,
@@ -37,7 +38,7 @@
 }
 
 .logo {
-  width: 300px;
+  width: 250px;
   height: auto;
   object-fit: contain;
   transition: all 0.3s ease;
@@ -45,12 +46,12 @@
 
 @media (max-width: 1024px) {
   .logo {
-    width: 260px;
+    width: 220px;
     filter: brightness(0) invert(1);
   }
 
   .scrolled .logo {
-    width: 220px;
+    width: 190px;
     filter: contrast(1.2) brightness(0.95);
   }
 
@@ -74,15 +75,33 @@
 
 @media (max-width: 767px) {
   .logo {
-    width: 240px;
+    width: 200px;
   }
 
   .scrolled .logo {
-    width: 200px;
+    width: 170px;
   }
 
   .container {
     padding: 0 24px;
+  }
+}
+
+@media (max-width: 400px) {
+  .flex {
+    height: 76px;
+  }
+
+  .logo {
+    width: 170px;
+  }
+
+  .scrolled .logo {
+    width: 150px;
+  }
+
+  .container {
+    padding: 0 16px;
   }
 }
 
@@ -110,6 +129,11 @@
   background: var(--mg-dark);
   color: var(--mg-white);
   border: none;
+  appearance: none;
+  cursor: pointer;
+  line-height: 1;
+  align-items: center;
+  justify-content: center;
   padding: 14px 32px;
   font-size: 10px;
   letter-spacing: 2px;
@@ -139,7 +163,7 @@
     display: flex;
   }
   .ctaButton {
-    display: block;
+    display: inline-flex;
   }
   .menuButton {
     display: none;

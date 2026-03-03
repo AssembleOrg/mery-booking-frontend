@@ -9,8 +9,8 @@ import {
   BookingConfirmationModal,
   ReservaModal,
 } from '@/presentation/components';
-import Image from 'next/image';
-import { useState, useMemo, useEffect } from 'react';
+import ConsultaModal from '@/presentation/components/ConsultaModal';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
 import {
@@ -22,16 +22,16 @@ import {
 } from '@/presentation/hooks';
 import {
   CategoryService,
+  EmployeeService,
   type ServiceEntity,
   type Employee,
 } from '@/infrastructure/http';
+import type { AccordionContentType } from '@/infrastructure/types/services';
 import { useAuth } from '@/presentation/contexts';
 import { Client } from '@/domain/entities';
 import dayjs from 'dayjs';
 import classes from './page.module.css';
-
-// Tipos de contenido del acordeón
-type AccordionContentType = 'consulta' | 'sesion' | 'retoque' | 'mantenimiento';
+import { CATEGORY_IDS } from '@/config/constants';
 
 interface ServiceOption {
   id: string;
@@ -46,6 +46,9 @@ interface ServiceOption {
   footerNote?: string;
   serviceName?: string; // Nombre del servicio en la BD
   serviceDuration?: number;
+  serviceId?: string;
+  employeeId?: string;
+  servicePrice?: number;
 }
 
 // Componente para contenido de Consulta
@@ -109,7 +112,7 @@ function ConsultaContent({
         date: dateString,
         startTime: selectedTime,
         quantity: 1,
-        paid: false,
+        paidStatus: 'UNPAID',
         notes: clientData.notes,
       });
 
@@ -258,7 +261,7 @@ function SesionContent({
         date: dateString,
         startTime: selectedTime,
         quantity: 1,
-        paid: false,
+        paidStatus: 'UNPAID',
         notes: clientData.notes,
       });
 
@@ -300,7 +303,13 @@ function SesionContent({
               {' '}
               {option.depositLabel}{' '}
               <span className={classes.depositValue}>
-                {option.depositValue}
+                {(() => {
+                  if (currentService) {
+                    return `AR$ ${Number(currentService.price).toLocaleString('es-AR')}.-`;
+                  }
+
+                  return option.depositValue;
+                })()}
               </span>
             </>
           )}
@@ -499,10 +508,10 @@ const nanoScalpOptions: ServiceOption[] = [
     description:
       'Primera sesión de Nano Scalp con Mery García. Recordá que los resultados óptimos se logran con dos sesiones.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 520.-',
+    priceValue: 'U$S 650.-',
     priceEffective: 'U$S 450.-',
     depositLabel: 'Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 150.000.-',
     serviceName: 'Nano Scalp (By Mery Garcia)',
     serviceDuration: 120,
   },
@@ -513,10 +522,10 @@ const nanoScalpOptions: ServiceOption[] = [
     description:
       'Completá tu servicio de entre 30 y 60 días después de tu primera sesión.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 520.-',
+    priceValue: 'U$S 650.-',
     priceEffective: 'U$S 450.-',
     depositLabel: 'Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 150.000.-',
     serviceName: 'Nano Scalp Segunda Sesion',
     serviceDuration: 120,
   },
@@ -527,10 +536,10 @@ const nanoScalpOptions: ServiceOption[] = [
     description:
       'Reactiva tu servicio de Nano Scalp. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 520.-',
+    priceValue: 'U$S 650.-',
     priceEffective: 'U$S 450.-',
     depositLabel: 'Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 150.000.-',
     serviceName: 'Nano Scalp Mantenimiento',
     serviceDuration: 120,
   },
@@ -555,10 +564,10 @@ const areolaOptions: ServiceOption[] = [
     description:
       'Primera sesión de Areola Camouflage con Mery García. Recordá que los resultados óptimos se logran con dos sesiones.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 480.-',
+    priceValue: 'U$S 560.-',
     priceEffective: 'U$S 420.-',
     depositLabel: 'Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 150.000.-',
     serviceName: 'Areola Harmonization (By Mery Garcia)',
     serviceDuration: 120,
   },
@@ -568,7 +577,7 @@ const areolaOptions: ServiceOption[] = [
     contentType: 'retoque',
     description: 'Completá tu servicio 6 semanas después de tu primera sesión.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 250.-',
+    priceValue: 'U$S 317.-',
     priceEffective: 'U$S 220.-',
     depositLabel: 'Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
@@ -585,12 +594,13 @@ const areolaOptions: ServiceOption[] = [
     priceValue: 'U$S 480.-',
     priceEffective: 'U$S 420.-',
     depositLabel: 'Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 150.000.-',
     serviceName: 'Areola Harmonization Mantenimiento',
     serviceDuration: 120,
   },
 ];
 
+/*
 const nippleOptions: ServiceOption[] = [
   {
     id: 'nipple-consulta',
@@ -615,7 +625,7 @@ const nippleOptions: ServiceOption[] = [
     priceValue: 'U$S 520.-',
     priceEffective: 'U$S 450.-',
     depositLabel: 'Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 150.000.-',
     serviceName: 'Nipple Reconstruction (By Mery Garcia)',
     serviceDuration: 120,
   },
@@ -642,25 +652,42 @@ const nippleOptions: ServiceOption[] = [
     priceValue: 'U$S 480.-',
     priceEffective: 'U$S 420.-',
     depositLabel: 'Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 150.000.-',
     serviceName: 'Nipple Reconstruction Mantenimiento',
     serviceDuration: 120,
   },
 ];
+*/
 
-// ID hardcodeado de la categoría "Paramedical Tattoo"
-const PARAMEDICAL_TATTOO_CATEGORY_ID = '45422e67-102b-4565-9192-ef4047e16f48';
+const scarCamouflageOptions: ServiceOption[] = [
+  {
+    id: 'scar-consulta',
+    label: 'Scar Camouflage Consulta previa Obligatoria',
+    contentType: 'consulta',
+    description:
+      'Disimula la apariencia de las cicatrices, haciendo que se mezclen con todos los tonos de la piel circundante. Esta técnica implica la implantación de pigmentos en la zona de la cicatriz para igualar el color y minimizar su visibilidad. Ideal para recuperar el contorno de tu rostro en la zona de patillas, camuflando la cicatriz.Para evaluar si podemos realizar tu servicio, debés enviar una foto de la zona antes de la consulta al WhatsApp de recepción: 54 9 11 6159-2591 ',
+    priceLabel: 'Valor de la seña:',
+    priceValue: 'AR$ 50.000.-',
+    footerNote:
+      '(*) El precio final del servicio varía entre U$S 200 y U$S 400 según la zona a tratar. La seña se abona al reservar la consulta.',
+    serviceName: 'Scar Camouflage Consulta',
+    serviceDuration: 60,
+  },
+];
 
 export default function ParamedicalTattooPage() {
   const { isAuthenticated } = useAuth();
+  const stickyNavRef = useRef<HTMLDivElement | null>(null);
 
   const [paramedicalCategoryId, setParamedicalCategoryId] = useState<string>(
-    PARAMEDICAL_TATTOO_CATEGORY_ID
+    CATEGORY_IDS.PARAMEDICAL_TATTOO
   );
   const [staffConsultasId, setStaffConsultasId] = useState<
     string | undefined
   >();
   const [meryGarciaId, setMeryGarciaId] = useState<string | undefined>();
+  // Mapa de serviceId → Employee[] (todos los empleados asignados a ese servicio, via API)
+  const [serviceEmployees, setServiceEmployees] = useState<Map<string, Employee[]>>(new Map());
 
   // Fetch category ID (solo si está autenticado)
   useEffect(() => {
@@ -696,37 +723,72 @@ export default function ParamedicalTattooPage() {
   // Find Staff Consultas and Mery Garcia IDs
   useEffect(() => {
     if (employees.length > 0) {
-      const staffConsultas = employees.find(
-        (e) =>
-          e.fullName.toLowerCase().includes('staff consultas') ||
-          e.fullName.toLowerCase().includes('consultas')
-      );
       const meryGarcia = employees.find(
         (e) =>
           e.fullName.toLowerCase().includes('mery garcia') ||
           e.fullName.toLowerCase().includes('mery garcía')
       );
 
-      if (staffConsultas) setStaffConsultasId(staffConsultas.id);
       if (meryGarcia) setMeryGarciaId(meryGarcia.id);
     }
   }, [employees]);
 
+  // Resolver los empleados asignados a CADA servicio via API.
+  // Evita búsqueda por nombre (fragile con duplicados o renombres).
+  useEffect(() => {
+    if (services.length === 0 || !paramedicalCategoryId) return;
+
+    const visibleServices = services.filter((s) => s.showOnSite);
+    if (visibleServices.length === 0) return;
+
+    const resolveServiceEmployees = async () => {
+      const newMap = new Map<string, Employee[]>();
+      await Promise.all(
+        visibleServices.map(async (service) => {
+          try {
+            const assigned = await EmployeeService.getAllPublic(
+              paramedicalCategoryId,
+              service.id
+            );
+            if (assigned.length > 0) {
+              newMap.set(service.id, assigned as Employee[]);
+            }
+          } catch (error) {
+            console.error(`Error resolviendo empleados para servicio ${service.name}:`, error);
+          }
+        })
+      );
+      setServiceEmployees(newMap);
+    };
+
+    resolveServiceEmployees();
+  }, [services, paramedicalCategoryId]);
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const headerHeight =
+        document.querySelector('header')?.getBoundingClientRect().height ?? 0;
+      const stickyNavHeight =
+        stickyNavRef.current?.getBoundingClientRect().height ?? 0;
+      const extraSpacing = 12;
+      const topOffset = headerHeight + stickyNavHeight + extraSpacing;
+      const targetY = element.getBoundingClientRect().top + window.scrollY;
+
+      window.scrollTo({ top: Math.max(0, targetY - topOffset), behavior: 'smooth' });
     }
   };
 
-  const openWhatsApp = (message: string) => {
-    const phoneNumber = '5491161592591';
-    const encodedMessage = encodeURIComponent(message);
-    window.open(
-      `https://wa.me/${phoneNumber}?text=${encodedMessage}`,
-      '_blank'
-    );
-  };
+  // Al montar, hacer scroll al anchor si viene en la URL
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (!hash) return;
+    const sectionId = hash.slice(1);
+    const timer = setTimeout(() => {
+      scrollToSection(sectionId);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Helper function to enrich service options with IDs
   const enrichServiceOptions = (
@@ -742,14 +804,23 @@ export default function ParamedicalTattooPage() {
         const consultaService = allServices.find((s) => {
           const nameLower = s.name.toLowerCase();
           const optionNameLower = option.serviceName!.toLowerCase();
-          return s.showOnSite && nameLower.includes(optionNameLower);
+          return (
+            s.showOnSite &&
+            (nameLower.includes(optionNameLower) || optionNameLower.includes(nameLower))
+          );
         });
+
+        // Usar el empleado asignado al servicio específico via API
+        const resolvedEmployeeId = consultaService?.id
+          ? serviceEmployees.get(consultaService.id)?.[0]?.id
+          : undefined;
 
         return {
           ...option,
           serviceId: consultaService?.id,
-          employeeId: staffId, // Staff Consultas
+          employeeId: resolvedEmployeeId,
           serviceDuration: consultaService?.duration || option.serviceDuration,
+          servicePrice: consultaService?.price,
         };
       }
 
@@ -763,14 +834,20 @@ export default function ParamedicalTattooPage() {
           if (!option.serviceName) return false;
           const nameLower = s.name.toLowerCase();
           const optionNameLower = option.serviceName.toLowerCase();
-          return s.showOnSite && nameLower.includes(optionNameLower);
+          return (
+            s.showOnSite &&
+            (nameLower.includes(optionNameLower) || optionNameLower.includes(nameLower))
+          );
         });
 
         return {
           ...option,
           serviceId: service?.id,
-          employeeId: meryId, // Mery Garcia
+          employeeId: service?.id
+            ? serviceEmployees.get(service.id)?.[0]?.id
+            : undefined,
           serviceDuration: service?.duration || option.serviceDuration,
+          servicePrice: service?.price,
         };
       }
 
@@ -799,9 +876,17 @@ export default function ParamedicalTattooPage() {
     options: ServiceOption[];
   } | null>(null);
 
+  // Estado para modal de consultas
+  const [consultaModalOpened, setConsultaModalOpened] = useState(false);
+  const [consultaService, setConsultaService] = useState<{
+    serviceName: string;
+    serviceKey: string;
+    consultaOptions: ServiceOption[];
+  } | null>(null);
+
   // Enrich service options with IDs
   const nanoScalpOptionsWithIds = useMemo(() => {
-    if (services.length === 0 || !staffConsultasId || !meryGarciaId) {
+    if (services.length === 0 || !meryGarciaId) {
       return nanoScalpOptions;
     }
     return enrichServiceOptions(
@@ -811,10 +896,10 @@ export default function ParamedicalTattooPage() {
       staffConsultasId,
       meryGarciaId
     );
-  }, [services, staffConsultasId, meryGarciaId]);
+  }, [services, staffConsultasId, meryGarciaId, serviceEmployees]);
 
   const areolaOptionsWithIds = useMemo(() => {
-    if (services.length === 0 || !staffConsultasId || !meryGarciaId) {
+    if (services.length === 0 || !meryGarciaId) {
       return areolaOptions;
     }
     return enrichServiceOptions(
@@ -824,8 +909,22 @@ export default function ParamedicalTattooPage() {
       staffConsultasId,
       meryGarciaId
     );
-  }, [services, staffConsultasId, meryGarciaId]);
+  }, [services, staffConsultasId, meryGarciaId, serviceEmployees]);
 
+  const scarCamouflageOptionsWithIds = useMemo(() => {
+    if (services.length === 0) {
+      return scarCamouflageOptions;
+    }
+    return enrichServiceOptions(
+      scarCamouflageOptions,
+      'scar-camouflage',
+      services,
+      staffConsultasId,
+      meryGarciaId
+    );
+  }, [services, staffConsultasId, meryGarciaId, serviceEmployees]);
+
+  /*
   const nippleOptionsWithIds = useMemo(() => {
     if (services.length === 0 || !staffConsultasId || !meryGarciaId) {
       return nippleOptions;
@@ -838,6 +937,7 @@ export default function ParamedicalTattooPage() {
       meryGarciaId
     );
   }, [services, staffConsultasId, meryGarciaId]);
+  */
 
   return (
     <>
@@ -845,7 +945,7 @@ export default function ParamedicalTattooPage() {
 
       <Box className={classes.pageWrapper}>
         {/* Sticky Navigation */}
-        <Box className={classes.heroNav}>
+        <Box ref={stickyNavRef} className={classes.heroNav}>
           <Box
             className={classes.navButton}
             onClick={() => scrollToSection('nano-scalp')}
@@ -860,40 +960,37 @@ export default function ParamedicalTattooPage() {
           </Box>
           <Box
             className={classes.navButton}
+            onClick={() => scrollToSection('scar-camouflage')}
+          >
+            <span>SCAR</span>
+          </Box>
+          {/* <Box
+            className={classes.navButton}
             onClick={() => scrollToSection('nipple-reconstruction')}
           >
             <span>NIPPLE</span>
-          </Box>
+          </Box> */}
         </Box>
 
         {/* Content Sections */}
-        <Box className={classes.contentWrapper}>
+        <Box id="consultas" className={classes.contentWrapper}>
           {/* Nano Scalp Section */}
           <FadeInSection direction="up" delay={0}>
             <Box id="nano-scalp" className={classes.section}>
               <Container size="lg" py="md">
                 <Box className={classes.sectionContent}>
                   <Box className={classes.serviceHeader}>
-                    <Box className={classes.serviceThumbnail}>
-                      <Image
-                        src="/images/nano-scallping.webp"
-                        alt="Nano Scalp"
-                        width={100}
-                        height={100}
-                        className={classes.thumbnailImage}
-                      />
-                    </Box>
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.sectionTitle}>NANO SCALP</Text>
                       <Text className={classes.serviceTagline}>
-                        Tatuaje cosmético de cuero cabelludo. Efecto de mayor
+                        Cosmetic Tattoo de cuero cabelludo. Efecto de mayor
                         densidad capilar.
                       </Text>
                     </Box>
                   </Box>
                   <Box className={classes.buttonsWrapper}>
                     <a
-                      href="https://merygarcia.com.ar/servicios/tatuaje-paramedico"
+                      href="https://merygarcia.com.ar/servicios/tatuaje-paramedico#nano-scalp"
                       target="_blank"
                       rel="noopener noreferrer"
                       className={classes.ctaButton}
@@ -902,9 +999,16 @@ export default function ParamedicalTattooPage() {
                     </a>
                     <button
                       className={classes.ctaButtonSecondary}
-                      onClick={() =>
-                        openWhatsApp('Quiero consultar sobre NANO SCALP')
-                      }
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'NANO SCALP',
+                          serviceKey: 'nano-scalp',
+                          consultaOptions: nanoScalpOptionsWithIds.filter(
+                            (opt) => opt.contentType === 'consulta'
+                          ),
+                        });
+                        setConsultaModalOpened(true);
+                      }}
                     >
                       CONSULTA
                     </button>
@@ -914,7 +1018,9 @@ export default function ParamedicalTattooPage() {
                         setModalService({
                           serviceName: 'NANO SCALP',
                           serviceKey: 'nano-scalp',
-                          options: nanoScalpOptionsWithIds,
+                          options: nanoScalpOptionsWithIds.filter(
+                            (opt) => opt.contentType !== 'consulta'
+                          ),
                         });
                         setModalOpened(true);
                       }}
@@ -946,15 +1052,6 @@ export default function ParamedicalTattooPage() {
               <Container size="lg" py="md">
                 <Box className={classes.sectionContent}>
                   <Box className={classes.serviceHeader}>
-                    <Box className={classes.serviceThumbnail}>
-                      <Image
-                        src="/images/aereola.webp"
-                        alt="Areola Harmonization"
-                        width={100}
-                        height={100}
-                        className={classes.thumbnailImage}
-                      />
-                    </Box>
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.sectionTitle}>
                         AREOLA HARMONIZATION
@@ -967,7 +1064,7 @@ export default function ParamedicalTattooPage() {
                   </Box>
                   <Box className={classes.buttonsWrapper}>
                     <a
-                      href="https://merygarcia.com.ar/servicios/tatuaje-paramedico"
+                      href="https://merygarcia.com.ar/servicios/tatuaje-paramedico#areola-harmonization"
                       target="_blank"
                       rel="noopener noreferrer"
                       className={classes.ctaButton}
@@ -976,11 +1073,16 @@ export default function ParamedicalTattooPage() {
                     </a>
                     <button
                       className={classes.ctaButtonSecondary}
-                      onClick={() =>
-                        openWhatsApp(
-                          'Quiero consultar sobre AREOLA HARMONIZATION'
-                        )
-                      }
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'AREOLA HARMONIZATION',
+                          serviceKey: 'areola-harmonization',
+                          consultaOptions: areolaOptionsWithIds.filter(
+                            (opt) => opt.contentType === 'consulta'
+                          ),
+                        });
+                        setConsultaModalOpened(true);
+                      }}
                     >
                       CONSULTA
                     </button>
@@ -990,7 +1092,9 @@ export default function ParamedicalTattooPage() {
                         setModalService({
                           serviceName: 'AREOLA HARMONIZATION',
                           serviceKey: 'areola-harmonization',
-                          options: areolaOptionsWithIds,
+                          options: areolaOptionsWithIds.filter(
+                            (opt) => opt.contentType !== 'consulta'
+                          ),
                         });
                         setModalOpened(true);
                       }}
@@ -1016,34 +1120,25 @@ export default function ParamedicalTattooPage() {
             </Box>
           </FadeInSection>
 
-          {/* Nipple Reconstruction Section */}
+          {/* Scar Camouflage Section */}
           <FadeInSection direction="up" delay={0.2}>
-            <Box id="nipple-reconstruction" className={classes.section}>
+            <Box id="scar-camouflage" className={classes.section}>
               <Container size="lg" py="md">
                 <Box className={classes.sectionContent}>
                   <Box className={classes.serviceHeader}>
-                    <Box className={classes.serviceThumbnail}>
-                      <Image
-                        src="/images/camuflaje.webp"
-                        alt="Nipple Reconstruction"
-                        width={100}
-                        height={100}
-                        className={classes.thumbnailImage}
-                      />
-                    </Box>
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.sectionTitle}>
-                        NIPPLE RECONSTRUCTION
+                        SCAR CAMOUFLAGE
                       </Text>
                       <Text className={classes.serviceTagline}>
-                        Tatuaje cosmético 3D para reconstrucción y corrección de
-                        asimetrías.
+                        Cosmetic Tattoo para disimular cicatrices. Precio
+                        variable según caso: U$S 200 - U$S 400.
                       </Text>
                     </Box>
                   </Box>
                   <Box className={classes.buttonsWrapper}>
                     <a
-                      href="https://merygarcia.com.ar/servicios/tatuaje-paramedico"
+                      href="https://merygarcia.com.ar/servicios/tatuaje-paramedico#scar-camouflage"
                       target="_blank"
                       rel="noopener noreferrer"
                       className={classes.ctaButton}
@@ -1052,11 +1147,75 @@ export default function ParamedicalTattooPage() {
                     </a>
                     <button
                       className={classes.ctaButtonSecondary}
-                      onClick={() =>
-                        openWhatsApp(
-                          'Quiero consultar sobre NIPPLE RECONSTRUCTION'
-                        )
-                      }
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'SCAR CAMOUFLAGE',
+                          serviceKey: 'scar-camouflage',
+                          consultaOptions: scarCamouflageOptionsWithIds.filter(
+                            (opt) => opt.contentType === 'consulta'
+                          ),
+                        });
+                        setConsultaModalOpened(true);
+                      }}
+                    >
+                      CONSULTA
+                    </button>
+                  </Box>
+
+                  <Box className={classes.optionsSection}>
+                    <Text className={classes.optionsTitle}>
+                      Seleccioná la opción deseada para solicitar tu cita:
+                    </Text>
+                    <ServiceAccordion
+                      options={scarCamouflageOptions}
+                      staffConsultasId={staffConsultasId}
+                      meryGarciaId={meryGarciaId}
+                      services={services as ServiceEntity[]}
+                      employees={employees as Employee[]}
+                    />
+                  </Box>
+                </Box>
+              </Container>
+            </Box>
+          </FadeInSection>
+
+          {/* Nipple Reconstruction Section - COMMENTED OUT */}
+          {/* <FadeInSection direction="up" delay={0.2}>
+            <Box id="nipple-reconstruction" className={classes.section}>
+              <Container size="lg" py="md">
+                <Box className={classes.sectionContent}>
+                  <Box className={classes.serviceHeader}>
+                    <Box className={classes.serviceTitleWrapper}>
+                      <Text className={classes.sectionTitle}>
+                        NIPPLE RECONSTRUCTION
+                      </Text>
+                      <Text className={classes.serviceTagline}>
+                        Cosmetic Tattoo 3D para reconstrucción y corrección de
+                        asimetrías.
+                      </Text>
+                    </Box>
+                  </Box>
+                  <Box className={classes.buttonsWrapper}>
+                    <a
+                      href="https://merygarcia.com.ar/servicios/tatuaje-paramedico#nipple-reconstruction"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={classes.ctaButton}
+                    >
+                      MÁS INFO AQUÍ
+                    </a>
+                    <button
+                      className={classes.ctaButtonSecondary}
+                      onClick={() => {
+                        setConsultaService({
+                          serviceName: 'NIPPLE RECONSTRUCTION',
+                          serviceKey: 'nipple-reconstruction',
+                          consultaOptions: nippleOptionsWithIds.filter(
+                            (opt) => opt.contentType === 'consulta'
+                          ),
+                        });
+                        setConsultaModalOpened(true);
+                      }}
                     >
                       CONSULTA
                     </button>
@@ -1090,7 +1249,7 @@ export default function ParamedicalTattooPage() {
                 </Box>
               </Container>
             </Box>
-          </FadeInSection>
+          </FadeInSection> */}
         </Box>
       </Box>
 
@@ -1111,6 +1270,25 @@ export default function ParamedicalTattooPage() {
           employees={employees as Employee[]}
           staffConsultasId={staffConsultasId}
           meryGarciaId={meryGarciaId}
+        />
+      )}
+
+      {/* Modal de Consultas con Stepper */}
+      {consultaService && (
+        <ConsultaModal
+          opened={consultaModalOpened}
+          onClose={() => {
+            setConsultaModalOpened(false);
+            setConsultaService(null);
+          }}
+          serviceName={consultaService.serviceName}
+          serviceKey={consultaService.serviceKey}
+          consultaOptions={consultaService.consultaOptions}
+          services={services as ServiceEntity[]}
+          employees={employees as Employee[]}
+          meryGarciaId={meryGarciaId}
+          staffConsultasId={staffConsultasId}
+          serviceEmployees={serviceEmployees}
         />
       )}
     </>

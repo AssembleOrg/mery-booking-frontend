@@ -1,6 +1,7 @@
 import apiClient from './apiClient';
 
 export type BookingStatus = 'PENDING' | 'ACTIVE' | 'CANCELLED' | 'COMPLETED';
+export type PaidStatus = 'UNPAID' | 'PARTIALLY_PAID' | 'PAID';
 
 export interface Booking {
   id: string;
@@ -60,12 +61,13 @@ export interface CreateBookingDto {
   date: string; // YYYY-MM-DD
   startTime: string; // HH:mm (solo :00 o :30)
   quantity?: number;
-  paid?: boolean;
+  paidStatus?: PaidStatus;
   notes?: string;
 }
 
 export interface BookingResponse {
   id: string;
+  bookingCode?: string; // Código único de reserva (6 caracteres alfanuméricos)
   clientId: string;
   employeeId: string;
   serviceId: string;
@@ -79,6 +81,7 @@ export interface BookingResponse {
   localEndTime: string; // HH:mm (hora local de fin)
   quantity: number;
   paid: boolean;
+  paidStatus: PaidStatus;
   status: BookingStatus;
   notes?: string;
   client?: {
@@ -122,6 +125,19 @@ export interface AvailabilityResponse {
     }>;
   }>;
 }
+
+export interface RescheduleBookingDto {
+  date: string; // YYYY-MM-DD
+  startTime: string; // HH:mm
+  employeeId: string;
+  serviceId?: string; // Opcional para admin
+}
+
+export interface UpdateBookingDto {
+  paid?: boolean;
+  notes?: string;
+}
+
 
 export class BookingService {
   private static readonly BASE_PATH = '/bookings';
@@ -207,6 +223,50 @@ export class BookingService {
 
   static async cancel(id: string): Promise<BookingResponse> {
     const response = await apiClient.post<BackendResponse<BookingResponse>>(`${this.BASE_PATH}/${id}/cancel`);
+    return response.data.data;
+  }
+
+  // Reagendar reserva (admin) - sin restricción de tiempo
+  static async reschedule(id: string, data: RescheduleBookingDto): Promise<BookingResponse> {
+    const response = await apiClient.patch<BackendResponse<BookingResponse>>(
+      `${this.BASE_PATH}/${id}/reschedule`,
+      data
+    );
+    return response.data.data;
+  }
+
+  // Buscar reserva por código (público)
+  static async getByCode(bookingCode: string): Promise<BookingResponse> {
+    const response = await apiClient.get<BackendResponse<BookingResponse>>(
+      `${this.BASE_PATH}/public/${bookingCode}`
+    );
+    return response.data.data;
+  }
+
+  // Reagendar reserva (público) - requiere 48 horas de anticipación
+  static async reschedulePublic(bookingCode: string, data: RescheduleBookingDto): Promise<BookingResponse> {
+    const response = await apiClient.patch<BackendResponse<BookingResponse>>(
+      `${this.BASE_PATH}/public/${bookingCode}/reschedule`,
+      data
+    );
+    return response.data.data;
+  }
+
+  // Actualizar reserva (admin) - puede actualizar estado de pago y notas
+  static async update(id: string, data: UpdateBookingDto): Promise<BookingResponse> {
+    const response = await apiClient.patch<BackendResponse<BookingResponse>>(
+      `${this.BASE_PATH}/${id}`,
+      data
+    );
+    return response.data.data;
+  }
+
+  // Cambiar estado de pago (admin) - UNPAID | PARTIALLY_PAID | PAID
+  static async changePaidStatus(id: string, paidStatus: PaidStatus): Promise<BookingResponse> {
+    const response = await apiClient.patch<BackendResponse<BookingResponse>>(
+      `${this.BASE_PATH}/${id}/paid-status`,
+      { paidStatus }
+    );
     return response.data.data;
   }
 }

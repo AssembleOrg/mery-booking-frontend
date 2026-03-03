@@ -6,30 +6,21 @@ import {
   Footer,
   ServiceBookingForm,
   DateTimeSelector,
-  BookingConfirmationModal,
   FadeInSection,
   ImageCrossfade,
 } from '@/presentation/components';
-import { useState, useMemo } from 'react';
-import { useDisclosure } from '@mantine/hooks';
-import {
-  useServices,
-  useEmployees,
-  useCreateClient,
-  useCreateBooking,
-} from '@/presentation/hooks';
-import { Client } from '@/domain/entities';
-import type { ServiceEntity } from '@/infrastructure/http';
+import { EstilismoReservaModal } from '@/presentation/components/EstilismoReservaModal';
+import { useState } from 'react';
+import { useServices, useEmployees } from '@/presentation/hooks';
+import type { ServiceEntity, Employee } from '@/infrastructure/http';
 import classes from './page.module.css';
-import dayjs from 'dayjs';
+import { CATEGORY_IDS, EMPLOYEE_IDS } from '@/config/constants';
+import { formatArs, getEstilismoListPriceArs } from '@/config/estilismoPricing';
 
 interface ServiceBookingData {
   servicio: string;
   profesional: string;
 }
-
-const MOCK_LOCATION = 'Mery García Office';
-const ESTILISMO_CEJAS_CATEGORY_ID = '316f01a6-ef73-4b05-a322-8da598ba50aa';
 
 export default function EstilismoCejasPage() {
   const [bookingData, setBookingData] = useState<ServiceBookingData | null>(
@@ -37,13 +28,18 @@ export default function EstilismoCejasPage() {
   );
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [opened, { open, close }] = useDisclosure(false);
 
-  const createClientMutation = useCreateClient();
-  const createBookingMutation = useCreateBooking();
+  // Estados para modales de reserva
+  const [reservaModalOpened, setReservaModalOpened] = useState(false);
+  const [selectedService, setSelectedService] = useState<ServiceEntity | null>(
+    null
+  );
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null
+  );
 
   const { data: services = [], isLoading: isLoadingServices } = useServices(
-    ESTILISMO_CEJAS_CATEGORY_ID
+    CATEGORY_IDS.ESTILISMO_CEJAS
   );
 
   const currentService = bookingData?.servicio
@@ -55,7 +51,7 @@ export default function EstilismoCejasPage() {
   const isLoadingService = isLoadingServices && !!bookingData?.servicio;
 
   const { data: employees = [] } = useEmployees(
-    ESTILISMO_CEJAS_CATEGORY_ID,
+    CATEGORY_IDS.ESTILISMO_CEJAS,
     bookingData?.servicio || undefined
   );
 
@@ -63,82 +59,37 @@ export default function EstilismoCejasPage() {
     ? employees.find((e) => e.id === bookingData.profesional)
     : null;
 
+  const informationalListPriceArs = currentService
+    ? getEstilismoListPriceArs(currentService.name)
+    : null;
+
   const handleServiceSubmit = (data: ServiceBookingData) => {
     setBookingData(data);
-    // Scroll automático hacia el calendario en mobile
-    setTimeout(() => {
-      const calendarElement = document.getElementById('calendar-anchor');
-      if (calendarElement) {
-        calendarElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 150);
+
+    // ONLY scroll if BOTH service AND professional are selected
+    if (data.servicio && data.profesional) {
+      setTimeout(() => {
+        const calendarElement = document.getElementById('calendar-anchor');
+        if (calendarElement) {
+          calendarElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 150);
+    }
   };
 
   const handleDateTimeSelect = (date: Date, time: string) => {
     setSelectedDate(date);
     setSelectedTime(time);
-    open();
+
+    if (!currentService || !currentEmployee) return;
+
+    // Guardar servicio y empleado seleccionados
+    setSelectedService(currentService);
+    setSelectedEmployee(currentEmployee);
+
+    // Abrir modal según tipo de servicio
+    setReservaModalOpened(true);
   };
-
-  const handleConfirmBooking = async (clientData: Client) => {
-    if (!bookingData || !selectedDate || !selectedTime || !currentService)
-      return;
-    if (!bookingData.profesional) return;
-
-    try {
-      if (!clientData.dni) throw new Error('El DNI es requerido');
-
-      const client = await createClientMutation.mutateAsync({
-        fullName: `${clientData.name} ${clientData.surname}`,
-        email: clientData.email,
-        phone: clientData.mobile,
-        dni: clientData.dni,
-      } as any);
-
-      const dateString = dayjs(selectedDate).format('YYYY-MM-DD');
-      await createBookingMutation.mutateAsync({
-        clientId: client.id,
-        employeeId: bookingData.profesional,
-        serviceId: currentService.id,
-        date: dateString,
-        startTime: selectedTime,
-        quantity: 1,
-        paid: false,
-        notes: clientData.notes,
-      });
-
-      close();
-      setBookingData(null);
-      setSelectedDate(null);
-      setSelectedTime(null);
-    } catch (error) {
-      console.error('Error al crear reserva:', error);
-    }
-  };
-
-  const serviceForModal = useMemo(() => {
-    if (!currentService) return null;
-    return {
-      id: currentService.id,
-      name: currentService.name,
-      slug: currentService.name.toLowerCase().replace(/\s+/g, '-'),
-      price: Number(currentService.price),
-      priceBook: Number(currentService.price),
-      duration: currentService.duration,
-      image: currentService.urlImage || '/desk.svg',
-    };
-  }, [currentService]);
-
-  const professionalForModal = useMemo(() => {
-    if (!currentEmployee) return null;
-    return {
-      id: currentEmployee.id,
-      name: currentEmployee.fullName,
-      available: true,
-      services: [],
-    };
-  }, [currentEmployee]);
-
   return (
     <>
       <Header />
@@ -154,13 +105,13 @@ export default function EstilismoCejasPage() {
             interval={6000}
             transitionDuration={1.0}
             className={classes.heroImage}
-            alt="Estilismo de Cejas"
+            alt="Estilismo de Cejas & Pestañas"
             objectPosition="center"
           />
           <Box className={classes.heroOverlay} />
           <Box className={classes.heroContent}>
             <FadeInSection direction="up" delay={0.2}>
-              <Text className={classes.heroOverline}>MERY GARCÍA</Text>
+
               <Text className={classes.heroTitle}>
                 ESTILISMO DE
                 <br />
@@ -205,14 +156,16 @@ export default function EstilismoCejasPage() {
                     <ServiceBookingForm
                       onSubmit={handleServiceSubmit}
                       onChange={handleServiceSubmit}
-                      categoryId={ESTILISMO_CEJAS_CATEGORY_ID}
-                      employeeFilter={(employee) =>
-                        employee.fullName
-                          .toLowerCase()
-                          .includes('rosario staff') ||
-                        employee.fullName.toLowerCase() === 'rosario staff'
-                      }
+                      categoryId={CATEGORY_IDS.ESTILISMO_CEJAS}
                     />
+                    {typeof informationalListPriceArs === 'number' && (
+                      <Text mt="md" size="sm" c="dimmed">
+                        Precio de lista:{' '}
+                        <Text component="span" c="dark" fw={500}>
+                          {formatArs(informationalListPriceArs)}
+                        </Text>
+                      </Text>
+                    )}
                   </Box>
 
                   <Box id="calendar-anchor" className={classes.calendarColumn}>
@@ -220,14 +173,12 @@ export default function EstilismoCejasPage() {
                       <Center py="xl" h={400}>
                         <Loader size="md" color="var(--mg-pink)" />
                       </Center>
-                    ) : currentService ? (
+                    ) : currentService && bookingData?.profesional && currentEmployee ? (
                       <DateTimeSelector
                         serviceDuration={currentService.duration}
-                        employeeId={bookingData?.profesional || null}
+                        employeeId={bookingData.profesional}
                         serviceId={currentService.id}
                         onSelectDateTime={handleDateTimeSelect}
-                        onBack={() => {}}
-                        showBackButton={false}
                       />
                     ) : (
                       <Box className={classes.infoBox}>
@@ -255,18 +206,27 @@ export default function EstilismoCejasPage() {
 
       <Footer />
 
-      {serviceForModal && selectedDate && selectedTime && (
-        <BookingConfirmationModal
-          opened={opened}
-          onClose={close}
-          service={serviceForModal}
-          professional={professionalForModal || null}
-          date={selectedDate}
-          time={selectedTime}
-          location={MOCK_LOCATION}
-          onConfirm={handleConfirmBooking}
+      {/* Modal de Reserva para sesiones regulares */}
+      {selectedService && selectedEmployee && selectedDate && selectedTime && (
+        <EstilismoReservaModal
+          opened={reservaModalOpened}
+          onClose={() => {
+            setReservaModalOpened(false);
+            setSelectedService(null);
+            setSelectedEmployee(null);
+            setSelectedDate(null);
+            setSelectedTime(null);
+          }}
+          serviceName={selectedService.name}
+          service={selectedService}
+          employee={selectedEmployee}
+          selectedDate={selectedDate}
+          selectedTime={selectedTime}
+          services={services as ServiceEntity[]}
+          employees={employees as Employee[]}
         />
       )}
+
     </>
   );
 }

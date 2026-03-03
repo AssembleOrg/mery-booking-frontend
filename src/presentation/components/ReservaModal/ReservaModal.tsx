@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import { Modal } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { AnimatePresence } from 'framer-motion';
 import { StepIndicator } from './StepIndicator';
 import { Step1Terms } from './Step1Terms';
 import { Step2SessionType } from './Step2SessionType';
 import { Step3Calendar } from './Step3Calendar';
 import { Step4Confirmation } from './Step4Confirmation';
+import { Step5PaymentSummary } from './Step5PaymentSummary';
 import classes from './ReservaModal.module.css';
 import type { ServiceOption } from '@/infrastructure/types/services';
 import type { Employee } from '@/infrastructure/http/employeeService';
@@ -36,11 +38,21 @@ export function ReservaModal({
   staffConsultasId,
   meryGarciaId,
 }: ReservaModalProps) {
+  const isMobile = useMediaQuery('(max-width: 767px)');
   const [currentStep, setCurrentStep] = useState(1);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [selectedOption, setSelectedOption] = useState<ServiceOption | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [clientData, setClientData] = useState<{
+    name: string;
+    surname: string;
+    email: string;
+    mobile: string;
+    dni: string;
+    notes?: string;
+  } | null>(null);
+  const [confirmationModalOpened, setConfirmationModalOpened] = useState(false);
 
   const handleClose = () => {
     // Reset estado al cerrar
@@ -49,11 +61,14 @@ export function ReservaModal({
     setSelectedOption(null);
     setSelectedDate(null);
     setSelectedTime(null);
+    setClientData(null);
+    setConfirmationModalOpened(false);
     onClose();
   };
 
   const handleStepComplete = () => {
-    if (currentStep < 4) {
+    if (currentStep < 5) {
+      console.log(`[ReservaModal] Avanzando de step ${currentStep} a step ${currentStep + 1}`);
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -76,7 +91,8 @@ export function ReservaModal({
       size="lg"
       centered
       padding={0}
-      radius="md"
+      radius={isMobile ? 0 : 'md'}
+      fullScreen={isMobile}
       classNames={{
         content: classes.modalContent,
         header: classes.modalHeader,
@@ -86,7 +102,7 @@ export function ReservaModal({
     >
       <div className={classes.container}>
         {/* Step Indicator */}
-        <StepIndicator currentStep={currentStep} totalSteps={4} />
+        <StepIndicator currentStep={currentStep} totalSteps={5} />
 
         {/* Content Area con AnimatePresence para transiciones */}
         <div className={classes.contentArea}>
@@ -98,6 +114,8 @@ export function ReservaModal({
                 onAcceptChange={setAcceptedTerms}
                 onContinue={handleStepComplete}
                 onCancel={handleClose}
+                serviceName={serviceName}
+                onClose={onClose}
               />
             )}
 
@@ -142,12 +160,60 @@ export function ReservaModal({
                 services={services}
                 staffConsultasId={staffConsultasId}
                 meryGarciaId={meryGarciaId}
-                onComplete={handleBookingComplete}
+                confirmationModalOpened={confirmationModalOpened}
+                onConfirmationModalClose={() => setConfirmationModalOpened(false)}
+                onClientDataCollected={(data) => {
+                  console.log('[ReservaModal] clientData actualizado:', data);
+                  setClientData(data);
+                  console.log('[ReservaModal] Avanzando a Step 5...');
+                  handleStepComplete();
+                }}
+              />
+            )}
+
+            {currentStep === 5 && selectedOption && selectedDate && selectedTime && clientData && (
+              (() => {
+                console.log('[ReservaModal] Renderizando Step 5 con:', {
+                  currentStep,
+                  hasSelectedOption: !!selectedOption,
+                  hasSelectedDate: !!selectedDate,
+                  hasSelectedTime: !!selectedTime,
+                  hasClientData: !!clientData,
+                });
+                return null;
+              })(),
+              <Step5PaymentSummary
+                key="step5"
+                serviceName={serviceName}
+                serviceKey={serviceKey}
+                selectedOption={selectedOption}
+                selectedDate={selectedDate}
+                selectedTime={selectedTime}
+                clientData={clientData}
+                employees={employees}
+                services={services}
+                staffConsultasId={staffConsultasId}
+                meryGarciaId={meryGarciaId}
                 onBack={handleStepBack}
               />
             )}
           </AnimatePresence>
         </div>
+
+        {currentStep === 4 && (
+          <div className={classes.buttonGroup}>
+            <button type="button" onClick={handleStepBack} className={classes.buttonSecondary}>
+              ATRÁS
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmationModalOpened(true)}
+              className={classes.buttonPrimary}
+            >
+              CONFIRMAR RESERVA
+            </button>
+          </div>
+        )}
       </div>
     </Modal>
   );

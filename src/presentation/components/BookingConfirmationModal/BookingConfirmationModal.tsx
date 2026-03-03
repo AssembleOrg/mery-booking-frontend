@@ -99,8 +99,7 @@ export function BookingConfirmationModal({
     reset(); // Limpiar formulario después de confirmar
   };
 
-  const deposit = Math.round(service.priceBook * 0.8); // 80% del precio book
-  const remaining = service.priceBook - deposit;
+  const deposit = service.priceBook;
 
   const formatDate = (date: Date) => {
     // Usar los componentes de la fecha directamente para evitar problemas de timezone
@@ -130,6 +129,9 @@ export function BookingConfirmationModal({
         body: classes.modalBody,
       }}
       withCloseButton={false}
+      trapFocus={false}
+      closeOnEscape={false}
+      closeOnClickOutside={false}
     >
       <Stack gap="xl">
         {/* Service Header */}
@@ -202,6 +204,8 @@ export function BookingConfirmationModal({
                 render={({ field }) => (
                   <TextInput
                     {...field}
+                    tabIndex={1}
+                    data-autofocus
                     label="* Nombre:"
                     placeholder="María"
                     error={errors.name?.message}
@@ -221,6 +225,7 @@ export function BookingConfirmationModal({
                 render={({ field }) => (
                   <TextInput
                     {...field}
+                    tabIndex={2}
                     label="* Apellido:"
                     placeholder="García"
                     error={errors.surname?.message}
@@ -249,6 +254,7 @@ export function BookingConfirmationModal({
                 render={({ field }) => (
                   <TextInput
                     {...field}
+                    tabIndex={3}
                     label="* Correo electrónico:"
                     placeholder="consultas@merygarcia.com"
                     error={errors.email?.message}
@@ -272,6 +278,7 @@ export function BookingConfirmationModal({
                     render={({ field }) => (
                       <Select
                         {...field}
+                        tabIndex={4}
                         data={countryCodes}
                         classNames={{
                           input: classes.input,
@@ -287,6 +294,7 @@ export function BookingConfirmationModal({
                     render={({ field }) => (
                       <TextInput
                         {...field}
+                        tabIndex={5}
                         placeholder="(11) 1234 567"
                         error={errors.mobile?.message}
                         classNames={{
@@ -308,6 +316,7 @@ export function BookingConfirmationModal({
               render={({ field }) => (
                 <TextInput
                   {...field}
+                  tabIndex={6}
                   label="* DNI:"
                   placeholder="12345678"
                   error={errors.dni?.message}
@@ -326,6 +335,7 @@ export function BookingConfirmationModal({
               render={({ field }) => (
                 <Textarea
                   {...field}
+                  tabIndex={7}
                   label="Notas (opcional):"
                   placeholder="Escribe aquí cualquier comentario o información adicional..."
                   minRows={3}
@@ -342,23 +352,10 @@ export function BookingConfirmationModal({
             <Box className={classes.pricingSummary}>
               <Flex justify="space-between" mb="xs">
                 <Text size="sm" fw={400}>
-                  Precio base:
+                  Seña:
                 </Text>
                 <Text size="sm" fw={600}>
-                  AR${service.price.toLocaleString('es-AR')}
-                </Text>
-              </Flex>
-
-              <Flex
-                justify="space-between"
-                mb="xs"
-                className={classes.totalRow}
-              >
-                <Text size="md" fw={500}>
-                  Coste total:
-                </Text>
-                <Text size="md" fw={600} c="pink.6">
-                  AR${service.priceBook.toLocaleString('es-AR')}
+                  AR${deposit.toLocaleString('es-AR')}
                 </Text>
               </Flex>
 
@@ -373,15 +370,6 @@ export function BookingConfirmationModal({
                   AR${deposit.toLocaleString('es-AR')}
                 </Text>
               </Flex>
-
-              <Flex justify="space-between">
-                <Text size="sm" fw={400}>
-                  A pagar
-                </Text>
-                <Text size="sm" fw={600}>
-                  AR${remaining.toLocaleString('es-AR')}
-                </Text>
-              </Flex>
             </Box>
 
             {/* Action Buttons */}
@@ -394,6 +382,7 @@ export function BookingConfirmationModal({
                 onClick={handleClose}
                 disabled={isSubmitting}
                 className={classes.cancelButton}
+                tabIndex={8}
               >
                 Cancelar
               </Button>
@@ -403,6 +392,7 @@ export function BookingConfirmationModal({
                 size="lg"
                 loading={isSubmitting}
                 className={classes.confirmButton}
+                tabIndex={9}
               >
                 Confirmar
               </Button>

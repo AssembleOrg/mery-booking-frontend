@@ -55,6 +55,11 @@ export function Step2SessionType({
                     {option.priceValue && (
                       <Text className={classes.optionPrice}>{option.priceValue}</Text>
                     )}
+                    {option.priceEffective && (
+                      <Text className={classes.optionPriceEffective}>
+                        {option.priceEffective} (efectivo)
+                      </Text>
+                    )}
                     {option.description && (
                       <Text className={classes.optionDescription}>
                         {option.description}

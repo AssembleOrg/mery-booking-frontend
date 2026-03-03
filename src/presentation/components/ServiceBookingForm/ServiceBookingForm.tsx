@@ -21,11 +21,11 @@ interface ServiceBookingFormProps {
 export function ServiceBookingForm({ onSubmit: onSubmitCallback, onChange, categoryId, employeeFilter }: ServiceBookingFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
-  
+
   // Cargar servicios y empleados desde la API
   const { data: services = [], isLoading: isLoadingServices } = useServices(categoryId);
-  // Refetch empleados cuando cambie el servicio seleccionado
-  const { data: employees = [], isLoading: isLoadingEmployees } = useEmployees(categoryId, selectedServiceId || undefined);
+  // Cargar empleados filtrados por servicio
+  const { data: allEmployees = [], isLoading: isLoadingEmployees } = useEmployees(categoryId, selectedServiceId || undefined);
   
   const {
     control,
@@ -62,22 +62,21 @@ export function ServiceBookingForm({ onSubmit: onSubmitCallback, onChange, categ
   }, [servicioValue]);
 
   // Notificar cambios en tiempo real al componente padre cuando cambie el servicio o profesional
-  // Solo notificar si hay un servicio seleccionado y los valores han cambiado
   useEffect(() => {
     const currentServicio = servicioValue || '';
     const currentProfesional = profesionalValue || '';
-    
+
     // Solo llamar si hay un servicio seleccionado y los valores han cambiado
     if (currentServicio && onChangeRef.current) {
       const prevValues = prevValuesRef.current;
-      
+
       // Verificar si los valores realmente cambiaron
       if (prevValues.servicio !== currentServicio || prevValues.profesional !== currentProfesional) {
         prevValuesRef.current = {
           servicio: currentServicio,
           profesional: currentProfesional,
         };
-        
+
         onChangeRef.current({
           servicio: currentServicio,
           profesional: currentProfesional,
@@ -102,18 +101,13 @@ export function ServiceBookingForm({ onSubmit: onSubmitCallback, onChange, categ
 
   // Transformar empleados para el Select
   const profesionalesOptions = useMemo(() => {
-    const options = [{ value: '', label: 'Cualquier profesional' }];
-    const filteredEmployees = employeeFilter 
-      ? employees.filter(employeeFilter)
-      : employees;
-    return [
-      ...options,
-      ...filteredEmployees.map(employee => ({
-        value: employee.id,
-        label: employee.fullName,
-      })),
-    ];
-  }, [employees, employeeFilter]);
+    if (!selectedServiceId || !allEmployees || allEmployees.length === 0) return [];
+
+    return allEmployees.map(employee => ({
+      value: employee.id,
+      label: employee.fullName,
+    }));
+  }, [allEmployees, selectedServiceId]);
 
   const onSubmit = async (data: ServiceBookingFormData) => {
     setIsSubmitting(true);
@@ -176,30 +170,38 @@ export function ServiceBookingForm({ onSubmit: onSubmitCallback, onChange, categ
             )}
           />
 
-          {/* Profesional Select */}
-          <Controller
-            name="profesional"
-            control={control}
-            render={({ field }) => (
-              <Box>
-                <Text size="sm" fw={400} mb="xs" c="gray.8" className={classes.fieldLabel}>
-                  Profesional:
-                </Text>
-                <Select
-                  {...field}
-                  placeholder="Cualquier profesional"
-                  data={profesionalesOptions}
-                  size="md"
-                  classNames={{
-                    input: classes.selectInput,
-                    dropdown: classes.selectDropdown,
-                  }}
-                  searchable
-                  clearable
-                />
-              </Box>
-            )}
-          />
+          {/* Profesional Select - Solo si hay servicio seleccionado */}
+          {selectedServiceId && (
+            <Controller
+              name="profesional"
+              control={control}
+              rules={{ required: 'Por favor selecciona un profesional' }}
+              render={({ field }) => (
+                <Box>
+                  <Text size="sm" fw={400} mb="xs" c="gray.8" className={classes.fieldLabel}>
+                    * Profesional:
+                  </Text>
+                  <Select
+                    {...field}
+                    placeholder={
+                      profesionalesOptions.length === 0
+                        ? "No hay profesionales disponibles para este servicio"
+                        : "Selecciona un profesional"
+                    }
+                    data={profesionalesOptions}
+                    size="md"
+                    classNames={{
+                      input: classes.selectInput,
+                      dropdown: classes.selectDropdown,
+                    }}
+                    disabled={profesionalesOptions.length === 0}
+                    searchable
+                    clearable
+                  />
+                </Box>
+              )}
+            />
+          )}
 
           {/* Submit Button */}
           <Button
@@ -207,6 +209,7 @@ export function ServiceBookingForm({ onSubmit: onSubmitCallback, onChange, categ
             size="lg"
             fullWidth
             loading={isSubmitting}
+            disabled={!selectedServiceId || !profesionalValue}
             className={classes.submitButton}
             fw={300}
             style={{

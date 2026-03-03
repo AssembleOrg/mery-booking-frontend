@@ -19,7 +19,15 @@
   display: flex;
   justify-content: center;
   padding: 1rem 0;
+  max-width: 100%;
+  overflow: visible;
 }
+
+/* === COLORES DE BRANDING OFICIAL === */
+/* Rosa Marcario (Principal): #EBA2A8 */
+/* Rosa Claro 1: #FBE8EA */
+/* Rosa Claro 2: #F7CBCB */
+/* Gris Medio: #545454 */
 
 .day {
   font-family: var(--font-din-regular), sans-serif;
@@ -32,13 +40,49 @@
   background-color: rgba(247, 203, 203, 0.2);
 }
 
-.day[data-selected] {
-  background-color: #F7CBCB !important;
+/* Día con buena disponibilidad (≥40% slots) - Rosa más claro */
+.dayAvailable {
+  background-color: #fbe8ea !important;
+  color: #545454 !important;
+  font-weight: 500 !important;
+}
+
+.dayAvailable:hover {
+  background-color: #f7cbcb !important;
+}
+
+/* Día con poca disponibilidad (<40% slots) - Rosa medio */
+.dayLimited {
+  background-color: #f7cbcb !important;
+  color: #545454 !important;
+  font-weight: 600 !important;
+}
+
+.dayLimited:hover {
+  background-color: #eba2a8 !important;
   color: white !important;
 }
 
+/* Día completamente lleno (0% disponibilidad) - Rosa principal (marcario) */
+.dayFull {
+  background-color: #eba2a8 !important;
+  color: white !important;
+  font-weight: 700 !important;
+  cursor: not-allowed !important;
+}
+
+.dayFull:hover {
+  background-color: rgba(235, 162, 168, 0.85) !important;
+}
+
+.day[data-selected] {
+  background-color: #f7cbcb !important;
+  color: white !important;
+  border: 2px solid #545454 !important;
+}
+
 .day[data-selected]:hover {
-  background-color: #EBA2A8 !important;
+  background-color: #eba2a8 !important;
 }
 
 .timeSlotsGrid {
@@ -61,24 +105,24 @@
 }
 
 .timeSlot:hover {
-  border-color: #F7CBCB;
+  border-color: #f7cbcb;
   background-color: rgba(247, 203, 203, 0.1);
   transform: translateY(-1px);
 }
 
 .timeSlotSelected {
-  background-color: #F7CBCB;
-  border-color: #F7CBCB;
+  background-color: #f7cbcb;
+  border-color: #f7cbcb;
   color: white;
 }
 
 .timeSlotSelected:hover {
-  background-color: #EBA2A8;
-  border-color: #EBA2A8;
+  background-color: #eba2a8;
+  border-color: #eba2a8;
 }
 
 .continueButton {
-  background-color: #F7CBCB;
+  background-color: #f7cbcb;
   color: white;
   height: 50px;
   border-radius: 10px;
@@ -90,16 +134,16 @@
 }
 
 .continueButton:hover {
-  background-color: white;
-  color: #F7CBCB;
-  border-color: #F7CBCB;
+  background-color: #eba2a8;
+  color: white;
+  border-color: #eba2a8;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(247, 203, 203, 0.3);
+  box-shadow: 0 6px 20px rgba(235, 162, 168, 0.3);
 }
 
 .backButton {
-  color: #F7CBCB;
-  border-color: #F7CBCB;
+  color: #f7cbcb;
+  border-color: #f7cbcb;
   height: 50px;
   border-radius: 10px;
   font-size: 0.95rem;
@@ -110,14 +154,44 @@
 
 .backButton:hover {
   background-color: rgba(247, 203, 203, 0.1);
-  border-color: #EBA2A8;
+  border-color: #eba2a8;
   transform: translateY(-2px);
+}
+
+/* Leyenda de disponibilidad */
+.availabilityLegend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  padding: 0.5rem 0;
+  justify-content: center;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #545454;
+  font-family: var(--font-din-regular), sans-serif;
+}
+
+.legendColor {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  flex-shrink: 0;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .container {
     padding: 1.5rem 1rem;
+    max-width: 100%;
+  }
+
+  .calendarWrapper {
+    padding: 0.5rem 0;
   }
 
   .timeSlot {
@@ -130,12 +204,45 @@
     height: 48px;
     font-size: 0.9rem;
   }
+
+  .availabilityLegend {
+    gap: 12px;
+    font-size: 0.8rem;
+  }
+
+  .legendColor {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 @media (max-width: 480px) {
+  .container {
+    padding: 1rem 0.75rem;
+  }
+
+  .calendarWrapper {
+    padding: 0.5rem 0;
+    overflow: visible;
+    width: 100%;
+  }
+
   .timeSlot {
     padding: 0.5rem 0.25rem;
     font-size: 0.75rem;
   }
-}
 
+  .availabilityLegend {
+    gap: 8px;
+    font-size: 0.75rem;
+  }
+
+  .legendItem {
+    gap: 6px;
+  }
+
+  .legendColor {
+    width: 12px;
+    height: 12px;
+  }
+}

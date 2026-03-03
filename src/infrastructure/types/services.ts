@@ -26,7 +26,10 @@ export interface ServiceOption {
   footerNote?: string;
   footerNote2?: string;
   cuotasText?: string;
+  serviceKey?: string;
+  serviceName?: string;
   serviceId?: string; // ID del servicio en el backend
   employeeId?: string; // ID del empleado en el backend
   serviceDuration?: number; // Duración del servicio en minutos
+  servicePrice?: number; // Precio del servicio en el backend
 }

@@ -64,7 +64,13 @@
 }
 
 .input::placeholder {
-  color: #545454;
+  color: #adb5bd;
+  opacity: 1;
+}
+
+.textarea::placeholder {
+  color: #adb5bd;
+  opacity: 1;
 }
 
 .pricingSummary {
@@ -121,6 +127,17 @@
   .serviceImage {
     width: 60px;
     height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cancelButton,
+  .confirmButton {
+    font-size: 0.78rem !important;
+    padding: 8px 10px !important;
+    min-height: 36px !important;
+    height: 36px !important;
+    letter-spacing: 0.03em;
   }
 }
 

@@ -15,7 +15,7 @@ interface MenuModalProps {
 const menuItems = [
   { label: 'INICIO', href: '/' },
   { label: 'COSMETIC TATTOO', href: '/tattoo-cosmetico' },
-  { label: 'ESTILISMO DE CEJAS', href: '/estilismo-de-cejas' },
+  { label: 'ESTILISMO DE CEJAS & PESTAÑAS', href: '/estilismo-de-cejas' },
   { label: 'PARAMEDICAL TATTOO', href: '/paramedical-tattoo' },
   { label: 'MI CUENTA', href: '/login' },
 ];
