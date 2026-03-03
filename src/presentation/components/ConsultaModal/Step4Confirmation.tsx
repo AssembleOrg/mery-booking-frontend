@@ -44,22 +44,10 @@ export default function Step4Confirmation({
   const formattedDate = dayjs(selectedDate).format("dddd D [de] MMMM, YYYY");
 
   const handleCollectData = async (clientData: Client) => {
-    console.log('[ConsultaModal Step4] Datos del cliente recolectados:', {
-      name: clientData.name,
-      surname: clientData.surname,
-      email: clientData.email,
-      dni: clientData.dni,
-      hasMobile: !!clientData.mobile,
-      hasNotes: !!clientData.notes,
-    });
-
     if (!clientData.dni) {
-      console.error('[ConsultaModal Step4] ERROR: El DNI es requerido');
       return;
     }
 
-    console.log('[ConsultaModal Step4] Llamando a onClientDataCollected...');
-    // Recolectar datos y pasar al Step 5
     onClientDataCollected({
       name: clientData.name,
       surname: clientData.surname,
@@ -68,7 +56,6 @@ export default function Step4Confirmation({
       dni: clientData.dni,
       notes: clientData.notes,
     });
-    console.log('[ConsultaModal Step4] onClientDataCollected ejecutado exitosamente');
   };
 
   return (

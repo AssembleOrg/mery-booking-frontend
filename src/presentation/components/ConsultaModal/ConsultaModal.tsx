@@ -83,7 +83,6 @@ export default function ConsultaModal({
 
   const handleStepComplete = () => {
     if (currentStep < 5) {
-      console.log(`[ConsultaModal] Avanzando de step ${currentStep} a step ${currentStep + 1}`);
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -236,9 +235,7 @@ export default function ConsultaModal({
                   confirmationModalOpened={confirmationModalOpened}
                   onConfirmationModalClose={() => setConfirmationModalOpened(false)}
                   onClientDataCollected={(data) => {
-                    console.log('[ConsultaModal] clientData actualizado:', data);
                     setClientData(data);
-                    console.log('[ConsultaModal] Avanzando a Step 5...');
                     handleStepComplete();
                   }}
                 />
@@ -246,16 +243,6 @@ export default function ConsultaModal({
             )}
 
             {currentStep === 5 && selectedOption && selectedDate && selectedTime && clientData && (
-              (() => {
-                console.log('[ConsultaModal] Renderizando Step 5 con:', {
-                  currentStep,
-                  hasSelectedOption: !!selectedOption,
-                  hasSelectedDate: !!selectedDate,
-                  hasSelectedTime: !!selectedTime,
-                  hasClientData: !!clientData,
-                });
-                return null;
-              })(),
               <motion.div
                 key="step5"
                 initial={{ opacity: 0, x: 20 }}

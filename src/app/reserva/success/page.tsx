@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, Suspense } from 'react';
+import { Suspense } from 'react';
 import {
   Container,
   Title,
@@ -22,12 +22,6 @@ function SuccessContent() {
   const collectionId = searchParams.get('collection_id');
   const preferenceId = searchParams.get('preference_id');
 
-  useEffect(() => {
-    console.log(
-      '[Success Page] Pago exitoso. Payment ID:',
-      paymentId || collectionId
-    );
-  }, [paymentId, collectionId]);
 
   return (
     <Container size="sm" py="xl">

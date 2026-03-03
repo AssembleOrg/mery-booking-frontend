@@ -330,18 +330,8 @@ function ConsultaContent({
   };
 
   const handleContinue = () => {
-    console.log(
-      'Continuar clicked - staffConsultasId:',
-      effectiveStaffConsultasId,
-      'serviceId:',
-      option.serviceId
-    );
-    // Permitir continuar aunque staffConsultasId sea undefined temporalmente
-    // El hook useAvailability manejará el caso cuando no hay employeeId
     if (option.serviceId) {
       setShowCalendar(true);
-    } else {
-      console.warn('Falta serviceId - serviceId:', option.serviceId);
     }
   };
 
@@ -374,23 +364,6 @@ function ConsultaContent({
     maxDateForAvailability
   );
 
-  // Debug: Log cuando cambian los parámetros
-  useEffect(() => {
-    if (showCalendar) {
-      console.log('Availability hook params:', {
-        employeeId: employeeIdForAvailability,
-        serviceId: serviceIdForAvailability,
-        minDate: minDateForAvailability,
-        maxDate: maxDateForAvailability,
-      });
-    }
-  }, [
-    showCalendar,
-    employeeIdForAvailability,
-    serviceIdForAvailability,
-    minDateForAvailability,
-    maxDateForAvailability,
-  ]);
 
   // Debug: Log errores
   useEffect(() => {
@@ -1628,49 +1601,6 @@ export default function TattooCosmeticoPage() {
   // Fallback simple sin useMemo (evita re-renders infinitos)
   const employeesWithFallback = employees.length > 0 ? employees : FALLBACK_EMPLOYEES;
 
-  // Debug: Log cuando cambian los servicios o categoryId
-  useEffect(() => {
-    console.log('Services loading state:', {
-      cosmeticTattooCategoryId,
-      servicesCount: services.length,
-      isLoadingServices,
-      servicesError,
-      services: services.map((s) => ({
-        id: s.id,
-        name: s.name,
-        showOnSite: s.showOnSite,
-      })),
-    });
-  }, [cosmeticTattooCategoryId, services, isLoadingServices, servicesError]);
-
-  // Debug: Log cuando cambian los empleados
-  useEffect(() => {
-    console.log('Employees loading state:', {
-      cosmeticTattooCategoryId,
-      employeesCount: employees.length,
-      isLoadingEmployees,
-      employeesError,
-      employees: employees.map((e) => ({ id: e.id, fullName: e.fullName })),
-    });
-
-    // Log detallado del error si existe
-    if (employeesError) {
-      console.error('❌ Error detallado al cargar empleados:');
-      console.error('Error completo:', employeesError);
-      console.error('Error message:', employeesError?.message);
-      // Cast a any para acceder a propiedades de axios
-      console.error('Error response:', (employeesError as any)?.response);
-      console.error('Error response data:', (employeesError as any)?.response?.data);
-    }
-  }, [cosmeticTattooCategoryId, employees, isLoadingEmployees, employeesError]);
-
-  // Log solo cuando se usa el fallback (evita logs repetidos en cada render)
-  useEffect(() => {
-    if (employeesError && employees.length === 0) {
-      console.warn('⚠️ Usando empleados hardcodeados como fallback');
-    }
-  }, [employeesError, employees.length]);
-
   // Mapear servicios y empleados cuando se cargan
   useEffect(() => {
     if (services.length > 0) {
@@ -1767,14 +1697,8 @@ export default function TattooCosmeticoPage() {
       if (staffMg) employeeMap.set('staff-mg', staffMg);
       if (staffConsultas) {
         employeeMap.set('staff-consultas', staffConsultas);
-        console.log('Staff Consultas encontrado:', staffConsultas);
       } else {
-        console.warn(
-          'Staff Consultas NO encontrado. Empleados disponibles:',
-          employeesWithFallback.map((e) => e.fullName)
-        );
         // Usar ID de constantes como fallback si no se encuentra en la lista
-        // Crear un objeto Employee temporal con el ID de constantes
         const staffConsultasFallback: Employee = {
           id: EMPLOYEE_IDS.STAFF_CONSULTAS,
           fullName: 'Staff Consultas',
@@ -1784,10 +1708,6 @@ export default function TattooCosmeticoPage() {
           updatedAt: '',
         };
         employeeMap.set('staff-consultas', staffConsultasFallback);
-        console.log(
-          'Usando Staff Consultas con ID de constantes:',
-          EMPLOYEE_IDS.STAFF_CONSULTAS
-        );
       }
 
       setMappedEmployees(employeeMap);
@@ -1989,20 +1909,6 @@ export default function TattooCosmeticoPage() {
               nameLower.includes('consulta')
             );
           });
-        }
-
-        // Debug: Log si no se encuentra el servicio
-        if (!consultaService) {
-          console.warn(
-            `No se encontró servicio de consulta para ${serviceKey} - ${option.contentType}`,
-            {
-              services: allServices
-                .filter((s) => s.showOnSite)
-                .map((s) => s.name),
-              optionLabel: option.label,
-              allServicesCount: allServices.length,
-            }
-          );
         }
 
         // Usar el empleado asignado al servicio específico via API
@@ -2525,16 +2431,6 @@ export default function TattooCosmeticoPage() {
                             opt.contentType !== 'consulta-con-trabajo'
                         );
 
-                        console.log('📦 Opening ReservaModal with:', {
-                          serviceName: 'NANOBLADING',
-                          serviceKey: 'nanoblading',
-                          optionsCount: sessionOptions.length,
-                          firstOptionSample: sessionOptions[0], // La opción "1ª Sesión"
-                          staffConsultasId,
-                          meryGarciaId,
-                          employeesCount: employeesWithFallback.length,
-                          servicesCount: services.length,
-                        });
                         setModalService({
                           serviceName: 'NANOBLADING',
                           serviceKey: 'nanoblading',

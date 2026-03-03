@@ -75,21 +75,6 @@ export default function Step3Calendar({
     }
   }, [showCalendar, effectiveEmployeeId, serviceId, selectedDate, selectedTime]);
 
-  // Debug log
-  useEffect(() => {
-    console.log('🔍 ConsultaModal Step3Calendar Debug:', {
-      'selectedOption.id': selectedOption.id,
-      'selectedOption.label': selectedOption.label,
-      'selectedOption.serviceId': selectedOption.serviceId,
-      'selectedOption.employeeId': selectedOption.employeeId,
-      'availableEmployees.length': availableEmployees.length,
-      'availableEmployees': availableEmployees.map(e => `${e.fullName} (${e.id})`),
-      'selectedEmployeeId': selectedEmployeeId,
-      'effectiveEmployeeId': effectiveEmployeeId,
-      'serviceId': serviceId,
-    });
-  }, [selectedOption, availableEmployees, selectedEmployeeId, effectiveEmployeeId, serviceId]);
-
   const hasMultipleEmployees = availableEmployees.length > 1;
 
   // ESTADO 1: Selección de Profesional (ANTES del calendario)

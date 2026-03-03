@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, Suspense } from 'react';
+import { Suspense } from 'react';
 import {
   Container,
   Title,
@@ -20,12 +20,6 @@ function PendingContent() {
   const paymentId = searchParams.get('payment_id');
   const collectionId = searchParams.get('collection_id');
 
-  useEffect(() => {
-    console.log(
-      '[Pending Page] Pago pendiente. Payment ID:',
-      paymentId || collectionId
-    );
-  }, [paymentId, collectionId]);
 
   return (
     <Container size="sm" py="xl">
