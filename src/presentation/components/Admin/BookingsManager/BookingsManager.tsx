@@ -59,6 +59,8 @@ export function BookingsManager() {
   });
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  const [clientSearch, setClientSearch] = useState('');
+  const [debouncedClientSearch, setDebouncedClientSearch] = useState('');
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
   
   // Estados para modales
@@ -408,11 +410,19 @@ export function BookingsManager() {
     updateDateRange();
   }, [calendarView, currentMonth]);
 
+  // Debounce búsqueda de cliente
+  useEffect(() => {
+    const id = setTimeout(() => {
+      setDebouncedClientSearch(clientSearch);
+    }, 300);
+    return () => clearTimeout(id);
+  }, [clientSearch]);
+
   useEffect(() => {
     if (startDate && endDate) {
       fetchBookings();
     }
-  }, [startDate, endDate, selectedEmployeeId, selectedServiceId]);
+  }, [startDate, endDate, selectedEmployeeId, selectedServiceId, debouncedClientSearch]);
 
   // Actualizar hora actual cada minuto para la línea roja
   useEffect(() => {
@@ -498,6 +508,7 @@ export function BookingsManager() {
         toDate: endDateStr,
         employeeId: selectedEmployeeId || undefined,
         serviceId: selectedServiceId || undefined,
+        clientSearch: debouncedClientSearch.trim() || undefined,
         // No filtrar por status para mostrar todas las reservas
       });
 
@@ -842,6 +853,13 @@ export function BookingsManager() {
               value={endDate}
               onChange={setEndDate}
               className={classes.dateInput}
+            />
+            <TextInput
+              label="Buscar cliente"
+              placeholder="Nombre del cliente..."
+              value={clientSearch}
+              onChange={(e) => setClientSearch(e.currentTarget.value)}
+              className={classes.filterSelect}
             />
             <Select
               label="Empleado"
