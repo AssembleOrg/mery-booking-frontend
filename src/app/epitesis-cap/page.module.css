@@ -553,6 +553,7 @@
   font-style: italic;
   margin-top: 16px;
   line-height: 1.6;
+  white-space: pre-line;
 }
 
 /* Special Section - CLIENTES INTERIOR/EXTERIOR */

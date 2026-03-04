@@ -35,6 +35,7 @@ interface ServiceOption {
   depositLabel?: string;
   depositValue?: string;
   footerNote?: string;
+  accordionDescription?: string;
   serviceName?: string;
   serviceDuration?: number;
   serviceId?: string;
@@ -97,7 +98,7 @@ function AccordionItem({
       {isOpen && (
         <Box className={classes.accordionPanel}>
           <Box className={classes.accordionPanelContent}>
-            <Text className={classes.panelDescription}>{option.description}</Text>
+            <Text className={classes.panelDescription}>{option.accordionDescription || option.description}</Text>
             <Text className={classes.panelPrice}>
               {option.priceLabel}{' '}
               <span className={classes.priceValue}>{option.priceValue}</span>
@@ -136,14 +137,16 @@ const epitesisCapOptions: ServiceOption[] = [
     label: 'Epitesis CAP — Consulta Previa Obligatoria',
     contentType: 'consulta',
     description:
+      'Consulta inicial de manera informativa, donde nos conoceremos y analizaremos tu caso. (Incluye charla informativa, toma de medidas, molde y registro fotográfico).',
+    accordionDescription:
       'Hay procesos que dejan marcas visibles. Y otros que transforman profundamente la forma en que nos miramos.\n\n' +
       'La epítesis de complejo areola–pezón (CAP) es una prótesis externa, realizada de manera totalmente artesanal y personalizada, diseñada para acompañar procesos post quirúrgicos —como mastectomías u otras intervenciones— devolviendo armonía, naturalidad y una imagen corporal más completa.\n\n' +
       'Cada pieza es única, y ahí está la magia. Se trabaja respetando tonos de piel, textura, forma, volumen y detalles que hacen que el resultado sea hiperrealista, sutil y profundamente personal.\n\n' +
-      'Importante: Es requisito contar con el aval de tu médico para realizar este servicio.',
+      'Importante: Es requisito contar con el aval de tu médico (apto firmado) para realizar este servicio.',
     priceLabel: 'Consulta obligatoria:',
     priceValue: 'AR$ 50.000.- NO REEMBOLSABLE',
     footerNote:
-      '(*) La consulta incluye evaluación de la zona, registro fotográfico, toma de medidas y molde negativo customizado. Dentro de la misma semana se realiza la prueba directa sobre la piel.',
+      '(*) La consulta incluye evaluación de la zona, registro fotográfico, toma de medidas y molde negativo customizado.\n\n Una vez encargada la producción de las piezas, los tiempos regulares de producción varían entre los 7 y los 10 días.\n\n Consultar por Speciall Pass para tiempos de producción y entrega inmediata.  ',
     serviceName: 'Epitesis Cap Consulta Previa',
     serviceDuration: 60,
   },

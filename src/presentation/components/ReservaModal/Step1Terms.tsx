@@ -87,8 +87,8 @@ export function Step1Terms({
             title="Antes de continuar — Epitesis CAP"
           >
             <Text size="sm" mb={6}>
-              <strong>Requisito médico:</strong> Es indispensable contar con el{' '}
-              <strong>aval de tu médico</strong> para poder realizar este servicio.
+              <strong>Requisito médico:</strong> Es indispensable contar con el aval de tu médico{' '}
+              <strong>(apto firmado)</strong> para poder realizar este servicio.
             </Text>
             <Text size="sm">
               La consulta inicial es el primer paso: nos conoceremos, analizaremos tu caso
