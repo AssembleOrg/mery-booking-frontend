@@ -1940,8 +1940,7 @@ export default function TattooCosmeticoPage() {
               const nameLower = s.name.toLowerCase();
               return (
                 s.showOnSite &&
-                nameLower.includes('last minute booking nanoblading') &&
-                nameLower.includes('mantenimiento')
+                nameLower.includes('last minute booking nanoblading')
               );
             });
           } else if (option.label.includes('Lip Blush')) {
@@ -1949,8 +1948,7 @@ export default function TattooCosmeticoPage() {
               const nameLower = s.name.toLowerCase();
               return (
                 s.showOnSite &&
-                nameLower.includes('last minute booking lip blush') &&
-                nameLower.includes('mantenimiento')
+                nameLower.includes('last minute booking lip blush')
               );
             });
           } else if (option.label.includes('Lash Line')) {
@@ -1958,8 +1956,7 @@ export default function TattooCosmeticoPage() {
               const nameLower = s.name.toLowerCase();
               return (
                 s.showOnSite &&
-                nameLower.includes('last minute booking lashes line') &&
-                nameLower.includes('mantenimiento')
+                nameLower.includes('last minute booking lashes line')
               );
             });
           }
