@@ -1068,17 +1068,17 @@ const nanobladingOptions: ServiceOption[] = [
   },
   {
     id: 'nano-6',
-    label: 'Last Minute Booking Nanoblading (Mantenimiento)',
+    label: 'Last Minute Booking Nanoblading (1ª Sesión)',
     contentType: 'mantenimiento-calendario',
     description:
-      'Citas seleccionadas de último momento con 20% off. Entérate antes que nadie a través de nuestro canal de IG: https://www.instagram.com/merygarciaoficial/ Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
+      'Citas seleccionadas de último momento con 20% off. SOLO PARA 1ª SESIÓN CON CONSULTA PREVIA YA REALIZADA. Entérate antes que nadie a través de nuestro canal de IG: https://www.instagram.com/merygarciaoficial/ Reservá tu cita 20% OFF. La seña NO es reembolsable.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 488.-',
     priceEffective: 'U$S 450',
     depositLabel: ' Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
     promoText:
-      'Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
+      'Reservá tu cita 20% OFF. SOLO PARA 1ª SESIÓN CON CONSULTA PREVIA YA REALIZADA. La seña NO es reembolsable.',
   },
 ];
 
@@ -1153,17 +1153,17 @@ const lipBlushOptions: ServiceOption[] = [
   },
   {
     id: 'lip-6',
-    label: 'Last Minute Booking Lip Blush (Mantenimiento)',
+    label: 'Last Minute Booking Lip Blush (1ª Sesión)',
     contentType: 'mantenimiento-calendario',
     description:
-      'Reactiva tu servicio de Lip Blush. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión. Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
+      'Citas seleccionadas de último momento con 20% off. SOLO PARA 1ª SESIÓN CON CONSULTA PREVIA YA REALIZADA. Reservá tu cita 20% OFF. La seña NO es reembolsable.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 520.-',
     priceEffective: 'U$S 475',
     depositLabel: ' Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
     promoText:
-      'Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
+      'Reservá tu cita 20% OFF. SOLO PARA 1ª SESIÓN CON CONSULTA PREVIA YA REALIZADA. La seña NO es reembolsable.',
   },
 ];
 
@@ -1251,17 +1251,17 @@ const lashesLineOptions: ServiceOption[] = [
   },
   {
     id: 'lash-5',
-    label: 'Last Minute Booking Lash Line (Mantenimiento)',
+    label: 'Last Minute Booking Lash Line (1ª Sesión)',
     contentType: 'mantenimiento-calendario',
     description:
-      'Reactiva tu servicio de Lash Line. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión. Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
+      'Citas seleccionadas de último momento con 20% off. SOLO PARA 1ª SESIÓN CON CONSULTA PREVIA YA REALIZADA. Reservá tu cita 20% OFF. La seña NO es reembolsable.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 384.-',
     priceEffective: 'U$S 320',
     depositLabel: ' Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
     promoText:
-      'Reservá tu cita 20% OFF SOLO para clientas de tatuaje cosmético MG. La seña NO es reembolsable.',
+      'Reservá tu cita 20% OFF. SOLO PARA 1ª SESIÓN CON CONSULTA PREVIA YA REALIZADA. La seña NO es reembolsable.',
   },
 ];
 
