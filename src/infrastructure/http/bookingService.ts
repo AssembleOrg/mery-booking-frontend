@@ -48,6 +48,7 @@ export interface GetAllBookingsParams {
   limit?: number;
   employeeId?: string;
   clientId?: string;
+  clientSearch?: string; // Búsqueda parcial por nombre del cliente (case-insensitive)
   serviceId?: string; // Agregado para filtrar por servicio
   status?: BookingStatus;
   fromDate?: string; // YYYY-MM-DD
@@ -193,6 +194,7 @@ export class BookingService {
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.employeeId) queryParams.append('employeeId', params.employeeId);
     if (params?.clientId) queryParams.append('clientId', params.clientId);
+    if (params?.clientSearch) queryParams.append('clientSearch', params.clientSearch);
     if (params?.status) queryParams.append('status', params.status);
     if (params?.serviceId) queryParams.append('serviceId', params.serviceId);
     if (params?.fromDate) queryParams.append('fromDate', params.fromDate);
