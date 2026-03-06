@@ -1,0 +1,132 @@
+/* ================================
+   PROMO MODAL — EPITESIS 50% OFF
+   ================================ */
+
+.content {
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.body {
+  padding: 40px 32px 32px;
+}
+
+@media (max-width: 480px) {
+  .body {
+    padding: 32px 24px 24px;
+  }
+}
+
+/* ======== INNER LAYOUT ======== */
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+/* ======== TYPOGRAPHY ======== */
+
+.badge {
+  font-family: var(--font-stack-ui);
+  font-size: 10px;
+  letter-spacing: var(--ls-wider);
+  color: var(--mg-gray);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.title {
+  font-family: var(--font-stack-title);
+  font-size: clamp(52px, 14vw, 80px);
+  font-weight: 700;
+  letter-spacing: var(--ls-tight);
+  color: var(--mg-dark);
+  line-height: 1;
+  margin: 0;
+}
+
+.subtitle {
+  font-family: var(--font-stack-emphasis);
+  font-size: 13px;
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--mg-dark);
+  margin: 0;
+}
+
+.note {
+  font-family: var(--font-stack-body);
+  font-size: 11px;
+  color: var(--mg-gray);
+  font-style: italic;
+  max-width: 260px;
+  line-height: 1.6;
+  margin-top: 4px;
+}
+
+.logo {
+  width: 140px;
+  height: auto;
+  margin-bottom: 2px;
+  opacity: 0.85;
+}
+
+.exclusive {
+  font-family: var(--font-stack-body);
+  font-size: 9px;
+  font-style: italic;
+  letter-spacing: var(--ls-wider);
+  color: var(--mg-gray);
+  text-transform: uppercase;
+  margin-top: -8px;
+  margin-bottom: 2px;
+}
+
+/* ======== ACTIONS ======== */
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btnPrimary {
+  background: var(--mg-dark);
+  color: var(--mg-white);
+  border: 1.5px solid var(--mg-dark);
+  padding: 10px 24px;
+  font-size: 11px;
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: var(--font-stack-ui);
+  transition: opacity 0.2s ease;
+  display: inline-block;
+}
+
+.btnPrimary:hover {
+  opacity: 0.75;
+}
+
+.btnGhost {
+  background: transparent;
+  color: var(--mg-dark);
+  border: 1.5px solid var(--mg-dark);
+  padding: 10px 24px;
+  font-size: 11px;
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: var(--font-stack-ui);
+  transition: opacity 0.2s ease;
+}
+
+.btnGhost:hover {
+  opacity: 0.5;
+}
