@@ -97,18 +97,23 @@ export function DateTimeSelector({
 
   // Función para deshabilitar fechas sin disponibilidad o lunes/domingos
   const isDateDisabled = (date: string) => {
-    // Deshabilitar lunes (1) y domingos (0)
+    // Si el backend indica que hay franjas activas para esta fecha específica, habilitarla siempre
+    if (availability) {
+      const dayAvailability = availability.availability.find(
+        (d) => d.date === date
+      );
+      if (dayAvailability && dayAvailability.hasActiveTimeSlots) return false;
+    }
+
+    // Fallback: deshabilitar lunes (1) y domingos (0) si no hay disponibilidad específica
     const [year, month, day] = date.split('-').map(Number);
     const dateObj = new Date(year, month - 1, day);
     const dayOfWeek = dateObj.getDay();
     if (dayOfWeek === 0 || dayOfWeek === 1) return true;
 
-    // Deshabilitar fechas sin disponibilidad
+    // Sin datos del backend = deshabilitar
     if (!availability) return false;
-    const dayAvailability = availability.availability.find(
-      (day) => day.date === date
-    );
-    return !dayAvailability || !dayAvailability.hasActiveTimeSlots;
+    return true;
   };
 
   // Función para calcular el nivel de disponibilidad de un día

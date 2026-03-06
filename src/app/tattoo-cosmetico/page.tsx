@@ -1378,7 +1378,7 @@ const SERVICE_NAME_MAPPING: Record<string, string[]> = {
   'lip-blush': ['lip blush', 'lipblush', 'lip-blush'],
   'lip-camouflage': ['lip camouflage', 'lipcamouflage', 'lip-camouflage'],
   'lashes-line': ['lashes line', 'lashesline', 'lashes-line', 'lash line'],
-  camuflaje: ['camuflaje de cejas', 'camuflaje cejas', 'camuflaje'],
+  camuflaje: ['brow camouflage', 'camuflaje de cejas', 'camuflaje cejas', 'camuflaje'],
   'lash-camouflage': ['lash camouflage', 'lashcamouflage', 'lash-camouflage'],
   'pecas-lunares': ['pecas', 'lunares', 'freckles', 'pecas y lunares'],
 };
@@ -1648,9 +1648,16 @@ export default function TattooCosmeticoPage() {
         services.find(
           (s) =>
             s.showOnSite &&
+            s.name.toLowerCase().includes('brow camouflage') &&
+            (s.name.toLowerCase().includes('sesi') || s.name.toLowerCase().includes('1'))
+        ) ||
+        services.find(
+          (s) =>
+            s.showOnSite &&
             s.name.toLowerCase().includes('camuflaje') &&
             s.name.toLowerCase().includes('1')
-        ) || findServiceByName(services, 'camuflaje');
+        ) ||
+        findServiceByName(services, 'camuflaje');
 
       // Para Lash Camouflage: buscar "Lash Camouflaje 1° Sesión (By Mery García)"
       // Nota: el nombre en el backend tiene typo "Camouflaje" con j
@@ -1845,28 +1852,49 @@ export default function TattooCosmeticoPage() {
           }
         } else if (serviceKey === 'camuflaje') {
           if (option.contentType === 'consulta-sin-trabajo') {
-            // Buscar: "Camuflaje de Cejas [Consulta obligatoria] SIN trabajo previo"
-            consultaService = allServices.find((s) => {
-              const nameLower = s.name.toLowerCase();
-              return (
-                s.showOnSite &&
-                nameLower.includes('camuflaje') &&
-                nameLower.includes('cejas') &&
-                nameLower.includes('consulta') &&
-                nameLower.includes('sin trabajo previo')
-              );
-            });
+            // Buscar: "Brow Camouflage [Consulta obligatoria] SIN trabajo previo"
+            consultaService =
+              allServices.find((s) => {
+                const nameLower = s.name.toLowerCase();
+                return (
+                  s.showOnSite &&
+                  nameLower.includes('brow camouflage') &&
+                  nameLower.includes('consulta') &&
+                  nameLower.includes('sin trabajo previo')
+                );
+              }) ||
+              allServices.find((s) => {
+                const nameLower = s.name.toLowerCase();
+                return (
+                  s.showOnSite &&
+                  nameLower.includes('camuflaje') &&
+                  nameLower.includes('cejas') &&
+                  nameLower.includes('consulta') &&
+                  nameLower.includes('sin trabajo previo')
+                );
+              });
           } else if (option.contentType === 'consulta-con-trabajo') {
-            consultaService = allServices.find((s) => {
-              const nameLower = s.name.toLowerCase();
-              return (
-                s.showOnSite &&
-                nameLower.includes('camuflaje') &&
-                nameLower.includes('cejas') &&
-                nameLower.includes('consulta') &&
-                nameLower.includes('con trabajo previo')
-              );
-            });
+            // Buscar: "Brow Camouflage [Consulta Obligatoria] CON trabajo previo"
+            consultaService =
+              allServices.find((s) => {
+                const nameLower = s.name.toLowerCase();
+                return (
+                  s.showOnSite &&
+                  nameLower.includes('brow camouflage') &&
+                  nameLower.includes('consulta') &&
+                  nameLower.includes('con trabajo previo')
+                );
+              }) ||
+              allServices.find((s) => {
+                const nameLower = s.name.toLowerCase();
+                return (
+                  s.showOnSite &&
+                  nameLower.includes('camuflaje') &&
+                  nameLower.includes('cejas') &&
+                  nameLower.includes('consulta') &&
+                  nameLower.includes('con trabajo previo')
+                );
+              });
           }
         } else if (serviceKey === 'lip-camouflage') {
           // Buscar: "Lip Camouflage [Consulta previa obligatoria]"
