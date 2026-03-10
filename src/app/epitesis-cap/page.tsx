@@ -1,13 +1,14 @@
 'use client';
 
-import { Box, Container, Text } from '@mantine/core';
+import { Box, Container, Modal, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import {
   Header,
   Footer,
   FadeInSection,
 } from '@/presentation/components';
 import ConsultaModal from '@/presentation/components/ConsultaModal';
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef, type ReactNode } from 'react';
 import { IconChevronDown } from '@tabler/icons-react';
 import {
   useServices,
@@ -36,6 +37,7 @@ interface ServiceOption {
   depositValue?: string;
   footerNote?: string;
   accordionDescription?: string;
+  accordionDescriptionNode?: ReactNode;
   serviceName?: string;
   serviceDuration?: number;
   serviceId?: string;
@@ -98,7 +100,11 @@ function AccordionItem({
       {isOpen && (
         <Box className={classes.accordionPanel}>
           <Box className={classes.accordionPanelContent}>
-            <Text className={classes.panelDescription}>{option.accordionDescription || option.description}</Text>
+            {option.accordionDescriptionNode ? (
+              <Text className={classes.panelDescription}>{option.accordionDescriptionNode}</Text>
+            ) : (
+              <Text className={classes.panelDescription}>{option.accordionDescription || option.description}</Text>
+            )}
             <Text className={classes.panelPrice}>
               {option.priceLabel}{' '}
               <span className={classes.priceValue}>{option.priceValue}</span>
@@ -130,6 +136,26 @@ function ServiceAccordion({ options }: { options: ServiceOption[] }) {
   );
 }
 
+interface DescriptionBlock {
+  kind: 'paragraph';
+  text: string;
+}
+
+const EPITESIS_DESCRIPTION_BLOCKS: DescriptionBlock[] = [
+  {
+    kind: 'paragraph',
+    text: 'Hay procesos que dejan marcas visibles. Y otros que transforman profundamente la forma en que nos miramos.',
+  },
+  {
+    kind: 'paragraph',
+    text: 'La epítesis de complejo areola–pezón (CAP) es una prótesis externa, realizada de manera totalmente artesanal y personalizada, diseñada para acompañar procesos post quirúrgicos —como mastectomías u otras intervenciones— devolviendo armonía, naturalidad y una imagen corporal más completa.',
+  },
+  {
+    kind: 'paragraph',
+    text: 'Cada pieza es única, y ahí está la magia. Se trabaja respetando tonos de piel, textura, forma, volumen y detalles que hacen que el resultado sea hiperrealista, sutil y profundamente personal.',
+  },
+];
+
 // Static service options array
 const epitesisCapOptions: ServiceOption[] = [
   {
@@ -149,6 +175,16 @@ const epitesisCapOptions: ServiceOption[] = [
       '(*) La consulta incluye evaluación de la zona, registro fotográfico, toma de medidas y molde negativo customizado.\n\n Una vez encargada la producción de las piezas, los tiempos regulares de producción varían entre los 7 y los 10 días.\n\n Consultar por Speciall Pass para tiempos de producción y entrega inmediata.  ',
     serviceName: 'Epitesis Cap Consulta Previa',
     serviceDuration: 60,
+  },
+  {
+    id: 'epitesis-dona-molde',
+    label: 'Epitesis CAP — Doná tu molde',
+    contentType: 'consulta',
+    accordionDescriptionNode: (
+      <>
+        Una forma generosa y filantrópica de ayudar a mas personas a acceder a reconstrucciones hiperrealistas, permitiéndonos tomar un molde de tu areola-pezón para formar parte de nuestro <strong>banco de moldes</strong>.
+      </>
+    ),
   },
 ];
 
@@ -231,10 +267,7 @@ export default function EpitesisCapPage() {
   };
 
   useEffect(() => {
-    const hash = window.location.hash;
-    if (!hash) return;
-    const timer = setTimeout(() => scrollToSection(hash.slice(1)), 300);
-    return () => clearTimeout(timer);
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);  
 
   const epitesisCapOptionsWithIds = useMemo(
@@ -244,6 +277,8 @@ export default function EpitesisCapPage() {
         : enrichServiceOptions(epitesisCapOptions, services, serviceEmployees),
     [services, serviceEmployees]
   );
+
+  const [epitesisInfoOpened, { open: openEpitesisInfo, close: closeEpitesisInfo }] = useDisclosure(false);
 
   const [consultaModalOpened, setConsultaModalOpened] = useState(false);
   const [consultaService, setConsultaService] = useState<{
@@ -279,13 +314,20 @@ export default function EpitesisCapPage() {
                   </Box>
                   <Box className={classes.buttonsWrapper}>
                     <button
+                      type="button"
+                      className={classes.ctaButton}
+                      onClick={openEpitesisInfo}
+                    >
+                      MÁS INFO
+                    </button>
+                    <button
                       className={classes.ctaButtonSecondary}
                       onClick={() => {
                         setConsultaService({
                           serviceName: 'EPITESIS CAP',
                           serviceKey: 'epitesis-cap',
                           consultaOptions: epitesisCapOptionsWithIds.filter(
-                            (opt) => opt.contentType === 'consulta'
+                            (opt) => opt.contentType === 'consulta' && !!opt.serviceName
                           ),
                         });
                         setConsultaModalOpened(true);
@@ -309,6 +351,28 @@ export default function EpitesisCapPage() {
       </Box>
 
       <Footer />
+
+      <Modal
+        opened={epitesisInfoOpened}
+        onClose={closeEpitesisInfo}
+        centered
+        size="lg"
+        radius="md"
+        keepMounted
+        title="EPITESIS CAP"
+        classNames={{
+          content: classes.descriptionModalContent,
+          header: classes.descriptionModalHeader,
+          title: classes.descriptionModalTitle,
+          body: classes.descriptionModalBody,
+        }}
+      >
+        {EPITESIS_DESCRIPTION_BLOCKS.map((block, index) => (
+          <Text key={index} className={classes.descriptionModalText}>
+            {block.text}
+          </Text>
+        ))}
+      </Modal>
 
       {consultaService && (
         <ConsultaModal

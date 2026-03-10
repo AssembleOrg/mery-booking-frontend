@@ -29,7 +29,7 @@ const BOOKING_OPTIONS = [
   {
     title: 'Epitesis CAP',
     description: 'Prótesis híper realistas complejo areola/pezón.',
-    href: '/epitesis-cap',
+    href: '/epitesis-cap#epitesis-cap',
   },
 ] as const;
 
