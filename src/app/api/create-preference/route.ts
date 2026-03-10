@@ -112,6 +112,9 @@ export async function POST(request: NextRequest) {
           failure: `${frontendUrl}/reserva/failure`,
           pending: `${frontendUrl}/reserva/pending`,
         },
+        payment_methods: {
+          installments: 1,
+        },
         auto_return: 'approved',
         notification_url: `${frontendUrl}/api/webhook`,
         statement_descriptor: 'MERY RESERVAS',
