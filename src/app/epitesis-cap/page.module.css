@@ -424,7 +424,9 @@
 .accordionChevron {
   color: var(--mg-pink);
   margin-right: 16px;
-  font-size: 12px;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 2px;
   transition: transform 0.2s ease;
 }
 
@@ -764,4 +766,37 @@
   .ctaButtonReservar {
     grid-column: 1 / -1;
   }
+}
+
+/* Description Modal */
+.descriptionModalContent {
+  background: var(--mg-white);
+}
+
+.descriptionModalHeader {
+  padding: 18px 24px 0 24px;
+}
+
+.descriptionModalTitle {
+  font-family: var(--font-avant-garde), system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mg-dark);
+}
+
+.descriptionModalBody {
+  padding: 16px 24px 24px 24px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.descriptionModalText {
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--mg-gray);
+  margin: 0 0 14px 0;
+  white-space: normal;
 }

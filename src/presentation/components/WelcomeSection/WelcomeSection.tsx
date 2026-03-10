@@ -61,6 +61,13 @@ const SERVICES = [
     image: '',
     href: '/estilismo-de-cejas',
   },
+  {
+    num: '07',
+    name: 'Epitesis',
+    desc: 'Cosmetic Tattoo',
+    image: '',
+    href: '/epitesis-cap',
+  },
 ];
 
 type GalleryItem =

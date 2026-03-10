@@ -2425,7 +2425,7 @@ export default function TattooCosmeticoPage() {
                         openExternalLink(NANOBLADING_MORE_INFO_URL)
                       }
                     >
-                      MÁS INFO AQUÍ
+                      MÁS INFO
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}
@@ -2517,7 +2517,7 @@ export default function TattooCosmeticoPage() {
                         openExternalLink(CAMUFLAJE_MORE_INFO_URL)
                       }
                     >
-                      MÁS INFO AQUÍ
+                      MÁS INFO
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}
@@ -2590,7 +2590,7 @@ export default function TattooCosmeticoPage() {
                       className={classes.ctaButton}
                       onClick={() => openExternalLink(LIP_BLUSH_MORE_INFO_URL)}
                     >
-                      MÁS INFO AQUÍ
+                      MÁS INFO
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}
@@ -2683,7 +2683,7 @@ export default function TattooCosmeticoPage() {
                         openExternalLink(LIP_CAMOUFLAGE_MORE_INFO_URL)
                       }
                     >
-                      MÁS INFO AQUÍ
+                      MÁS INFO
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}
@@ -2763,7 +2763,7 @@ export default function TattooCosmeticoPage() {
                         )
                       }
                     >
-                      MÁS INFO AQUÍ
+                      MÁS INFO
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}
@@ -2839,7 +2839,7 @@ export default function TattooCosmeticoPage() {
                       className={classes.ctaButton}
                       onClick={() => openExternalLink(LASH_CAMOUFLAGE_MORE_INFO_URL)}
                     >
-                      MÁS INFO AQUÍ
+                      MÁS INFO
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}
@@ -2911,7 +2911,7 @@ export default function TattooCosmeticoPage() {
                         openExternalLink(FRECKLES_MORE_INFO_URL)
                       }
                     >
-                      MÁS INFO AQUÍ
+                      MÁS INFO
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}

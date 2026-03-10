@@ -995,7 +995,7 @@ export default function ParamedicalTattooPage() {
                       rel="noopener noreferrer"
                       className={classes.ctaButton}
                     >
-                      MÁS INFO AQUÍ
+                      MÁS INFO
                     </a>
                     <button
                       className={classes.ctaButtonSecondary}
@@ -1069,7 +1069,7 @@ export default function ParamedicalTattooPage() {
                       rel="noopener noreferrer"
                       className={classes.ctaButton}
                     >
-                      MÁS INFO AQUÍ
+                      MÁS INFO
                     </a>
                     <button
                       className={classes.ctaButtonSecondary}
@@ -1143,7 +1143,7 @@ export default function ParamedicalTattooPage() {
                       rel="noopener noreferrer"
                       className={classes.ctaButton}
                     >
-                      MÁS INFO AQUÍ
+                      MÁS INFO
                     </a>
                     <button
                       className={classes.ctaButtonSecondary}
@@ -1202,7 +1202,7 @@ export default function ParamedicalTattooPage() {
                       rel="noopener noreferrer"
                       className={classes.ctaButton}
                     >
-                      MÁS INFO AQUÍ
+                      MÁS INFO
                     </a>
                     <button
                       className={classes.ctaButtonSecondary}
