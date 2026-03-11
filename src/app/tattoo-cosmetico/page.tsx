@@ -1032,7 +1032,7 @@ const nanobladingOptions: ServiceOption[] = [
       'Primera experiencia de Nanoblading con nosotras. Recordá que los resultados óptimos se logran con dos sesiones.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 610.-',
-    priceEffective: 'U$S 450',
+    priceEffective: 'U$S 500',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 150.000.-',
     cuotasText:
@@ -1046,7 +1046,7 @@ const nanobladingOptions: ServiceOption[] = [
       'Completá tu servicio de Nanoblading entre 30 y 60 días después de tu primera sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 317.-',
-    priceEffective: 'U$S 180',
+    priceEffective: 'U$S 250',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
     cuotasText:
@@ -1060,7 +1060,7 @@ const nanobladingOptions: ServiceOption[] = [
       'Reactiva tu servicio de Nanoblading. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 610.-',
-    priceEffective: 'U$S 450',
+    priceEffective: 'U$S 500',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 150.000.-',
     cuotasText:
@@ -1074,7 +1074,7 @@ const nanobladingOptions: ServiceOption[] = [
       'Citas seleccionadas de último momento con 20% off. SOLO PARA 1ª SESIÓN CON CONSULTA PREVIA YA REALIZADA. Entérate antes que nadie a través de nuestro canal de IG: https://www.instagram.com/merygarciaoficial/ Reservá tu cita 20% OFF. La seña NO es reembolsable.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 488.-',
-    priceEffective: 'U$S 450',
+    priceEffective: 'U$S 500',
     depositLabel: ' Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
     promoText:
@@ -1117,7 +1117,7 @@ const lipBlushOptions: ServiceOption[] = [
       'Primer experiencia de Lip Blush con nosotras. Recordá que los resultados óptimos se logran con dos sesiones.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 650.-',
-    priceEffective: 'U$S 475',
+    priceEffective: 'U$S 500',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 150.000.-',
     cuotasText:
@@ -1131,7 +1131,7 @@ const lipBlushOptions: ServiceOption[] = [
       'Completá tu servicio de Lip Blush entre 30 y 60 días después de tu primera sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 317.-',
-    priceEffective: 'U$S 180',
+    priceEffective: 'U$S 250',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
     cuotasText:
@@ -1145,7 +1145,7 @@ const lipBlushOptions: ServiceOption[] = [
       'Reactiva tu servicio de Lip Blush. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 650.-',
-    priceEffective: 'U$S 475',
+    priceEffective: 'U$S 500',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 150.000.-',
     cuotasText:
@@ -1159,7 +1159,7 @@ const lipBlushOptions: ServiceOption[] = [
       'Citas seleccionadas de último momento con 20% off. SOLO PARA 1ª SESIÓN CON CONSULTA PREVIA YA REALIZADA. Reservá tu cita 20% OFF. La seña NO es reembolsable.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 520.-',
-    priceEffective: 'U$S 475',
+    priceEffective: 'U$S 500',
     depositLabel: ' Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
     promoText:
@@ -1186,10 +1186,10 @@ const lipCamouflageOptions: ServiceOption[] = [
     description:
       'Servicio de corrección y mejora de trabajos previos en labios.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 700.-',
-    priceEffective: 'U$S 475',
+    priceValue: 'U$S 650.-',
+    priceEffective: 'U$S 500',
     depositLabel: ') Valor de la seña:',
-    depositValue: 'AR$ 100.000.-',
+    depositValue: 'AR$ 200.000.-',
     cuotasText:
       'Acercate a nuestro local para acceder a 3 cuotas sin interés pagando con tarjeta física de cualquier banco.',
   },
@@ -1215,7 +1215,7 @@ const lashesLineOptions: ServiceOption[] = [
       'Primer experiencia de Lash Line con nosotras. Recordá que los resultados óptimos se logran con dos sesiones.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 480.-',
-    priceEffective: 'U$S 320',
+    priceEffective: 'U$S 380',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 150.000.-',
     cuotasText:
@@ -1229,7 +1229,7 @@ const lashesLineOptions: ServiceOption[] = [
       'Completá tu servicio de Lash Line entre 30 y 60 días después de tu primera sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 317.-',
-    priceEffective: 'U$S 180',
+    priceEffective: 'U$S 250',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
     cuotasText:
@@ -1243,7 +1243,7 @@ const lashesLineOptions: ServiceOption[] = [
       'Reactiva tu servicio de Lash Line. Se considera mantenimiento al servicio a realizarse pasados los 90 días de tu última sesión.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 480.-',
-    priceEffective: 'U$S 320',
+    priceEffective: 'U$S 380',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 150.000.-',
     cuotasText:
@@ -1257,7 +1257,7 @@ const lashesLineOptions: ServiceOption[] = [
       'Citas seleccionadas de último momento con 20% off. SOLO PARA 1ª SESIÓN CON CONSULTA PREVIA YA REALIZADA. Reservá tu cita 20% OFF. La seña NO es reembolsable.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 384.-',
-    priceEffective: 'U$S 320',
+    priceEffective: 'U$S 380',
     depositLabel: ' Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
     promoText:
@@ -1284,8 +1284,8 @@ const lashCamouflageOptions: ServiceOption[] = [
     description:
       'Es un servicio que combina despigmentación, corrección de color, textura y estructura para MEJORAR EL ASPECTO de un trabajo mal hecho o deteriorado tanto de dermopigmentación como de un tatuaje de otro lugar.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 700.-',
-    priceEffective: 'U$S 500',
+    priceValue: 'U$S 680.-',
+    priceEffective: 'U$S 250',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 150.000.-',
     cuotasText:
@@ -1340,7 +1340,7 @@ const camouflageOptions: ServiceOption[] = [
       'Primera sesión de corrección y camuflaje de trabajos previos en cejas. El proceso puede requerir múltiples sesiones dependiendo del estado del trabajo a corregir.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 710.-',
-    priceEffective: 'U$S 475',
+    priceEffective: 'U$S 550',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 150.000.-',
     cuotasText:

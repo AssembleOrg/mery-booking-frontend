@@ -88,6 +88,39 @@
   background: var(--mg-pink-light);
 }
 
+.consultaOptionCardInfo {
+  padding: 16px;
+  border: 2px dashed var(--mg-pink-lighter);
+  border-radius: 8px;
+  cursor: default;
+  background: #fafafa;
+}
+
+.consultaOptionInfoBadge {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--mg-gray);
+  background: var(--mg-pink-lighter);
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.whatsappLink {
+  color: var(--mg-dark);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+}
+
+.whatsappLink:hover {
+  color: var(--mg-pink);
+}
+
 .consultaOptionContent {
   display: flex;
   flex-direction: column;
