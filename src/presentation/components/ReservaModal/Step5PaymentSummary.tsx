@@ -74,6 +74,7 @@ export function Step5PaymentSummary({
       : meryGarciaId);
 
   const employee = employees.find((e) => e.id === employeeId);
+  const employeeName = employee?.fullName || 'Profesional asignado';
   const service = services.find((s) => s.id === selectedOption.serviceId);
 
   const depositAmount = service ? Number(service.price) : 0;
@@ -198,7 +199,7 @@ export function Step5PaymentSummary({
     }
   };
 
-  if (!service || !employee) {
+  if (!service || !employeeId) {
     return (
       <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
         <h3>Error: No se pueden cargar los datos del servicio o profesional</h3>
@@ -240,7 +241,7 @@ export function Step5PaymentSummary({
                   Profesional:
                 </Text>
                 <Text size="sm" fw={500}>
-                  {employee.fullName}
+                  {employeeName}
                 </Text>
               </Group>
               <Group gap="xs">
