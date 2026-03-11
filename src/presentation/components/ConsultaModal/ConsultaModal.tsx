@@ -260,6 +260,7 @@ export default function ConsultaModal({
                   employees={employees}
                   services={services}
                   staffConsultasId={staffConsultasId}
+                  selectedEmployeeId={selectedEmployeeId}
                   onBack={handleStepBack}
                 />
               </motion.div>

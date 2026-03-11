@@ -41,6 +41,7 @@ interface Step5PaymentSummaryProps {
   employees: Employee[];
   services: ServiceEntity[];
   staffConsultasId?: string;
+  selectedEmployeeId?: string | null;
   onBack: () => void;
 }
 
@@ -54,14 +55,16 @@ export function Step5PaymentSummary({
   employees,
   services,
   staffConsultasId,
+  selectedEmployeeId,
   onBack,
 }: Step5PaymentSummaryProps) {
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Para consultas, siempre usar staffConsultasId
-  const employeeId = selectedOption.employeeId || staffConsultasId;
+  // Prioridad: selección explícita del usuario (Step3) > opción enriched > fallback
+  const employeeId = selectedEmployeeId || selectedOption.employeeId || staffConsultasId;
 
   const employee = employees.find((e) => e.id === employeeId);
+  const employeeName = employee?.fullName || 'Profesional asignado';
   const service = services.find((s) => s.id === selectedOption.serviceId);
 
 
@@ -83,6 +86,12 @@ export function Step5PaymentSummary({
 
   const handlePayment = async () => {
     if (!service || !employeeId) {
+      notifications.show({
+        title: 'Error de datos',
+        message: 'Faltan datos del servicio o profesional para procesar el pago.',
+        color: 'red',
+        autoClose: 5000,
+      });
       return;
     }
 
@@ -114,6 +123,16 @@ export function Step5PaymentSummary({
           startTime: selectedTime,
         },
       };
+
+      if (process.env.NODE_ENV !== 'production') {
+        console.info('[Consulta Step5] Payment payload debug', {
+          selectedEmployeeId,
+          optionEmployeeId: selectedOption.employeeId,
+          staffConsultasId,
+          resolvedEmployeeId: employeeId,
+          serviceId: service.id,
+        });
+      }
 
       // Crear preferencia de pago
       const response = await fetch('/api/create-preference', {
@@ -187,7 +206,7 @@ export function Step5PaymentSummary({
     }
   };
 
-  if (!service || !employee) {
+  if (!service || !employeeId) {
     return (
       <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
         <h3>Error: No se pueden cargar los datos del servicio o profesional</h3>
@@ -229,7 +248,7 @@ export function Step5PaymentSummary({
                   Profesional:
                 </Text>
                 <Text size="sm" fw={500}>
-                  {employee.fullName}
+                  {employeeName}
                 </Text>
               </Group>
               <Group gap="xs">

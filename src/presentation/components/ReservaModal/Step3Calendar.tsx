@@ -19,6 +19,7 @@ interface Step3CalendarProps {
   selectedDate: Date | null;
   selectedTime: string | null;
   onSelectDateTime: (date: Date, time: string) => void;
+  onEmployeeResolved?: (employeeId: string | null) => void;
   onContinue: () => void;
   onBack: () => void;
 }
@@ -32,6 +33,7 @@ export function Step3Calendar({
   selectedDate,
   selectedTime,
   onSelectDateTime,
+  onEmployeeResolved,
   onContinue,
   onBack,
 }: Step3CalendarProps) {
@@ -74,6 +76,10 @@ export function Step3Calendar({
   const serviceId = selectedOption.serviceId || currentService?.id || null;
   const serviceDuration =
     selectedOption.serviceDuration || currentService?.duration || 60;
+
+  useEffect(() => {
+    onEmployeeResolved?.(employeeId || null);
+  }, [employeeId, onEmployeeResolved]);
 
   // Determinar nombre del profesional
   const professionalName = useMemo(() => {

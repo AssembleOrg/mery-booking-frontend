@@ -13,6 +13,16 @@ export async function POST(request: NextRequest) {
     const { serviceName, depositAmount, clientData, bookingData, locale } =
       body;
 
+    if (process.env.NODE_ENV !== 'production') {
+      console.info('[create-preference] Incoming booking payload', {
+        serviceName,
+        bookingEmployeeId: bookingData?.employeeId,
+        bookingServiceId: bookingData?.serviceId,
+        bookingDate: bookingData?.date,
+        bookingStartTime: bookingData?.startTime,
+      });
+    }
+
     const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL?.replace(
       /\/$/,
       ''

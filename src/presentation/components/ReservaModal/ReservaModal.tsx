@@ -44,6 +44,9 @@ export function ReservaModal({
   const [selectedOption, setSelectedOption] = useState<ServiceOption | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(
+    null
+  );
   const [clientData, setClientData] = useState<{
     name: string;
     surname: string;
@@ -61,6 +64,7 @@ export function ReservaModal({
     setSelectedOption(null);
     setSelectedDate(null);
     setSelectedTime(null);
+    setSelectedEmployeeId(null);
     setClientData(null);
     setConfirmationModalOpened(false);
     onClose();
@@ -143,6 +147,7 @@ export function ReservaModal({
                   setSelectedDate(date);
                   setSelectedTime(time);
                 }}
+                onEmployeeResolved={setSelectedEmployeeId}
                 onContinue={handleStepComplete}
                 onBack={handleStepBack}
               />
@@ -159,6 +164,7 @@ export function ReservaModal({
                 services={services}
                 staffConsultasId={staffConsultasId}
                 meryGarciaId={meryGarciaId}
+                selectedEmployeeId={selectedEmployeeId ?? undefined}
                 confirmationModalOpened={confirmationModalOpened}
                 onConfirmationModalClose={() => setConfirmationModalOpened(false)}
                 onClientDataCollected={(data) => {
@@ -181,6 +187,7 @@ export function ReservaModal({
                 services={services}
                 staffConsultasId={staffConsultasId}
                 meryGarciaId={meryGarciaId}
+                selectedEmployeeId={selectedEmployeeId ?? undefined}
                 onBack={handleStepBack}
               />
             )}
