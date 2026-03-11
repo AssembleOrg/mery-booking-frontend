@@ -45,14 +45,15 @@ interface ServiceOption {
   servicePrice?: number;
 }
 
-// Función pura a nivel de módulo — no se recrea en cada render
-function enrichServiceOptions(
+// Función robusta de resolución de opciones con keyword matching en cadena
+function getEpitesisOptionsWithIds(
   options: ServiceOption[],
   allServices: ServiceEntity[],
   serviceEmployees: Map<string, Employee[]>
 ): ServiceOption[] {
   return options.map((option) => {
-    if (option.contentType === 'consulta' && option.serviceName) {
+    // Consulta Previa — resolución via serviceName exacto (con includes bidireccional)
+    if (option.contentType === 'consulta' && option.id === 'epitesis-consulta' && option.serviceName) {
       const consultaService = allServices.find((s) => {
         const nameLower = s.name.toLowerCase();
         const optionNameLower = option.serviceName!.toLowerCase();
@@ -74,6 +75,7 @@ function enrichServiceOptions(
         servicePrice: consultaService?.price,
       };
     }
+
     return option;
   });
 }
@@ -156,7 +158,7 @@ const EPITESIS_DESCRIPTION_BLOCKS: DescriptionBlock[] = [
   },
 ];
 
-// Static service options array
+// Static service options array (solo las que van al flujo de booking)
 const epitesisCapOptions: ServiceOption[] = [
   {
     id: 'epitesis-consulta',
@@ -176,13 +178,28 @@ const epitesisCapOptions: ServiceOption[] = [
     serviceName: 'Epitesis Cap Consulta Previa',
     serviceDuration: 60,
   },
+];
+
+// Array extendido solo para el acordeón informativo de la página (incluye Doná tu molde sin flujo de booking)
+const epitesisAccordionOptions: ServiceOption[] = [
+  ...epitesisCapOptions,
   {
     id: 'epitesis-dona-molde',
     label: 'Epitesis CAP — Doná tu molde',
     contentType: 'consulta',
     accordionDescriptionNode: (
       <>
-        Una forma generosa y filantrópica de ayudar a mas personas a acceder a reconstrucciones hiperrealistas, permitiéndonos tomar un molde de tu areola-pezón para formar parte de nuestro <strong>banco de moldes</strong>.
+        Una forma generosa y filantrópica de ayudar a más personas a acceder a reconstrucciones hiperrealistas, permitiéndonos tomar un molde de tu areola–pezón para formar parte de nuestro <strong>banco de moldes</strong>.{' '}
+        <strong>Contactate con nosotras</strong> para coordinar:{' '}
+        <a
+          href="https://wa.me/5491161592591"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          style={{ color: 'inherit', fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: '2px', whiteSpace: 'nowrap' }}
+        >
+          +54 9 11 6159-2591
+        </a>
       </>
     ),
   },
@@ -274,7 +291,7 @@ export default function EpitesisCapPage() {
     () =>
       services.length === 0
         ? epitesisCapOptions
-        : enrichServiceOptions(epitesisCapOptions, services, serviceEmployees),
+        : getEpitesisOptionsWithIds(epitesisCapOptions, services, serviceEmployees),
     [services, serviceEmployees]
   );
 
@@ -327,7 +344,7 @@ export default function EpitesisCapPage() {
                           serviceName: 'EPITESIS CAP',
                           serviceKey: 'epitesis-cap',
                           consultaOptions: epitesisCapOptionsWithIds.filter(
-                            (opt) => opt.contentType === 'consulta' && !!opt.serviceName
+                            (opt) => opt.contentType === 'consulta'
                           ),
                         });
                         setConsultaModalOpened(true);
@@ -341,7 +358,7 @@ export default function EpitesisCapPage() {
                     <Text className={classes.optionsTitle}>
                       Seleccioná la opción deseada para solicitar tu cita:
                     </Text>
-                    <ServiceAccordion options={epitesisCapOptions} />
+                    <ServiceAccordion options={epitesisAccordionOptions} />
                   </Box>
                 </Box>
               </Container>

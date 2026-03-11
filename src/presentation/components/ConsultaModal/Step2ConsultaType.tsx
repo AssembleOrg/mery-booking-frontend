@@ -63,6 +63,30 @@ export default function Step2ConsultaType({
         ))}
       </div>
 
+      {consultaOptions.some((o) => o.id === 'epitesis-consulta') && (
+        <div className={classes.consultaOptionCardInfo}>
+          <div className={classes.consultaOptionContent}>
+            <span className={classes.consultaOptionInfoBadge}>Informativo</span>
+            <Text className={classes.consultaOptionLabel}>
+              Epitesis CAP — Doná tu molde
+            </Text>
+            <Text className={classes.consultaOptionDescription}>
+              Una forma generosa y filantrópica de ayudar a más personas a acceder a reconstrucciones hiperrealistas.{' '}
+              <strong>Contactate con nosotras</strong> para coordinar:{' '}
+              <a
+                href="https://wa.me/5491161592591"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className={classes.whatsappLink}
+              >
+                +54 9 11 6159-2591
+              </a>
+            </Text>
+          </div>
+        </div>
+      )}
+
     </Box>
   );
 }
