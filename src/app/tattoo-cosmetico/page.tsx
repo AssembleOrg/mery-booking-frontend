@@ -1186,8 +1186,8 @@ const lipCamouflageOptions: ServiceOption[] = [
     description:
       'Servicio de corrección y mejora de trabajos previos en labios.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'U$S 650.-',
-    priceEffective: 'U$S 500',
+    priceValue: 'U$S 680.-',
+    priceEffective: 'U$S 550',
     depositLabel: ') Valor de la seña:',
     depositValue: 'AR$ 200.000.-',
     cuotasText:
