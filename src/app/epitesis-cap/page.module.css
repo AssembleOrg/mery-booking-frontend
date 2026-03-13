@@ -800,3 +800,50 @@
   margin: 0 0 14px 0;
   white-space: normal;
 }
+
+/* PDF Download Section — inside info modal */
+.descriptionModalDownloadSection {
+  margin-bottom: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--mg-pink-lighter);
+}
+
+.descriptionModalDownloadLabel {
+  display: block;
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--mg-gray);
+  margin-bottom: 8px;
+}
+
+.descriptionModalActions {
+  display: flex;
+  justify-content: flex-start;
+  padding-top: 6px;
+}
+
+.descriptionModalMoreButton {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--mg-pink);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: var(--font-din-medium), sans-serif;
+  cursor: pointer;
+  transition: color 0.25s ease, text-decoration-color 0.25s ease;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  text-decoration-color: rgba(226, 0, 116, 0.35);
+  display: inline-flex;
+  align-items: center;
+}
+
+.descriptionModalMoreButton:hover {
+  color: var(--mg-dark);
+  text-decoration-color: var(--mg-dark);
+}

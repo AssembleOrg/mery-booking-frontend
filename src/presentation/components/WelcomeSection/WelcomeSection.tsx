@@ -64,7 +64,7 @@ const SERVICES = [
   {
     num: '07',
     name: 'Epitesis',
-    desc: 'Cosmetic Tattoo',
+    desc: '\u00A0',
     image: '',
     href: '/epitesis-cap',
   },
