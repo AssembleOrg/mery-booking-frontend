@@ -9,7 +9,7 @@ import {
 } from '@/presentation/components';
 import ConsultaModal from '@/presentation/components/ConsultaModal';
 import { useState, useMemo, useEffect, useRef, type ReactNode } from 'react';
-import { IconChevronDown } from '@tabler/icons-react';
+import { IconChevronDown, IconFileDescription } from '@tabler/icons-react';
 import {
   useServices,
   useEmployees,
@@ -192,7 +192,7 @@ const epitesisAccordionOptions: ServiceOption[] = [
         Una forma generosa y filantrópica de ayudar a más personas a acceder a reconstrucciones hiperrealistas, permitiéndonos tomar un molde de tu areola–pezón para formar parte de nuestro <strong>banco de moldes</strong>.{' '}
         <strong>Contactate con nosotras</strong> para coordinar:{' '}
         <a
-          href="https://wa.me/5491161592591"
+          href="https://wa.me/5491161592591?text=Hola%20Mery%20Garc%C3%ADa%2C%20me%20gustar%C3%ADa%20donar%20mi%20molde"
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
@@ -200,6 +200,22 @@ const epitesisAccordionOptions: ServiceOption[] = [
         >
           +54 9 11 6159-2591
         </a>
+
+        {/* PDF download section */}
+        <span className={classes.descriptionModalDownloadSection} style={{ marginTop: 16, display: 'block' }}>
+          <span className={classes.descriptionModalDownloadLabel}>Más información:</span>
+          <span className={classes.descriptionModalActions} style={{ display: 'block' }}>
+            <a
+              href="/descargables/cap-presentacion.pdf"
+              download
+              className={classes.descriptionModalMoreButton}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <IconFileDescription size={13} stroke={1.5} style={{ marginRight: 6, verticalAlign: 'middle', flexShrink: 0 }} />
+              DESCARGAR PDF
+            </a>
+          </span>
+        </span>
       </>
     ),
   },
@@ -384,6 +400,22 @@ export default function EpitesisCapPage() {
           body: classes.descriptionModalBody,
         }}
       >
+        {/* PDF download section */}
+        <div className={classes.descriptionModalDownloadSection}>
+          <span className={classes.descriptionModalDownloadLabel}>Más información:</span>
+          <div className={classes.descriptionModalActions}>
+            <a
+              href="/descargables/cap-presentacion.pdf"
+              download
+              className={classes.descriptionModalMoreButton}
+            >
+              <IconFileDescription size={13} stroke={1.5} style={{ marginRight: 6, verticalAlign: 'middle', flexShrink: 0 }} />
+              DESCARGAR PDF
+            </a>
+          </div>
+        </div>
+
+        {/* Description paragraphs */}
         {EPITESIS_DESCRIPTION_BLOCKS.map((block, index) => (
           <Text key={index} className={classes.descriptionModalText}>
             {block.text}
