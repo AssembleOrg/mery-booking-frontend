@@ -78,6 +78,9 @@ export function BookingsManager() {
   const [paidStatusModalOpen, setPaidStatusModalOpen] = useState(false);
   const [pendingPaidStatus, setPendingPaidStatus] = useState<PaidStatus | null>(null);
   const [isUpdatingPaidStatus, setIsUpdatingPaidStatus] = useState(false);
+  const [isEditingNotes, setIsEditingNotes] = useState(false);
+  const [editedNotes, setEditedNotes] = useState('');
+  const [isSavingNotes, setIsSavingNotes] = useState(false);
 
   // Hooks para crear reserva y cliente
   const createBookingMutation = useCreateBooking();
@@ -1384,6 +1387,7 @@ export function BookingsManager() {
         onClose={() => {
           setBookingDetailsModalOpen(false);
           setSelectedBooking(null);
+          setIsEditingNotes(false);
         }}
         title="Detalles de la Reserva"
         size="lg"
@@ -1429,15 +1433,83 @@ export function BookingsManager() {
               <Text size="md">{selectedBooking.employee?.fullName || 'Sin empleado'}</Text>
             </Box>
 
-            {selectedBooking.notes && (
-              <>
-                <Divider />
-                <Box>
-                  <Text size="sm" fw={500} c="dimmed">Notas</Text>
-                  <Text size="sm">{selectedBooking.notes}</Text>
-                </Box>
-              </>
-            )}
+            <Divider />
+            <Box>
+              <Group justify="space-between" align="center" mb={4}>
+                <Text size="sm" fw={500} c="dimmed">Notas</Text>
+                {selectedBooking.status !== 'CANCELLED' && !isEditingNotes && (
+                  <Button
+                    size="compact-xs"
+                    variant="subtle"
+                    color="pink"
+                    onClick={() => {
+                      setIsEditingNotes(true);
+                      setEditedNotes(selectedBooking.notes || '');
+                    }}
+                  >
+                    Editar
+                  </Button>
+                )}
+              </Group>
+              {isEditingNotes ? (
+                <Stack gap="xs">
+                  <Textarea
+                    value={editedNotes}
+                    onChange={(e) => setEditedNotes(e.currentTarget.value)}
+                    placeholder="Notas adicionales..."
+                    autosize
+                    minRows={2}
+                    maxRows={5}
+                  />
+                  <Group gap="xs" justify="flex-end">
+                    <Button
+                      size="compact-xs"
+                      variant="default"
+                      onClick={() => setIsEditingNotes(false)}
+                      disabled={isSavingNotes}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      size="compact-xs"
+                      color="pink"
+                      loading={isSavingNotes}
+                      onClick={async () => {
+                        if (!selectedBooking) return;
+                        setIsSavingNotes(true);
+                        try {
+                          await BookingService.update(selectedBooking.id, { notes: editedNotes || undefined });
+                          setSelectedBooking({ ...selectedBooking, notes: editedNotes || undefined });
+                          setBookings(prev => prev.map(b =>
+                            b.id === selectedBooking.id ? { ...b, notes: editedNotes || undefined } : b
+                          ));
+                          setIsEditingNotes(false);
+                          notifications.show({
+                            title: 'Notas actualizadas',
+                            message: 'Las notas se guardaron correctamente',
+                            color: 'green',
+                          });
+                        } catch (error: any) {
+                          notifications.show({
+                            title: 'Error',
+                            message: error.response?.data?.message || 'Error al guardar las notas',
+                            color: 'red',
+                          });
+                        } finally {
+                          setIsSavingNotes(false);
+                        }
+                      }}
+                    >
+                      Guardar
+                    </Button>
+                  </Group>
+                </Stack>
+              ) : (
+                <Text size="sm" c={selectedBooking.notes ? undefined : 'dimmed'}>
+                  {selectedBooking.notes || 'Sin notas'}
+                </Text>
+              )}
+            </Box>
 
             <Divider />
 

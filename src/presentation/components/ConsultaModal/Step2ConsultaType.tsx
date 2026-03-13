@@ -74,7 +74,7 @@ export default function Step2ConsultaType({
               Una forma generosa y filantrópica de ayudar a más personas a acceder a reconstrucciones hiperrealistas.{' '}
               <strong>Contactate con nosotras</strong> para coordinar:{' '}
               <a
-                href="https://wa.me/5491161592591"
+                href="https://wa.me/5491161592591?text=Hola%20Mery%20Garc%C3%ADa%2C%20me%20gustar%C3%ADa%20donar%20mi%20molde"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
