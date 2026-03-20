@@ -174,7 +174,7 @@ const epitesisCapOptions: ServiceOption[] = [
     priceLabel: 'Consulta obligatoria:',
     priceValue: 'AR$ 50.000.- NO REEMBOLSABLE',
     footerNote:
-      '(*) La consulta incluye evaluación de la zona, registro fotográfico, toma de medidas y molde negativo customizado.\n\n Una vez encargada la producción de las piezas, los tiempos regulares de producción varían entre los 7 y los 10 días.\n\n Consultar por Speciall Pass para tiempos de producción y entrega inmediata.  ',
+      '(*) La consulta incluye evaluación de la zona, registro fotográfico, toma de medidas y molde negativo customizado.\n\n Una vez encargada la producción de las piezas, los tiempos regulares de producción varían entre los 7 y los 10 días.\n\n Consultar por Special Pass para tiempos de producción y entrega inmediata.  ',
     serviceName: 'Epitesis Cap Consulta Previa',
     serviceDuration: 60,
   },
@@ -192,13 +192,13 @@ const epitesisAccordionOptions: ServiceOption[] = [
         Una forma generosa y filantrópica de ayudar a más personas a acceder a reconstrucciones hiperrealistas, permitiéndonos tomar un molde de tu areola–pezón para formar parte de nuestro <strong>banco de moldes</strong>.{' '}
         <strong>Contactate con nosotras</strong> para coordinar:{' '}
         <a
-          href="https://wa.me/5491161592591?text=Hola%20Mery%20Garc%C3%ADa%2C%20me%20gustar%C3%ADa%20donar%20mi%20molde"
+          href="https://wa.me/5491128593378?text=-+Hola+chicas%2C+como+est%C3%A1n%3F+Quisiera+donar+mi+molde+para+Epitesis+CAP"
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
           style={{ color: 'inherit', fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: '2px', whiteSpace: 'nowrap' }}
         >
-          +54 9 11 6159-2591
+          +54 9 11 2859-3378
         </a>
 
         {/* PDF download section */}
