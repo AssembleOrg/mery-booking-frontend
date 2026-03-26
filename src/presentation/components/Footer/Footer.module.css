@@ -126,6 +126,38 @@
   border-top: 1px solid rgba(235, 162, 168, 0.3);
 }
 
+/* Pistech Credit */
+.pistechBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0 0;
+}
+
+.pistechText {
+  font-size: 11px;
+  color: var(--mg-gray);
+  font-family: var(--font-din-regular), sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.pistechLink {
+  display: flex;
+  align-items: center;
+  opacity: 0.75;
+  transition: opacity 0.2s ease;
+}
+
+.pistechLink:hover {
+  opacity: 1;
+}
+
+.pistechLogo {
+  width: 44px;
+  height: auto;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .mainFooter {

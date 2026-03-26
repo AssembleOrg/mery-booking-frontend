@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Tabs, Box, Text, Button } from '@mantine/core';
+import Image from 'next/image';
 import { useAuth } from '@/presentation/contexts';
 import { CategoriesManager } from '@/presentation/components/Admin/CategoriesManager';
 import { ServicesManager } from '@/presentation/components/Admin/ServicesManager';
@@ -112,6 +113,19 @@ export default function AdminPage() {
           </Box>
         </Tabs>
       </Box>
+
+      {/* Pistech Credit */}
+      <div className={classes.pistechBar}>
+        <span className={classes.pistechText}>Un producto de</span>
+        <a
+          href="https://wa.me/5491138207230?text=Hola%2C%20me%20interesan%20los%20servicios%20de%20Pistech.%20Puedo%20tener%20mas%20info%3F"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={classes.pistechLink}
+        >
+          <Image src="/pistech/Pistech.png" alt="Pistech" width={44} height={44} style={{ height: 'auto' }} />
+        </a>
+      </div>
     </Box>
   );
 }

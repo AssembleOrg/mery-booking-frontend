@@ -165,6 +165,17 @@ export function Footer() {
             <Text className={classes.copyright}>
               © Mery García 2024 – All Rights Reserved
             </Text>
+            <div className={classes.pistechBar}>
+              <span className={classes.pistechText}>Un producto de</span>
+              <a
+                href="https://wa.me/5491138207230?text=Hola%2C%20me%20interesan%20los%20servicios%20de%20Pistech.%20Puedo%20tener%20mas%20info%3F"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.pistechLink}
+              >
+                <Image src="/pistech/pistech-logo.png" alt="Pistech" width={44} height={17} className={classes.pistechLogo} />
+              </a>
+            </div>
           </Container>
         </Box>
       </Box>
@@ -302,6 +313,17 @@ export function Footer() {
             <Text className={classes.copyright}>
               © Mery García 2024 – All Rights Reserved
             </Text>
+            <div className={classes.pistechBar}>
+              <span className={classes.pistechText}>Un producto de</span>
+              <a
+                href="https://wa.me/5491138207230?text=Hola%2C%20me%20interesan%20los%20servicios%20de%20Pistech.%20Puedo%20tener%20mas%20info%3F"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.pistechLink}
+              >
+                <Image src="/pistech/pistech-logo.png" alt="Pistech" width={44} height={17} className={classes.pistechLogo} />
+              </a>
+            </div>
           </motion.div>
         </Container>
       </Box>

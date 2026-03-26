@@ -96,6 +96,33 @@
   padding: 1rem;
 }
 
+/* Pistech Credit */
+.pistechBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 0 24px;
+}
+
+.pistechText {
+  font-size: 11px;
+  color: #9ca3af;
+  font-family: var(--font-din-regular), sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.pistechLink {
+  display: flex;
+  align-items: center;
+  opacity: 0.65;
+  transition: opacity 0.2s ease;
+}
+
+.pistechLink:hover {
+  opacity: 1;
+}
+
 @media (min-width: 768px) {
   .adminHeader {
     padding: 0 1.5rem;
