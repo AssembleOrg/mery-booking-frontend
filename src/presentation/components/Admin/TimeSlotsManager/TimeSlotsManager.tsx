@@ -31,6 +31,7 @@ import {
   UnstyledButton,
   Tabs,
 } from '@mantine/core';
+import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import { useForm, Controller } from 'react-hook-form';
 import { notifications } from '@mantine/notifications';
 import { EmployeeTimeSlotService, EmployeeService, ServiceService, BlockedTimeSlotService } from '@/infrastructure/http';
@@ -47,14 +48,30 @@ import type {
 import { ConfirmationModal } from '@/presentation/components';
 import classes from './TimeSlotsManager.module.css';
 
+/** Format a Date (or string) as "YYYY-MM-DD" using local components */
+function formatDateToYMD(date: Date | string): string {
+  if (typeof date === 'string') {
+    // Already a string — if DD/MM/YYYY, convert; if YYYY-MM-DD, return as-is
+    if (date.includes('/')) {
+      const [d, m, y] = date.split('/');
+      return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+    }
+    return date;
+  }
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 interface FormData {
   employeeId: string;
-  date: string;
+  date: Date | string | null;
   dayOfWeek: DayOfWeek | '';
   startTime: number;
   endTime: number;
   isActive: boolean;
-  type: 'date' | 'dayOfWeek'; // Para saber si es fecha específica o día de la semana
+  type: 'date' | 'dayOfWeek';
   serviceIds: string[];
 }
 
@@ -70,7 +87,7 @@ const DAYS_OF_WEEK: Array<{ value: DayOfWeek; label: string }> = [
 
 interface BlockedFormData {
   employeeId: string;
-  date: string;
+  date: Date | string | null;
   dayOfWeek: DayOfWeek | '';
   startTime: number;
   endTime: number;
@@ -243,7 +260,7 @@ export function TimeSlotsManager() {
     await loadEmployeeServices(selectedEmployeeId);
     reset({
       employeeId: selectedEmployeeId,
-      date: '',
+      date: null,
       dayOfWeek: '',
       startTime: 9,
       endTime: 10,
@@ -271,7 +288,7 @@ export function TimeSlotsManager() {
     const isDateType = !!timeSlot.date;
     reset({
       employeeId: selectedEmployeeId,
-      date: '', // Al copiar, no copiamos la fecha específica, solo el día de la semana si aplica
+      date: null, // Al copiar, no copiamos la fecha específica, solo el día de la semana si aplica
       dayOfWeek: timeSlot.dayOfWeek || '',
       startTime: timeSlot.startTime,
       endTime: timeSlot.endTime,
@@ -289,7 +306,7 @@ export function TimeSlotsManager() {
     const isDateType = !!timeSlot.date;
     reset({
       employeeId: timeSlot.employeeId,
-      date: timeSlot.date || '',
+      date: timeSlot.date ? parseLocalDate(timeSlot.date) : null,
       dayOfWeek: (timeSlot.dayOfWeek as DayOfWeek) || '',
       startTime: timeSlot.startTime,
       endTime: timeSlot.endTime,
@@ -347,8 +364,8 @@ export function TimeSlotsManager() {
         serviceIds: data.serviceIds, // Ahora es obligatorio
       };
 
-      if (data.type === 'date') {
-        timeSlotData.date = data.date;
+      if (data.type === 'date' && data.date) {
+        timeSlotData.date = formatDateToYMD(data.date);
       } else {
         timeSlotData.dayOfWeek = data.dayOfWeek as DayOfWeek;
       }
@@ -587,7 +604,7 @@ export function TimeSlotsManager() {
     setIsCopyingBlocked(false);
     resetBlocked({
       employeeId: selectedEmployeeId,
-      date: '',
+      date: null,
       dayOfWeek: '',
       startTime: 12,
       endTime: 13,
@@ -612,7 +629,7 @@ export function TimeSlotsManager() {
     const isDateType = !!blocked.date;
     resetBlocked({
       employeeId: selectedEmployeeId,
-      date: '', // Al copiar, no copiamos la fecha específica, solo el día de la semana si aplica
+      date: null, // Al copiar, no copiamos la fecha específica, solo el día de la semana si aplica
       dayOfWeek: blocked.dayOfWeek || '',
       startTime: blocked.startTime,
       endTime: blocked.endTime,
@@ -628,7 +645,7 @@ export function TimeSlotsManager() {
     const isDateType = !!blocked.date;
     resetBlocked({
       employeeId: blocked.employeeId,
-      date: blocked.date || '',
+      date: blocked.date ? parseLocalDate(blocked.date) : null,
       dayOfWeek: (blocked.dayOfWeek as DayOfWeek) || '',
       startTime: blocked.startTime,
       endTime: blocked.endTime,
@@ -655,8 +672,8 @@ export function TimeSlotsManager() {
         reason: data.reason || undefined,
       };
 
-      if (data.type === 'date') {
-        blockedData.date = data.date;
+      if (data.type === 'date' && data.date) {
+        blockedData.date = formatDateToYMD(data.date);
       } else {
         blockedData.dayOfWeek = data.dayOfWeek as DayOfWeek;
       }
@@ -1169,9 +1186,6 @@ export function TimeSlotsManager() {
 
             {type === 'date' ? (
               <Box>
-                <Text size="sm" fw={500} mb={5}>
-                  Fecha Específica
-                </Text>
                 <Controller
                   name="date"
                   control={control}
@@ -1179,19 +1193,18 @@ export function TimeSlotsManager() {
                     required: type === 'date' ? 'La fecha es requerida' : false,
                   }}
                   render={({ field }) => (
-                    <input
-                      {...field}
-                      type="date"
-                      className={classes.dateInput}
-                      required={type === 'date'}
-                    />
+                    <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 1 }}>
+                      <DatePickerInput
+                        label="Fecha Específica"
+                        placeholder="DD/MM/AAAA"
+                        value={field.value}
+                        onChange={field.onChange}
+                        valueFormat="DD/MM/YYYY"
+                        error={errors.date?.message}
+                      />
+                    </DatesProvider>
                   )}
                 />
-                {errors.date && (
-                  <Text size="xs" c="red" mt={5}>
-                    {errors.date.message}
-                  </Text>
-                )}
               </Box>
             ) : (
               <Controller
@@ -1458,9 +1471,6 @@ export function TimeSlotsManager() {
 
             {blockedType === 'date' ? (
               <Box>
-                <Text size="sm" fw={500} mb={5}>
-                  Fecha Específica
-                </Text>
                 <Controller
                   name="date"
                   control={controlBlocked}
@@ -1468,19 +1478,18 @@ export function TimeSlotsManager() {
                     required: blockedType === 'date' ? 'La fecha es requerida' : false,
                   }}
                   render={({ field }) => (
-                    <input
-                      {...field}
-                      type="date"
-                      className={classes.dateInput}
-                      required={blockedType === 'date'}
-                    />
+                    <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 1 }}>
+                      <DatePickerInput
+                        label="Fecha Específica"
+                        placeholder="DD/MM/AAAA"
+                        value={field.value}
+                        onChange={field.onChange}
+                        valueFormat="DD/MM/YYYY"
+                        error={errorsBlocked.date?.message}
+                      />
+                    </DatesProvider>
                   )}
                 />
-                {errorsBlocked.date && (
-                  <Text size="xs" c="red" mt={5}>
-                    {errorsBlocked.date.message}
-                  </Text>
-                )}
               </Box>
             ) : (
               <Controller
