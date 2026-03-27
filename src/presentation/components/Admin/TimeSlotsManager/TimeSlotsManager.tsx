@@ -1,5 +1,11 @@
 'use client';
 
+/** Parse "YYYY-MM-DD" as local date (not UTC) to avoid timezone shift */
+function parseLocalDate(dateStr: string): Date {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
 import { useEffect, useState } from 'react';
 import {
   Table,
@@ -468,7 +474,7 @@ export function TimeSlotsManager() {
 
       if (timeSlot.date) {
         // Fecha específica
-        const date = new Date(timeSlot.date);
+        const date = parseLocalDate(timeSlot.date);
         dayKey = `date-${timeSlot.date}`;
         dayLabel = date.toLocaleDateString('es-AR', {
           weekday: 'long',
@@ -502,7 +508,7 @@ export function TimeSlotsManager() {
       let sortOrder: number;
 
       if (firstSlot.date) {
-        const date = new Date(firstSlot.date);
+        const date = parseLocalDate(firstSlot.date);
         dayLabel = date.toLocaleDateString('es-AR', {
           weekday: 'long',
           year: 'numeric',
@@ -738,7 +744,7 @@ export function TimeSlotsManager() {
       let dayLabel: string;
 
       if (blocked.date) {
-        const date = new Date(blocked.date);
+        const date = parseLocalDate(blocked.date);
         dayKey = `date-${blocked.date}`;
         dayLabel = date.toLocaleDateString('es-AR', {
           weekday: 'long',
@@ -769,7 +775,7 @@ export function TimeSlotsManager() {
       let sortOrder: number;
 
       if (firstSlot.date) {
-        const date = new Date(firstSlot.date);
+        const date = parseLocalDate(firstSlot.date);
         dayLabel = date.toLocaleDateString('es-AR', {
           weekday: 'long',
           year: 'numeric',
