@@ -105,12 +105,6 @@ export function DateTimeSelector({
       if (dayAvailability && dayAvailability.hasActiveTimeSlots) return false;
     }
 
-    // Fallback: deshabilitar lunes (1) y domingos (0) si no hay disponibilidad específica
-    const [year, month, day] = date.split('-').map(Number);
-    const dateObj = new Date(year, month - 1, day);
-    const dayOfWeek = dateObj.getDay();
-    if (dayOfWeek === 0 || dayOfWeek === 1) return true;
-
     // Sin datos del backend = deshabilitar
     if (!availability) return false;
     return true;
