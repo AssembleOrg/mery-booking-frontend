@@ -55,8 +55,6 @@ export function DateTimeSelector({
   );
 
   // Obtener disponibilidad de la API
-  console.log('[DateTimeSelector] employeeId:', employeeId, '| serviceId:', serviceId);
-
   const {
     data: availability,
     isLoading,
@@ -91,8 +89,6 @@ export function DateTimeSelector({
     const dayAvailability = availability.availability.find(
       (day) => day.date === selectedDate
     );
-
-    console.log('[DateTimeSelector] selectedDate:', selectedDate, '| dayAvailability:', dayAvailability);
 
     if (!dayAvailability || !dayAvailability.hasActiveTimeSlots) return [];
 
