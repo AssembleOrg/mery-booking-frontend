@@ -622,6 +622,10 @@ export function BookingsManager() {
     }
   };
 
+  const hasActiveCoupon = (booking: BookingResponse): boolean => {
+    return Boolean(booking.couponCode?.trim());
+  };
+
   // Calendario mensual
   const getMonthDays = () => {
     const year = currentMonth.getFullYear();
@@ -1043,7 +1047,8 @@ export function BookingsManager() {
                                   onClick={() => handleBookingClick(booking)}
                                 >
                                   <Text size="xs" fw={500} lineClamp={1} title={booking.client?.fullName || 'Cliente'}>
-                                    {truncateText(booking.client?.fullName || 'Sin nombre', 15)}
+                                    {hasActiveCoupon(booking) ? '🎁 ' : ''}
+                                    {truncateText(booking.client?.fullName || 'Sin nombre', hasActiveCoupon(booking) ? 12 : 15)}
                                   </Text>
                                   {duration > 1 && (
                                     <Text size="xs" c="dimmed" mt={2}>
@@ -1146,7 +1151,8 @@ export function BookingsManager() {
                                 style={{ cursor: 'pointer' }}
                                 title={booking.client?.fullName || 'Cliente'}
                               >
-                                {truncateText(booking.client?.fullName || 'Sin nombre', 15)}
+                                {hasActiveCoupon(booking) ? '🎁 ' : ''}
+                                {truncateText(booking.client?.fullName || 'Sin nombre', hasActiveCoupon(booking) ? 12 : 15)}
                               </Text>
                               <Text size="xs" c="dimmed" lineClamp={1}>
                                 {getBookingStartTime(booking)}-{getBookingEndTime(booking)}
@@ -1222,19 +1228,16 @@ export function BookingsManager() {
                                 p="xs"
                                 className={classes.bookingCard}
                                 style={{
-                                  backgroundColor: '#FBE8EA',
+                                  backgroundColor: hasActiveCoupon(booking) ? '#f3e8ff' : '#FBE8EA',
                                   minHeight: height,
                                   height: duration > 1 ? height : 'auto',
                                   cursor: 'pointer',
-                                  position: 'relative',
+                                  borderLeft: hasActiveCoupon(booking) ? '3px solid #9333ea' : undefined,
                                 }}
                                 onClick={() => handleBookingClick(booking)}
                               >
-                                {booking.couponCode && (
-                                  <Text size="xs" style={{ position: 'absolute', top: 2, right: 4 }}>🎁</Text>
-                                )}
                                 <Text size="xs" fw={500} lineClamp={1} title={booking.client?.fullName || 'Cliente'}>
-                                  {truncateText(booking.client?.fullName || 'Sin nombre', 15)}
+                                  {hasActiveCoupon(booking) ? '🎁 ' : ''}{truncateText(booking.client?.fullName || 'Sin nombre', hasActiveCoupon(booking) ? 12 : 15)}
                                 </Text>
                                 <Text size="xs" c="dimmed" lineClamp={1}>
                                   {booking.service?.name || 'Sin servicio'}
@@ -1255,11 +1258,6 @@ export function BookingsManager() {
                                   {booking.paid && (
                                     <Badge size="xs" color="pink" variant="light">
                                       Pagado
-                                    </Badge>
-                                  )}
-                                  {booking.couponCode && (
-                                    <Badge size="xs" color="grape" variant="light">
-                                      🎁 {booking.discountPercent}%
                                     </Badge>
                                   )}
                                 </Group>
@@ -1320,11 +1318,11 @@ export function BookingsManager() {
                       <Table.Td>
                         {startTime && endTime ? `${startTime} - ${endTime}` : '-'}
                       </Table.Td>
-                    <Table.Td 
+                    <Table.Td
                       style={{ cursor: 'pointer' }}
                       onClick={() => handleBookingClick(booking)}
                     >
-                      {booking.client?.fullName || 'Sin nombre'}
+                      {hasActiveCoupon(booking) ? '🎁 ' : ''}{booking.client?.fullName || 'Sin nombre'}
                     </Table.Td>
                     <Table.Td>{booking.employee?.fullName || 'Sin empleado'}</Table.Td>
                     <Table.Td>{booking.service?.name || 'Sin servicio'}</Table.Td>
@@ -1340,13 +1338,6 @@ export function BookingsManager() {
                       <Badge color={booking.paid ? 'pink' : 'gray'} variant="light">
                         {booking.paid ? 'Sí' : 'No'}
                       </Badge>
-                    </Table.Td>
-                    <Table.Td>
-                      {booking.couponCode && (
-                        <Badge color="grape" variant="light">
-                          🎁 {booking.couponCode} ({booking.discountPercent}%)
-                        </Badge>
-                      )}
                     </Table.Td>
                   </Table.Tr>
                   );
@@ -1393,7 +1384,7 @@ export function BookingsManager() {
                   <Group justify="space-between">
                     <Box>
                       <Text fw={500} size="sm">
-                        {booking.couponCode && '🎁 '}{booking.client?.fullName || 'Sin nombre'}
+                        {hasActiveCoupon(booking) && '🎁 '}{booking.client?.fullName || 'Sin nombre'}
                       </Text>
                       <Text size="xs" c="dimmed">
                         {getBookingStartTime(booking)} - {getBookingEndTime(booking)}
