@@ -26,6 +26,7 @@ interface Step4ConfirmationProps {
     mobile: string;
     dni: string;
     notes?: string;
+    couponCode?: string;
   }) => void;
 }
 
@@ -43,7 +44,7 @@ export default function Step4Confirmation({
 
   const formattedDate = dayjs(selectedDate).format("dddd D [de] MMMM, YYYY");
 
-  const handleCollectData = async (clientData: Client) => {
+  const handleCollectData = async (clientData: Client, couponCode?: string) => {
     if (!clientData.dni) {
       return;
     }
@@ -55,6 +56,7 @@ export default function Step4Confirmation({
       mobile: clientData.mobile,
       dni: clientData.dni,
       notes: clientData.notes,
+      couponCode,
     });
   };
 
@@ -119,6 +121,7 @@ export default function Step4Confirmation({
         date={selectedDate}
         time={selectedTime}
         location="Mery García Office"
+        serviceId={consultaOption.serviceId}
         onConfirm={handleCollectData}
       />
     </Box>

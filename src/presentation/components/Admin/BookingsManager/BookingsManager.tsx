@@ -25,7 +25,7 @@ import {
 import { DatePickerInput, DateValue, DatesProvider } from '@mantine/dates';
 import { useForm, Controller } from 'react-hook-form';
 import { notifications } from '@mantine/notifications';
-import { BookingService, EmployeeService, ServiceService, ClientService } from '@/infrastructure/http';
+import { BookingService, EmployeeService, ServiceService, ClientService, CouponService } from '@/infrastructure/http';
 import type { Booking, BookingResponse, Employee, ServiceEntity, Client, ClientSearchResult, PaidStatus } from '@/infrastructure/http';
 import { useCreateBooking, useCreateClient, useAvailability, useRescheduleBooking } from '@/presentation/hooks';
 import { ConfirmationModal } from '@/presentation/components';
@@ -81,6 +81,18 @@ export function BookingsManager() {
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [editedNotes, setEditedNotes] = useState('');
   const [isSavingNotes, setIsSavingNotes] = useState(false);
+  const [couponInput, setCouponInput] = useState('');
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [showCouponInput, setShowCouponInput] = useState(false);
+  // For create booking modal coupon
+  const [createCouponInput, setCreateCouponInput] = useState('');
+  const [createCouponValidation, setCreateCouponValidation] = useState<{
+    valid: boolean;
+    discountPercent: number;
+    couponCode: string;
+    message?: string;
+  } | null>(null);
+  const [isValidatingCreateCoupon, setIsValidatingCreateCoupon] = useState(false);
 
   // Hooks para crear reserva y cliente
   const createBookingMutation = useCreateBooking();
@@ -96,6 +108,7 @@ export function BookingsManager() {
     startTime: string; // HH:mm
     notes: string;
     paidStatus: PaidStatus;
+    couponCode: string;
   }
   
   const {
@@ -252,10 +265,13 @@ export function BookingsManager() {
         quantity: 1,
         paidStatus: data.paidStatus,
         notes: data.notes || undefined,
+        couponCode: data.couponCode?.trim() || undefined,
       });
       
       setCreateBookingModalOpen(false);
       resetCreateBookingForm();
+      setCreateCouponInput('');
+      setCreateCouponValidation(null);
       await fetchBookings();
     } catch (error) {
       // Los errores ya se manejan en el hook
@@ -1210,9 +1226,13 @@ export function BookingsManager() {
                                   minHeight: height,
                                   height: duration > 1 ? height : 'auto',
                                   cursor: 'pointer',
+                                  position: 'relative',
                                 }}
                                 onClick={() => handleBookingClick(booking)}
                               >
+                                {booking.couponCode && (
+                                  <Text size="xs" style={{ position: 'absolute', top: 2, right: 4 }}>🎁</Text>
+                                )}
                                 <Text size="xs" fw={500} lineClamp={1} title={booking.client?.fullName || 'Cliente'}>
                                   {truncateText(booking.client?.fullName || 'Sin nombre', 15)}
                                 </Text>
@@ -1235,6 +1255,11 @@ export function BookingsManager() {
                                   {booking.paid && (
                                     <Badge size="xs" color="pink" variant="light">
                                       Pagado
+                                    </Badge>
+                                  )}
+                                  {booking.couponCode && (
+                                    <Badge size="xs" color="grape" variant="light">
+                                      🎁 {booking.discountPercent}%
                                     </Badge>
                                   )}
                                 </Group>
@@ -1316,6 +1341,13 @@ export function BookingsManager() {
                         {booking.paid ? 'Sí' : 'No'}
                       </Badge>
                     </Table.Td>
+                    <Table.Td>
+                      {booking.couponCode && (
+                        <Badge color="grape" variant="light">
+                          🎁 {booking.couponCode} ({booking.discountPercent}%)
+                        </Badge>
+                      )}
+                    </Table.Td>
                   </Table.Tr>
                   );
                 })
@@ -1361,7 +1393,7 @@ export function BookingsManager() {
                   <Group justify="space-between">
                     <Box>
                       <Text fw={500} size="sm">
-                        {booking.client?.fullName || 'Sin nombre'}
+                        {booking.couponCode && '🎁 '}{booking.client?.fullName || 'Sin nombre'}
                       </Text>
                       <Text size="xs" c="dimmed">
                         {getBookingStartTime(booking)} - {getBookingEndTime(booking)}
@@ -1388,6 +1420,8 @@ export function BookingsManager() {
           setBookingDetailsModalOpen(false);
           setSelectedBooking(null);
           setIsEditingNotes(false);
+          setShowCouponInput(false);
+          setCouponInput('');
         }}
         title="Detalles de la Reserva"
         size="lg"
@@ -1421,9 +1455,23 @@ export function BookingsManager() {
               <Text size="xs" c="dimmed">
                 Duración: {selectedBooking.service?.duration || 0} minutos
               </Text>
-              <Text size="xs" c="dimmed">
-                Precio: ${selectedBooking.service?.price || '0'}
-              </Text>
+              {selectedBooking.couponCode && selectedBooking.discountPercent ? (
+                <Group gap="xs" align="center">
+                  <Text size="xs" c="dimmed" td="line-through">
+                    ${selectedBooking.service?.price || '0'}
+                  </Text>
+                  <Text size="sm" fw={600} c="grape">
+                    ${Math.round(Number(selectedBooking.service?.price || 0) * (1 - selectedBooking.discountPercent / 100)).toLocaleString('es-AR')}
+                  </Text>
+                  <Badge color="grape" variant="light" size="xs">
+                    -{selectedBooking.discountPercent}%
+                  </Badge>
+                </Group>
+              ) : (
+                <Text size="xs" c="dimmed">
+                  Precio: ${selectedBooking.service?.price || '0'}
+                </Text>
+              )}
             </Box>
 
             <Divider />
@@ -1431,6 +1479,120 @@ export function BookingsManager() {
             <Box>
               <Text size="sm" fw={500} c="dimmed">Profesional</Text>
               <Text size="md">{selectedBooking.employee?.fullName || 'Sin empleado'}</Text>
+            </Box>
+
+            <Divider />
+
+            <Box>
+              <Group justify="space-between" align="center" mb={4}>
+                <Text size="sm" fw={500} c="dimmed">Cupón de Descuento</Text>
+                {selectedBooking.status !== 'CANCELLED' && selectedBooking.couponCode && !showCouponInput && (
+                  <Button
+                    size="compact-xs"
+                    variant="subtle"
+                    color="red"
+                    onClick={async () => {
+                      setIsApplyingCoupon(true);
+                      try {
+                        await BookingService.update(selectedBooking.id, { couponCode: '' } as any);
+                        const updated = { ...selectedBooking, couponCode: undefined, discountPercent: undefined, couponId: undefined };
+                        setSelectedBooking(updated);
+                        setBookings(prev => prev.map(b => b.id === selectedBooking.id ? { ...b, couponCode: undefined, discountPercent: undefined } : b));
+                        notifications.show({ title: 'Cupón removido', message: 'Se quitó el cupón de la reserva.', color: 'green' });
+                      } catch (error: any) {
+                        notifications.show({ title: 'Error', message: error?.response?.data?.message || 'Error al quitar cupón.', color: 'red' });
+                      } finally {
+                        setIsApplyingCoupon(false);
+                      }
+                    }}
+                    loading={isApplyingCoupon}
+                  >
+                    Quitar
+                  </Button>
+                )}
+              </Group>
+
+              {selectedBooking.couponCode ? (
+                <Group gap="xs">
+                  <Text size="md">🎁</Text>
+                  <Text size="md" fw={600}>{selectedBooking.couponCode}</Text>
+                  <Badge color="grape" variant="light" size="lg">
+                    {selectedBooking.discountPercent}% OFF
+                  </Badge>
+                </Group>
+              ) : selectedBooking.status !== 'CANCELLED' ? (
+                <>
+                  {!showCouponInput ? (
+                    <Button
+                      size="compact-sm"
+                      variant="light"
+                      color="grape"
+                      onClick={() => { setShowCouponInput(true); setCouponInput(''); }}
+                    >
+                      Asignar cupón
+                    </Button>
+                  ) : (
+                    <Group gap="xs">
+                      <TextInput
+                        placeholder="Código del cupón"
+                        value={couponInput}
+                        onChange={(e) => setCouponInput(e.currentTarget.value)}
+                        size="sm"
+                        style={{ flex: 1 }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Escape') setShowCouponInput(false);
+                        }}
+                      />
+                      <Button
+                        size="sm"
+                        color="grape"
+                        loading={isApplyingCoupon}
+                        disabled={!couponInput.trim()}
+                        onClick={async () => {
+                          setIsApplyingCoupon(true);
+                          try {
+                            await BookingService.update(selectedBooking.id, { couponCode: couponInput.trim() } as any);
+                            // Refetch booking to get updated data
+                            const response = await BookingService.getAll({
+                              fromDate: selectedBooking.localDate,
+                              toDate: selectedBooking.localDate,
+                            });
+                            const updatedBookings = response.data || response;
+                            const updated = (updatedBookings as BookingResponse[]).find((b: BookingResponse) => b.id === selectedBooking.id);
+                            if (updated) {
+                              setSelectedBooking(updated);
+                              setBookings(prev => prev.map(b => b.id === updated.id ? updated : b));
+                            }
+                            setShowCouponInput(false);
+                            setCouponInput('');
+                            notifications.show({ title: 'Cupón aplicado', message: 'Se asignó el cupón a la reserva.', color: 'green' });
+                          } catch (error: any) {
+                            const msg = error?.response?.data?.message;
+                            notifications.show({
+                              title: 'Error',
+                              message: Array.isArray(msg) ? msg.join(', ') : msg || 'Error al aplicar cupón.',
+                              color: 'red',
+                            });
+                          } finally {
+                            setIsApplyingCoupon(false);
+                          }
+                        }}
+                      >
+                        Aplicar
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="default"
+                        onClick={() => setShowCouponInput(false)}
+                      >
+                        Cancelar
+                      </Button>
+                    </Group>
+                  )}
+                </>
+              ) : (
+                <Text size="sm" c="dimmed">Sin cupón</Text>
+              )}
             </Box>
 
             <Divider />
@@ -1572,6 +1734,8 @@ export function BookingsManager() {
         onClose={() => {
           setCreateBookingModalOpen(false);
           resetCreateBookingForm();
+          setCreateCouponInput('');
+          setCreateCouponValidation(null);
         }}
         title="Crear Reserva Manual"
         size="lg"
@@ -1704,6 +1868,79 @@ export function BookingsManager() {
               )}
             />
 
+            {/* Cupón */}
+            <Box>
+              <Text size="sm" fw={500} mb={4}>Cupón de descuento</Text>
+              {createCouponValidation?.valid ? (
+                <Group gap="sm" align="center">
+                  <Text size="sm">🎁</Text>
+                  <Badge color="grape" variant="light" size="lg">
+                    {createCouponValidation.couponCode} — {createCouponValidation.discountPercent}% OFF
+                  </Badge>
+                  <Button
+                    size="compact-xs"
+                    variant="subtle"
+                    color="red"
+                    onClick={() => {
+                      setCreateCouponInput('');
+                      setCreateCouponValidation(null);
+                      setCreateBookingValue('couponCode', '');
+                    }}
+                  >
+                    Quitar
+                  </Button>
+                </Group>
+              ) : (
+                <>
+                  <Group gap="xs">
+                    <TextInput
+                      placeholder="Código del cupón (opcional)"
+                      value={createCouponInput}
+                      onChange={(e) => {
+                        setCreateCouponInput(e.currentTarget.value);
+                        if (createCouponValidation) setCreateCouponValidation(null);
+                      }}
+                      size="sm"
+                      style={{ flex: 1 }}
+                    />
+                    <Button
+                      size="sm"
+                      variant="light"
+                      color="grape"
+                      disabled={!createCouponInput.trim() || !selectedServiceIdForBooking || isValidatingCreateCoupon}
+                      loading={isValidatingCreateCoupon}
+                      onClick={async () => {
+                        if (!createCouponInput.trim() || !selectedServiceIdForBooking) return;
+                        setIsValidatingCreateCoupon(true);
+                        try {
+                          const result = await CouponService.validateCoupon(createCouponInput.trim(), selectedServiceIdForBooking);
+                          setCreateCouponValidation(result);
+                          if (result.valid) {
+                            setCreateBookingValue('couponCode', result.couponCode);
+                          }
+                        } catch {
+                          setCreateCouponValidation({
+                            valid: false, discountPercent: 0, couponCode: createCouponInput,
+                            message: 'Error al validar el cupón.',
+                          });
+                        } finally {
+                          setIsValidatingCreateCoupon(false);
+                        }
+                      }}
+                    >
+                      Validar
+                    </Button>
+                  </Group>
+                  {createCouponValidation && !createCouponValidation.valid && (
+                    <Text size="xs" c="red" mt={4}>{createCouponValidation.message}</Text>
+                  )}
+                  {!selectedServiceIdForBooking && createCouponInput.trim() && (
+                    <Text size="xs" c="dimmed" mt={4}>Seleccioná un servicio primero para validar el cupón.</Text>
+                  )}
+                </>
+              )}
+            </Box>
+
             {/* Estado de pago */}
             <Controller
               name="paidStatus"
@@ -1727,6 +1964,8 @@ export function BookingsManager() {
                 onClick={() => {
                   setCreateBookingModalOpen(false);
                   resetCreateBookingForm();
+                  setCreateCouponInput('');
+                  setCreateCouponValidation(null);
                 }}
               >
                 Cancelar

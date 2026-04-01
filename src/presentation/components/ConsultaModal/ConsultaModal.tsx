@@ -52,6 +52,7 @@ export default function ConsultaModal({
     mobile: string;
     dni: string;
     notes?: string;
+    couponCode?: string;
   } | null>(null);
   const [step3ShowCalendar, setStep3ShowCalendar] = useState(false);
   const [step3CanContinue, setStep3CanContinue] = useState(false);
@@ -261,6 +262,7 @@ export default function ConsultaModal({
                   services={services}
                   staffConsultasId={staffConsultasId}
                   selectedEmployeeId={selectedEmployeeId}
+                  couponCode={clientData?.couponCode}
                   onBack={handleStepBack}
                 />
               </motion.div>

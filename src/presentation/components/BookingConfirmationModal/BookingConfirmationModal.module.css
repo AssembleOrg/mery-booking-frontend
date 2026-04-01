@@ -73,6 +73,23 @@
   opacity: 1;
 }
 
+.couponSection {
+  background: #f8f0ff;
+  border: 1px dashed #d0a8e0;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+}
+
+.couponToggle {
+  width: 100%;
+  color: #7c3aed;
+  transition: opacity 0.2s;
+}
+
+.couponToggle:hover {
+  opacity: 0.8;
+}
+
 .pricingSummary {
   background: #FBE8EA;
   padding: 1rem;
