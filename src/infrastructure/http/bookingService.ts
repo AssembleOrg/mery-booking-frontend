@@ -64,6 +64,7 @@ export interface CreateBookingDto {
   quantity?: number;
   paidStatus?: PaidStatus;
   notes?: string;
+  couponCode?: string;
 }
 
 export interface BookingResponse {
@@ -85,6 +86,8 @@ export interface BookingResponse {
   paidStatus: PaidStatus;
   status: BookingStatus;
   notes?: string;
+  couponCode?: string;
+  discountPercent?: number;
   client?: {
     id: string;
     fullName: string;

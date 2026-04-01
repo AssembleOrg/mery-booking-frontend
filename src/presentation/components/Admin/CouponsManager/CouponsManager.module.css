@@ -1,0 +1,108 @@
+.container {
+  padding: 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 0.75rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #666;
+  border-bottom: 2px solid #eee;
+}
+
+.table td {
+  padding: 0.75rem 0.5rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+.table tr:hover td {
+  background-color: #fafafa;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editBtn,
+.deleteBtn {
+  padding: 0.25rem 0.75rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: opacity 0.2s;
+}
+
+.editBtn {
+  background: #e8f4fd;
+  color: #1976d2;
+}
+
+.deleteBtn {
+  background: #fde8e8;
+  color: #d32f2f;
+}
+
+.editBtn:hover,
+.deleteBtn:hover {
+  opacity: 0.8;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+  color: #999;
+}
+
+.serviceBadge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  margin: 0.15rem;
+  border-radius: 12px;
+  background: #f0e6ff;
+  color: #7c3aed;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.usesCell {
+  font-variant-numeric: tabular-nums;
+}
+
+.serviceCheckboxCard {
+  padding: 0.5rem 0.75rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  transition: border-color 0.15s;
+}
+
+.serviceCheckboxCard:hover {
+  background: #f1f3f5;
+  border-color: #d0a8e0;
+}

@@ -54,6 +54,7 @@ export function ReservaModal({
     mobile: string;
     dni: string;
     notes?: string;
+    couponCode?: string;
   } | null>(null);
   const [confirmationModalOpened, setConfirmationModalOpened] = useState(false);
 
@@ -188,6 +189,7 @@ export function ReservaModal({
                 staffConsultasId={staffConsultasId}
                 meryGarciaId={meryGarciaId}
                 selectedEmployeeId={selectedEmployeeId ?? undefined}
+                couponCode={clientData?.couponCode}
                 onBack={handleStepBack}
               />
             )}

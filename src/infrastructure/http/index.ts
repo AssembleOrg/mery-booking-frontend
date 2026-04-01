@@ -8,6 +8,7 @@ export { BlockedTimeSlotService } from './blockedTimeSlotService';
 export { BookingService } from './bookingService';
 export { ClientService } from './clientService';
 export { TempReservationService } from './tempReservationService';
+export { CouponService } from './couponService';
 export type { LoginCredentials, AuthResponse } from './authService';
 export type { Category, CreateCategoryDto, UpdateCategoryDto } from './categoryService';
 export type { ServiceEntity, CreateServiceDto, UpdateServiceDto, PublicServiceResponse } from './serviceService';
@@ -18,4 +19,5 @@ export type { Service as EmployeeTimeSlotServiceType } from './employeeTimeSlotS
 export type { Booking, BookingStatus, PaidStatus, GetOccupiedTimeSlotsParams, CreateBookingDto, BookingResponse, AvailabilityResponse, RescheduleBookingDto } from './bookingService';
 export type { Client, CreateClientDto, UpdateClientDto, CreateClientPublicDto, CreateClientPublicResponse, ClientSearchResult } from './clientService';
 export type { TempReservation, CreateTempReservationDto, LinkPreferenceDto } from './tempReservationService';
+export type { Coupon, CreateCouponDto, UpdateCouponDto, ValidateCouponResponse } from './couponService';
 

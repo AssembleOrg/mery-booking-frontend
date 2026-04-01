@@ -11,10 +11,16 @@ import {
   TextInput,
   Textarea,
   Image,
+  Badge,
+  Loader,
+  Collapse,
+  UnstyledButton,
 } from '@mantine/core';
 import { useForm, Controller } from 'react-hook-form';
 import { useState } from 'react';
+import { IconGift } from '@tabler/icons-react';
 import { Professional, Service, Client } from '@/domain/entities';
+import { CouponService } from '@/infrastructure/http/couponService';
 import classes from './BookingConfirmationModal.module.css';
 
 interface BookingConfirmationModalProps {
@@ -25,7 +31,8 @@ interface BookingConfirmationModalProps {
   date: Date;
   time: string;
   location: string;
-  onConfirm: (client: Client) => void;
+  serviceId?: string;
+  onConfirm: (client: Client, couponCode?: string) => void;
 }
 
 interface FormData {
@@ -53,9 +60,19 @@ export function BookingConfirmationModal({
   date,
   time,
   location,
+  serviceId,
   onConfirm,
 }: BookingConfirmationModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [couponOpen, setCouponOpen] = useState(false);
+  const [couponInput, setCouponInput] = useState('');
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+  const [couponValidation, setCouponValidation] = useState<{
+    valid: boolean;
+    discountPercent: number;
+    couponCode: string;
+    message?: string;
+  } | null>(null);
 
   const {
     control,
@@ -75,8 +92,35 @@ export function BookingConfirmationModal({
   });
 
   const handleClose = () => {
-    reset(); // Limpiar formulario al cancelar
+    reset();
+    setCouponOpen(false);
+    setCouponInput('');
+    setCouponValidation(null);
     onClose();
+  };
+
+  const handleValidateCoupon = async () => {
+    if (!couponInput.trim() || !serviceId) return;
+    setIsValidatingCoupon(true);
+    setCouponValidation(null);
+    try {
+      const result = await CouponService.validateCoupon(couponInput.trim(), serviceId);
+      setCouponValidation(result);
+    } catch {
+      setCouponValidation({
+        valid: false,
+        discountPercent: 0,
+        couponCode: couponInput,
+        message: 'Error al validar el cupón. Intenta nuevamente.',
+      });
+    } finally {
+      setIsValidatingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setCouponInput('');
+    setCouponValidation(null);
   };
 
   const onSubmit = async (data: FormData) => {
@@ -91,25 +135,24 @@ export function BookingConfirmationModal({
       notes: data.notes || undefined,
     };
 
-    // Simular delay
     await new Promise((resolve) => setTimeout(resolve, 500));
     setIsSubmitting(false);
 
-    onConfirm(client);
-    reset(); // Limpiar formulario después de confirmar
+    const appliedCoupon = couponValidation?.valid ? couponValidation.couponCode : undefined;
+    onConfirm(client, appliedCoupon);
+    reset();
+    setCouponOpen(false);
+    setCouponInput('');
+    setCouponValidation(null);
   };
 
   const deposit = service.priceBook;
 
   const formatDate = (date: Date) => {
-    // Usar los componentes de la fecha directamente para evitar problemas de timezone
     const day = date.getDate();
     const month = date.getMonth();
     const year = date.getFullYear();
-
-    // Crear una nueva fecha usando los componentes locales
     const localDate = new Date(year, month, day);
-
     return localDate.toLocaleDateString('es-ES', {
       day: 'numeric',
       month: 'long',
@@ -347,6 +390,78 @@ export function BookingConfirmationModal({
                 />
               )}
             />
+
+            {/* Coupon Section */}
+            {serviceId && (
+              <Box className={classes.couponSection}>
+                {couponValidation?.valid ? (
+                  <Flex align="center" justify="space-between" gap="sm">
+                    <Flex align="center" gap="xs">
+                      <IconGift size={18} color="#ae3ec9" />
+                      <Text size="sm" fw={500}>
+                        Cupón aplicado:
+                      </Text>
+                      <Badge color="grape" variant="light" size="lg">
+                        {couponValidation.couponCode} — {couponValidation.discountPercent}% OFF
+                      </Badge>
+                    </Flex>
+                    <UnstyledButton onClick={handleRemoveCoupon}>
+                      <Text size="xs" c="dimmed" td="underline">
+                        Quitar
+                      </Text>
+                    </UnstyledButton>
+                  </Flex>
+                ) : (
+                  <>
+                    <UnstyledButton
+                      onClick={() => setCouponOpen(!couponOpen)}
+                      className={classes.couponToggle}
+                    >
+                      <Flex align="center" gap="xs">
+                        <IconGift size={18} />
+                        <Text size="sm" fw={500}>
+                          ¿Tenés un cupón de descuento?
+                        </Text>
+                      </Flex>
+                    </UnstyledButton>
+                    <Collapse in={couponOpen}>
+                      <Flex gap="xs" mt="sm" direction={{ base: 'column', xs: 'row' }}>
+                        <TextInput
+                          placeholder="Ingresá tu código"
+                          value={couponInput}
+                          onChange={(e) => {
+                            setCouponInput(e.currentTarget.value);
+                            if (couponValidation) setCouponValidation(null);
+                          }}
+                          classNames={{ input: classes.input }}
+                          style={{ flex: 1 }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleValidateCoupon();
+                            }
+                          }}
+                        />
+                        <Button
+                          onClick={handleValidateCoupon}
+                          disabled={!couponInput.trim() || isValidatingCoupon}
+                          variant="light"
+                          color="grape"
+                          style={{ minWidth: 100 }}
+                        >
+                          {isValidatingCoupon ? <Loader size="xs" /> : 'Validar'}
+                        </Button>
+                      </Flex>
+                      {couponValidation && !couponValidation.valid && (
+                        <Text size="xs" c="red" mt="xs">
+                          {couponValidation.message}
+                        </Text>
+                      )}
+                    </Collapse>
+                  </>
+                )}
+              </Box>
+            )}
 
             {/* Pricing Summary */}
             <Box className={classes.pricingSummary}>

@@ -34,6 +34,7 @@ interface Step4ConfirmationProps {
     mobile: string;
     dni: string;
     notes?: string;
+    couponCode?: string;
   }) => void;
 }
 
@@ -87,7 +88,7 @@ export function Step4Confirmation({
     };
   }, [employee]);
 
-  const handleCollectData = async (clientData: Client) => {
+  const handleCollectData = async (clientData: Client, couponCode?: string) => {
     if (!clientData.dni) {
       return;
     }
@@ -99,6 +100,7 @@ export function Step4Confirmation({
       mobile: clientData.mobile,
       dni: clientData.dni,
       notes: clientData.notes,
+      couponCode,
     });
   };
 
@@ -156,6 +158,7 @@ export function Step4Confirmation({
         date={selectedDate}
         time={selectedTime}
         location={MOCK_LOCATION}
+        serviceId={selectedOption.serviceId}
         onConfirm={handleCollectData}
       />
     </Box>

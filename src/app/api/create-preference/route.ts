@@ -10,7 +10,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { serviceName, depositAmount, clientData, bookingData, locale } =
+    const { serviceName, depositAmount, clientData, bookingData } =
       body;
 
     if (process.env.NODE_ENV !== 'production') {
@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
             email: clientData.email,
             phone: clientData.phone,
             dni: clientData.dni,
+            couponCode: clientData.couponCode || undefined,
           },
           expirationMinutes: 15, // 15 minutos para completar el pago
           notes: clientData.notes,
@@ -115,7 +116,8 @@ export async function POST(request: NextRequest) {
           book_date: bookingData.date,
           book_time: bookingData.startTime,
           book_notes: clientData.notes || '',
-          temp_reservation_id: tempReservationId, // ⭐ NUEVO: ID de pre-reserva
+          coupon_code: clientData.couponCode || '',
+          temp_reservation_id: tempReservationId,
         },
         back_urls: {
           success: `${frontendUrl}/reserva/success`,
