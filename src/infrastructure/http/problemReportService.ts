@@ -1,9 +1,11 @@
 import publicApiClient from './publicApiClient';
+import { getRecentRequests } from './requestTracker';
 
 export interface CreateProblemReportDto {
     email: string;
     phone?: string;
     description: string;
+    recentRequests?: unknown[];
 }
 
 export interface ProblemReportResponse {
@@ -25,7 +27,11 @@ export class ProblemReportService {
     private static readonly BASE_PATH = '/problem-report';
 
     static async create(data: CreateProblemReportDto): Promise<ProblemReportResponse> {
-        const response = await publicApiClient.post<BackendResponse<ProblemReportResponse>>(this.BASE_PATH, data);
+        const payload = {
+            ...data,
+            recentRequests: getRecentRequests(),
+        };
+        const response = await publicApiClient.post<BackendResponse<ProblemReportResponse>>(this.BASE_PATH, payload);
         return response.data.data;
     }
 }
