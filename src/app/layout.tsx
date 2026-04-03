@@ -6,6 +6,7 @@ import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
 import { MantineProviderWrapper } from '@/presentation/providers';
 import { ColorSchemeScript } from '@mantine/core';
+import { ProblemReportWidget } from '@/presentation/components';
 
 // Fuente principal para la web (Medium .otf)
 const avantGardeMedium = localFont({
@@ -129,7 +130,10 @@ export default function RootLayout({
         style={{ margin: 0 }}
         suppressHydrationWarning
       >
-        <MantineProviderWrapper>{children}</MantineProviderWrapper>
+        <MantineProviderWrapper>
+          {children}
+          <ProblemReportWidget />
+        </MantineProviderWrapper>
       </body>
     </html>
   );

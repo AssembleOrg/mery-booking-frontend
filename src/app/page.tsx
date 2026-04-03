@@ -1,4 +1,4 @@
-import { Header, WelcomeSection, Footer, ProblemReportWidget } from '@/presentation/components';
+import { Header, WelcomeSection, Footer } from '@/presentation/components';
 import PromoModal from '@/presentation/components/PromoModal/PromoModal';
 
 export default function Home() {
@@ -8,7 +8,6 @@ export default function Home() {
       <WelcomeSection />
       <Footer />
       <PromoModal />
-      <ProblemReportWidget />
     </>
   );
 }
