@@ -2,14 +2,14 @@ import publicApiClient from './publicApiClient';
 
 export interface CreateProblemReportDto {
     email: string;
-    phone: string;
+    phone?: string;
     description: string;
 }
 
 export interface ProblemReportResponse {
     id: string;
     email: string;
-    phone: string;
+    phone?: string;
     description: string;
     createdAt: string;
 }

@@ -1,12 +1,30 @@
 'use client';
 
 import { useState } from 'react';
-import { Affix, Button, Modal, TextInput, Textarea, Stack, Transition } from '@mantine/core';
+import { Affix, Button, Flex, Modal, Select, Text, TextInput, Textarea, Stack, Transition } from '@mantine/core';
 import { useDisclosure, useWindowScroll } from '@mantine/hooks';
 import { useForm, Controller } from 'react-hook-form';
 import { IconHeadset } from '@tabler/icons-react';
-import { ProblemReportService, CreateProblemReportDto } from '@/infrastructure/http';
+import { ProblemReportService } from '@/infrastructure/http';
 import { notifications } from '@mantine/notifications';
+
+const countryCodes = [
+  { value: '+54', label: '🇦🇷 +54' },
+  { value: '+1', label: '🇺🇸 +1' },
+  { value: '+34', label: '🇪🇸 +34' },
+  { value: '+52', label: '🇲🇽 +52' },
+  { value: '+55', label: '🇧🇷 +55' },
+  { value: '+56', label: '🇨🇱 +56' },
+  { value: '+57', label: '🇨🇴 +57' },
+  { value: '+598', label: '🇺🇾 +598' },
+];
+
+interface FormData {
+  email: string;
+  countryCode: string;
+  phone: string;
+  description: string;
+}
 
 export default function ProblemReportWidget() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -18,18 +36,24 @@ export default function ProblemReportWidget() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<CreateProblemReportDto>({
+  } = useForm<FormData>({
     defaultValues: {
       email: '',
+      countryCode: '+54',
       phone: '',
       description: '',
     },
   });
 
-  const onSubmit = async (data: CreateProblemReportDto) => {
+  const onSubmit = async (data: FormData) => {
     try {
       setIsLoading(true);
-      await ProblemReportService.create(data);
+      const phone = data.phone ? `${data.countryCode}${data.phone}` : undefined;
+      await ProblemReportService.create({
+        email: data.email,
+        phone,
+        description: data.description,
+      });
       notifications.show({
         title: 'Reporte enviado',
         message: 'Hemos recibido su reporte de problema de manera exitosa. Nos contactaremos a la brevedad.',
@@ -77,9 +101,9 @@ export default function ProblemReportWidget() {
             <Controller
               name="email"
               control={control}
-              rules={{ 
-                required: 'El correo electrónico es requerido', 
-                pattern: { value: /^\S+@\S+$/i, message: 'Correo electrónico inválido' } 
+              rules={{
+                required: 'El correo electrónico es requerido',
+                pattern: { value: /^\S+@\S+$/i, message: 'Correo electrónico inválido' },
               }}
               render={({ field }) => (
                 <TextInput
@@ -91,26 +115,44 @@ export default function ProblemReportWidget() {
               )}
             />
 
-            <Controller
-              name="phone"
-              control={control}
-              rules={{ required: 'El teléfono es requerido' }}
-              render={({ field }) => (
-                <TextInput
-                  {...field}
-                  label="Teléfono"
-                  placeholder="Ej: +54 9 11 1234 5678"
-                  error={errors.phone?.message}
+            <div>
+              <Text size="sm" fw={500} mb={4}>
+                Teléfono (opcional)
+              </Text>
+              <Flex gap="xs">
+                <Controller
+                  name="countryCode"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      data={countryCodes}
+                      style={{ width: '110px' }}
+                      allowDeselect={false}
+                    />
+                  )}
                 />
-              )}
-            />
+                <Controller
+                  name="phone"
+                  control={control}
+                  render={({ field }) => (
+                    <TextInput
+                      {...field}
+                      placeholder="(11) 1234 5678"
+                      error={errors.phone?.message}
+                      style={{ flex: 1 }}
+                    />
+                  )}
+                />
+              </Flex>
+            </div>
 
             <Controller
               name="description"
               control={control}
-              rules={{ 
-                required: 'Por favor, detalla el problema', 
-                minLength: { value: 10, message: 'La descripción es muy corta' } 
+              rules={{
+                required: 'Por favor, detalla el problema',
+                minLength: { value: 10, message: 'La descripción es muy corta' },
               }}
               render={({ field }) => (
                 <Textarea
