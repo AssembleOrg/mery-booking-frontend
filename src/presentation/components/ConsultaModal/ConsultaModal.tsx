@@ -193,6 +193,7 @@ export default function ConsultaModal({
                 <Step2ServiceType
                   selectedServiceType={selectedServiceType}
                   onSelectServiceType={setSelectedServiceType}
+                  onClearServiceType={() => setSelectedServiceType(null)}
                 />
               </motion.div>
             )}

@@ -10,6 +10,7 @@ import classes from './ConsultaModal.module.css';
 interface Step2ServiceTypeProps {
   selectedServiceType: string | null;
   onSelectServiceType: (serviceType: string) => void;
+  onClearServiceType: () => void;
 }
 
 const ACTIVE_OPTIONS = [
@@ -17,13 +18,7 @@ const ACTIVE_OPTIONS = [
     id: 'Servicio 100% customizado',
     label: 'Servicio 100% customizado',
     description:
-      'Requiere presencialidad desde la consulta hasta la entrega final, por Mery & Staff. La consulta es obligatoria, y es realizada por el equipo MG. Las piezas se encargan con el compromiso de una seña y conllevan un tiempo de producción de 72 hs hábiles para su entrega con los detalles finales a mano de Mery.',
-  },
-  {
-    id: 'Servicio semi-customizado',
-    label: 'Servicio semi-customizado',
-    description:
-      'La consulta es virtual, se deberá enviar fotos de la zona para recibir asesoramiento. Las piezas se moldean con un modelo de nuestro catálogo de moldes y se realizan detalles personalizados de color (presencialmente el día de la entrega por Mery). En caso de no contar con un modelo que se acerque al tuyo, podés optar por la opción 100% personalizada.',
+      'Requiere 2 presencialidades (consulta obligatoria y entrega final, por Mery & Staff). Las piezas se encargan con el compromiso de una seña y conllevan un tiempo de producción de 72 hs hábiles para su entrega con los detalles finales a mano de Mery.',
   },
 ];
 
@@ -33,6 +28,15 @@ const DISABLED_OPTIONS = [
 
 // Cards informativos — mismo estilo de dropdown que las activas, sin radio
 const INFO_OPTIONS = [
+  {
+    id: 'semi-customizado',
+    label: 'Servicio semi-customizado',
+    ctaText: 'Es necesario que completes este formulario para que nos pongamos en contacto:',
+    ctaLink: 'https://docs.google.com/forms/d/1T91vKMOrMW9FUHpU7i7u7zvpEr4Y1dagktVrIllULdM/edit',
+    ctaLinkLabel: 'Formulario de contacto',
+    description:
+      'La consulta es virtual, se deberán enviar fotos de la zona para recibir asesoramiento. Las piezas se moldean con un modelo de nuestro catálogo de moldes y se realizan detalles personalizados de color (presencialmente el día de la entrega por Mery). En caso de no contar con un modelo que se acerque al tuyo, podés optar por la opción 100% personalizada.',
+  },
   {
     id: 'special-pass',
     label: 'Special Pass',
@@ -54,11 +58,17 @@ const INFO_OPTIONS = [
 export default function Step2ServiceType({
   selectedServiceType,
   onSelectServiceType,
+  onClearServiceType,
 }: Step2ServiceTypeProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const toggle = (id: string) =>
+  const toggle = (id: string) => {
+    const isInfoOption = INFO_OPTIONS.some((o) => o.id === id);
+    if (isInfoOption) {
+      onClearServiceType();
+    }
     setExpandedId((prev) => (prev === id ? null : id));
+  };
 
   return (
     <Box className={classes.stepContainer}>
@@ -162,18 +172,38 @@ export default function Step2ServiceType({
                       transition={{ duration: 0.25, ease: 'easeInOut' }}
                       style={{ overflow: 'hidden' }}
                     >
-                      <Text className={classes.consultaOptionDescription} style={{ marginTop: 6 }}>
-                        {option.description}
-                        <a
-                          href={option.waLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className={classes.whatsappLink}
-                        >
-                          {option.waPhone}
-                        </a>
-                      </Text>
+                      {'ctaLink' in option ? (
+                        <div style={{ marginTop: 6 }}>
+                          <Text className={classes.consultaOptionDescription} style={{ fontWeight: 600, marginBottom: 4 }}>
+                            {option.ctaText}{' '}
+                            <a
+                              href={option.ctaLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className={classes.whatsappLink}
+                            >
+                              {option.ctaLinkLabel}
+                            </a>
+                          </Text>
+                          <Text className={classes.consultaOptionDescription}>
+                            {option.description}
+                          </Text>
+                        </div>
+                      ) : (
+                        <Text className={classes.consultaOptionDescription} style={{ marginTop: 6 }}>
+                          {option.description}
+                          <a
+                            href={option.waLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className={classes.whatsappLink}
+                          >
+                            {option.waPhone}
+                          </a>
+                        </Text>
+                      )}
                     </motion.div>
                   )}
                 </AnimatePresence>

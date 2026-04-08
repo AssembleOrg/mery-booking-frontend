@@ -199,7 +199,7 @@ const epitesisAccordionOptions: ServiceOption[] = [
     contentType: 'consulta',
     accordionDescriptionNode: (
       <>
-        Requiere presencialidad desde la consulta hasta la entrega final, por Mery & Staff. La consulta es obligatoria, y es realizada por el equipo MG. Las piezas se encargan con el compromiso de una seña y conllevan un tiempo de producción de 72 hs hábiles para su entrega con los detalles finales a mano de Mery.
+        Requiere 2 presencialidades (consulta obligatoria y entrega final, por Mery & Staff). Las piezas se encargan con el compromiso de una seña y conllevan un tiempo de producción de 72 hs hábiles para su entrega con los detalles finales a mano de Mery.
       </>
     ),
   },
@@ -209,7 +209,18 @@ const epitesisAccordionOptions: ServiceOption[] = [
     contentType: 'consulta',
     accordionDescriptionNode: (
       <>
-        La consulta es virtual, se deberá enviar fotos de la zona para recibir asesoramiento. Las piezas se moldean con un modelo de nuestro catálogo de moldes y se realizan detalles personalizados de color (presencialmente el día de la entrega por Mery). En caso de no contar con un modelo que se acerque al tuyo, podés optar por la opción 100% personalizada.
+        La consulta es virtual, se deberán enviar fotos de la zona para recibir asesoramiento. Las piezas se moldean con un modelo de nuestro catálogo de moldes y se realizan detalles personalizados de color (presencialmente el día de la entrega por Mery). En caso de no contar con un modelo que se acerque al tuyo, podés optar por la opción 100% personalizada.{' '}
+        <br /><br />
+        Es necesario que completes este formulario para que nos pongamos en contacto:{' '}
+        <a
+          href="https://docs.google.com/forms/d/1T91vKMOrMW9FUHpU7i7u7zvpEr4Y1dagktVrIllULdM/edit"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          style={{ color: 'inherit', fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: '2px' }}
+        >
+          Formulario de contacto
+        </a>
       </>
     ),
   },
