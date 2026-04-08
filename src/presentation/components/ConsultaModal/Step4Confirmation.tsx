@@ -17,6 +17,7 @@ interface Step4ConfirmationProps {
   professionalName?: string;
   selectedDate: Date;
   selectedTime: string;
+  serviceTypeLabel?: string;
   confirmationModalOpened: boolean;
   onConfirmationModalClose: () => void;
   onClientDataCollected: (data: {
@@ -37,6 +38,7 @@ export default function Step4Confirmation({
   professionalName,
   selectedDate,
   selectedTime,
+  serviceTypeLabel,
   confirmationModalOpened,
   onConfirmationModalClose,
   onClientDataCollected,
@@ -69,6 +71,13 @@ export default function Step4Confirmation({
           <Text className={classes.summaryLabel}>Servicio:</Text>
           <Text className={classes.summaryValue}>{serviceName}</Text>
         </div>
+
+        {serviceTypeLabel && (
+          <div className={classes.summaryRow}>
+            <Text className={classes.summaryLabel}>Categoría:</Text>
+            <Text className={classes.summaryValue}>{serviceTypeLabel}</Text>
+          </div>
+        )}
 
         <div className={classes.summaryRow}>
           <Text className={classes.summaryLabel}>Tipo de consulta:</Text>

@@ -788,7 +788,7 @@ export default function ParamedicalTattooPage() {
       scrollToSection(sectionId);
     }, 300);
     return () => clearTimeout(timer);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);  
 
   // Helper function to enrich service options with IDs
   const enrichServiceOptions = (
@@ -1031,7 +1031,7 @@ export default function ParamedicalTattooPage() {
 
                   <Box className={classes.optionsSection}>
                     <Text className={classes.optionsTitle}>
-                      Seleccioná la opción deseada para solicitar tu cita:
+                       Seleccioná la opción deseada para más información.
                     </Text>
                     <ServiceAccordion
                       options={nanoScalpOptions}
@@ -1105,7 +1105,7 @@ export default function ParamedicalTattooPage() {
 
                   <Box className={classes.optionsSection}>
                     <Text className={classes.optionsTitle}>
-                      Seleccioná la opción deseada para solicitar tu cita:
+                       Seleccioná la opción deseada para más información.
                     </Text>
                     <ServiceAccordion
                       options={areolaOptions}
@@ -1164,7 +1164,7 @@ export default function ParamedicalTattooPage() {
 
                   <Box className={classes.optionsSection}>
                     <Text className={classes.optionsTitle}>
-                      Seleccioná la opción deseada para solicitar tu cita:
+                       Seleccioná la opción deseada para más información.
                     </Text>
                     <ServiceAccordion
                       options={scarCamouflageOptions}
@@ -1236,7 +1236,7 @@ export default function ParamedicalTattooPage() {
 
                   <Box className={classes.optionsSection}>
                     <Text className={classes.optionsTitle}>
-                      Seleccioná la opción deseada para solicitar tu cita:
+                       Seleccioná la opción deseada para más información.
                     </Text>
                     <ServiceAccordion
                       options={nippleOptions}

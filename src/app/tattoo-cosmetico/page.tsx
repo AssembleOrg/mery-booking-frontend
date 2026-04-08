@@ -2474,7 +2474,7 @@ export default function TattooCosmeticoPage() {
 
                 {/* <Box className={classes.optionsSection}>
                   <Text className={classes.optionsTitle}>
-                    Seleccioná la opción deseada para solicitar tu cita:
+                     Seleccioná la opción deseada para más información.
                   </Text>
                   <ServiceAccordion
                     options={nanobladingOptionsWithIds}
@@ -2638,7 +2638,7 @@ export default function TattooCosmeticoPage() {
 
                 {/* <Box className={classes.optionsSection}>
                   <Text className={classes.optionsTitle}>
-                    Seleccioná la opción deseada para solicitar tu cita:
+                     Seleccioná la opción deseada para más información.
                   </Text>
                   <ServiceAccordion
                     options={lipBlushOptionsWithIds}
@@ -2726,7 +2726,7 @@ export default function TattooCosmeticoPage() {
 
                 {/* <Box className={classes.optionsSection}>
                   <Text className={classes.optionsTitle}>
-                    Seleccioná la opción deseada para solicitar tu cita:
+                     Seleccioná la opción deseada para más información.
                   </Text>
                   <ServiceAccordion
                     options={lipCamouflageOptionsWithIds}
@@ -2806,7 +2806,7 @@ export default function TattooCosmeticoPage() {
 
                 {/* <Box className={classes.optionsSection}>
                   <Text className={classes.optionsTitle}>
-                    Seleccioná la opción deseada para solicitar tu cita:
+                     Seleccioná la opción deseada para más información.
                   </Text>
                   <ServiceAccordion
                     options={lashesLineOptionsWithIds}

@@ -348,6 +348,21 @@
   .stepLine {
     width: 40px;
   }
+}
+
+@media (max-width: 400px) {
+  .stepCircle {
+    width: 24px;
+    height: 24px;
+  }
+
+  .stepLine {
+    width: 14px;
+  }
+
+  .stepNumber {
+    font-size: 11px;
+  }
 
   .buttonGroup {
     flex-direction: column-reverse;

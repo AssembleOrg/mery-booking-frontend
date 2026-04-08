@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Affix, Button, Flex, Modal, Select, Text, TextInput, Textarea, Stack, Transition } from '@mantine/core';
-import { useDisclosure, useWindowScroll } from '@mantine/hooks';
+import { Affix, Button, Flex, Modal, Select, Text, TextInput, Textarea, Stack } from '@mantine/core';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { useForm, Controller } from 'react-hook-form';
 import { IconHeadset } from '@tabler/icons-react';
 import { ProblemReportService } from '@/infrastructure/http';
 import { notifications } from '@mantine/notifications';
+import { motion } from 'framer-motion';
 
 const countryCodes = [
   { value: '+54', label: '🇦🇷 +54' },
@@ -28,8 +29,8 @@ interface FormData {
 
 export default function ProblemReportWidget() {
   const [opened, { open, close }] = useDisclosure(false);
-  const [scroll] = useWindowScroll();
   const [isLoading, setIsLoading] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const {
     control,
@@ -74,25 +75,31 @@ export default function ProblemReportWidget() {
 
   return (
     <>
-      <Affix position={{ bottom: 20, right: 20 }} zIndex={100}>
-        <Transition transition="slide-up" mounted={scroll.y > 0 || true}>
-          {(transitionStyles) => (
-            <Button
-              leftSection={<IconHeadset size={20} />}
-              style={{
-                ...transitionStyles,
-                borderRadius: '9999px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                padding: '0 20px',
-              }}
-              color="dark"
-              onClick={open}
-              size="md"
-            >
-              ¿Problemas?
-            </Button>
-          )}
-        </Transition>
+      <Affix position={{ bottom: isMobile ? 16 : 20, right: isMobile ? 16 : 20 }} zIndex={100}>
+        <motion.div
+          initial={{ scale: 0.7, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.6 }}
+          whileHover={{ scale: 1.07 }}
+          whileTap={{ scale: 0.93 }}
+          style={{ display: 'inline-block' }}
+        >
+          <Button
+            leftSection={<IconHeadset size={isMobile ? 14 : 20} />}
+            style={{
+              borderRadius: '9999px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              padding: isMobile ? '0 10px' : '0 20px',
+              minWidth: isMobile ? 0 : undefined,
+              fontSize: isMobile ? '11px' : undefined,
+            }}
+            color="dark"
+            onClick={open}
+            size={isMobile ? 'xs' : 'md'}
+          >
+            {isMobile ? '¿Ayuda?' : '¿Problemas?'}
+          </Button>
+        </motion.div>
       </Affix>
 
       <Modal opened={opened} onClose={close} title="Reportar un problema" centered radius="md">
