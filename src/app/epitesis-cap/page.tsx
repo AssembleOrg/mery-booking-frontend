@@ -54,7 +54,7 @@ function getEpitesisOptionsWithIds(
 ): ServiceOption[] {
   return options.map((option) => {
     // Consulta Previa — resolución via serviceName exacto (con includes bidireccional)
-    if (option.contentType === 'consulta' && (option.id === 'epitesis-consulta' || option.id === 'epitesis-consulta-test') && option.serviceName) {
+    if (option.contentType === 'consulta' && option.id === 'epitesis-consulta' && option.serviceName) {
       const consultaService = allServices.find((s) => {
         const nameLower = s.name.toLowerCase();
         const optionNameLower = option.serviceName!.toLowerCase();
@@ -189,14 +189,6 @@ const epitesisCapOptions: ServiceOption[] = [
     serviceName: 'Epitesis Cap Consulta Previa',
     serviceDuration: 60,
   },
-  {
-    id: 'epitesis-consulta-test',
-    label: '[TEST] Epitesis CAP — Consulta Previa',
-    contentType: 'consulta',
-    description: 'Servicio de prueba para validar el flujo de reservas.',
-    serviceName: 'Epitesis Cap TEST',
-    serviceDuration: 60,
-  },
 ];
 
 // Array para el acordeón informativo de la página
@@ -215,7 +207,11 @@ const epitesisAccordionOptions: ServiceOption[] = [
     id: 'epitesis-semi-customizado',
     label: 'Servicio semi-customizado',
     contentType: 'consulta',
-    disabled: true,
+    accordionDescriptionNode: (
+      <>
+        La consulta es virtual, se deberá enviar fotos de la zona para recibir asesoramiento. Las piezas se moldean con un modelo de nuestro catálogo de moldes y se realizan detalles personalizados de color (presencialmente el día de la entrega por Mery). En caso de no contar con un modelo que se acerque al tuyo, podés optar por la opción 100% personalizada.
+      </>
+    ),
   },
   {
     id: 'epitesis-por-catalogo',
