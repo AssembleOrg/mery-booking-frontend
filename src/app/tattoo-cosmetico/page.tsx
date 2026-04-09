@@ -1074,7 +1074,7 @@ const nanobladingOptions: ServiceOption[] = [
       'Citas seleccionadas de último momento con 20% off. SOLO PARA 1ª SESIÓN CON CONSULTA PREVIA YA REALIZADA. Entérate antes que nadie a través de nuestro canal de IG: https://www.instagram.com/merygarciaoficial/ Reservá tu cita 20% OFF. La seña NO es reembolsable.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 488.-',
-    priceEffective: 'U$S 500',
+    priceEffective: 'U$S 400',
     depositLabel: ' Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
     promoText:
@@ -1159,7 +1159,7 @@ const lipBlushOptions: ServiceOption[] = [
       'Citas seleccionadas de último momento con 20% off. SOLO PARA 1ª SESIÓN CON CONSULTA PREVIA YA REALIZADA. Reservá tu cita 20% OFF. La seña NO es reembolsable.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 520.-',
-    priceEffective: 'U$S 500',
+    priceEffective: 'U$S 400',
     depositLabel: ' Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
     promoText:
@@ -1257,7 +1257,7 @@ const lashesLineOptions: ServiceOption[] = [
       'Citas seleccionadas de último momento con 20% off. SOLO PARA 1ª SESIÓN CON CONSULTA PREVIA YA REALIZADA. Reservá tu cita 20% OFF. La seña NO es reembolsable.',
     priceLabel: 'Precio de lista del servicio:',
     priceValue: 'U$S 384.-',
-    priceEffective: 'U$S 380',
+    priceEffective: 'U$S 304',
     depositLabel: ' Valor de la seña:',
     depositValue: 'AR$ 100.000.-',
     promoText:
@@ -1776,7 +1776,7 @@ export default function TattooCosmeticoPage() {
       scrollToSection(sectionId);
     }, 300);
     return () => clearTimeout(timer);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);  
 
   const openExternalLink = (url: string) => {
     window.open(url, '_blank');
