@@ -93,14 +93,22 @@ export function Header() {
               ))}
             </nav>
 
-            {/* CTA Button - Desktop */}
-            <button
-              type="button"
-              className={classes.ctaButton}
-              onClick={openBookingEntry}
-            >
-              RESERVAR
-            </button>
+            {/* CTA Buttons - Desktop */}
+            <Flex align="center" gap="sm" className={classes.ctaGroup}>
+              <button
+                type="button"
+                className={classes.ctaButton}
+                onClick={openBookingEntry}
+              >
+                RESERVAR
+              </button>
+              <Link
+                href="/cambiar-reserva"
+                className={classes.ctaButtonSecondary}
+              >
+                CAMBIAR RESERVA
+              </Link>
+            </Flex>
 
             {/* Mobile Menu Button */}
             <Flex

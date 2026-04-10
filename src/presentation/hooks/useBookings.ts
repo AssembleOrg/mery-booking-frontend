@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { BookingService, type CreateBookingDto, type BookingResponse, type RescheduleBookingDto } from '@/infrastructure/http';
+import { BookingService, type CreateBookingDto, type BookingResponse, type RescheduleBookingDto, type ReschedulePublicBookingDto } from '@/infrastructure/http';
 import { notifications } from '@mantine/notifications';
 
 export function useCreateBooking() {
@@ -62,7 +62,7 @@ export function useRescheduleBooking() {
 export function useRescheduleBookingPublic() {
   const queryClient = useQueryClient();
 
-  return useMutation<BookingResponse, Error, { bookingCode: string; data: RescheduleBookingDto }>({
+  return useMutation<BookingResponse, Error, { bookingCode: string; data: ReschedulePublicBookingDto }>({
     mutationFn: async ({ bookingCode, data }) => {
       return await BookingService.reschedulePublic(bookingCode, data);
     },
@@ -88,9 +88,9 @@ export function useRescheduleBookingPublic() {
 }
 
 export function useGetBookingByCode() {
-  return useMutation<BookingResponse, Error, string>({
-    mutationFn: async (bookingCode) => {
-      return await BookingService.getByCode(bookingCode);
+  return useMutation<BookingResponse, Error, { bookingCode: string; dni: string }>({
+    mutationFn: async ({ bookingCode, dni }) => {
+      return await BookingService.getByCode(bookingCode, dni);
     },
     onError: (error: any) => {
       const errorMessage = error.response?.data?.message || error.message || 'Error al buscar la reserva';

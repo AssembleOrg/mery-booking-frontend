@@ -598,14 +598,6 @@ export function WelcomeSection() {
         </FadeInSection>
       </section> */}
 
-      {/* Sección de reagendamiento público - Ocultada temporalmente */}
-      {/* <section className={classes.rescheduleSection}>
-        <Container className={classes.rescheduleContainer}>
-          <FadeInSection direction="up" delay={0.2}>
-            <PublicRescheduleBooking />
-          </FadeInSection>
-        </Container>
-      </section> */}
     </Box>
   );
 }

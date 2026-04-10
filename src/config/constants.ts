@@ -11,3 +11,11 @@ export const CATEGORY_IDS = {
   PARAMEDICAL_TATTOO: '45422e67-102b-4565-9192-ef4047e16f48',
   EPITESIS_CAP: '7cfbc1e8-8eb2-41cc-a8de-a3b0ecce30c4',
 } as const;
+
+// Mapeo categoryId → ruta de la página pública
+export const CATEGORY_PAGE_MAP: Record<string, string> = {
+  [CATEGORY_IDS.TATTOO_COSMETICO]: '/tattoo-cosmetico',
+  [CATEGORY_IDS.ESTILISMO_CEJAS]: '/estilismo-de-cejas',
+  [CATEGORY_IDS.PARAMEDICAL_TATTOO]: '/paramedical-tattoo',
+  [CATEGORY_IDS.EPITESIS_CAP]: '/epitesis-cap',
+};

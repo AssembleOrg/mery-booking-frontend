@@ -1,8 +1,10 @@
 import apiClient from './apiClient';
+import publicApiClient from './publicApiClient';
 
 export interface Category {
   id: string;
   name: string;
+  rescheduleCutoffHours: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -14,10 +16,12 @@ export interface PaginatedResponse<T> {
 
 export interface CreateCategoryDto {
   name: string;
+  rescheduleCutoffHours?: number;
 }
 
 export interface UpdateCategoryDto {
   name?: string;
+  rescheduleCutoffHours?: number;
 }
 
 // Formato de respuesta del backend
@@ -71,6 +75,13 @@ export class CategoryService {
 
   static async delete(id: string): Promise<void> {
     await apiClient.delete(`${this.BASE_PATH}/${id}`);
+  }
+
+  static async getAllPublic(): Promise<Category[]> {
+    const response = await publicApiClient.get<BackendResponse<Category[]>>(
+      `${this.BASE_PATH}/public`
+    );
+    return response.data.data;
   }
 }
 

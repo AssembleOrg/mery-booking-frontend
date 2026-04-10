@@ -107,7 +107,7 @@
 
 .nav {
   display: none;
-  gap: 40px;
+  gap: clamp(20px, 2.5vw, 40px);
 }
 
 .navLink {
@@ -124,14 +124,18 @@
   color: var(--mg-pink);
 }
 
-.ctaButton {
+.ctaGroup {
   display: none;
+}
+
+.ctaButton {
   background: var(--mg-dark);
   color: var(--mg-white);
-  border: none;
+  border: 1px solid var(--mg-dark);
   appearance: none;
   cursor: pointer;
   line-height: 1;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 14px 32px;
@@ -141,11 +145,53 @@
   font-family: var(--font-din-medium), sans-serif;
   font-weight: 500;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .ctaButton:hover {
   background: var(--mg-pink);
+  border-color: var(--mg-pink);
   transform: translateY(-2px);
+}
+
+/* Botón secundario para CAMBIAR RESERVA — outline para no competir con
+   RESERVAR pero misma altura visual. Cambia colores según el header esté
+   sobre fondo oscuro (top) o blanco (scrolled). */
+.ctaButtonSecondary {
+  background: transparent;
+  color: var(--mg-dark);
+  border: 1px solid var(--mg-pink);
+  appearance: none;
+  cursor: pointer;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 20px;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-decoration: none;
+  font-family: var(--font-din-medium), sans-serif;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.ctaButtonSecondary:hover {
+  background: var(--mg-pink);
+  color: var(--mg-white);
+  transform: translateY(-2px);
+}
+
+.scrolled .ctaButtonSecondary {
+  color: var(--mg-pink);
+  border-color: var(--mg-pink);
+}
+
+.scrolled .ctaButtonSecondary:hover {
+  background: var(--mg-pink);
+  color: var(--mg-white);
+  border-color: var(--mg-pink);
 }
 
 .menuButton {
@@ -162,7 +208,7 @@
   .nav {
     display: flex;
   }
-  .ctaButton {
+  .ctaGroup {
     display: inline-flex;
   }
   .menuButton {

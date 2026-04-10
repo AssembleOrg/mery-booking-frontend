@@ -1,0 +1,536 @@
+.pageWrapper {
+  min-height: 100vh;
+  background: var(--mg-white);
+  padding-top: 120px;
+  padding-bottom: 60px;
+}
+
+.container {
+  max-width: 640px;
+}
+
+/* ═══ Card ═══ */
+
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  min-height: 500px;
+}
+
+@media (max-width: 600px) {
+  .pageWrapper {
+    padding-top: 100px;
+    padding-bottom: 40px;
+  }
+  .card {
+    padding: 24px 20px;
+    border-radius: 12px;
+    min-height: auto;
+  }
+}
+
+/* ═══ Step Indicator ═══ */
+
+.stepIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 8px;
+}
+
+.stepIndicatorItem {
+  display: flex;
+  align-items: center;
+}
+
+.stepCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  border: 2px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.stepCircleActive {
+  background-color: var(--mg-pink);
+  border-color: var(--mg-pink);
+  box-shadow: 0 0 0 4px rgba(235, 162, 168, 0.2);
+}
+
+.stepCircleCompleted {
+  background-color: var(--mg-pink);
+  border-color: var(--mg-pink);
+}
+
+.stepNumber {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 16px;
+  color: var(--mg-gray);
+}
+
+.stepCircleActive .stepNumber {
+  color: var(--mg-white);
+}
+
+.stepCheck {
+  color: var(--mg-white);
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.stepLine {
+  width: 48px;
+  height: 2px;
+  background-color: #e0e0e0;
+  transition: background-color 0.3s ease;
+}
+
+.stepLineCompleted {
+  background-color: var(--mg-pink);
+}
+
+@media (max-width: 600px) {
+  .stepCircle {
+    width: 32px;
+    height: 32px;
+  }
+  .stepLine {
+    width: clamp(16px, 3vw, 36px);
+  }
+  .stepNumber {
+    font-size: 13px;
+  }
+  .stepCheck {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 380px) {
+  .stepCircle {
+    width: 28px;
+    height: 28px;
+  }
+  .stepLine {
+    width: 12px;
+  }
+  .stepNumber {
+    font-size: 11px;
+  }
+}
+
+/* ═══ Step Content ═══ */
+
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+}
+
+.stepHeader {
+  text-align: center;
+}
+
+.stepTitle {
+  font-family: var(--font-saol-display), serif;
+  font-size: clamp(22px, 4vw, 30px);
+  font-weight: 400;
+  color: var(--mg-dark);
+  margin: 0 0 8px;
+}
+
+.stepSubtitle {
+  font-family: var(--font-din-regular), sans-serif;
+  font-size: 14px;
+  color: rgba(43, 43, 43, 0.6);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ═══ Form ═══ */
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--mg-dark);
+}
+
+.input {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #e0e0e0;
+  background: transparent;
+  padding: 12px 0;
+  font-family: var(--font-din-regular), sans-serif;
+  font-size: 16px;
+  color: var(--mg-dark);
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+
+.input::placeholder {
+  color: rgba(43, 43, 43, 0.3);
+}
+
+.input:focus {
+  border-bottom-color: var(--mg-pink);
+}
+
+.inputCode {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+}
+
+/* Mantine overrides */
+.mantineLabel {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--mg-dark);
+  margin-bottom: 8px;
+}
+
+.mantineInput {
+  border: none;
+  border-bottom: 2px solid #e0e0e0;
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-din-regular), sans-serif;
+  font-size: 16px;
+  color: var(--mg-dark);
+  padding-left: 0;
+  min-height: 44px;
+  transition: border-color 0.25s ease;
+}
+
+.mantineInput:focus,
+.mantineInput:focus-within {
+  border-bottom-color: var(--mg-pink);
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+/* ═══ Summary ═══ */
+
+.summary {
+  background: #fafafa;
+  border-left: 3px solid var(--mg-pink);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summaryOverline {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  color: var(--mg-pink);
+  text-transform: uppercase;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+}
+
+@media (max-width: 500px) {
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.summaryGrid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summaryLabel {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(43, 43, 43, 0.45);
+}
+
+.summaryValue {
+  font-family: var(--font-din-regular), sans-serif;
+  font-size: 14px;
+  color: var(--mg-dark);
+}
+
+/* ═══ Service changed notice ═══ */
+
+.serviceChangedNotice {
+  background: rgba(235, 162, 168, 0.08);
+  border: 1px solid rgba(235, 162, 168, 0.25);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: var(--font-din-regular), sans-serif;
+  font-size: 13px;
+  color: var(--mg-dark);
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* ═══ Terms ═══ */
+
+.termsBox {
+  padding: 16px 0;
+}
+
+.termsLabel {
+  font-family: var(--font-din-regular), sans-serif;
+  font-size: 13px;
+  color: rgba(43, 43, 43, 0.7);
+  line-height: 1.5;
+}
+
+/* ═══ Service Cards ═══ */
+
+.serviceGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.serviceCard {
+  appearance: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  background: var(--mg-white);
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.25s ease;
+  font-family: var(--font-din-regular), sans-serif;
+}
+
+.serviceCard:hover {
+  border-color: var(--mg-pink);
+}
+
+.serviceCardSelected {
+  border-color: var(--mg-pink);
+  background: rgba(235, 162, 168, 0.06);
+  box-shadow: 0 0 0 3px rgba(235, 162, 168, 0.15);
+}
+
+.serviceName {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 14px;
+  color: var(--mg-dark);
+  flex: 1;
+  min-width: 0;
+}
+
+.serviceMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.servicePrice {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 14px;
+  color: var(--mg-pink);
+  font-weight: 600;
+}
+
+.serviceDuration {
+  font-family: var(--font-din-regular), sans-serif;
+  font-size: 11px;
+  color: rgba(43, 43, 43, 0.5);
+  letter-spacing: 0.5px;
+}
+
+/* ═══ Calendar ═══ */
+
+.calendarWrap {
+  margin: 0 -8px;
+}
+
+/* ═══ Selection badge ═══ */
+
+.selectionBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: rgba(235, 162, 168, 0.08);
+  border: 1px solid rgba(235, 162, 168, 0.3);
+  border-radius: 8px;
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 14px;
+  color: var(--mg-dark);
+  text-transform: capitalize;
+}
+
+.selectionTime {
+  color: var(--mg-pink);
+  font-weight: 600;
+}
+
+/* ═══ Buttons ═══ */
+
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+@media (max-width: 500px) {
+  .buttonGroup {
+    flex-direction: column-reverse;
+  }
+}
+
+.buttonPrimary,
+.buttonSecondary {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 16px 36px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: var(--font-din-medium), sans-serif;
+  font-weight: 500;
+  border-radius: 0;
+  min-width: 160px;
+  text-decoration: none;
+}
+
+.buttonPrimary {
+  background: var(--mg-pink);
+  color: var(--mg-white);
+  border: 2px solid var(--mg-pink);
+}
+
+.buttonPrimary:hover:not(:disabled) {
+  background: transparent;
+  color: var(--mg-pink);
+  transform: translateY(-2px);
+}
+
+.buttonPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.buttonSecondary {
+  background: transparent;
+  color: var(--mg-dark);
+  border: 2px solid rgba(43, 43, 43, 0.2);
+}
+
+.buttonSecondary:hover:not(:disabled) {
+  border-color: var(--mg-dark);
+  transform: translateY(-2px);
+}
+
+/* ═══ Loader ═══ */
+
+.loaderWrap {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+/* ═══ Helper ═══ */
+
+.helper {
+  font-family: var(--font-din-regular), sans-serif;
+  font-size: 13px;
+  color: rgba(43, 43, 43, 0.5);
+  text-align: center;
+  margin: 0;
+}
+
+/* ═══ Success ═══ */
+
+.successBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  padding: 24px 0;
+}
+
+.successIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--mg-pink);
+  color: var(--mg-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.successBox .stepSubtitle {
+  max-width: 400px;
+}
+
+.successBox .buttonPrimary {
+  margin-top: 12px;
+}
+
+/* ═══ Modal ═══ */
+
+.modalTitle {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 16px;
+  color: var(--mg-dark);
+}

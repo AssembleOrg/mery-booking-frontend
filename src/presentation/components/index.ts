@@ -11,6 +11,9 @@ export { ReservaModal } from './ReservaModal';
 export { EstilismoReservaModal } from './EstilismoReservaModal';
 export { ImageCarousel } from './ImageCarousel';
 export { PublicRescheduleBooking } from './PublicRescheduleBooking';
+export { RescheduleConfirmStep } from './RescheduleConfirmStep';
+export type { RescheduleData } from './RescheduleConfirmStep';
+
 export { ProblemReportWidget } from './ProblemReportWidget';
 // Editorial components
 export { SectionTitle } from './SectionTitle';

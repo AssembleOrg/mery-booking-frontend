@@ -1,6 +1,6 @@
 'use client';
 
-import { Drawer, Box, Text } from '@mantine/core';
+import { Drawer, Box } from '@mantine/core';
 import { IconBrandWhatsapp, IconX } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -18,6 +18,7 @@ const menuItems = [
   { label: 'ESTILISMO DE CEJAS & PESTAÑAS', href: '/estilismo-de-cejas' },
   { label: 'PARAMEDICAL TATTOO', href: '/paramedical-tattoo' },
   { label: 'EPITESIS CAP', href: '/epitesis-cap' },
+  { label: 'CAMBIAR RESERVA', href: '/cambiar-reserva' },
   { label: 'MI CUENTA', href: '/login' },
 ];
 

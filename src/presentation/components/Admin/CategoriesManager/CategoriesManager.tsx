@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button, Modal, TextInput, Box, Skeleton, Group } from '@mantine/core';
+import { Button, Modal, TextInput, NumberInput, Box, Skeleton, Group, Text } from '@mantine/core';
+import { Controller } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { CategoryService } from '@/infrastructure/http';
 import type { Category, CreateCategoryDto } from '@/infrastructure/http';
@@ -10,7 +11,10 @@ import classes from './CategoriesManager.module.css';
 
 interface FormData {
   name: string;
+  rescheduleCutoffHours: number;
 }
+
+const DEFAULT_RESCHEDULE_CUTOFF_HOURS = 48;
 
 export function CategoriesManager() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -26,8 +30,14 @@ export function CategoriesManager() {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    defaultValues: {
+      name: '',
+      rescheduleCutoffHours: DEFAULT_RESCHEDULE_CUTOFF_HOURS,
+    },
+  });
 
   useEffect(() => {
     fetchCategories();
@@ -47,20 +57,23 @@ export function CategoriesManager() {
 
   const handleOpenCreate = () => {
     setEditingCategory(null);
-    reset({ name: '' });
+    reset({ name: '', rescheduleCutoffHours: DEFAULT_RESCHEDULE_CUTOFF_HOURS });
     setIsModalOpen(true);
   };
 
   const handleOpenEdit = (category: Category) => {
     setEditingCategory(category);
-    reset({ name: category.name });
+    reset({
+      name: category.name,
+      rescheduleCutoffHours: category.rescheduleCutoffHours ?? DEFAULT_RESCHEDULE_CUTOFF_HOURS,
+    });
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingCategory(null);
-    reset({ name: '' });
+    reset({ name: '', rescheduleCutoffHours: DEFAULT_RESCHEDULE_CUTOFF_HOURS });
   };
 
   const onSubmit = async (data: FormData) => {
@@ -114,6 +127,7 @@ export function CategoriesManager() {
               <Skeleton height={20} width={150} style={{ marginLeft: '1rem' }} />
             </div>
           </td>
+          <td className={classes.tableCell}><Skeleton height={20} width={60} /></td>
           <td className={classes.tableCell}><Skeleton height={20} width={200} /></td>
           <td className={classes.tableCell}>
             <Group gap="xs">
@@ -147,6 +161,7 @@ export function CategoriesManager() {
             <thead>
               <tr>
                 <th>Nombre</th>
+                <th>Cutoff reagendar (hs)</th>
                 <th>Fecha de Creación</th>
                 <th className={classes.actionsHeader}>Acciones</th>
               </tr>
@@ -156,7 +171,7 @@ export function CategoriesManager() {
                 renderSkeletonRows()
               ) : categories.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className={classes.emptyCell}>
+                  <td colSpan={4} className={classes.emptyCell}>
                     No hay categorías creadas
                   </td>
                 </tr>
@@ -170,6 +185,9 @@ export function CategoriesManager() {
                         </div>
                         <div className={classes.categoryName}>{category.name}</div>
                       </div>
+                    </td>
+                    <td className={classes.tableCell}>
+                      {category.rescheduleCutoffHours ?? DEFAULT_RESCHEDULE_CUTOFF_HOURS} hs
                     </td>
                     <td className={classes.tableCell}>
                       {new Date(category.createdAt).toLocaleDateString('es-AR', {
@@ -226,6 +244,37 @@ export function CategoriesManager() {
               })}
               error={errors.name?.message}
             />
+
+            <Controller
+              name="rescheduleCutoffHours"
+              control={control}
+              rules={{
+                required: 'Las horas de cutoff son requeridas',
+                min: { value: 0, message: 'No puede ser negativo' },
+                max: { value: 720, message: 'Máximo 720 horas (30 días)' },
+              }}
+              render={({ field }) => (
+                <NumberInput
+                  label="Cutoff para reagendar (horas)"
+                  description="Horas mínimas de anticipación que necesita el cliente para reagendar una reserva de esta categoría. Por defecto 48hs."
+                  placeholder="48"
+                  min={0}
+                  max={720}
+                  step={1}
+                  allowDecimal={false}
+                  value={field.value}
+                  onChange={(val) =>
+                    field.onChange(typeof val === 'number' ? val : Number(val) || 0)
+                  }
+                  error={errors.rescheduleCutoffHours?.message}
+                />
+              )}
+            />
+
+            <Text size="xs" c="dimmed">
+              Ejemplo: 48 para cosmetic tattoo (cliente debe reagendar con al menos 48hs de
+              anticipación), 24 para estilismo.
+            </Text>
 
             <Box className={classes.modalActions}>
               <Button

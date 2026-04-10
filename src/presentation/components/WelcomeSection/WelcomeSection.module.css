@@ -5,14 +5,15 @@
 }
 
 .rescheduleSection {
-  padding: 4rem 0;
+  padding: clamp(56px, 8vw, 96px) 0;
   background: #fafafa;
+  scroll-margin-top: 80px;
 }
 
 .rescheduleContainer {
-  max-width: 1200px;
+  max-width: 880px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 clamp(16px, 4vw, 32px);
 }
 
 .heroContainer {

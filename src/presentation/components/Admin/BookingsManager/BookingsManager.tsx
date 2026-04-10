@@ -1698,6 +1698,16 @@ export function BookingsManager() {
               {isUpdatingPaidStatus && <Loader size="xs" />}
             </Box>
 
+            {/* Reschedule count */}
+            {selectedBooking.rescheduleCount != null && selectedBooking.rescheduleCount > 0 && (
+              <Box>
+                <Text size="sm" fw={500} c="dimmed" mb={6}>Reagendamientos</Text>
+                <Badge color="pink" variant="light">
+                  Reagendado {selectedBooking.rescheduleCount} {selectedBooking.rescheduleCount === 1 ? 'vez' : 'veces'}
+                </Badge>
+              </Box>
+            )}
+
             {selectedBooking.status !== 'CANCELLED' && (
               <Group gap="sm" grow>
                 <Button
