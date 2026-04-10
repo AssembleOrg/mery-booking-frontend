@@ -434,6 +434,24 @@
   transform: rotate(90deg);
 }
 
+.accordionItemDisabled {
+  opacity: 0.5;
+}
+
+.comingSoonBadgeAccordion {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--mg-gray);
+  background: var(--mg-pink-lighter);
+  padding: 2px 7px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
 .accordionLabel {
   color: var(--mg-dark);
   font-size: 13px;

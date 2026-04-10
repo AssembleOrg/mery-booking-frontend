@@ -43,6 +43,7 @@ interface ServiceOption {
   serviceId?: string;
   employeeId?: string;
   servicePrice?: number;
+  disabled?: boolean;
 }
 
 // Función robusta de resolución de opciones con keyword matching en cadena
@@ -85,21 +86,32 @@ function AccordionItem({
   option,
   isOpen,
   onToggle,
+  disabled,
 }: {
   option: ServiceOption;
   isOpen: boolean;
   onToggle: () => void;
+  disabled?: boolean;
 }) {
   return (
-    <Box className={classes.accordionItem}>
-      <button className={classes.accordionControl} onClick={onToggle}>
-        <IconChevronDown
-          className={`${classes.accordionChevron} ${isOpen ? classes.accordionChevronOpen : ''}`}
-          size={16}
-        />
+    <Box className={`${classes.accordionItem} ${disabled ? classes.accordionItemDisabled : ''}`}>
+      <button
+        className={classes.accordionControl}
+        onClick={disabled ? undefined : onToggle}
+        style={disabled ? { cursor: 'default', opacity: 0.5 } : undefined}
+      >
+        {!disabled && (
+          <IconChevronDown
+            className={`${classes.accordionChevron} ${isOpen ? classes.accordionChevronOpen : ''}`}
+            size={16}
+          />
+        )}
         <span className={classes.accordionLabel}>{option.label}</span>
+        {disabled && (
+          <span className={classes.comingSoonBadgeAccordion}>Próximamente</span>
+        )}
       </button>
-      {isOpen && (
+      {!disabled && isOpen && (
         <Box className={classes.accordionPanel}>
           <Box className={classes.accordionPanelContent}>
             {option.accordionDescriptionNode ? (
@@ -132,6 +144,7 @@ function ServiceAccordion({ options }: { options: ServiceOption[] }) {
           option={option}
           isOpen={openedIndex === index}
           onToggle={() => setOpenedIndex(openedIndex === index ? null : index)}
+          disabled={option.disabled}
         />
       ))}
     </Box>
@@ -167,10 +180,8 @@ const epitesisCapOptions: ServiceOption[] = [
     description:
       'Consulta inicial de manera informativa, donde nos conoceremos y analizaremos tu caso. (Incluye charla informativa, toma de medidas, molde y registro fotográfico).',
     accordionDescription:
-      'Hay procesos que dejan marcas visibles. Y otros que transforman profundamente la forma en que nos miramos.\n\n' +
-      'La epítesis de complejo areola–pezón (CAP) es una prótesis externa, realizada de manera totalmente artesanal y personalizada, diseñada para acompañar procesos post quirúrgicos —como mastectomías u otras intervenciones— devolviendo armonía, naturalidad y una imagen corporal más completa.\n\n' +
-      'Cada pieza es única, y ahí está la magia. Se trabaja respetando tonos de piel, textura, forma, volumen y detalles que hacen que el resultado sea hiperrealista, sutil y profundamente personal.\n\n' +
-      'Importante: Es requisito contar con el aval de tu médico (apto firmado) para realizar este servicio.',
+      'La consulta es el primer paso para conocernos, evaluar tu caso y la zona de aplique de la pieza. También, realizamos un registro fotográfico, toma de medidas y un molde negativo customizado.\n\n' +
+      'Una vez encargada la producción de las piezas, los tiempos regulares de realización de las mismas es de 72 hs hábiles.\n\n',
     priceLabel: 'Consulta obligatoria:',
     priceValue: 'AR$ 50.000.- NO REEMBOLSABLE',
     footerNote:
@@ -180,9 +191,64 @@ const epitesisCapOptions: ServiceOption[] = [
   },
 ];
 
-// Array extendido solo para el acordeón informativo de la página (incluye Doná tu molde sin flujo de booking)
+// Array para el acordeón informativo de la página
 const epitesisAccordionOptions: ServiceOption[] = [
-  ...epitesisCapOptions,
+  {
+    id: 'epitesis-100-customizado',
+    label: 'Servicio 100% customizado',
+    contentType: 'consulta',
+    accordionDescriptionNode: (
+      <>
+        Requiere 2 presencialidades (consulta obligatoria y entrega final, por Mery & Staff). Las piezas se encargan con el compromiso de una seña y conllevan un tiempo de producción de 72 hs hábiles para su entrega con los detalles finales a mano de Mery.
+      </>
+    ),
+  },
+  {
+    id: 'epitesis-semi-customizado',
+    label: 'Servicio semi-customizado',
+    contentType: 'consulta',
+    accordionDescriptionNode: (
+      <>
+        La consulta es virtual, se deberán enviar fotos de la zona para recibir asesoramiento. Las piezas se moldean con un modelo de nuestro catálogo de moldes y se realizan detalles personalizados de color (presencialmente el día de la entrega por Mery). En caso de no contar con un modelo que se acerque al tuyo, podés optar por la opción 100% personalizada.{' '}
+        <br /><br />
+        Es necesario que completes este formulario para que nos pongamos en contacto:{' '}
+        <a
+          href="https://docs.google.com/forms/d/1T91vKMOrMW9FUHpU7i7u7zvpEr4Y1dagktVrIllULdM/edit"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          style={{ color: 'inherit', fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: '2px' }}
+        >
+          Formulario de contacto
+        </a>
+      </>
+    ),
+  },
+  {
+    id: 'epitesis-por-catalogo',
+    label: 'Servicio por catálogo',
+    contentType: 'consulta',
+    disabled: true,
+  },
+  {
+    id: 'epitesis-special-pass',
+    label: 'Special Pass',
+    contentType: 'consulta',
+    accordionDescriptionNode: (
+      <>
+        Pensado especialmente para clientas que nos visitan desde el interior o el exterior del país. Se trata de disponibilidades exclusivas con horarios y honorarios diferenciales. Podés consultarnos valores y tiempo de entrega para la realización de las piezas el mismo día o en el plazo de 24 hs, escribiendo al{' '}
+        <a
+          href="https://wa.me/5491128593378?text=-+Hola+chicas%2C+como+est%C3%A1n%3F+Quisiera+consultar+el+Special+Pass+de+Epitesis+CAP"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          style={{ color: 'inherit', fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: '2px', whiteSpace: 'nowrap' }}
+        >
+          +54 9 11 2859-3378
+        </a>
+      </>
+    ),
+  },
   {
     id: 'epitesis-dona-molde',
     label: 'Epitesis CAP — Doná tu molde',
@@ -372,7 +438,7 @@ export default function EpitesisCapPage() {
 
                   <Box className={classes.optionsSection}>
                     <Text className={classes.optionsTitle}>
-                      Seleccioná la opción deseada para solicitar tu cita:
+                      Seleccioná la opción deseada para más información.
                     </Text>
                     <ServiceAccordion options={epitesisAccordionOptions} />
                   </Box>

@@ -1,6 +1,7 @@
 'use client';
 
 import axios, { AxiosInstance, AxiosError } from 'axios';
+import { attachTracker } from './requestTracker';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -47,6 +48,8 @@ function createClient(): AxiosInstance {
     },
     (error) => Promise.reject(error)
   );
+
+  attachTracker(clientInstance);
 
   // Response interceptor para manejar errores
   clientInstance.interceptors.response.use(

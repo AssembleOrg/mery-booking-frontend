@@ -43,6 +43,7 @@ interface Step5PaymentSummaryProps {
   staffConsultasId?: string;
   selectedEmployeeId?: string | null;
   couponCode?: string;
+  serviceTypeLabel?: string;
   onBack: () => void;
 }
 
@@ -58,6 +59,7 @@ export function Step5PaymentSummary({
   staffConsultasId,
   selectedEmployeeId,
   couponCode,
+  serviceTypeLabel,
   onBack,
 }: Step5PaymentSummaryProps) {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -116,7 +118,9 @@ export function Step5PaymentSummary({
           email: clientData.email,
           phone: clientData.mobile,
           dni: clientData.dni,
-          notes: clientData.notes,
+          notes: serviceTypeLabel
+            ? `[${serviceTypeLabel}]${clientData.notes ? ` ${clientData.notes}` : ''}`
+            : clientData.notes,
           couponCode: couponCode || undefined,
         },
         bookingData: {

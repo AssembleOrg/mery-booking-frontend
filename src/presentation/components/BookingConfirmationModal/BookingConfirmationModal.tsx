@@ -397,11 +397,11 @@ export function BookingConfirmationModal({
                 {couponValidation?.valid ? (
                   <Flex align="center" justify="space-between" gap="sm">
                     <Flex align="center" gap="xs">
-                      <IconGift size={18} color="#ae3ec9" />
+                      <IconGift size={18} color="#EBA2A8" />
                       <Text size="sm" fw={500}>
                         Cupón aplicado:
                       </Text>
-                      <Badge color="grape" variant="light" size="lg">
+                      <Badge color="pink" variant="light" size="lg">
                         {couponValidation.couponCode} — {couponValidation.discountPercent}% OFF
                       </Badge>
                     </Flex>
@@ -417,10 +417,13 @@ export function BookingConfirmationModal({
                       onClick={() => setCouponOpen(!couponOpen)}
                       className={classes.couponToggle}
                     >
-                      <Flex align="center" gap="xs">
-                        <IconGift size={18} />
-                        <Text size="sm" fw={500}>
+                      <Flex align="center" gap="sm">
+                        <IconGift size={22} />
+                        <Text size="sm" fw={700} style={{ letterSpacing: '0.03em' }}>
                           ¿Tenés un cupón de descuento?
+                        </Text>
+                        <Text size="xs" c="dimmed" style={{ marginLeft: 'auto' }}>
+                          {couponOpen ? '▲' : '▼'}
                         </Text>
                       </Flex>
                     </UnstyledButton>
@@ -433,7 +436,7 @@ export function BookingConfirmationModal({
                             setCouponInput(e.currentTarget.value);
                             if (couponValidation) setCouponValidation(null);
                           }}
-                          classNames={{ input: classes.input }}
+                          classNames={{ input: classes.couponInput }}
                           style={{ flex: 1 }}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
@@ -445,11 +448,10 @@ export function BookingConfirmationModal({
                         <Button
                           onClick={handleValidateCoupon}
                           disabled={!couponInput.trim() || isValidatingCoupon}
-                          variant="light"
-                          color="grape"
+                          className={classes.couponValidateBtn}
                           style={{ minWidth: 100 }}
                         >
-                          {isValidatingCoupon ? <Loader size="xs" /> : 'Validar'}
+                          {isValidatingCoupon ? <Loader size="xs" color="white" /> : 'Validar'}
                         </Button>
                       </Flex>
                       {couponValidation && !couponValidation.valid && (

@@ -1,6 +1,7 @@
 'use client';
 
 import axios, { AxiosInstance } from 'axios';
+import { attachTracker } from './requestTracker';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -18,7 +19,7 @@ function createPublicClient(): AxiosInstance {
     },
   });
 
-  // No agregar token de autenticación - este cliente es para endpoints públicos
+  attachTracker(publicClientInstance);
 
   return publicClientInstance;
 }

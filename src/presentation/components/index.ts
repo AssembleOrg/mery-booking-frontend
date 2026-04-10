@@ -11,7 +11,7 @@ export { ReservaModal } from './ReservaModal';
 export { EstilismoReservaModal } from './EstilismoReservaModal';
 export { ImageCarousel } from './ImageCarousel';
 export { PublicRescheduleBooking } from './PublicRescheduleBooking';
-
+export { ProblemReportWidget } from './ProblemReportWidget';
 // Editorial components
 export { SectionTitle } from './SectionTitle';
 export { ServiceCard } from './ServiceCard';

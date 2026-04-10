@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 // Tipos de contenido del acordeón
 export type AccordionContentType =
   | 'consulta-sin-trabajo'
@@ -32,4 +34,7 @@ export interface ServiceOption {
   employeeId?: string; // ID del empleado en el backend
   serviceDuration?: number; // Duración del servicio en minutos
   servicePrice?: number; // Precio del servicio en el backend
+  accordionDescription?: string;
+  accordionDescriptionNode?: ReactNode;
+  disabled?: boolean; // Si está griseado/no interactivo en el acordeón
 }

@@ -147,6 +147,30 @@
   color: var(--mg-gray);
 }
 
+/* Service Type — disabled card (coming soon) */
+.serviceTypeOptionCardDisabled {
+  padding: 16px;
+  border: 2px solid #efefef;
+  border-radius: 8px;
+  cursor: not-allowed;
+  background: #f7f7f7;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.comingSoonBadge {
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #aaa;
+  background: #efefef;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
 /* Professional Card */
 .professionalCard {
   background: var(--mg-pink-light);

@@ -74,20 +74,61 @@
 }
 
 .couponSection {
-  background: #f8f0ff;
-  border: 1px dashed #d0a8e0;
-  border-radius: 10px;
-  padding: 0.85rem 1rem;
+  background: linear-gradient(135deg, #fff5f6 0%, #fce8ea 100%);
+  border: 1.5px dashed #EBA2A8;
+  border-radius: 12px;
+  padding: 0.9rem 1.1rem;
+  box-shadow: 0 2px 10px rgba(235, 162, 168, 0.15);
 }
 
 .couponToggle {
   width: 100%;
-  color: #7c3aed;
-  transition: opacity 0.2s;
+  color: #b85c65;
+  transition: color 0.2s, transform 0.15s;
 }
 
 .couponToggle:hover {
-  opacity: 0.8;
+  color: #9a3d46;
+  transform: translateX(2px);
+}
+
+.couponInput {
+  border: 1.5px solid #F7CBCB !important;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  font-family: var(--font-avant-garde), sans-serif;
+  background: white;
+}
+
+.couponInput:focus {
+  border-color: #EBA2A8 !important;
+  box-shadow: 0 0 0 2px rgba(235, 162, 168, 0.2) !important;
+}
+
+.couponInput::placeholder {
+  color: #c9a0a4;
+  opacity: 1;
+}
+
+.couponValidateBtn {
+  background-color: #EBA2A8 !important;
+  color: white !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em;
+  border: none !important;
+  transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s !important;
+}
+
+.couponValidateBtn:hover:not(:disabled) {
+  background-color: #d48990 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(235, 162, 168, 0.4) !important;
+}
+
+.couponValidateBtn:disabled {
+  background-color: #f0c8cb !important;
+  opacity: 0.7;
 }
 
 .pricingSummary {

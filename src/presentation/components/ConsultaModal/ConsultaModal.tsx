@@ -6,6 +6,7 @@ import { useMediaQuery } from '@mantine/hooks';
 import { AnimatePresence, motion } from 'framer-motion';
 import { StepIndicator } from '../ReservaModal/StepIndicator';
 import { Step1Terms } from '../ReservaModal/Step1Terms';
+import Step2ServiceType from './Step2ServiceType';
 import Step2ConsultaType from './Step2ConsultaType';
 import Step3Calendar from './Step3Calendar';
 import Step4Confirmation from './Step4Confirmation';
@@ -42,6 +43,7 @@ export default function ConsultaModal({
   const isMobile = useMediaQuery('(max-width: 767px)');
   const [currentStep, setCurrentStep] = useState(1);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [selectedServiceType, setSelectedServiceType] = useState<string | null>(null);
   const [selectedOption, setSelectedOption] = useState<ServiceOption | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -71,6 +73,7 @@ export default function ConsultaModal({
   const handleClose = () => {
     setCurrentStep(1);
     setAcceptedTerms(false);
+    setSelectedServiceType(null);
     setSelectedOption(null);
     setSelectedDate(null);
     setSelectedTime(null);
@@ -82,15 +85,23 @@ export default function ConsultaModal({
     onClose();
   };
 
+  const isEpitesis = serviceKey === 'epitesis-cap';
+  const totalSteps = isEpitesis ? 6 : 5;
+
+  // En epitesis: step 4 = calendario. En otros: step 3 = calendario.
+  const calendarStep = isEpitesis ? 4 : 3;
+  // En epitesis: step 5 = confirmación. En otros: step 4 = confirmación.
+  const confirmationStep = isEpitesis ? 5 : 4;
+
   const handleStepComplete = () => {
-    if (currentStep < 5) {
+    if (currentStep < totalSteps) {
       setCurrentStep((prev) => prev + 1);
     }
   };
 
   const handleStepBack = () => {
     if (currentStep > 1) {
-      if (currentStep === 3) {
+      if (currentStep === calendarStep) {
         setStep3ShowCalendar(false);
         setStep3CanContinue(false);
         setSelectedEmployeeId(null);
@@ -99,7 +110,7 @@ export default function ConsultaModal({
     }
   };
 
-  const handleStep3Back = () => {
+  const handleCalendarBack = () => {
     if (step3ShowCalendar) {
       setStep3ShowCalendar(false);
     } else {
@@ -107,7 +118,7 @@ export default function ConsultaModal({
     }
   };
 
-  const handleStep3Continue = () => {
+  const handleCalendarContinue = () => {
     if (!step3ShowCalendar) {
       setStep3ShowCalendar(true);
     } else {
@@ -147,10 +158,11 @@ export default function ConsultaModal({
           <p className={classes.subtitle}>{serviceName}</p>
         </div>
 
-        <StepIndicator currentStep={currentStep} totalSteps={5} />
+        <StepIndicator currentStep={currentStep} totalSteps={totalSteps} />
 
         <div className={classes.contentArea}>
           <AnimatePresence mode="wait">
+            {/* Step 1 — Términos (todos los servicios) */}
             {currentStep === 1 && (
               <motion.div
                 key="step1"
@@ -169,9 +181,27 @@ export default function ConsultaModal({
               </motion.div>
             )}
 
-            {currentStep === 2 && (
+            {/* Step 2 — Tipo de servicio (SOLO epitesis) */}
+            {isEpitesis && currentStep === 2 && (
               <motion.div
-                key="step2"
+                key="step2-service-type"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Step2ServiceType
+                  selectedServiceType={selectedServiceType}
+                  onSelectServiceType={setSelectedServiceType}
+                  onClearServiceType={() => setSelectedServiceType(null)}
+                />
+              </motion.div>
+            )}
+
+            {/* Step 2 (otros) / Step 3 (epitesis) — Tipo de consulta */}
+            {currentStep === (isEpitesis ? 3 : 2) && (
+              <motion.div
+                key="step-consulta-type"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
@@ -185,9 +215,10 @@ export default function ConsultaModal({
               </motion.div>
             )}
 
-            {currentStep === 3 && selectedOption && (
+            {/* Step 3 (otros) / Step 4 (epitesis) — Calendario */}
+            {currentStep === calendarStep && selectedOption && (
               <motion.div
-                key="step3"
+                key="step-calendar"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
@@ -218,9 +249,10 @@ export default function ConsultaModal({
               </motion.div>
             )}
 
-            {currentStep === 4 && selectedOption && selectedDate && selectedTime && (
+            {/* Step 4 (otros) / Step 5 (epitesis) — Confirmación */}
+            {currentStep === confirmationStep && selectedOption && selectedDate && selectedTime && (
               <motion.div
-                key="step4"
+                key="step-confirmation"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
@@ -233,6 +265,7 @@ export default function ConsultaModal({
                   professionalName={selectedProfessionalName}
                   selectedDate={selectedDate}
                   selectedTime={selectedTime}
+                  serviceTypeLabel={isEpitesis ? (selectedServiceType ?? undefined) : undefined}
                   confirmationModalOpened={confirmationModalOpened}
                   onConfirmationModalClose={() => setConfirmationModalOpened(false)}
                   onClientDataCollected={(data) => {
@@ -243,9 +276,10 @@ export default function ConsultaModal({
               </motion.div>
             )}
 
-            {currentStep === 5 && selectedOption && selectedDate && selectedTime && clientData && (
+            {/* Step 5 (otros) / Step 6 (epitesis) — Pago */}
+            {currentStep === totalSteps && selectedOption && selectedDate && selectedTime && clientData && (
               <motion.div
-                key="step5"
+                key="step-payment"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
@@ -263,6 +297,7 @@ export default function ConsultaModal({
                   staffConsultasId={staffConsultasId}
                   selectedEmployeeId={selectedEmployeeId}
                   couponCode={clientData?.couponCode}
+                  serviceTypeLabel={isEpitesis ? (selectedServiceType ?? undefined) : undefined}
                   onBack={handleStepBack}
                 />
               </motion.div>
@@ -270,7 +305,24 @@ export default function ConsultaModal({
           </AnimatePresence>
         </div>
 
-        {currentStep === 2 && (
+        {/* Botón step 2 epitesis — tipo de servicio */}
+        {isEpitesis && currentStep === 2 && (
+          <div className={classes.buttonGroup}>
+            <button type="button" onClick={handleStepBack} className={classes.buttonSecondary}>
+              ATRÁS
+            </button>
+            <button
+              type="button"
+              onClick={handleStepComplete}
+              disabled={!selectedServiceType}
+              className={classes.buttonPrimary}
+            >
+              CONTINUAR
+            </button>
+          </div>
+        )}
+        {/* Botón tipo de consulta: step 2 (otros) o step 3 (epitesis) */}
+        {currentStep === (isEpitesis ? 3 : 2) && (
           <div className={classes.buttonGroup}>
             <button type="button" onClick={handleStepBack} className={classes.buttonSecondary}>
               ATRÁS
@@ -285,14 +337,15 @@ export default function ConsultaModal({
             </button>
           </div>
         )}
-        {currentStep === 3 && (
+        {/* Botón calendario */}
+        {currentStep === calendarStep && (
           <div className={classes.buttonGroup}>
-            <button type="button" onClick={handleStep3Back} className={classes.buttonSecondary}>
+            <button type="button" onClick={handleCalendarBack} className={classes.buttonSecondary}>
               ATRÁS
             </button>
             <button
               type="button"
-              onClick={handleStep3Continue}
+              onClick={handleCalendarContinue}
               disabled={!step3CanContinue}
               className={classes.buttonPrimary}
             >
@@ -300,7 +353,8 @@ export default function ConsultaModal({
             </button>
           </div>
         )}
-        {currentStep === 4 && (
+        {/* Botón confirmación */}
+        {currentStep === confirmationStep && (
           <div className={classes.buttonGroup}>
             <button type="button" onClick={handleStepBack} className={classes.buttonSecondary}>
               ATRÁS
