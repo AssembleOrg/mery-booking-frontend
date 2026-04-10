@@ -93,6 +93,7 @@ export interface BookingResponse {
     fullName: string;
     email: string;
     phone: string;
+    dni: string;
   };
   employee?: {
     id: string;
