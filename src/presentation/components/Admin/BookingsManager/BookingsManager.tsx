@@ -62,7 +62,7 @@ export function BookingsManager() {
   const [clientSearch, setClientSearch] = useState('');
   const [debouncedClientSearch, setDebouncedClientSearch] = useState('');
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
-  
+
   // Estados para modales
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedBooking, setSelectedBooking] = useState<BookingResponse | null>(null);
@@ -98,7 +98,7 @@ export function BookingsManager() {
   const createBookingMutation = useCreateBooking();
   const createClientMutation = useCreateClient();
   const rescheduleBookingMutation = useRescheduleBooking();
-  
+
   // Formulario para crear reserva manual
   interface CreateBookingFormData {
     clientId: string;
@@ -110,7 +110,7 @@ export function BookingsManager() {
     paidStatus: PaidStatus;
     couponCode: string;
   }
-  
+
   const {
     control: createBookingControl,
     handleSubmit: handleCreateBookingSubmit,
@@ -129,11 +129,11 @@ export function BookingsManager() {
       paidStatus: 'UNPAID',
     },
   });
-  
+
   const selectedServiceIdForBooking = watchCreateBooking('serviceId');
   const selectedEmployeeIdForBooking = watchCreateBooking('employeeId');
   const selectedDateForBooking = watchCreateBooking('date');
-  
+
   // Formulario para reagendar reserva
   interface RescheduleBookingFormData {
     employeeId: string;
@@ -141,7 +141,7 @@ export function BookingsManager() {
     date: Date | null;
     startTime: string; // HH:mm
   }
-  
+
   const {
     control: rescheduleControl,
     handleSubmit: handleRescheduleSubmit,
@@ -157,26 +157,26 @@ export function BookingsManager() {
       startTime: '',
     },
   });
-  
+
   const selectedServiceIdForReschedule = watchReschedule('serviceId');
   const selectedEmployeeIdForReschedule = watchReschedule('employeeId');
   const selectedDateForReschedule = watchReschedule('date');
-  
+
   // Calcular fechas para la consulta de disponibilidad (rango de 30 días desde la fecha seleccionada)
-  const availabilityMinDate = selectedDateForBooking 
+  const availabilityMinDate = selectedDateForBooking
     ? dayjs(selectedDateForBooking).format('YYYY-MM-DD')
     : null;
   const availabilityMaxDate = selectedDateForBooking
     ? dayjs(selectedDateForBooking).add(30, 'days').format('YYYY-MM-DD')
     : null;
-  
-  const rescheduleAvailabilityMinDate = selectedDateForReschedule 
+
+  const rescheduleAvailabilityMinDate = selectedDateForReschedule
     ? dayjs(selectedDateForReschedule).format('YYYY-MM-DD')
     : null;
   const rescheduleAvailabilityMaxDate = selectedDateForReschedule
     ? dayjs(selectedDateForReschedule).add(30, 'days').format('YYYY-MM-DD')
     : null;
-  
+
   // Consultar disponibilidad cuando tengamos empleado, servicio y fecha
   const { data: availability, isLoading: isLoadingAvailability } = useAvailability(
     selectedEmployeeIdForBooking || null,
@@ -184,7 +184,7 @@ export function BookingsManager() {
     availabilityMinDate,
     availabilityMaxDate
   );
-  
+
   // Consultar disponibilidad para reagendamiento
   const { data: rescheduleAvailability, isLoading: isLoadingRescheduleAvailability } = useAvailability(
     selectedEmployeeIdForReschedule || null,
@@ -192,7 +192,7 @@ export function BookingsManager() {
     rescheduleAvailabilityMinDate,
     rescheduleAvailabilityMaxDate
   );
-  
+
   // Cargar clientes cuando se abre el modal (sin filtro inicial)
   useEffect(() => {
     if (createBookingModalOpen) {
@@ -204,20 +204,20 @@ export function BookingsManager() {
       setClients([]);
     }
   }, [createBookingModalOpen]);
-  
+
   // Debounce para la búsqueda de clientes cuando el usuario escribe
   useEffect(() => {
     if (!createBookingModalOpen) return;
-    
+
     const trimmedQuery = clientSearchQuery.trim();
-    
+
     // Solo buscar si está vacío (cargar primeros 50) o tiene al menos 2 caracteres
     if (trimmedQuery.length > 0 && trimmedQuery.length < 2) {
       // Si tiene solo 1 carácter, limpiar resultados
       setClients([]);
       return;
     }
-    
+
     const timeoutId = setTimeout(() => {
       const query = trimmedQuery.length >= 2 ? trimmedQuery : undefined;
       searchClients(query);
@@ -225,7 +225,7 @@ export function BookingsManager() {
 
     return () => clearTimeout(timeoutId);
   }, [clientSearchQuery, createBookingModalOpen]);
-  
+
   const searchClients = async (name?: string) => {
     try {
       setIsLoadingClients(true);
@@ -243,7 +243,7 @@ export function BookingsManager() {
       setIsLoadingClients(false);
     }
   };
-  
+
   const onSubmitCreateBooking = async (data: CreateBookingFormData) => {
     if (!data.date) {
       notifications.show({
@@ -253,7 +253,7 @@ export function BookingsManager() {
       });
       return;
     }
-    
+
     try {
       const dateString = dayjs(data.date).format('YYYY-MM-DD');
       await createBookingMutation.mutateAsync({
@@ -267,7 +267,7 @@ export function BookingsManager() {
         notes: data.notes || undefined,
         couponCode: data.couponCode?.trim() || undefined,
       });
-      
+
       setCreateBookingModalOpen(false);
       resetCreateBookingForm();
       setCreateCouponInput('');
@@ -278,7 +278,7 @@ export function BookingsManager() {
       console.error('Error creating booking:', error);
     }
   };
-  
+
   // Generar opciones de hora filtradas por disponibilidad
   const timeOptions = useMemo(() => {
     const allOptions = [];
@@ -288,26 +288,26 @@ export function BookingsManager() {
         allOptions.push({ value: `${hour.toString().padStart(2, '0')}:30`, label: `${hour}:30` });
       }
     }
-    
+
     // Si tenemos disponibilidad y una fecha seleccionada, filtrar las opciones
     if (availability && selectedDateForBooking && selectedEmployeeIdForBooking && selectedServiceIdForBooking) {
       const dateStr = dayjs(selectedDateForBooking).format('YYYY-MM-DD');
       const dayAvailability = availability.availability.find(day => day.date === dateStr);
-      
+
       if (dayAvailability && dayAvailability.slots) {
         // Filtrar solo los slots disponibles
         const availableSlots = dayAvailability.slots
           .filter(slot => slot.available)
           .map(slot => slot.startTime);
-        
+
         return allOptions.filter(option => availableSlots.includes(option.value));
       }
     }
-    
+
     // Si no hay disponibilidad o no hay fecha seleccionada, devolver todas las opciones
     return allOptions;
   }, [availability, selectedDateForBooking, selectedEmployeeIdForBooking, selectedServiceIdForBooking]);
-  
+
   // Generar opciones de hora para reagendamiento
   const rescheduleTimeOptions = useMemo(() => {
     const allOptions = [];
@@ -317,26 +317,26 @@ export function BookingsManager() {
         allOptions.push({ value: `${hour.toString().padStart(2, '0')}:30`, label: `${hour}:30` });
       }
     }
-    
+
     // Si tenemos disponibilidad y una fecha seleccionada, filtrar las opciones
     if (rescheduleAvailability && selectedDateForReschedule && selectedEmployeeIdForReschedule && selectedServiceIdForReschedule) {
       const dateStr = dayjs(selectedDateForReschedule).format('YYYY-MM-DD');
       const dayAvailability = rescheduleAvailability.availability.find(day => day.date === dateStr);
-      
+
       if (dayAvailability && dayAvailability.slots) {
         // Filtrar solo los slots disponibles
         const availableSlots = dayAvailability.slots
           .filter(slot => slot.available)
           .map(slot => slot.startTime);
-        
+
         return allOptions.filter(option => availableSlots.includes(option.value));
       }
     }
-    
+
     // Si no hay disponibilidad o no hay fecha seleccionada, devolver todas las opciones
     return allOptions;
   }, [rescheduleAvailability, selectedDateForReschedule, selectedEmployeeIdForReschedule, selectedServiceIdForReschedule]);
-  
+
   // Inicializar formulario de reagendamiento cuando se abre el modal
   useEffect(() => {
     if (rescheduleModalOpen && selectedBooking) {
@@ -351,7 +351,7 @@ export function BookingsManager() {
       resetRescheduleForm();
     }
   }, [rescheduleModalOpen, selectedBooking, setRescheduleValue, resetRescheduleForm]);
-  
+
   const onSubmitReschedule = async (data: RescheduleBookingFormData) => {
     if (!selectedBooking || !data.date) {
       notifications.show({
@@ -361,7 +361,7 @@ export function BookingsManager() {
       });
       return;
     }
-    
+
     try {
       const dateString = dayjs(data.date).format('YYYY-MM-DD');
       await rescheduleBookingMutation.mutateAsync({
@@ -373,7 +373,7 @@ export function BookingsManager() {
           serviceId: data.serviceId, // Opcional para admin, pero lo incluimos
         },
       });
-      
+
       setRescheduleModalOpen(false);
       setBookingDetailsModalOpen(false);
       setSelectedBooking(null);
@@ -384,7 +384,7 @@ export function BookingsManager() {
       console.error('Error rescheduling booking:', error);
     }
   };
-  
+
   const handleRescheduleClick = () => {
     setRescheduleModalOpen(true);
   };
@@ -456,7 +456,7 @@ export function BookingsManager() {
 
   const updateDateRange = () => {
     const today = new Date();
-    
+
     switch (calendarView) {
       case 'today':
         setStartDate(today);
@@ -636,28 +636,28 @@ export function BookingsManager() {
     const startingDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Lunes = 0
 
     const days: (Date | null)[] = [];
-    
+
     // Días del mes anterior (para completar la primera semana)
     const prevMonth = month === 0 ? 11 : month - 1;
     const prevYear = month === 0 ? year - 1 : year;
     const prevMonthLastDay = new Date(prevYear, prevMonth + 1, 0).getDate();
-    
+
     for (let i = startingDayOfWeek - 1; i >= 0; i--) {
       const date = new Date(prevYear, prevMonth, prevMonthLastDay - i);
       days.push(date);
     }
-    
+
     // Días del mes actual
     for (let day = 1; day <= daysInMonth; day++) {
       days.push(new Date(year, month, day));
     }
-    
+
     // Días del mes siguiente (para completar la última semana)
     const remainingDays = 42 - days.length; // 6 semanas * 7 días
     for (let day = 1; day <= remainingDays; day++) {
       days.push(new Date(year, month + 1, day));
     }
-    
+
     return days;
   };
 
@@ -778,14 +778,14 @@ export function BookingsManager() {
   // Helper para formatear una fecha YYYY-MM-DD a string localizado sin problemas de zona horaria
   const formatDateString = (dateStr: string): string => {
     if (!dateStr) return 'Fecha no disponible';
-    
+
     // Parsear la fecha manualmente para evitar problemas de zona horaria
     const [year, month, day] = dateStr.split('-').map(Number);
     if (!year || !month || !day) return 'Fecha no disponible';
-    
+
     // Crear la fecha usando los componentes directamente (evita problemas de UTC)
     const date = new Date(year, month - 1, day);
-    
+
     return date.toLocaleDateString('es-AR', {
       weekday: 'long',
       year: 'numeric',
@@ -997,74 +997,74 @@ export function BookingsManager() {
                     ))}
                   </Box>
 
-                {/* Filas de horarios con línea de hora actual */}
-                <Box className={classes.dayCalendarBody} style={{ position: 'relative' }}>
-                  {/* Línea roja de hora actual */}
-                  {getCurrentTimePosition() !== null && (
-                    <Box
-                      className={classes.currentTimeLine}
-                      style={{
-                        top: `${getCurrentTimePosition()}px`,
-                      }}
-                    >
-                      <Box className={classes.currentTimeIndicator}></Box>
-                    </Box>
-                  )}
-
-                  {timeSlots.map((hour) => (
-                    <Box key={hour} className={classes.dayCalendarRow}>
-                      <Box className={classes.timeColumn}>
-                        <Text size="sm" fw={500}>
-                          {formatTime(hour)}
-                        </Text>
+                  {/* Filas de horarios con línea de hora actual */}
+                  <Box className={classes.dayCalendarBody} style={{ position: 'relative' }}>
+                    {/* Línea roja de hora actual */}
+                    {getCurrentTimePosition() !== null && (
+                      <Box
+                        className={classes.currentTimeLine}
+                        style={{
+                          top: `${getCurrentTimePosition()}px`,
+                        }}
+                      >
+                        <Box className={classes.currentTimeIndicator}></Box>
                       </Box>
-                      {getEmployeesWithBookingsToday().map((employee) => {
-                        const today = new Date();
-                        const slotBookings = getBookingsForEmployeeAndTime(
-                          employee.id,
-                          hour,
-                          today
-                        );
+                    )}
 
-                        return (
-                          <Box key={employee.id} className={classes.dayCalendarCell}>
-                            {slotBookings.map((booking) => {
-                              const startTime = getBookingStartTime(booking);
-                              const endTime = getBookingEndTime(booking);
-                              const duration = calculateDuration(startTime, endTime);
-                              const height = duration > 0 ? `${duration * 80 - 4}px` : '76px';
-                              return (
-                                <Paper
-                                  key={booking.id}
-                                  p="xs"
-                                  className={classes.bookingCard}
-                                  style={{
-                                    backgroundColor: '#FBE8EA',
-                                    minHeight: height,
-                                    height: duration > 1 ? height : 'auto',
-                                    cursor: 'pointer',
-                                  }}
-                                  onClick={() => handleBookingClick(booking)}
-                                >
-                                  <Text size="xs" fw={500} lineClamp={1} title={booking.client?.fullName || 'Cliente'}>
-                                    {hasActiveCoupon(booking) ? '🎁 ' : ''}
-                                    {truncateText(booking.client?.fullName || 'Sin nombre', hasActiveCoupon(booking) ? 12 : 15)}
-                                  </Text>
-                                  {duration > 1 && (
-                                    <Text size="xs" c="dimmed" mt={2}>
-                                      {startTime} - {endTime}
+                    {timeSlots.map((hour) => (
+                      <Box key={hour} className={classes.dayCalendarRow}>
+                        <Box className={classes.timeColumn}>
+                          <Text size="sm" fw={500}>
+                            {formatTime(hour)}
+                          </Text>
+                        </Box>
+                        {getEmployeesWithBookingsToday().map((employee) => {
+                          const today = new Date();
+                          const slotBookings = getBookingsForEmployeeAndTime(
+                            employee.id,
+                            hour,
+                            today
+                          );
+
+                          return (
+                            <Box key={employee.id} className={classes.dayCalendarCell}>
+                              {slotBookings.map((booking) => {
+                                const startTime = getBookingStartTime(booking);
+                                const endTime = getBookingEndTime(booking);
+                                const duration = calculateDuration(startTime, endTime);
+                                const height = duration > 0 ? `${duration * 80 - 4}px` : '76px';
+                                return (
+                                  <Paper
+                                    key={booking.id}
+                                    p="xs"
+                                    className={classes.bookingCard}
+                                    style={{
+                                      backgroundColor: '#FBE8EA',
+                                      minHeight: height,
+                                      height: duration > 1 ? height : 'auto',
+                                      cursor: 'pointer',
+                                    }}
+                                    onClick={() => handleBookingClick(booking)}
+                                  >
+                                    <Text size="xs" fw={500} lineClamp={1} title={booking.client?.fullName || 'Cliente'}>
+                                      {hasActiveCoupon(booking) ? '🎁 ' : ''}
+                                      {truncateText(booking.client?.fullName || 'Sin nombre', hasActiveCoupon(booking) ? 12 : 15)}
                                     </Text>
-                                  )}
-                                </Paper>
-                              );
-                            })}
-                          </Box>
-                        );
-                      })}
-                    </Box>
-                  ))}
+                                    {duration > 1 && (
+                                      <Text size="xs" c="dimmed" mt={2}>
+                                        {startTime} - {endTime}
+                                      </Text>
+                                    )}
+                                  </Paper>
+                                );
+                              })}
+                            </Box>
+                          );
+                        })}
+                      </Box>
+                    ))}
+                  </Box>
                 </Box>
-              </Box>
               )}
             </ScrollArea>
           ) : calendarView === 'month' ? (
@@ -1100,7 +1100,7 @@ export function BookingsManager() {
               <Box className={classes.monthGrid}>
                 {monthDays.map((day, index) => {
                   if (!day) return <Box key={index} className={classes.monthDayCell} />;
-                  
+
                   const dateStr = formatDateToString(day);
                   const isCurrentMonth = day.getMonth() === currentMonth.getMonth();
                   const isToday = formatDateToString(new Date()) === dateStr;
@@ -1318,28 +1318,28 @@ export function BookingsManager() {
                       <Table.Td>
                         {startTime && endTime ? `${startTime} - ${endTime}` : '-'}
                       </Table.Td>
-                    <Table.Td
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => handleBookingClick(booking)}
-                    >
-                      {hasActiveCoupon(booking) ? '🎁 ' : ''}{booking.client?.fullName || 'Sin nombre'}
-                    </Table.Td>
-                    <Table.Td>{booking.employee?.fullName || 'Sin empleado'}</Table.Td>
-                    <Table.Td>{booking.service?.name || 'Sin servicio'}</Table.Td>
-                    <Table.Td>
-                      <Badge
-                        color={getStatusColor(booking.status)}
-                        variant="light"
+                      <Table.Td
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => handleBookingClick(booking)}
                       >
-                        {getStatusLabel(booking.status)}
-                      </Badge>
-                    </Table.Td>
-                    <Table.Td>
-                      <Badge color={booking.paid ? 'pink' : 'gray'} variant="light">
-                        {booking.paid ? 'Sí' : 'No'}
-                      </Badge>
-                    </Table.Td>
-                  </Table.Tr>
+                        {hasActiveCoupon(booking) ? '🎁 ' : ''}{booking.client?.fullName || 'Sin nombre'}
+                      </Table.Td>
+                      <Table.Td>{booking.employee?.fullName || 'Sin empleado'}</Table.Td>
+                      <Table.Td>{booking.service?.name || 'Sin servicio'}</Table.Td>
+                      <Table.Td>
+                        <Badge
+                          color={getStatusColor(booking.status)}
+                          variant="light"
+                        >
+                          {getStatusLabel(booking.status)}
+                        </Badge>
+                      </Table.Td>
+                      <Table.Td>
+                        <Badge color={booking.paid ? 'pink' : 'gray'} variant="light">
+                          {booking.paid ? 'Sí' : 'No'}
+                        </Badge>
+                      </Table.Td>
+                    </Table.Tr>
                   );
                 })
               )}
@@ -1355,11 +1355,11 @@ export function BookingsManager() {
           setDayBookingsModalOpen(false);
           setSelectedDate(null);
         }}
-        title={selectedDate ? `Reservas del ${selectedDate.toLocaleDateString('es-AR', { 
-          weekday: 'long', 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
+        title={selectedDate ? `Reservas del ${selectedDate.toLocaleDateString('es-AR', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
         })}` : 'Reservas del día'}
         size="lg"
       >
@@ -1424,6 +1424,7 @@ export function BookingsManager() {
               <Text size="md" fw={600}>{selectedBooking.client?.fullName || 'Sin nombre'}</Text>
               <Text size="xs" c="dimmed">{selectedBooking.client?.email || 'Sin email'}</Text>
               <Text size="xs" c="dimmed">{selectedBooking.client?.phone || 'Sin teléfono'}</Text>
+              <Text size="xs" c="dimmed">{selectedBooking.client?.dni || 'Sin DNI'}</Text>
             </Box>
 
             <Divider />
@@ -1434,8 +1435,8 @@ export function BookingsManager() {
                 {formatDateString(getBookingDate(selectedBooking))}
               </Text>
               <Text size="md" fw={600}>
-              {getBookingStartTime(selectedBooking)} - {getBookingEndTime(selectedBooking)}
-            </Text>
+                {getBookingStartTime(selectedBooking)} - {getBookingEndTime(selectedBooking)}
+              </Text>
             </Box>
 
             <Divider />
@@ -1817,7 +1818,7 @@ export function BookingsManager() {
             <Controller
               name="startTime"
               control={createBookingControl}
-              rules={{ 
+              rules={{
                 required: 'La hora es requerida',
                 pattern: {
                   value: /^([0-1][0-9]|2[0-3]):(00|30)$/,
@@ -1829,13 +1830,13 @@ export function BookingsManager() {
                   {...field}
                   label="* Hora de inicio"
                   placeholder={
-                    isLoadingAvailability 
-                      ? "Cargando disponibilidad..." 
+                    isLoadingAvailability
+                      ? "Cargando disponibilidad..."
                       : !selectedDateForBooking || !selectedEmployeeIdForBooking || !selectedServiceIdForBooking
-                      ? "Selecciona fecha, empleado y servicio primero"
-                      : timeOptions.length === 0
-                      ? "No hay horarios disponibles para esta fecha"
-                      : "Selecciona una hora"
+                        ? "Selecciona fecha, empleado y servicio primero"
+                        : timeOptions.length === 0
+                          ? "No hay horarios disponibles para esta fecha"
+                          : "Selecciona una hora"
                   }
                   data={timeOptions}
                   error={createBookingErrors.startTime?.message}
@@ -2047,7 +2048,7 @@ export function BookingsManager() {
             <Controller
               name="startTime"
               control={rescheduleControl}
-              rules={{ 
+              rules={{
                 required: 'La hora es requerida',
                 pattern: {
                   value: /^([0-1][0-9]|2[0-3]):(00|30)$/,
@@ -2059,13 +2060,13 @@ export function BookingsManager() {
                   {...field}
                   label="* Hora de inicio"
                   placeholder={
-                    isLoadingRescheduleAvailability 
-                      ? "Cargando disponibilidad..." 
+                    isLoadingRescheduleAvailability
+                      ? "Cargando disponibilidad..."
                       : !selectedDateForReschedule || !selectedEmployeeIdForReschedule || !selectedServiceIdForReschedule
-                      ? "Selecciona fecha, empleado y servicio primero"
-                      : rescheduleTimeOptions.length === 0
-                      ? "No hay horarios disponibles para esta fecha"
-                      : "Selecciona una hora"
+                        ? "Selecciona fecha, empleado y servicio primero"
+                        : rescheduleTimeOptions.length === 0
+                          ? "No hay horarios disponibles para esta fecha"
+                          : "Selecciona una hora"
                   }
                   data={rescheduleTimeOptions}
                   error={rescheduleErrors.startTime?.message}
