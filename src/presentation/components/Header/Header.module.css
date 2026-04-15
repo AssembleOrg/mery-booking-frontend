@@ -158,8 +158,8 @@
    RESERVAR pero misma altura visual. Cambia colores según el header esté
    sobre fondo oscuro (top) o blanco (scrolled). */
 .ctaButtonSecondary {
-  background: transparent;
-  color: var(--mg-dark);
+  background: var(--mg-pink);
+  color: var(--mg-white);
   border: 1px solid var(--mg-pink);
   appearance: none;
   cursor: pointer;
@@ -178,20 +178,22 @@
 }
 
 .ctaButtonSecondary:hover {
-  background: var(--mg-pink);
+  background: var(--mg-dark);
   color: var(--mg-white);
+  border-color: var(--mg-dark);
   transform: translateY(-2px);
 }
 
 .scrolled .ctaButtonSecondary {
-  color: var(--mg-pink);
+  background: var(--mg-pink);
+  color: var(--mg-white);
   border-color: var(--mg-pink);
 }
 
 .scrolled .ctaButtonSecondary:hover {
-  background: var(--mg-pink);
+  background: var(--mg-dark);
   color: var(--mg-white);
-  border-color: var(--mg-pink);
+  border-color: var(--mg-dark);
 }
 
 .menuButton {

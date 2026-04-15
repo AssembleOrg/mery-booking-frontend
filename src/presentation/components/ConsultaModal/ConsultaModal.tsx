@@ -208,7 +208,11 @@ export default function ConsultaModal({
                 transition={{ duration: 0.3 }}
               >
                 <Step2ConsultaType
-                  consultaOptions={consultaOptions}
+                  consultaOptions={
+                    isEpitesis && selectedServiceType === 'Servicio semi-customizado'
+                      ? consultaOptions.filter((opt) => opt.id === 'epitesis-agenda-entrega')
+                      : consultaOptions
+                  }
                   selectedOption={selectedOption}
                   onSelectOption={setSelectedOption}
                 />

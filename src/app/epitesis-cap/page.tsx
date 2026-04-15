@@ -53,8 +53,8 @@ function getEpitesisOptionsWithIds(
   serviceEmployees: Map<string, Employee[]>
 ): ServiceOption[] {
   return options.map((option) => {
-    // Consulta Previa — resolución via serviceName exacto (con includes bidireccional)
-    if (option.contentType === 'consulta' && option.id === 'epitesis-consulta' && option.serviceName) {
+    // Resolución via serviceName exacto (con includes bidireccional) — aplica a todas las opciones con serviceName
+    if (option.contentType === 'consulta' && option.serviceName) {
       const consultaService = allServices.find((s) => {
         const nameLower = s.name.toLowerCase();
         const optionNameLower = option.serviceName!.toLowerCase();
@@ -169,10 +169,23 @@ const EPITESIS_DESCRIPTION_BLOCKS: DescriptionBlock[] = [
     kind: 'paragraph',
     text: 'Cada pieza es única, y ahí está la magia. Se trabaja respetando tonos de piel, textura, forma, volumen y detalles que hacen que el resultado sea hiperrealista, sutil y profundamente personal.',
   },
+    {
+    kind: 'paragraph',
+    text: 'Más información y valores en el PDF',
+  },
 ];
 
 // Static service options array (solo las que van al flujo de booking)
 const epitesisCapOptions: ServiceOption[] = [
+  {
+    id: 'epitesis-agenda-entrega',
+    label: 'Entrega de Epítesis',
+    contentType: 'consulta',
+    description: 'Agendá la entrega de tu epítesis personalizada.',
+    priceValue: 'AR$ 150.000.-',
+    serviceName: 'Entrega de Epítesis',
+    serviceDuration: 60,
+  },
   {
     id: 'epitesis-consulta',
     label: 'Epitesis CAP — Consulta Previa Obligatoria',
@@ -269,7 +282,7 @@ const epitesisAccordionOptions: ServiceOption[] = [
 
         {/* PDF download section */}
         <span className={classes.descriptionModalDownloadSection} style={{ marginTop: 16, display: 'block' }}>
-          <span className={classes.descriptionModalDownloadLabel}>Más información:</span>
+          <span className={classes.descriptionModalDownloadLabel}>Más información y valores:</span>
           <span className={classes.descriptionModalActions} style={{ display: 'block' }}>
             <a
               href="/descargables/cap-presentacion.pdf"
@@ -417,7 +430,7 @@ export default function EpitesisCapPage() {
                       className={classes.ctaButton}
                       onClick={openEpitesisInfo}
                     >
-                      MÁS INFO
+                      MÁS INFO y VALORES
                     </button>
                     <button
                       className={classes.ctaButtonSecondary}
@@ -468,7 +481,7 @@ export default function EpitesisCapPage() {
       >
         {/* PDF download section */}
         <div className={classes.descriptionModalDownloadSection}>
-          <span className={classes.descriptionModalDownloadLabel}>Más información:</span>
+          <span className={classes.descriptionModalDownloadLabel}>Más información y valores:</span>
           <div className={classes.descriptionModalActions}>
             <a
               href="/descargables/cap-presentacion.pdf"
