@@ -76,21 +76,6 @@ export function Step2SessionType({
           ))}
         </Stack>
 
-        <div className={classes.buttonGroup}>
-          <button
-            onClick={onBack}
-            className={classes.buttonSecondary}
-          >
-            ATRÁS
-          </button>
-          <button
-            onClick={onContinue}
-            disabled={!selectedOption}
-            className={classes.buttonPrimary}
-          >
-            CONTINUAR
-          </button>
-        </div>
       </Stack>
     </motion.div>
   );

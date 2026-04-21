@@ -239,3 +239,9 @@
     font-size: 60px;
   }
 }
+
+@media (max-width: 380px) {
+  .calendarColumn {
+    padding: 16px 8px;
+  }
+}

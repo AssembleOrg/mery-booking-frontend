@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { Text, Stack } from '@mantine/core';
 import { motion } from 'framer-motion';
 import { DateTimeSelector } from '@/presentation/components';
@@ -20,8 +20,10 @@ interface Step3CalendarProps {
   selectedTime: string | null;
   onSelectDateTime: (date: Date, time: string) => void;
   onEmployeeResolved?: (employeeId: string | null) => void;
-  onContinue: () => void;
   onBack: () => void;
+  showCalendar: boolean;
+  onShowCalendarChange: (show: boolean) => void;
+  onStep3IdsResolved: (employeeId: string | null, serviceId: string | null) => void;
 }
 
 export function Step3Calendar({
@@ -34,15 +36,15 @@ export function Step3Calendar({
   selectedTime,
   onSelectDateTime,
   onEmployeeResolved,
-  onContinue,
   onBack,
+  showCalendar,
+  onShowCalendarChange,
+  onStep3IdsResolved,
 }: Step3CalendarProps) {
   // IDs de constantes como fallback
   const STAFF_CONSULTAS_FALLBACK_ID = EMPLOYEE_IDS.STAFF_CONSULTAS;
   const MERY_GARCIA_FALLBACK_ID = EMPLOYEE_IDS.MERY_GARCIA;
 
-  // Estado para controlar si se muestra el calendario (como en dropdown flow)
-  const [showCalendar, setShowCalendar] = useState(false);
 
   // Buscar service dinámicamente por label
   const currentService = useMemo(() => {
@@ -81,6 +83,10 @@ export function Step3Calendar({
     onEmployeeResolved?.(employeeId || null);
   }, [employeeId, onEmployeeResolved]);
 
+  useEffect(() => {
+    onStep3IdsResolved(employeeId || null, serviceId);
+  }, [employeeId, serviceId]);
+
   // Determinar nombre del profesional
   const professionalName = useMemo(() => {
     // Verificamos contra props O contra los fallbacks (fix visual crucial cuando falla la API)
@@ -97,21 +103,9 @@ export function Step3Calendar({
     return employee?.fullName || 'Profesional';
   }, [employeeId, staffConsultasId, meryGarciaId, employees]);
 
-  // Handler para mostrar el calendario
-  const handleContinue = () => {
-    if (employeeId && serviceId) {
-      setShowCalendar(true);
-    }
-  };
-
-  // Handler para volver desde el calendario a selección de profesional
-  const handleBackFromCalendar = () => {
-    setShowCalendar(false);
-  };
-
   // Handler para volver a Step 2
   const handleBackToStep2 = () => {
-    setShowCalendar(false);
+    onShowCalendarChange(false);
     onBack();
   };
 
@@ -137,24 +131,6 @@ export function Step3Calendar({
           <div className={classes.professionalCard}>
             <Text className={classes.professionalLabel}>Profesional:</Text>
             <Text className={classes.professionalName}>{professionalName}</Text>
-          </div>
-
-          <div className={classes.buttonGroup}>
-            <button
-              type="button"
-              onClick={handleBackToStep2}
-              className={classes.buttonSecondary}
-            >
-              ATRÁS
-            </button>
-            <button
-              type="button"
-              onClick={handleContinue}
-              disabled={!employeeId || !serviceId}
-              className={classes.buttonPrimary}
-            >
-              CONTINUAR
-            </button>
           </div>
         </Stack>
       </motion.div>
@@ -184,24 +160,6 @@ export function Step3Calendar({
           serviceDuration={serviceDuration}
           onSelectDateTime={onSelectDateTime}
         />
-
-        <div className={classes.buttonGroup}>
-          <button
-            type="button"
-            onClick={handleBackToStep2}
-            className={classes.buttonSecondary}
-          >
-            ATRÁS
-          </button>
-          <button
-            type="button"
-            onClick={onContinue}
-            disabled={!selectedDate || !selectedTime}
-            className={classes.buttonPrimary}
-          >
-            CONTINUAR
-          </button>
-        </div>
       </Stack>
     </motion.div>
   );

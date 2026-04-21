@@ -57,6 +57,9 @@ export function ReservaModal({
     couponCode?: string;
   } | null>(null);
   const [confirmationModalOpened, setConfirmationModalOpened] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [step3EmployeeId, setStep3EmployeeId] = useState<string | null>(null);
+  const [step3ServiceId, setStep3ServiceId] = useState<string | null>(null);
 
   const handleClose = () => {
     // Reset estado al cerrar
@@ -68,6 +71,9 @@ export function ReservaModal({
     setSelectedEmployeeId(null);
     setClientData(null);
     setConfirmationModalOpened(false);
+    setShowCalendar(false);
+    setStep3EmployeeId(null);
+    setStep3ServiceId(null);
     onClose();
   };
 
@@ -79,6 +85,7 @@ export function ReservaModal({
 
   const handleStepBack = () => {
     if (currentStep > 1) {
+      if (currentStep === 3) setShowCalendar(false);
       setCurrentStep(prev => prev - 1);
     }
   };
@@ -149,8 +156,13 @@ export function ReservaModal({
                   setSelectedTime(time);
                 }}
                 onEmployeeResolved={setSelectedEmployeeId}
-                onContinue={handleStepComplete}
                 onBack={handleStepBack}
+                showCalendar={showCalendar}
+                onShowCalendarChange={setShowCalendar}
+                onStep3IdsResolved={(empId, svcId) => {
+                  setStep3EmployeeId(empId);
+                  setStep3ServiceId(svcId);
+                }}
               />
             )}
 
@@ -195,6 +207,70 @@ export function ReservaModal({
             )}
           </AnimatePresence>
         </div>
+
+        {currentStep === 1 && (
+          <div className={classes.buttonGroup}>
+            <button type="button" onClick={handleClose} className={classes.buttonSecondary}>
+              CANCELAR
+            </button>
+            <button
+              type="button"
+              onClick={handleStepComplete}
+              disabled={!acceptedTerms}
+              className={classes.buttonPrimary}
+            >
+              CONTINUAR
+            </button>
+          </div>
+        )}
+
+        {currentStep === 2 && (
+          <div className={classes.buttonGroup}>
+            <button type="button" onClick={handleStepBack} className={classes.buttonSecondary}>
+              ATRÁS
+            </button>
+            <button
+              type="button"
+              onClick={handleStepComplete}
+              disabled={!selectedOption}
+              className={classes.buttonPrimary}
+            >
+              CONTINUAR
+            </button>
+          </div>
+        )}
+
+        {currentStep === 3 && !showCalendar && (
+          <div className={classes.buttonGroup}>
+            <button type="button" onClick={handleStepBack} className={classes.buttonSecondary}>
+              ATRÁS
+            </button>
+            <button
+              type="button"
+              onClick={() => { if (step3EmployeeId && step3ServiceId) setShowCalendar(true); }}
+              disabled={!step3EmployeeId || !step3ServiceId}
+              className={classes.buttonPrimary}
+            >
+              CONTINUAR
+            </button>
+          </div>
+        )}
+
+        {currentStep === 3 && showCalendar && (
+          <div className={classes.buttonGroup}>
+            <button type="button" onClick={() => setShowCalendar(false)} className={classes.buttonSecondary}>
+              ATRÁS
+            </button>
+            <button
+              type="button"
+              onClick={handleStepComplete}
+              disabled={!selectedDate || !selectedTime}
+              className={classes.buttonPrimary}
+            >
+              CONTINUAR
+            </button>
+          </div>
+        )}
 
         {currentStep === 4 && (
           <div className={classes.buttonGroup}>

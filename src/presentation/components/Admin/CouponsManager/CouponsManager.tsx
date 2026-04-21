@@ -19,6 +19,12 @@ import {
   Divider,
   SimpleGrid,
 } from '@mantine/core';
+import {
+  IconPencil,
+  IconTrash,
+  IconPlayerPause,
+  IconPlayerPlay,
+} from '@tabler/icons-react';
 import { useMediaQuery } from '@mantine/hooks';
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import { useForm, Controller } from 'react-hook-form';
@@ -280,7 +286,13 @@ export function CouponsManager() {
     <Box className={classes.container}>
       <div className={classes.header}>
         <h2 className={classes.title}>Cupones de Descuento</h2>
-        <Button onClick={handleOpenCreate} color="grape">+ Nuevo Cupón</Button>
+        <Button
+          onClick={handleOpenCreate}
+          variant="filled"
+          style={{ backgroundColor: 'var(--mg-pink)', color: 'white', border: 'none' }}
+        >
+          + Nuevo Cupón
+        </Button>
       </div>
 
       {isLoading ? (
@@ -307,7 +319,7 @@ export function CouponsManager() {
               {coupons.map((coupon) => (
                 <tr key={coupon.id}>
                   <td><strong>{coupon.code}</strong></td>
-                  <td><Badge color="grape" variant="light">{coupon.discountPercent}%</Badge></td>
+                  <td><span className={classes.discountBadge}>{coupon.discountPercent}%</span></td>
                   <td>
                     {coupon.services.map((s) => (
                       <span key={s.id} className={classes.serviceBadge}>{s.name}</span>
@@ -322,22 +334,38 @@ export function CouponsManager() {
                     {coupon.currentUses}{coupon.maxUses != null ? ` / ${coupon.maxUses}` : ' / \u221E'}
                   </td>
                   <td>
-                    <Badge color={coupon.isActive ? 'green' : 'gray'} variant="light">
-                      {coupon.isActive ? 'Sí' : 'No'}
-                    </Badge>
+                    {coupon.isActive ? (
+                      <span className={classes.statusActive}>
+                        <span className={classes.statusDot} />
+                        Activo
+                      </span>
+                    ) : (
+                      <span className={classes.statusInactive}>
+                        <span className={classes.statusDot} />
+                        Inactivo
+                      </span>
+                    )}
                   </td>
                   <td>
                     <div className={classes.actions}>
-                      <button className={classes.editBtn} onClick={() => handleOpenEdit(coupon)}>Editar</button>
+                      <button className={classes.editBtn} onClick={() => handleOpenEdit(coupon)}>
+                        <IconPencil size={13} strokeWidth={1.8} />
+                        Editar
+                      </button>
                       {coupon.currentUses > 0 ? (
                         <button
-                          className={coupon.isActive ? classes.deleteBtn : classes.editBtn}
+                          className={coupon.isActive ? classes.deactivateBtn : classes.activateBtn}
                           onClick={() => handleToggleActive(coupon)}
                         >
-                          {coupon.isActive ? 'Desactivar' : 'Activar'}
+                          {coupon.isActive
+                            ? <><IconPlayerPause size={13} strokeWidth={1.8} />Desactivar</>
+                            : <><IconPlayerPlay size={13} strokeWidth={1.8} />Activar</>}
                         </button>
                       ) : (
-                        <button className={classes.deleteBtn} onClick={() => { setCouponToDelete(coupon); setDeleteModalOpen(true); }}>Eliminar</button>
+                        <button className={classes.deleteBtn} onClick={() => { setCouponToDelete(coupon); setDeleteModalOpen(true); }}>
+                          <IconTrash size={13} strokeWidth={1.8} />
+                          Eliminar
+                        </button>
                       )}
                     </div>
                   </td>
@@ -516,10 +544,10 @@ export function CouponsManager() {
                                       {service.name}
                                     </Text>
                                     <Group gap="xs" mt={4}>
-                                      <Badge color="grape" variant="light" size="sm">
+                                      <Badge color="gray" variant="light" size="sm">
                                         ${Number(service.price).toLocaleString('es-AR')}
                                       </Badge>
-                                      <Badge color="grape" variant="light" size="sm">
+                                      <Badge color="gray" variant="light" size="sm">
                                         {service.duration} min
                                       </Badge>
                                     </Group>
@@ -557,7 +585,12 @@ export function CouponsManager() {
 
             <Group justify="flex-end" mt="md">
               <Button variant="default" onClick={handleCloseModal}>Cancelar</Button>
-              <Button type="submit" loading={isSubmitting} color="grape">
+              <Button
+                type="submit"
+                loading={isSubmitting}
+                variant="filled"
+                style={{ backgroundColor: 'var(--mg-pink)', color: 'white', border: 'none' }}
+              >
                 {editingCoupon ? 'Guardar Cambios' : 'Crear Cupón'}
               </Button>
             </Group>

@@ -126,21 +126,6 @@ export function Step1Terms({
           }}
         />
 
-        <div className={`${classes.buttonGroup} ${classes.desktopOnly}`}>
-          <button
-            onClick={onCancel}
-            className={classes.buttonSecondary}
-          >
-            CANCELAR
-          </button>
-          <button
-            onClick={onContinue}
-            disabled={!acceptedTerms}
-            className={classes.buttonPrimary}
-          >
-            CONTINUAR
-          </button>
-        </div>
       </Stack>
     </motion.div>
   );

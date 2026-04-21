@@ -157,6 +157,22 @@ export function EstilismoReservaModal({
           </AnimatePresence>
         </div>
 
+        {currentStep === 1 && (
+          <div className={classes.buttonGroup}>
+            <button type="button" onClick={handleClose} className={classes.buttonSecondary}>
+              CANCELAR
+            </button>
+            <button
+              type="button"
+              onClick={handleStepComplete}
+              disabled={!acceptedTerms}
+              className={classes.buttonPrimary}
+            >
+              CONTINUAR
+            </button>
+          </div>
+        )}
+
         {currentStep === 2 && (
           <div className={classes.buttonGroup}>
             <button type="button" onClick={handleStepBack} className={classes.buttonSecondary}>

@@ -309,6 +309,22 @@ export default function ConsultaModal({
           </AnimatePresence>
         </div>
 
+        {/* Botón step 1 — términos (todos los servicios) */}
+        {currentStep === 1 && (
+          <div className={classes.buttonGroup}>
+            <button type="button" onClick={handleClose} className={classes.buttonSecondary}>
+              CANCELAR
+            </button>
+            <button
+              type="button"
+              onClick={handleStepComplete}
+              disabled={!acceptedTerms}
+              className={classes.buttonPrimary}
+            >
+              CONTINUAR
+            </button>
+          </div>
+        )}
         {/* Botón step 2 epitesis — tipo de servicio */}
         {isEpitesis && currentStep === 2 && (
           <div className={classes.buttonGroup}>

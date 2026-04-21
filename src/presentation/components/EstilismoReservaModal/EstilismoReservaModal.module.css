@@ -52,8 +52,15 @@
   display: flex;
   gap: 16px;
   justify-content: flex-end;
-  margin-top: auto;
-  padding-top: 24px;
+  flex-shrink: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--mg-pink-lighter);
+}
+
+.buttonPrimary:disabled {
+  background-color: #E0E0E0;
+  color: #545454;
+  cursor: not-allowed;
 }
 
 .buttonPrimary {
@@ -134,5 +141,20 @@
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .buttonGroup {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+
+  .buttonPrimary,
+  .buttonSecondary {
+    width: 100%;
+    padding: 12px 16px !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 0.1em !important;
+    min-width: 100px;
+    white-space: normal;
   }
 }
