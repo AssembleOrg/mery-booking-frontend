@@ -19,8 +19,30 @@
 
 .logoContainer {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 2rem;
+}
+
+.bookingLabel {
+  font-family: var(--font-avant-garde), sans-serif;
+  font-size: var(--text-overline);
+  letter-spacing: var(--ls-wider);
+  color: var(--mg-gray);
+  text-transform: uppercase;
+  margin-top: 8px;
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.adminLabel {
+  font-family: var(--font-avant-garde), sans-serif;
+  font-size: var(--text-overline);
+  letter-spacing: 0.08em;
+  color: #7a2a30;
+  margin-top: 5px;
+  margin-bottom: 0;
+  text-align: center;
 }
 
 .logo {
@@ -35,24 +57,6 @@
   border: 1px solid rgba(247, 203, 203, 0.2);
 }
 
-.header {
-  text-align: center;
-}
-
-.title {
-  font-family: var(--font-avant-garde), sans-serif;
-  font-size: 1.75rem;
-  font-weight: 500;
-  color: #2B2B2B;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.5rem;
-}
-
-.subtitle {
-  font-family: var(--font-avant-garde), sans-serif;
-  font-size: 0.9rem;
-  letter-spacing: 0.02em;
-}
 
 .label {
   font-family: var(--font-avant-garde), sans-serif;
@@ -79,6 +83,24 @@
   background-color: #EBA2A8;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(247, 203, 203, 0.4);
+}
+
+.formacionesLink {
+  margin-top: 20px;
+  text-align: center;
+  font-family: var(--font-din-light), sans-serif;
+  font-size: 13px;
+  color: #3d3d3d;
+}
+
+.formacionesLink a {
+  color: #7a2a30;
+  text-decoration: none;
+  font-family: var(--font-din-medium), sans-serif;
+}
+
+.formacionesLink a:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 480px) {

@@ -9,7 +9,6 @@ import {
   TextInput,
   PasswordInput,
   Button,
-  Title,
   Text,
   Box,
   Stack,
@@ -82,6 +81,8 @@ export default function LoginPage() {
               style={{ cursor: 'pointer' }}
             />
           </Link>
+          <p className={classes.bookingLabel}>BOOKING · RESERVAS</p>
+          <p className={classes.adminLabel}>Solo para administradoras</p>
         </Box>
 
         <Box style={{ marginBottom: '1rem', textAlign: 'center' }}>
@@ -101,15 +102,6 @@ export default function LoginPage() {
 
         <Paper shadow="xl" p="xl" radius="lg" className={classes.paper}>
           <Stack gap="lg">
-            <Box className={classes.header}>
-              <Title order={2} className={classes.title}>
-                Panel de Administración
-              </Title>
-              <Text size="sm" c="dimmed" className={classes.subtitle}>
-                Ingresa tus credenciales para continuar
-              </Text>
-            </Box>
-
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack gap="md">
                 <TextInput
@@ -172,6 +164,17 @@ export default function LoginPage() {
             </Text>
           </Stack>
         </Paper>
+
+        <div className={classes.formacionesLink}>
+          <span>¿Querés acceder a tus formaciones? </span>
+          <a
+            href="https://merygarcia.com.ar/login"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Hacé click acá
+          </a>
+        </div>
       </Container>
     </Box>
   );
