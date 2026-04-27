@@ -16,6 +16,9 @@ interface Step3CalendarProps {
   services: ServiceEntity[];
   staffConsultasId?: string;
   meryGarciaId?: string;
+  serviceEmployees?: Map<string, Employee[]>;
+  selectedEmployeeId: string | null;
+  onEmployeeSelect: (id: string) => void;
   selectedDate: Date | null;
   selectedTime: string | null;
   onSelectDateTime: (date: Date, time: string) => void;
@@ -32,6 +35,9 @@ export function Step3Calendar({
   services,
   staffConsultasId,
   meryGarciaId,
+  serviceEmployees,
+  selectedEmployeeId,
+  onEmployeeSelect,
   selectedDate,
   selectedTime,
   onSelectDateTime,
@@ -60,9 +66,23 @@ export function Step3Calendar({
     });
   }, [selectedOption.label, services]);
 
-  // Determinar employeeId dinámicamente con fallbacks
+  const serviceId = selectedOption.serviceId || currentService?.id || null;
+  const serviceDuration =
+    selectedOption.serviceDuration || currentService?.duration || 60;
+
+  // Lista de profesionales habilitados para este servicio (many-to-many backend)
+  const availableEmployees = useMemo<Employee[]>(() => {
+    if (!serviceId || !serviceEmployees) return [];
+    return serviceEmployees.get(serviceId) ?? [];
+  }, [serviceId, serviceEmployees]);
+
+  const hasMultipleEmployees = availableEmployees.length > 1;
+
+  // employeeId efectivo: selección del usuario > opción explícita > primer disponible > fallbacks
   const employeeId = useMemo(() => {
+    if (selectedEmployeeId) return selectedEmployeeId;
     if (selectedOption.employeeId) return selectedOption.employeeId;
+    if (availableEmployees.length > 0) return availableEmployees[0].id;
 
     if (
       selectedOption.contentType === 'consulta-sin-trabajo' ||
@@ -73,11 +93,14 @@ export function Step3Calendar({
     }
 
     return meryGarciaId || MERY_GARCIA_FALLBACK_ID;
-  }, [selectedOption, staffConsultasId, meryGarciaId]);
+  }, [selectedEmployeeId, selectedOption, availableEmployees, staffConsultasId, meryGarciaId]);
 
-  const serviceId = selectedOption.serviceId || currentService?.id || null;
-  const serviceDuration =
-    selectedOption.serviceDuration || currentService?.duration || 60;
+  // Auto-seleccionar el único profesional disponible
+  useEffect(() => {
+    if (!selectedEmployeeId && availableEmployees.length === 1) {
+      onEmployeeSelect(availableEmployees[0].id);
+    }
+  }, [availableEmployees, selectedEmployeeId, onEmployeeSelect]);
 
   useEffect(() => {
     onEmployeeResolved?.(employeeId || null);
@@ -89,7 +112,11 @@ export function Step3Calendar({
 
   // Determinar nombre del profesional
   const professionalName = useMemo(() => {
-    // Verificamos contra props O contra los fallbacks (fix visual crucial cuando falla la API)
+    // 1) Lookup en availableEmployees (lista filtrada por servicio)
+    const fromAvailable = availableEmployees.find((e: Employee) => e.id === employeeId);
+    if (fromAvailable?.fullName) return fromAvailable.fullName;
+
+    // 2) Fallbacks hardcoded para staff consultas / mery garcia (cuando la API no responde)
     if (
       employeeId === staffConsultasId ||
       employeeId === STAFF_CONSULTAS_FALLBACK_ID
@@ -98,10 +125,10 @@ export function Step3Calendar({
     if (employeeId === meryGarciaId || employeeId === MERY_GARCIA_FALLBACK_ID)
       return 'Mery Garcia';
 
-    // Buscar en employees array
+    // 3) Lookup en employees globales
     const employee = employees.find((e) => e.id === employeeId);
     return employee?.fullName || 'Profesional';
-  }, [employeeId, staffConsultasId, meryGarciaId, employees]);
+  }, [employeeId, availableEmployees, staffConsultasId, meryGarciaId, employees]);
 
   // Handler para volver a Step 2
   const handleBackToStep2 = () => {
@@ -121,17 +148,37 @@ export function Step3Calendar({
       >
         <Stack gap="xl">
           <div>
-            <Text className={classes.stepTitle}>Seleccionar profesional</Text>
+            <Text className={classes.stepTitle}>
+              {hasMultipleEmployees ? 'Elegí tu profesional' : 'Seleccionar profesional'}
+            </Text>
             <Text className={classes.stepDescription}>
-              Confirmá el profesional asignado para este servicio
+              {hasMultipleEmployees
+                ? 'Seleccioná el profesional de tu preferencia para este servicio'
+                : 'Confirmá el profesional asignado para este servicio'}
             </Text>
           </div>
 
-          {/* Professional Card */}
-          <div className={classes.professionalCard}>
-            <Text className={classes.professionalLabel}>Profesional:</Text>
-            <Text className={classes.professionalName}>{professionalName}</Text>
-          </div>
+          {hasMultipleEmployees ? (
+            <div className={classes.employeeSelector}>
+              {availableEmployees.map((emp: Employee) => (
+                <button
+                  key={emp.id}
+                  type="button"
+                  className={`${classes.employeeCard} ${
+                    employeeId === emp.id ? classes.employeeCardSelected : ''
+                  }`}
+                  onClick={() => onEmployeeSelect(emp.id)}
+                >
+                  <Text className={classes.professionalName}>{emp.fullName}</Text>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className={classes.professionalCard}>
+              <Text className={classes.professionalLabel}>Profesional:</Text>
+              <Text className={classes.professionalName}>{professionalName}</Text>
+            </div>
+          )}
         </Stack>
       </motion.div>
     );

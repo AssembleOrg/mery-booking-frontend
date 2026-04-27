@@ -2097,6 +2097,11 @@ export default function TattooCosmeticoPage() {
     return getOptionsWithIds(camouflageOptions, 'camuflaje', services);
   }, [mappedServices, mappedEmployees, services, serviceEmployees]);
 
+  const pecasLunaresOptionsWithIds = useMemo(() => {
+    if (services.length === 0) return pecasLunaresOptions;
+    return getOptionsWithIds(pecasLunaresOptions, 'pecas-lunares', services);
+  }, [mappedServices, mappedEmployees, services, serviceEmployees]);
+
   // IDs de empleados para modal de reservas (fallback para props del modal)
   const staffConsultasId = useMemo(() => {
     return mappedEmployees.get('staff-consultas')?.id;
@@ -2919,7 +2924,7 @@ export default function TattooCosmeticoPage() {
                         setConsultaService({
                           serviceName: 'Freckles & Beauty Mark',
                           serviceKey: 'pecas-lunares',
-                          consultaOptions: pecasLunaresOptions,
+                          consultaOptions: pecasLunaresOptionsWithIds,
                         });
                         setConsultaModalOpened(true);
                       }}
@@ -2954,6 +2959,7 @@ export default function TattooCosmeticoPage() {
           employees={employeesWithFallback as Employee[]}
           staffConsultasId={staffConsultasId}
           meryGarciaId={meryGarciaId}
+          serviceEmployees={serviceEmployees}
         />
       )}
 

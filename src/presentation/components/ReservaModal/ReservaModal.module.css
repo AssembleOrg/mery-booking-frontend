@@ -512,3 +512,31 @@
   color: var(--mg-dark);
   font-weight: 500;
 }
+
+/* Employee Selector (multiple professionals) */
+.employeeSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.employeeCard {
+  background: transparent;
+  border: 2px solid var(--mg-pink-lighter);
+  border-radius: 8px;
+  padding: 16px 24px;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.employeeCard:hover {
+  border-color: var(--mg-pink);
+  background: var(--mg-pink-light);
+}
+
+.employeeCardSelected {
+  border-color: var(--mg-pink) !important;
+  background: var(--mg-pink-light) !important;
+}

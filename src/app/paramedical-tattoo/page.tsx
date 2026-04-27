@@ -886,7 +886,7 @@ export default function ParamedicalTattooPage() {
 
   // Enrich service options with IDs
   const nanoScalpOptionsWithIds = useMemo(() => {
-    if (services.length === 0 || !meryGarciaId) {
+    if (services.length === 0) {
       return nanoScalpOptions;
     }
     return enrichServiceOptions(
@@ -899,7 +899,7 @@ export default function ParamedicalTattooPage() {
   }, [services, staffConsultasId, meryGarciaId, serviceEmployees]);
 
   const areolaOptionsWithIds = useMemo(() => {
-    if (services.length === 0 || !meryGarciaId) {
+    if (services.length === 0) {
       return areolaOptions;
     }
     return enrichServiceOptions(
@@ -1270,6 +1270,7 @@ export default function ParamedicalTattooPage() {
           employees={employees as Employee[]}
           staffConsultasId={staffConsultasId}
           meryGarciaId={meryGarciaId}
+          serviceEmployees={serviceEmployees}
         />
       )}
 

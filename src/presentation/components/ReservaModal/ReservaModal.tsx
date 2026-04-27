@@ -25,6 +25,7 @@ interface ReservaModalProps {
   employees: Employee[];
   staffConsultasId?: string;
   meryGarciaId?: string;
+  serviceEmployees?: Map<string, Employee[]>;
 }
 
 export function ReservaModal({
@@ -37,6 +38,7 @@ export function ReservaModal({
   employees,
   staffConsultasId,
   meryGarciaId,
+  serviceEmployees,
 }: ReservaModalProps) {
   const isMobile = useMediaQuery('(max-width: 767px)');
   const [currentStep, setCurrentStep] = useState(1);
@@ -85,7 +87,12 @@ export function ReservaModal({
 
   const handleStepBack = () => {
     if (currentStep > 1) {
-      if (currentStep === 3) setShowCalendar(false);
+      if (currentStep === 3) {
+        setShowCalendar(false);
+        setSelectedEmployeeId(null);
+        setStep3EmployeeId(null);
+        setStep3ServiceId(null);
+      }
       setCurrentStep(prev => prev - 1);
     }
   };
@@ -149,6 +156,9 @@ export function ReservaModal({
                 services={services}
                 staffConsultasId={staffConsultasId}
                 meryGarciaId={meryGarciaId}
+                serviceEmployees={serviceEmployees}
+                selectedEmployeeId={selectedEmployeeId}
+                onEmployeeSelect={setSelectedEmployeeId}
                 selectedDate={selectedDate}
                 selectedTime={selectedTime}
                 onSelectDateTime={(date, time) => {

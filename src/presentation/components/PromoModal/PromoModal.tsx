@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import classes from './PromoModal.module.css';
 
-const STORAGE_KEY = 'epitesis-marzo-2026-promo';
+const STORAGE_KEY = 'epitesis-mayo-2026-promo';
 const OPEN_DELAY_MS = 800;
 
 export default function PromoModal() {
@@ -56,7 +56,7 @@ export default function PromoModal() {
             className={classes.logo}
           />
           <Text className={classes.exclusive}>EXCLUSIVE</Text>
-          <Text className={classes.badge}>MARZO 2026</Text>
+          <Text className={classes.badge}>MAYO 2026</Text>
           <Text className={classes.title}>50% OFF</Text>
           <Text className={classes.subtitle}>
             en el encargo de piezas de Epítesis
