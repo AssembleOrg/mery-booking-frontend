@@ -5,12 +5,12 @@ import { Modal, Box, Text } from '@mantine/core';
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import classes from './PromoModal.module.css';
+import classes from './EpitesisPromoMayo.module.css';
 
-const STORAGE_KEY = 'epitesis-mayo-2026-promo';
+const STORAGE_KEY = 'epitesis-promo-v2';
 const OPEN_DELAY_MS = 800;
 
-export default function PromoModal() {
+export default function EpitesisPromoMayo() {
   const [opened, setOpened] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 

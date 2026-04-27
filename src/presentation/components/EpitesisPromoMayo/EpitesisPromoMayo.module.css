@@ -1,5 +1,5 @@
 /* ================================
-   PROMO MODAL — EPITESIS 50% OFF
+   EPITESIS PROMO MAYO 50% OFF
    ================================ */
 
 .content {
@@ -17,8 +17,6 @@
   }
 }
 
-/* ======== INNER LAYOUT ======== */
-
 .inner {
   display: flex;
   flex-direction: column;
@@ -26,8 +24,6 @@
   gap: 12px;
   text-align: center;
 }
-
-/* ======== TYPOGRAPHY ======== */
 
 .badge {
   font-family: var(--font-stack-ui);
@@ -84,8 +80,6 @@
   margin-top: -8px;
   margin-bottom: 2px;
 }
-
-/* ======== ACTIONS ======== */
 
 .actions {
   display: flex;
