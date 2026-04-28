@@ -9,7 +9,7 @@ import {
 } from '@/presentation/components';
 import ConsultaModal from '@/presentation/components/ConsultaModal';
 import { useState, useMemo, useEffect, useRef, type ReactNode } from 'react';
-import { IconChevronDown, IconFileDescription } from '@tabler/icons-react';
+import { IconChevronDown, IconFileDescription, IconBrandInstagram } from '@tabler/icons-react';
 import {
   useServices,
   useEmployees,
@@ -422,6 +422,15 @@ export default function EpitesisCapPage() {
                       <Text className={classes.serviceTagline}>
                         Prótesis de areola pezon hiperrealista. Complejo areola–pezón post mastectomía.
                       </Text>
+                      <a
+                        href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE3OTUwNTgzNDg3MDk1MDEw?story_media_id=3846893448464467008"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={classes.igPill}
+                      >
+                        <IconBrandInstagram size={14} stroke={1.6} className={classes.igPillIcon} />
+                        <span>Conocé el proceso · piezas hiperrealistas</span>
+                      </a>
                     </Box>
                   </Box>
                   <Box className={classes.buttonsWrapper}>

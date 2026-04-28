@@ -272,6 +272,40 @@
   display: none;
 }
 
+/* ======== INSTAGRAM PILL ======== */
+.igPill {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  padding: 7px 14px;
+  border: 1px solid rgba(226, 0, 116, 0.28);
+  border-radius: 100px;
+  background: rgba(226, 0, 116, 0.04);
+  color: var(--mg-pink);
+  font-size: 9.5px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  font-family: var(--font-din-medium), sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease, box-shadow 0.22s ease;
+  white-space: nowrap;
+}
+
+.igPill:hover {
+  background: rgba(226, 0, 116, 0.09);
+  border-color: var(--mg-pink);
+  box-shadow: 0 0 12px rgba(226, 0, 116, 0.18);
+  color: var(--mg-pink);
+}
+
+.igPillIcon {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
 /* ======== BUTTONS - ENFATIZADO ======== */
 .buttonsWrapper {
   display: flex;
