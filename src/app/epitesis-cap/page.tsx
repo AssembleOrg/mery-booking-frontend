@@ -420,7 +420,7 @@ export default function EpitesisCapPage() {
                     <Box className={classes.serviceTitleWrapper}>
                       <Text className={classes.sectionTitle}>EPITESIS CAP</Text>
                       <Text className={classes.serviceTagline}>
-                        Prótesis artesanal hiperrealista. Complejo areola–pezón post mastectomía.
+                        Prótesis de areola pezon hiperrealista. Complejo areola–pezón post mastectomía.
                       </Text>
                     </Box>
                   </Box>

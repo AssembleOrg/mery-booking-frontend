@@ -99,7 +99,6 @@ export default function EstilismoCejasPage() {
           <ImageCrossfade
             images={[
               '/images/estilismo-cejas.webp',
-              '/images/nano-scallping.webp',
               '/images/im.2-op-2-scaled-1.webp',
             ]}
             interval={6000}
@@ -109,47 +108,39 @@ export default function EstilismoCejasPage() {
             objectPosition="center"
           />
           <Box className={classes.heroOverlay} />
-          <Box className={classes.heroContent}>
-            <FadeInSection direction="up" delay={0.2}>
-
-              <Text className={classes.heroTitle}>
-                ESTILISMO DE
-                <br />
-                CEJAS
-              </Text>
-            </FadeInSection>
-          </Box>
           <span className={classes.heroNumber}>01</span>
         </Box>
 
         <Box className={classes.contentSection}>
-          <Container size="xl" py={{ base: 40, sm: 60, md: 80 }}>
-            <Stack gap="xl" align="center">
-              <FadeInSection direction="up" delay={0.3}>
-                <Box maw={1100} w="100%">
-                  <Text
-                    ta="center"
-                    size="sm"
-                    c="dimmed"
-                    fw={300}
-                    className={classes.descriptiveText}
-                  >
-                    Si es tu primera vez podés conocer todos nuestros servicios
-                    ingresando{' '}
-                    <Text
-                      component="a"
-                      href="https://merygarcia.com.ar/"
-                      c="pink.6"
-                      fw={400}
-                      className={classes.linkText}
-                    >
-                      AQUÍ
-                    </Text>
-                    .
-                  </Text>
-                </Box>
-              </FadeInSection>
+          <Container size="xl">
+            <FadeInSection direction="up" delay={0.2}>
+              <div className={classes.pageTitleBlock}>
+                <span className={classes.pageTitleOverline}>ESTILISMO DE CEJAS &amp; PESTAÑAS</span>
+                <hr className={classes.pageTitleDivider} />
+              </div>
+              <Text
+                ta="center"
+                size="sm"
+                c="dimmed"
+                fw={300}
+                className={classes.descriptiveText}
+              >
+                Si es tu primera vez podés conocer todos nuestros servicios
+                ingresando{' '}
+                <Text
+                  component="a"
+                  href="https://merygarcia.com.ar/"
+                  c="pink.6"
+                  fw={400}
+                  className={classes.linkText}
+                >
+                  AQUÍ
+                </Text>
+                .
+              </Text>
+            </FadeInSection>
 
+            <Stack gap="xl" align="center">
               <Box w="100%" maw={1200}>
                 <Box className={classes.formLayout}>
                   <Box className={classes.formColumn}>

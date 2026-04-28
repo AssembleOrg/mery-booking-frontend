@@ -44,7 +44,7 @@
   transition: all 0.3s ease;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1124px) {
   .logo {
     width: 220px;
     filter: brightness(0) invert(1);
@@ -206,7 +206,7 @@
   gap: 0.5rem;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1124px) {
   .nav {
     display: flex;
   }

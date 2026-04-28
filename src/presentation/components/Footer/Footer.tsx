@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Box, Container, Flex, Stack, Text } from '@mantine/core';
 import {
   IconBrandInstagram,
@@ -15,6 +16,7 @@ import {
   ANIMATION_TIMING,
   ANIMATION_EASING,
 } from '@/presentation/lib/animations';
+import LocationModal from '../LocationModal/LocationModal';
 import classes from './Footer.module.css';
 
 const INFO_LINKS = [
@@ -42,6 +44,7 @@ const SOCIAL_LINKS = [
 
 export function Footer() {
   const prefersReducedMotion = useReducedMotion();
+  const [locationOpen, setLocationOpen] = useState(false);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -69,6 +72,7 @@ export function Footer() {
   if (prefersReducedMotion) {
     return (
       <Box component="footer" className={classes.footer}>
+        <LocationModal opened={locationOpen} onClose={() => setLocationOpen(false)} />
         {/* Warning Bar */}
         <Box className={classes.warningBar}>
           <Container size="xl">
@@ -95,13 +99,15 @@ export function Footer() {
                   gap={8}
                   align="flex-start"
                   className={classes.addressLine}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setLocationOpen(true)}
                 >
                   <IconMapPin
                     size={18}
                     stroke={1.5}
                     className={classes.addressIcon}
                   />
-                  <Text className={classes.address}>
+                  <Text className={classes.addressLink}>
                     Av. Melián 3646 PB 1, CABA, Argentina
                   </Text>
                 </Flex>
@@ -163,7 +169,7 @@ export function Footer() {
             </Flex>
 
             <Text className={classes.copyright}>
-              © Mery García 2024 – All Rights Reserved
+              © Mery García 2026 – All Rights Reserved
             </Text>
             <div className={classes.pistechBar}>
               <span className={classes.pistechText}>Un producto de</span>
@@ -184,6 +190,8 @@ export function Footer() {
 
   return (
     <Box component="footer" className={classes.footer}>
+      <LocationModal opened={locationOpen} onClose={() => setLocationOpen(false)} />
+
       {/* Warning Bar */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -225,13 +233,15 @@ export function Footer() {
                     gap={8}
                     align="flex-start"
                     className={classes.addressLine}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setLocationOpen(true)}
                   >
                     <IconMapPin
                       size={18}
                       stroke={1.5}
                       className={classes.addressIcon}
                     />
-                    <Text className={classes.address}>
+                    <Text className={classes.addressLink}>
                       Av. Melián 3646 PB 1, CABA, Argentina
                     </Text>
                   </Flex>
@@ -311,7 +321,7 @@ export function Footer() {
             transition={{ delay: 0.5, duration: 0.5 }}
           >
             <Text className={classes.copyright}>
-              © Mery García 2024 – All Rights Reserved
+              © Mery García 2026 – All Rights Reserved
             </Text>
             <div className={classes.pistechBar}>
               <span className={classes.pistechText}>Un producto de</span>

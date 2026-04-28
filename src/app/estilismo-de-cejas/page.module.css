@@ -7,12 +7,11 @@
 .heroSection {
   position: relative;
   width: 100%;
-  min-height: 450px;
+  height: 320px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 80px;
 }
 
 .heroImage {
@@ -80,8 +79,31 @@
   font-family: var(--font-din-medium), sans-serif;
 }
 
+.pageTitleBlock {
+  text-align: center;
+  margin: 0 0 20px;
+}
+
+.pageTitleOverline {
+  display: block;
+  font-family: var(--font-din-regular), sans-serif;
+  font-size: 13px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--mg-gray);
+  margin-bottom: 14px;
+}
+
+.pageTitleDivider {
+  border: none;
+  border-top: 1px solid var(--mg-pink-lighter);
+  width: 56px;
+  margin: 0 auto 0;
+}
+
+
 .contentSection {
-  padding: 60px 24px;
+  padding: 32px 24px 48px;
   position: relative;
 }
 
@@ -91,7 +113,7 @@
   letter-spacing: 0.02em;
   color: var(--mg-gray);
   max-width: 800px;
-  margin: 0 auto 40px;
+  margin: 0 auto 32px;
   text-align: center;
 }
 
@@ -177,8 +199,17 @@
 }
 
 @media (min-width: 900px) {
+  .heroSection {
+    height: clamp(320px, 35vw, 520px);
+  }
+
+  .pageTitleOverline {
+    font-size: 15px;
+    letter-spacing: 6px;
+  }
+
   .contentSection {
-    padding: 100px 48px;
+    padding: 56px 48px 64px;
   }
 
   .formLayout {
@@ -199,11 +230,7 @@
 
 @media (max-width: 899px) {
   .heroSection {
-    min-height: 350px;
-    padding-top: 100px;
-  }
-  .heroTitle {
-    font-size: 32px;
+    height: 260px;
   }
   .heroNumber {
     font-size: 80px;
@@ -212,7 +239,7 @@
   }
 
   .formLayout {
-    gap: 60px;
+    gap: 32px;
   }
 
   .formColumn,
@@ -229,10 +256,7 @@
 
 @media (max-width: 480px) {
   .heroSection {
-    min-height: 280px;
-  }
-  .heroTitle {
-    font-size: 24px;
+    height: 220px;
   }
   .heroNumber {
     bottom: 10px;

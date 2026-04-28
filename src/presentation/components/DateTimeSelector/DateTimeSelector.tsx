@@ -306,7 +306,7 @@ export function DateTimeSelector({
               </Alert>
             ) : (
               <SimpleGrid
-                cols={{ base: 2, xs: 2, sm: 3, md: 3 }}
+                cols={{ base: 2, xs: 2, sm: 2, md: 3, lg: 3 }}
                 spacing="xs"
                 className={classes.timeSlotsGrid}
               >
