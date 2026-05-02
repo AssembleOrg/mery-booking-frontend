@@ -350,7 +350,6 @@ export function WelcomeSection() {
               images={[
                 '/loop/loop4.webp',
                 '/loop/loop1.webp',
-                '/loop/loop2.webp',
                 '/images/image-soft-blur.jpg',
               ]}
               interval={5000}
