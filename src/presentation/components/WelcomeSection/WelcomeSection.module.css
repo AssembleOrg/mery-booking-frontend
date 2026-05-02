@@ -39,21 +39,6 @@
   background: var(--mg-dark);
 }
 
-.heroOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.3) 0%,
-    rgba(0, 0, 0, 0.5) 50%,
-    rgba(0, 0, 0, 0.8) 100%
-  );
-  pointer-events: none;
-}
 
 @media (max-width: 1023px) {
   .heroSection {
@@ -233,10 +218,6 @@
     height: 100%;
     clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
     z-index: 0;
-  }
-
-  .heroOverlay {
-    display: none;
   }
 
   .heroTextSection {

@@ -13,6 +13,7 @@ interface ImageCrossfadeProps {
   alt?: string;
   showIndicators?: boolean;
   objectPosition?: string;
+  sizes?: string;
 }
 
 export function ImageCrossfade({
@@ -23,6 +24,7 @@ export function ImageCrossfade({
   alt = 'Gallery image',
   showIndicators = false,
   objectPosition = 'center',
+  sizes,
 }: ImageCrossfadeProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const shouldReduceMotion = useReducedMotion();
@@ -52,6 +54,7 @@ export function ImageCrossfade({
             fill
             className={classes.image}
             style={{ objectPosition }}
+            sizes={sizes}
             priority
           />
         </div>
@@ -84,6 +87,7 @@ export function ImageCrossfade({
             fill
             className={classes.image}
             style={{ objectPosition }}
+            sizes={sizes}
             priority={index < 2}
             loading={index < 2 ? 'eager' : 'lazy'}
           />

@@ -358,6 +358,7 @@ export function WelcomeSection() {
               showIndicators={true}
               alt="Mery Garcia Cosmetic Tattoo"
               objectPosition={isMobileOrTablet ? 'center 20%' : 'center center'}
+              sizes="(max-width: 1023px) 100vw, 55vw"
             />
             <div className={classes.heroOverlay} />
           </Box>
