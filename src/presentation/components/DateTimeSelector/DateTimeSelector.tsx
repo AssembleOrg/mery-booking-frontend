@@ -62,6 +62,18 @@ export function DateTimeSelector({
     refetch,
   } = useAvailability(employeeId ?? null, serviceId ?? null, minDate, maxDate);
 
+  // Set de días de la semana en los que el empleado trabaja al menos una vez en el rango.
+  // Permite distinguir "agenda completa" (día laborable sin slots libres) de "cerrado"
+  // ya que el backend colapsa ambos casos a hasActiveTimeSlots:false.
+  const workingDaysOfWeek = useMemo(() => {
+    const set = new Set<string>();
+    if (!availability) return set;
+    for (const d of availability.availability) {
+      if (d.hasActiveTimeSlots) set.add(d.dayOfWeek);
+    }
+    return set;
+  }, [availability]);
+
   // Actualizar fecha seleccionada cuando cambie la fecha pre-seleccionada
   useEffect(() => {
     if (preSelectedDate) {
@@ -95,21 +107,6 @@ export function DateTimeSelector({
     return dayAvailability.slots.filter((slot) => slot.available);
   }, [selectedDate, availability]);
 
-  // Función para deshabilitar fechas sin disponibilidad o lunes/domingos
-  const isDateDisabled = (date: string) => {
-    // Si el backend indica que hay franjas activas para esta fecha específica, habilitarla siempre
-    if (availability) {
-      const dayAvailability = availability.availability.find(
-        (d) => d.date === date
-      );
-      if (dayAvailability && dayAvailability.hasActiveTimeSlots) return false;
-    }
-
-    // Sin datos del backend = deshabilitar
-    if (!availability) return false;
-    return true;
-  };
-
   // Función para calcular el nivel de disponibilidad de un día
   const getAvailabilityLevel = (
     date: string
@@ -117,24 +114,18 @@ export function DateTimeSelector({
     if (!availability) return 'disabled';
 
     const dayData = availability.availability.find((d) => d.date === date);
+    if (!dayData) return 'disabled';
 
-    // Día sin timeslots activos o día deshabilitado
-    if (!dayData || !dayData.hasActiveTimeSlots) {
-      return 'disabled';
+    // Backend colapsa "agenda completa" y "no laborable" en hasActiveTimeSlots:false.
+    // Heurística: si el empleado trabaja ese dayOfWeek en otro día del rango,
+    // este día sin slots es agenda completa, no cerrado.
+    if (!dayData.hasActiveTimeSlots) {
+      return workingDaysOfWeek.has(dayData.dayOfWeek) ? 'full' : 'disabled';
     }
 
-    const totalSlots = dayData.slots.length;
     const availableSlots = dayData.slots.filter((s) => s.available).length;
-
-    if (totalSlots === 0) return 'disabled';
-
-    const percentage = (availableSlots / totalSlots) * 100;
-
-    // 0% disponibilidad = día lleno
-    if (percentage === 0) return 'full';
-    // < 40% disponibilidad = disponibilidad limitada
-    if (percentage < 40) return 'limited';
-    // >= 40% disponibilidad = buena disponibilidad
+    if (availableSlots === 0) return 'disabled';
+    if (availableSlots <= 2) return 'limited';
     return 'available';
   };
 
@@ -197,7 +188,7 @@ export function DateTimeSelector({
       <Box className={classes.container}>
         <Stack gap="xl">
           <Text ta="center" size="md" fw={300} className={classes.title}>
-            Hacé click en la fecha y la hora que desees
+            Elegí día y horario
           </Text>
           <Alert title="Información">
             Por favor, selecciona un servicio y profesional para ver la
@@ -212,7 +203,7 @@ export function DateTimeSelector({
     <Box className={classes.container}>
       <Stack gap="xl">
         <Text ta="center" size="md" fw={300} className={classes.title}>
-          Hacé click en la fecha y la hora que desees
+          Elegí día y horario
         </Text>
 
         {/* Calendario */}
@@ -224,10 +215,8 @@ export function DateTimeSelector({
             maxDate={maxDate}
             getDayProps={(date) => {
               const level = getAvailabilityLevel(date);
-              const isDisabled = isDateDisabled(date);
               const availableCount = getAvailabilityInfo(date);
 
-              // Determinar clase CSS según nivel de disponibilidad
               let dayClass = classes.day;
               if (level === 'full') dayClass = `${classes.day} ${classes.dayFull}`;
               else if (level === 'limited')
@@ -235,18 +224,19 @@ export function DateTimeSelector({
               else if (level === 'available')
                 dayClass = `${classes.day} ${classes.dayAvailable}`;
 
-              // Construir título para tooltip
               let title = '';
-              if (isDisabled) {
-                title = 'Cerrado';
+              if (level === 'disabled') {
+                title = '';
               } else if (level === 'full') {
-                title = 'Sin turnos disponibles';
+                title = 'Agenda completa';
+              } else if (level === 'limited' && availableCount) {
+                title = `Solo quedan ${availableCount} turno${availableCount !== 1 ? 's' : ''}`;
               } else if (availableCount) {
                 title = `${availableCount} turno${availableCount !== 1 ? 's' : ''} disponible${availableCount !== 1 ? 's' : ''}`;
               }
 
               return {
-                disabled: isDisabled,
+                disabled: level === 'disabled' || level === 'full',
                 className: dayClass,
                 title,
               };
@@ -259,55 +249,48 @@ export function DateTimeSelector({
           />
         </Box>
 
-        {/* Leyenda de disponibilidad */}
+        {/* Leyenda con texto compacto */}
         <Box className={classes.availabilityLegend}>
           <div className={classes.legendItem}>
-            <div
-              className={classes.legendColor}
-              style={{ backgroundColor: '#FBE8EA' }}
-            />
+            <div className={classes.legendDots}>
+              <div
+                className={classes.legendDot}
+                style={{ backgroundColor: '#eba2a8' }}
+              />
+              <div
+                className={classes.legendDot}
+                style={{ backgroundColor: '#eba2a8' }}
+              />
+            </div>
             <span>Disponible</span>
           </div>
-
           <div className={classes.legendItem}>
             <div
-              className={classes.legendColor}
-              style={{ backgroundColor: '#F7CBCB' }}
+              className={classes.legendDot}
+              style={{ backgroundColor: '#eba2a8' }}
             />
             <span>Pocos turnos</span>
           </div>
-
           <div className={classes.legendItem}>
-            <div
-              className={classes.legendColor}
-              style={{ backgroundColor: '#EBA2A8' }}
-            />
-            <span>Sin turnos</span>
-          </div>
-
-          <div className={classes.legendItem}>
-            <div
-              className={classes.legendColor}
-              style={{ backgroundColor: '#e9ecef' }}
-            />
-            <span>Cerrado</span>
+            <div className={classes.legendDash} />
+            <span>Agenda completa</span>
           </div>
         </Box>
 
         {/* Franjas horarias */}
         {selectedDate && (
           <Box>
-            <Text size="sm" fw={400} mb="md" ta="center" c="gray.7">
-              Selecciona un horario:
+            <Text size="sm" fw={500} mb="md" ta="center" c="gray.7">
+              Horarios disponibles
             </Text>
             {availableSlotsForDate.length === 0 ? (
-              <Alert title="Sin disponibilidad">
-                No hay horarios disponibles para esta fecha.
+              <Alert>
+                No quedan horarios libres este día. Probá otro.
               </Alert>
             ) : (
               <SimpleGrid
-                cols={{ base: 2, xs: 2, sm: 2, md: 3, lg: 3 }}
-                spacing="xs"
+                cols={{ base: 2, sm: 3 }}
+                spacing="sm"
                 className={classes.timeSlotsGrid}
               >
                 {availableSlotsForDate.map((slot) => (

@@ -34,55 +34,95 @@
   font-weight: 400;
   border-radius: 8px;
   transition: all 0.2s ease;
+  position: relative;
 }
 
-.day:hover {
-  background-color: rgba(247, 203, 203, 0.2);
+.day:hover:not([data-disabled]) {
+  background-color: rgba(251, 232, 234, 0.6);
 }
 
-/* Día con buena disponibilidad (≥40% slots) - Rosa más claro */
+/* Día con buena disponibilidad (≥40% slots) - DOS dots rosa marca */
 .dayAvailable {
-  background-color: #fbe8ea !important;
   color: #545454 !important;
   font-weight: 500 !important;
 }
 
-.dayAvailable:hover {
-  background-color: #f7cbcb !important;
+.dayAvailable::before,
+.dayAvailable::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #eba2a8;
+  pointer-events: none;
 }
 
-/* Día con poca disponibilidad (<40% slots) - Rosa medio */
+.dayAvailable::before {
+  left: calc(50% - 4px);
+}
+
+.dayAvailable::after {
+  left: calc(50% + 1px);
+}
+
+/* Día con poca disponibilidad (<40% slots) - UN dot rosa marca + fondo rosa muy tenue */
 .dayLimited {
-  background-color: #f7cbcb !important;
+  color: #545454 !important;
+  font-weight: 500 !important;
+  background-color: rgba(235, 162, 168, 0.08) !important;
+}
+
+.dayLimited::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #eba2a8;
+  pointer-events: none;
+}
+
+/* Día con agenda completa - fondo gris sutil, número gris medio */
+.dayFull {
+  background-color: #f5f5f5 !important;
+  color: #a0a0a0 !important;
+  font-weight: 400 !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}
+
+/* Día cerrado (no laborable) - número gris claro, sin fondo */
+.day[data-disabled]:not(.dayFull) {
+  color: #d0d0d0 !important;
+}
+
+/* Día seleccionado - rosa claro (pink-light) con borde rosa marca. Doble atributo para ganar especificidad sobre Mantine. */
+.day[data-selected][data-selected] {
+  background-color: #fbe8ea !important;
   color: #545454 !important;
   font-weight: 600 !important;
+  border: 2px solid #eba2a8 !important;
+  box-shadow: 0 2px 8px rgba(235, 162, 168, 0.15);
 }
 
-.dayLimited:hover {
-  background-color: #eba2a8 !important;
-  color: white !important;
+.day[data-selected][data-selected]:hover {
+  background-color: #fbe8ea !important;
 }
 
-/* Día completamente lleno (0% disponibilidad) - Rosa principal (marcario) */
-.dayFull {
-  background-color: #eba2a8 !important;
-  color: white !important;
-  font-weight: 700 !important;
-  cursor: not-allowed !important;
+/* Ocultar dots cuando el día está seleccionado */
+.day[data-selected]::before,
+.day[data-selected]::after {
+  display: none !important;
 }
 
-.dayFull:hover {
-  background-color: rgba(235, 162, 168, 0.85) !important;
-}
-
-.day[data-selected] {
-  background-color: #f7cbcb !important;
-  color: white !important;
-  border: 2px solid #545454 !important;
-}
-
-.day[data-selected]:hover {
-  background-color: #eba2a8 !important;
+/* Día de hoy - borde sutil rosa, sin fondo */
+.day[data-today]:not([data-selected]) {
+  border: 1px solid #eba2a8 !important;
 }
 
 .timeSlotsGrid {
@@ -90,13 +130,14 @@
 }
 
 .timeSlot {
-  padding: 0.75rem 0.5rem;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
+  padding: 0.875rem 1rem;
+  border: 1px solid #efefef;
+  border-radius: 10px;
   text-align: center;
   font-family: var(--font-din-regular), sans-serif;
-  font-weight: 400;
-  font-size: 0.85rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
   transition: all 0.2s ease;
   cursor: pointer;
   background-color: white;
@@ -107,20 +148,23 @@
 }
 
 .timeSlot:hover {
-  border-color: #f7cbcb;
-  background-color: rgba(247, 203, 203, 0.1);
+  border-color: #eba2a8;
+  box-shadow: 0 4px 12px rgba(235, 162, 168, 0.12);
   transform: translateY(-1px);
 }
 
 .timeSlotSelected {
-  background-color: #f7cbcb;
-  border-color: #f7cbcb;
+  background-color: #eba2a8;
+  border-color: #eba2a8;
   color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(235, 162, 168, 0.35);
 }
 
 .timeSlotSelected:hover {
   background-color: #eba2a8;
   border-color: #eba2a8;
+  box-shadow: 0 4px 16px rgba(235, 162, 168, 0.35);
 }
 
 .continueButton {
@@ -160,28 +204,49 @@
   transform: translateY(-2px);
 }
 
-/* Leyenda de disponibilidad */
+/* Leyenda con texto compacto */
 .availabilityLegend {
   display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  font-size: 0.85rem;
-  padding: 0.5rem 0;
+  gap: 14px;
+  align-items: center;
+  padding: 0.25rem 0;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .legendItem {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #545454;
-  font-family: var(--font-din-regular), sans-serif;
+  gap: 6px;
 }
 
-.legendColor {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
+.legendItem span {
+  font-family: var(--font-din-regular), sans-serif;
+  font-size: 11px;
+  color: #888;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.legendDots {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.legendDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.legendDash {
+  width: 12px;
+  height: 1.5px;
+  background-color: #b8b8b8;
   flex-shrink: 0;
 }
 
@@ -197,8 +262,8 @@
   }
 
   .timeSlot {
-    padding: 0.625rem 0.375rem;
-    font-size: 0.8rem;
+    padding: 0.75rem 0.625rem;
+    font-size: 0.85rem;
   }
 
   .continueButton,
@@ -209,12 +274,6 @@
 
   .availabilityLegend {
     gap: 12px;
-    font-size: 0.8rem;
-  }
-
-  .legendColor {
-    width: 14px;
-    height: 14px;
   }
 }
 
@@ -231,22 +290,29 @@
   }
 
   .timeSlot {
-    padding: 0.5rem 0.25rem;
-    font-size: 0.75rem;
+    padding: 0.625rem 0.5rem;
+    font-size: 0.8rem;
   }
 
   .availabilityLegend {
     gap: 8px;
-    font-size: 0.75rem;
   }
 
   .legendItem {
-    gap: 6px;
+    gap: 5px;
   }
 
-  .legendColor {
-    width: 12px;
-    height: 12px;
+  .legendItem span {
+    font-size: 10px;
+  }
+
+  .legendDot {
+    width: 5px;
+    height: 5px;
+  }
+
+  .legendDash {
+    width: 10px;
   }
 }
 
