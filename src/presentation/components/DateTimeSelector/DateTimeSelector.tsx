@@ -62,18 +62,6 @@ export function DateTimeSelector({
     refetch,
   } = useAvailability(employeeId ?? null, serviceId ?? null, minDate, maxDate);
 
-  // Set de días de la semana en los que el empleado trabaja al menos una vez en el rango.
-  // Permite distinguir "agenda completa" (día laborable sin slots libres) de "cerrado"
-  // ya que el backend colapsa ambos casos a hasActiveTimeSlots:false.
-  const workingDaysOfWeek = useMemo(() => {
-    const set = new Set<string>();
-    if (!availability) return set;
-    for (const d of availability.availability) {
-      if (d.hasActiveTimeSlots) set.add(d.dayOfWeek);
-    }
-    return set;
-  }, [availability]);
-
   // Actualizar fecha seleccionada cuando cambie la fecha pre-seleccionada
   useEffect(() => {
     if (preSelectedDate) {
@@ -116,15 +104,11 @@ export function DateTimeSelector({
     const dayData = availability.availability.find((d) => d.date === date);
     if (!dayData) return 'disabled';
 
-    // Backend colapsa "agenda completa" y "no laborable" en hasActiveTimeSlots:false.
-    // Heurística: si el empleado trabaja ese dayOfWeek en otro día del rango,
-    // este día sin slots es agenda completa, no cerrado.
-    if (!dayData.hasActiveTimeSlots) {
-      return workingDaysOfWeek.has(dayData.dayOfWeek) ? 'full' : 'disabled';
-    }
+    if (dayData.dayState === 'closed') return 'disabled';
+    if (dayData.dayState === 'fully_booked') return 'full';
 
     const availableSlots = dayData.slots.filter((s) => s.available).length;
-    if (availableSlots === 0) return 'disabled';
+    if (availableSlots === 0) return 'full';
     if (availableSlots <= 2) return 'limited';
     return 'available';
   };
@@ -272,7 +256,7 @@ export function DateTimeSelector({
             <span>Pocos turnos</span>
           </div>
           <div className={classes.legendItem}>
-            <div className={classes.legendDash} />
+            <span className={classes.legendStrike}>15</span>
             <span>Agenda completa</span>
           </div>
         </Box>

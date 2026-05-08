@@ -87,13 +87,16 @@
   pointer-events: none;
 }
 
-/* Día con agenda completa - fondo gris sutil, número gris medio */
+/* Día con agenda completa - fondo rosa tenue + número tachado (día laborable pero sin turnos) */
 .dayFull {
-  background-color: #f5f5f5 !important;
-  color: #a0a0a0 !important;
+  background-color: rgba(235, 162, 168, 0.12) !important;
+  color: #b88a8e !important;
   font-weight: 400 !important;
   cursor: not-allowed !important;
   opacity: 1 !important;
+  text-decoration: line-through;
+  text-decoration-color: #c98e93;
+  text-decoration-thickness: 1.5px;
 }
 
 /* Día cerrado (no laborable) - número gris claro, sin fondo */
@@ -247,6 +250,19 @@
   width: 12px;
   height: 1.5px;
   background-color: #b8b8b8;
+  flex-shrink: 0;
+}
+
+.legendStrike {
+  font-family: var(--font-din-regular), sans-serif;
+  font-size: 11px;
+  color: #8a5a60;
+  background-color: rgba(235, 162, 168, 0.18);
+  padding: 1px 4px;
+  border-radius: 3px;
+  text-decoration: line-through;
+  text-decoration-color: #8a5a60;
+  text-decoration-thickness: 1.5px;
   flex-shrink: 0;
 }
 

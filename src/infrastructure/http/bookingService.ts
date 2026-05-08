@@ -125,6 +125,7 @@ export interface AvailabilityResponse {
     date: string; // YYYY-MM-DD
     dayOfWeek: string;
     hasActiveTimeSlots: boolean;
+    dayState: 'closed' | 'fully_booked' | 'available';
     slots: Array<{
       startTime: string; // HH:mm
       endTime: string; // HH:mm
