@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Affix, Button, Flex, Modal, Select, Text, TextInput, Textarea, Stack } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { useForm, Controller } from 'react-hook-form';
 import { IconHeadset } from '@tabler/icons-react';
 import { ProblemReportService } from '@/infrastructure/http';
 import { notifications } from '@mantine/notifications';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const countryCodes = [
   { value: '+54', label: '🇦🇷 +54' },
@@ -30,7 +30,28 @@ interface FormData {
 export default function ProblemReportWidget() {
   const [opened, { open, close }] = useDisclosure(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const isSmall = useMediaQuery('(max-width: 480px)');
+
+  useEffect(() => {
+    if (!expanded) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setExpanded(false);
+    };
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setExpanded(false);
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      window.removeEventListener('keydown', handleKey);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [expanded]);
 
   const {
     control,
@@ -75,31 +96,98 @@ export default function ProblemReportWidget() {
 
   return (
     <>
-      <Affix position={{ bottom: isMobile ? 16 : 20, right: isMobile ? 16 : 20 }} zIndex={100}>
-        <motion.div
-          initial={{ scale: 0.7, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.6 }}
-          whileHover={{ scale: 1.07 }}
-          whileTap={{ scale: 0.93 }}
-          style={{ display: 'inline-block' }}
+      <Affix position={{ left: 0, bottom: isSmall ? 60 : isMobile ? 80 : 120 }} zIndex={100}>
+        <div
+          ref={containerRef}
+          style={{
+            display: 'flex',
+            alignItems: 'stretch',
+          }}
         >
-          <Button
-            leftSection={<IconHeadset size={isMobile ? 14 : 20} />}
+          <AnimatePresence initial={false}>
+            {expanded && (
+              <motion.div
+                key="panel"
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: isSmall ? 180 : isMobile ? 220 : 260, opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+                style={{
+                  background: '#fff',
+                  boxShadow: '2px 4px 12px rgba(0,0,0,0.15)',
+                  borderRadius: '0 8px 8px 0',
+                  overflow: 'hidden',
+                }}
+              >
+                <Stack
+                  p={isSmall ? 'sm' : 'md'}
+                  gap="sm"
+                  style={{ minWidth: isSmall ? 180 : isMobile ? 220 : 260 }}
+                >
+                  <Text size={isSmall ? 'xs' : 'sm'} c="dark" fw={500}>
+                    ¿Tuviste algún problema? Contanos
+                  </Text>
+                  <Button
+                    color="dark"
+                    radius="md"
+                    size={isSmall ? 'xs' : 'sm'}
+                    onClick={() => {
+                      open();
+                      setExpanded(false);
+                    }}
+                  >
+                    Reportar problema
+                  </Button>
+                </Stack>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <motion.button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            initial={{ x: -40, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 22, delay: 0.4 }}
+            aria-label="Abrir reporte de problemas"
+            aria-expanded={expanded}
             style={{
-              borderRadius: '9999px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              padding: isMobile ? '0 10px' : '0 20px',
-              minWidth: isMobile ? 0 : undefined,
-              fontSize: isMobile ? '11px' : undefined,
+              fontFamily: 'var(--font-din-medium), sans-serif',
+              background: '#1c1c1c',
+              color: '#fff',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              borderRadius: '0 8px 8px 0',
+              boxShadow: '2px 0 8px rgba(0,0,0,0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: isSmall ? 10 : isMobile ? 11 : 13,
+              fontWeight: 500,
+              letterSpacing: '0.08em',
+              alignSelf: 'stretch',
+              width: isSmall ? 24 : isMobile ? 26 : 32,
+              minHeight: isSmall ? 85 : isMobile ? 95 : 115,
+              overflow: 'hidden',
             }}
-            color="dark"
-            onClick={open}
-            size={isMobile ? 'xs' : 'md'}
           >
-            {isMobile ? '¿Ayuda?' : '¿Problemas?'}
-          </Button>
-        </motion.div>
+            <span
+              style={{
+                transform: 'rotate(-90deg)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <IconHeadset size={isSmall ? 12 : isMobile ? 14 : 16} />
+              AYUDA
+            </span>
+          </motion.button>
+        </div>
       </Affix>
 
       <Modal opened={opened} onClose={close} title="Reportar un problema" centered radius="md">
