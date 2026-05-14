@@ -8,6 +8,7 @@ export const EMPLOYEE_IDS = {
 export const CATEGORY_IDS = {
   TATTOO_COSMETICO: '9a39b2f8-0d4a-4bca-bc93-b4b5d6cf2d11',
   ESTILISMO_CEJAS: '316f01a6-ef73-4b05-a322-8da598ba50aa',
+  AUTOSTYLING: '0e476605-64c0-483a-8ee2-a7e34e62a31e',
   PARAMEDICAL_TATTOO: '45422e67-102b-4565-9192-ef4047e16f48',
   EPITESIS_CAP: '7cfbc1e8-8eb2-41cc-a8de-a3b0ecce30c4',
 } as const;
@@ -16,6 +17,7 @@ export const CATEGORY_IDS = {
 export const CATEGORY_PAGE_MAP: Record<string, string> = {
   [CATEGORY_IDS.TATTOO_COSMETICO]: '/tattoo-cosmetico',
   [CATEGORY_IDS.ESTILISMO_CEJAS]: '/estilismo-de-cejas',
+  [CATEGORY_IDS.AUTOSTYLING]: '/autostyling',
   [CATEGORY_IDS.PARAMEDICAL_TATTOO]: '/paramedical-tattoo',
   [CATEGORY_IDS.EPITESIS_CAP]: '/epitesis-cap',
 };

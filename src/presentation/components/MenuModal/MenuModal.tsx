@@ -16,6 +16,7 @@ const menuItems = [
   { label: 'INICIO', href: '/' },
   { label: 'COSMETIC TATTOO', href: '/tattoo-cosmetico' },
   { label: 'ESTILISMO DE CEJAS & PESTAÑAS', href: '/estilismo-de-cejas' },
+  { label: 'AUTOSTYLING', href: '/autostyling' },
   { label: 'PARAMEDICAL TATTOO', href: '/paramedical-tattoo' },
   { label: 'EPITESIS CAP', href: '/epitesis-cap' },
   { label: 'CAMBIAR RESERVA', href: '/cambiar-reserva' },

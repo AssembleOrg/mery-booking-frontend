@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from 'react';
 const NAV_ITEMS = [
   { label: 'COSMETIC TATTOO', href: '/tattoo-cosmetico' },
   { label: 'ESTILISMO', href: '/estilismo-de-cejas' },
+  { label: 'AUTOSTYLING', href: '/autostyling' },
   { label: 'PARAMEDICAL', href: '/paramedical-tattoo' },
   { label: 'EPITESIS', href: '/epitesis-cap' },
 ];

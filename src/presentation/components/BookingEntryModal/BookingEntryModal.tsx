@@ -22,6 +22,11 @@ const BOOKING_OPTIONS = [
     href: '/estilismo-de-cejas',
   },
   {
+    title: 'Autostyling',
+    description: 'Autostyling.',
+    href: '/autostyling',
+  },
+  {
     title: 'Paramedical Tattoo',
     description: 'Arte y salud.',
     href: '/paramedical-tattoo',
