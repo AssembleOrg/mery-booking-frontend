@@ -12,6 +12,7 @@ interface ServiceForm {
   description: string;
   categoryId: string;
   showOnSite: boolean;
+  isLmbEligible: boolean;
   duration: number | string;
   price: number | string;
   minQuantity: number | string;
@@ -24,6 +25,7 @@ const DEFAULT_FORM: ServiceForm = {
   description: '',
   categoryId: '',
   showOnSite: true,
+  isLmbEligible: false,
   duration: 60,
   price: 0,
   minQuantity: 1,
@@ -156,6 +158,7 @@ export function ServicesManager() {
       description: service.description || '',
       categoryId: service.categoryId,
       showOnSite: service.showOnSite,
+      isLmbEligible: service.isLmbEligible ?? false,
       duration: service.duration,
       price: service.price,
       minQuantity: service.minQuantity,
@@ -195,6 +198,7 @@ export function ServicesManager() {
         description: form.description || undefined,
         categoryId: form.categoryId,
         showOnSite: form.showOnSite,
+        isLmbEligible: form.isLmbEligible,
         duration: Number(form.duration),
         price: Number(form.price),
         minQuantity: Number(form.minQuantity),
@@ -458,6 +462,13 @@ export function ServicesManager() {
               label="Mostrar en el sitio web"
               checked={form.showOnSite}
               onChange={(e) => setField('showOnSite', e.currentTarget.checked)}
+            />
+
+            <Checkbox
+              label="🔥 Eligible para Last Minute Booking"
+              description="Si está marcado, este servicio puede asignarse a slots LMB"
+              checked={form.isLmbEligible}
+              onChange={(e) => setField('isLmbEligible', e.currentTarget.checked)}
             />
 
             <Box className={classes.modalActions}>

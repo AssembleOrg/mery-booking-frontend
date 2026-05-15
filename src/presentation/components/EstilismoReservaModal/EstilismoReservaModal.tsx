@@ -23,6 +23,7 @@ interface EstilismoReservaModalProps {
   selectedTime: string;
   services: ServiceEntity[];
   employees: Employee[];
+  lmbInfo?: { lmbId: string; discountPercent: number };
 }
 
 export function EstilismoReservaModal({
@@ -35,6 +36,7 @@ export function EstilismoReservaModal({
   selectedTime,
   services,
   employees,
+  lmbInfo,
 }: EstilismoReservaModalProps) {
   const isMobile = useMediaQuery('(max-width: 767px)');
   const [currentStep, setCurrentStep] = useState(1);
@@ -132,6 +134,7 @@ export function EstilismoReservaModal({
                 selectedEmployeeId={employee.id}
                 confirmationModalOpened={confirmationModalOpened}
                 onConfirmationModalClose={() => setConfirmationModalOpened(false)}
+                lmbInfo={lmbInfo}
                 onClientDataCollected={(data) => {
                   setClientData(data);
                   handleStepComplete();
@@ -151,6 +154,7 @@ export function EstilismoReservaModal({
                 services={services}
                 selectedEmployeeId={employee.id}
                 informationalListPriceArs={informationalListPriceArs ?? undefined}
+                lmbInfo={lmbInfo}
                 onBack={handleStepBack}
               />
             )}

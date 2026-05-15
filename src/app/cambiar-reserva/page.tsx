@@ -137,6 +137,14 @@ export default function CambiarReservaPage() {
     setIsSearching(true);
     try {
       const result = await BookingService.getByCode(bookingCode.trim().toUpperCase(), dni.trim());
+      // Las reservas Last Minute no son reagendables — corte temprano
+      if (result.lastMinuteBookingId) {
+        setErrorMessage(
+          'Esta es una reserva Last Minute (🔥) y no se puede reagendar ni cancelar. Si necesitás un cambio, contactanos por WhatsApp.',
+        );
+        setErrorModalOpen(true);
+        return;
+      }
       setBooking(result);
       setCurrentStep(2);
     } catch (err: any) {

@@ -28,6 +28,7 @@ export default function EstilismoCejasPage() {
   );
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [selectedLmb, setSelectedLmb] = useState<{ lmbId: string; discountPercent: number } | null>(null);
 
   // Estados para modales de reserva
   const [reservaModalOpened, setReservaModalOpened] = useState(false);
@@ -77,9 +78,14 @@ export default function EstilismoCejasPage() {
     }
   };
 
-  const handleDateTimeSelect = (date: Date, time: string) => {
+  const handleDateTimeSelect = (
+    date: Date,
+    time: string,
+    lmbInfo?: { lmbId: string; discountPercent: number },
+  ) => {
     setSelectedDate(date);
     setSelectedTime(time);
+    setSelectedLmb(lmbInfo ?? null);
 
     if (!currentService || !currentEmployee) return;
 
@@ -207,6 +213,7 @@ export default function EstilismoCejasPage() {
             setSelectedEmployee(null);
             setSelectedDate(null);
             setSelectedTime(null);
+            setSelectedLmb(null);
           }}
           serviceName={selectedService.name}
           service={selectedService}
@@ -215,6 +222,7 @@ export default function EstilismoCejasPage() {
           selectedTime={selectedTime}
           services={services as ServiceEntity[]}
           employees={employees as Employee[]}
+          lmbInfo={selectedLmb ?? undefined}
         />
       )}
 

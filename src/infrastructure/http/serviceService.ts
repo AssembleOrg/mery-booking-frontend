@@ -7,6 +7,7 @@ export interface ServiceEntity {
   description: string | null;
   categoryId: string;
   showOnSite: boolean;
+  isLmbEligible?: boolean;
   duration: number;
   price: number;
   minQuantity: number;
@@ -38,6 +39,7 @@ export interface UpdateServiceDto {
   description?: string;
   categoryId?: string;
   showOnSite?: boolean;
+  isLmbEligible?: boolean;
   duration?: number;
   price?: number;
   minQuantity?: number;

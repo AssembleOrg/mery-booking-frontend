@@ -45,6 +45,7 @@ interface Step5PaymentSummaryProps {
   selectedEmployeeId?: string;
   informationalListPriceArs?: number;
   couponCode?: string;
+  lmbInfo?: { lmbId: string; discountPercent: number };
   onBack: () => void;
 }
 
@@ -62,6 +63,7 @@ export function Step5PaymentSummary({
   selectedEmployeeId,
   informationalListPriceArs,
   couponCode,
+  lmbInfo,
   onBack,
 }: Step5PaymentSummaryProps) {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -79,7 +81,10 @@ export function Step5PaymentSummary({
   const employeeName = employee?.fullName || 'Profesional asignado';
   const service = services.find((s) => s.id === selectedOption.serviceId);
 
-  const depositAmount = service ? Number(service.price) : 0;
+  const baseDepositAmount = service ? Number(service.price) : 0;
+  const depositAmount = lmbInfo
+    ? Math.round(baseDepositAmount * (1 - lmbInfo.discountPercent / 100))
+    : baseDepositAmount;
 
   const formattedDate = useMemo(() => {
     const day = selectedDate.getDate();
@@ -320,11 +325,35 @@ export function Step5PaymentSummary({
               </Group>
             )}
 
+            {lmbInfo && (
+              <>
+                <Group justify="space-between">
+                  <Text size="sm" c="dimmed">
+                    Seña sin descuento:
+                  </Text>
+                  <Text size="sm" style={{ textDecoration: 'line-through', color: '#999' }}>
+                    AR$ {baseDepositAmount.toLocaleString('es-AR')}
+                  </Text>
+                </Group>
+                <Group justify="space-between">
+                  <Group gap={6}>
+                    <Text size="sm">🔥</Text>
+                    <Text size="sm" fw={600} style={{ color: '#ea580c' }}>
+                      Descuento Last Minute ({lmbInfo.discountPercent}%):
+                    </Text>
+                  </Group>
+                  <Text size="sm" fw={600} style={{ color: '#ea580c' }}>
+                    − AR$ {(baseDepositAmount - depositAmount).toLocaleString('es-AR')}
+                  </Text>
+                </Group>
+              </>
+            )}
+
             <Group justify="space-between">
               <Text size="md" fw={600}>
                 Depósito (Pagar ahora):
               </Text>
-              <Text size="md" fw={700} c="pink.5">
+              <Text size="md" fw={700} c={lmbInfo ? undefined : 'pink.5'} style={lmbInfo ? { color: '#ea580c' } : undefined}>
                 AR$ {depositAmount.toLocaleString('es-AR')}
               </Text>
             </Group>

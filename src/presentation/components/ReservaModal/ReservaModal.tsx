@@ -62,6 +62,7 @@ export function ReservaModal({
   const [showCalendar, setShowCalendar] = useState(false);
   const [step3EmployeeId, setStep3EmployeeId] = useState<string | null>(null);
   const [step3ServiceId, setStep3ServiceId] = useState<string | null>(null);
+  const [lmbInfo, setLmbInfo] = useState<{ lmbId: string; discountPercent: number } | null>(null);
 
   const handleClose = () => {
     // Reset estado al cerrar
@@ -76,6 +77,7 @@ export function ReservaModal({
     setShowCalendar(false);
     setStep3EmployeeId(null);
     setStep3ServiceId(null);
+    setLmbInfo(null);
     onClose();
   };
 
@@ -92,9 +94,20 @@ export function ReservaModal({
         setSelectedEmployeeId(null);
         setStep3EmployeeId(null);
         setStep3ServiceId(null);
+        setLmbInfo(null);
       }
       setCurrentStep(prev => prev - 1);
     }
+  };
+
+  const handleDateTimeSelect = (
+    date: Date,
+    time: string,
+    lmb?: { lmbId: string; discountPercent: number },
+  ) => {
+    setSelectedDate(date);
+    setSelectedTime(time);
+    setLmbInfo(lmb ?? null);
   };
 
   const handleBookingComplete = () => {
@@ -161,10 +174,7 @@ export function ReservaModal({
                 onEmployeeSelect={setSelectedEmployeeId}
                 selectedDate={selectedDate}
                 selectedTime={selectedTime}
-                onSelectDateTime={(date, time) => {
-                  setSelectedDate(date);
-                  setSelectedTime(time);
-                }}
+                onSelectDateTime={handleDateTimeSelect}
                 onEmployeeResolved={setSelectedEmployeeId}
                 onBack={handleStepBack}
                 showCalendar={showCalendar}
@@ -190,6 +200,7 @@ export function ReservaModal({
                 selectedEmployeeId={selectedEmployeeId ?? undefined}
                 confirmationModalOpened={confirmationModalOpened}
                 onConfirmationModalClose={() => setConfirmationModalOpened(false)}
+                lmbInfo={lmbInfo ?? undefined}
                 onClientDataCollected={(data) => {
                   setClientData(data);
                   handleStepComplete();
@@ -212,6 +223,7 @@ export function ReservaModal({
                 meryGarciaId={meryGarciaId}
                 selectedEmployeeId={selectedEmployeeId ?? undefined}
                 couponCode={clientData?.couponCode}
+                lmbInfo={lmbInfo ?? undefined}
                 onBack={handleStepBack}
               />
             )}

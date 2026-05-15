@@ -88,6 +88,7 @@ export interface BookingResponse {
   notes?: string;
   couponCode?: string;
   discountPercent?: number;
+  lastMinuteBookingId?: string;
   rescheduleCount?: number;
   priceDifference?: number;
   client?: {
@@ -130,6 +131,9 @@ export interface AvailabilityResponse {
       startTime: string; // HH:mm
       endTime: string; // HH:mm
       available: boolean;
+      isLmb?: boolean;
+      lmbId?: string;
+      discountPercent?: number;
     }>;
   }>;
 }

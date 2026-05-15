@@ -626,6 +626,16 @@ export function BookingsManager() {
     return Boolean(booking.couponCode?.trim());
   };
 
+  const hasLmb = (booking: BookingResponse): boolean => {
+    return Boolean((booking as any).lastMinuteBookingId);
+  };
+
+  const bookingPrefix = (booking: BookingResponse): string => {
+    if (hasLmb(booking)) return '🔥 ';
+    if (hasActiveCoupon(booking)) return '🎁 ';
+    return '';
+  };
+
   // Calendario mensual
   const getMonthDays = () => {
     const year = currentMonth.getFullYear();
@@ -1047,8 +1057,8 @@ export function BookingsManager() {
                                     onClick={() => handleBookingClick(booking)}
                                   >
                                     <Text size="xs" fw={500} lineClamp={1} title={booking.client?.fullName || 'Cliente'}>
-                                      {hasActiveCoupon(booking) ? '🎁 ' : ''}
-                                      {truncateText(booking.client?.fullName || 'Sin nombre', hasActiveCoupon(booking) ? 12 : 15)}
+                                      {bookingPrefix(booking)}
+                                      {truncateText(booking.client?.fullName || 'Sin nombre', (hasLmb(booking) || hasActiveCoupon(booking)) ? 12 : 15)}
                                     </Text>
                                     {duration > 1 && (
                                       <Text size="xs" c="dimmed" mt={2}>
@@ -1151,8 +1161,8 @@ export function BookingsManager() {
                                 style={{ cursor: 'pointer' }}
                                 title={booking.client?.fullName || 'Cliente'}
                               >
-                                {hasActiveCoupon(booking) ? '🎁 ' : ''}
-                                {truncateText(booking.client?.fullName || 'Sin nombre', hasActiveCoupon(booking) ? 12 : 15)}
+                                {bookingPrefix(booking)}
+                                {truncateText(booking.client?.fullName || 'Sin nombre', (hasLmb(booking) || hasActiveCoupon(booking)) ? 12 : 15)}
                               </Text>
                               <Text size="xs" c="dimmed" lineClamp={1}>
                                 {getBookingStartTime(booking)}-{getBookingEndTime(booking)}
@@ -1228,16 +1238,24 @@ export function BookingsManager() {
                                 p="xs"
                                 className={classes.bookingCard}
                                 style={{
-                                  backgroundColor: hasActiveCoupon(booking) ? '#f3e8ff' : '#FBE8EA',
+                                  backgroundColor: hasLmb(booking)
+                                    ? '#fff1e6'
+                                    : hasActiveCoupon(booking)
+                                      ? '#f3e8ff'
+                                      : '#FBE8EA',
                                   minHeight: height,
                                   height: duration > 1 ? height : 'auto',
                                   cursor: 'pointer',
-                                  borderLeft: hasActiveCoupon(booking) ? '3px solid #9333ea' : undefined,
+                                  borderLeft: hasLmb(booking)
+                                    ? '3px solid #ea580c'
+                                    : hasActiveCoupon(booking)
+                                      ? '3px solid #9333ea'
+                                      : undefined,
                                 }}
                                 onClick={() => handleBookingClick(booking)}
                               >
                                 <Text size="xs" fw={500} lineClamp={1} title={booking.client?.fullName || 'Cliente'}>
-                                  {hasActiveCoupon(booking) ? '🎁 ' : ''}{truncateText(booking.client?.fullName || 'Sin nombre', hasActiveCoupon(booking) ? 12 : 15)}
+                                  {bookingPrefix(booking)}{truncateText(booking.client?.fullName || 'Sin nombre', (hasLmb(booking) || hasActiveCoupon(booking)) ? 12 : 15)}
                                 </Text>
                                 <Text size="xs" c="dimmed" lineClamp={1}>
                                   {booking.service?.name || 'Sin servicio'}
@@ -1322,7 +1340,7 @@ export function BookingsManager() {
                         style={{ cursor: 'pointer' }}
                         onClick={() => handleBookingClick(booking)}
                       >
-                        {hasActiveCoupon(booking) ? '🎁 ' : ''}{booking.client?.fullName || 'Sin nombre'}
+                        {bookingPrefix(booking)}{booking.client?.fullName || 'Sin nombre'}
                       </Table.Td>
                       <Table.Td>{booking.employee?.fullName || 'Sin empleado'}</Table.Td>
                       <Table.Td>{booking.service?.name || 'Sin servicio'}</Table.Td>
@@ -1384,7 +1402,7 @@ export function BookingsManager() {
                   <Group justify="space-between">
                     <Box>
                       <Text fw={500} size="sm">
-                        {hasActiveCoupon(booking) && '🎁 '}{booking.client?.fullName || 'Sin nombre'}
+                        {bookingPrefix(booking)}{booking.client?.fullName || 'Sin nombre'}
                       </Text>
                       <Text size="xs" c="dimmed">
                         {getBookingStartTime(booking)} - {getBookingEndTime(booking)}
@@ -1475,6 +1493,21 @@ export function BookingsManager() {
 
             <Divider />
 
+            {hasLmb(selectedBooking) ? (
+              <Box>
+                <Text size="sm" fw={500} c="dimmed" mb={4}>Last Minute Booking</Text>
+                <Group gap="xs">
+                  <Text size="md">🔥</Text>
+                  <Text size="md" fw={600}>Slot LMB</Text>
+                  <Badge color="orange" variant="light" size="lg">
+                    {selectedBooking.discountPercent}% OFF
+                  </Badge>
+                </Group>
+                <Text size="xs" c="dimmed" mt={4}>
+                  Reserva no reagendable por el cliente.
+                </Text>
+              </Box>
+            ) : (
             <Box>
               <Group justify="space-between" align="center" mb={4}>
                 <Text size="sm" fw={500} c="dimmed">Cupón de Descuento</Text>
@@ -1586,6 +1619,7 @@ export function BookingsManager() {
                 <Text size="sm" c="dimmed">Sin cupón</Text>
               )}
             </Box>
+            )}
 
             <Divider />
             <Box>

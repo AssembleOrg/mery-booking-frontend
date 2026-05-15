@@ -9,6 +9,7 @@ export { BookingService } from './bookingService';
 export { ClientService } from './clientService';
 export { TempReservationService } from './tempReservationService';
 export { CouponService } from './couponService';
+export { LastMinuteBookingService } from './lastMinuteBookingService';
 export { ProblemReportService } from './problemReportService';
 export type { LoginCredentials, AuthResponse } from './authService';
 export type { CreateProblemReportDto, ProblemReportResponse } from './problemReportService';
@@ -22,4 +23,5 @@ export type { Booking, BookingStatus, PaidStatus, GetOccupiedTimeSlotsParams, Cr
 export type { Client, CreateClientDto, UpdateClientDto, CreateClientPublicDto, CreateClientPublicResponse, ClientSearchResult } from './clientService';
 export type { TempReservation, CreateTempReservationDto, LinkPreferenceDto } from './tempReservationService';
 export type { Coupon, CreateCouponDto, UpdateCouponDto, ValidateCouponResponse } from './couponService';
+export type { LastMinuteBooking, CreateLastMinuteBookingDto, UpdateLastMinuteBookingDto, LmbStatus, LmbFilters, PaginatedLmb } from './lastMinuteBookingService';
 

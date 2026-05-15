@@ -10,6 +10,7 @@ import {
   Loader,
   Center,
   Alert,
+  Tooltip,
 } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 import { useState, useMemo, useEffect } from 'react';
@@ -20,11 +21,16 @@ import classes from './DateTimeSelector.module.css';
 
 dayjs.locale('es');
 
+export interface LmbSlotInfo {
+  lmbId: string;
+  discountPercent: number;
+}
+
 interface DateTimeSelectorProps {
   serviceDuration?: number; // Duración en minutos
   employeeId?: string | null; // ID del empleado (opcional, puede ser null para "cualquier profesional")
   serviceId?: string | null; // ID del servicio (opcional)
-  onSelectDateTime: (date: Date, time: string) => void;
+  onSelectDateTime: (date: Date, time: string, lmbInfo?: LmbSlotInfo) => void;
   selectedDate?: Date; // Fecha pre-seleccionada desde ServiceBookingForm
   onBack?: () => void; // Callback para retroceder (opcional)
   showBackButton?: boolean; // Mostrar botón de retroceso (opcional)
@@ -124,6 +130,14 @@ export function DateTimeSelector({
     return availableCount;
   };
 
+  // Indica si un día tiene al menos un slot LMB activo
+  const dayHasLmb = (date: string): boolean => {
+    if (!availability) return false;
+    const dayData = availability.availability.find((d) => d.date === date);
+    if (!dayData) return false;
+    return dayData.slots.some((s) => s.isLmb && s.available);
+  };
+
   const handleDateChange = (date: string | null) => {
     setSelectedDate(date);
     setSelectedTime(null); // Reset time when date changes
@@ -139,7 +153,12 @@ export function DateTimeSelector({
       if (selectedDate) {
         const [year, month, day] = selectedDate.split('-').map(Number);
         const dateObj = new Date(year, month - 1, day);
-        onSelectDateTime(dateObj, timeStart);
+        const slot = availableSlotsForDate.find((s) => s.startTime === timeStart);
+        const lmbInfo: LmbSlotInfo | undefined =
+          slot && slot.isLmb && slot.lmbId && typeof slot.discountPercent === 'number'
+            ? { lmbId: slot.lmbId, discountPercent: slot.discountPercent }
+            : undefined;
+        onSelectDateTime(dateObj, timeStart, lmbInfo);
       }
     }
   };
@@ -222,8 +241,33 @@ export function DateTimeSelector({
               return {
                 disabled: level === 'disabled' || level === 'full',
                 className: dayClass,
-                title,
+                title: dayHasLmb(date) ? `${title}${title ? ' · ' : ''}Last Minute disponible` : title,
               };
+            }}
+            renderDay={(date) => {
+              const dateStr = typeof date === 'string' ? date : '';
+              const day = dateStr ? Number(dateStr.split('-')[2]) : '';
+              const hasLmb = dateStr ? dayHasLmb(dateStr) : false;
+              return (
+                <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span>{day}</span>
+                  {hasLmb && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        right: 1,
+                        fontSize: 9,
+                        lineHeight: 1,
+                        pointerEvents: 'none',
+                      }}
+                      aria-label="Last Minute disponible"
+                    >
+                      🔥
+                    </span>
+                  )}
+                </div>
+              );
             }}
             classNames={{
               day: classes.day,
@@ -259,6 +303,10 @@ export function DateTimeSelector({
             <span className={classes.legendStrike}>15</span>
             <span>Agenda completa</span>
           </div>
+          <div className={classes.legendItem}>
+            <span style={{ fontSize: '14px', lineHeight: 1 }}>🔥</span>
+            <span>Last Minute Booking</span>
+          </div>
         </Box>
 
         {/* Franjas horarias */}
@@ -277,19 +325,43 @@ export function DateTimeSelector({
                 spacing="sm"
                 className={classes.timeSlotsGrid}
               >
-                {availableSlotsForDate.map((slot) => (
-                  <UnstyledButton
-                    key={slot.startTime}
-                    onClick={() => handleTimeSelect(slot.startTime)}
-                    className={`${classes.timeSlot} ${
-                      selectedTime === slot.startTime
-                        ? classes.timeSlotSelected
-                        : ''
-                    }`}
-                  >
-                    {slot.startTime} - {slot.endTime}
-                  </UnstyledButton>
-                ))}
+                {availableSlotsForDate.map((slot) => {
+                  const slotButton = (
+                    <UnstyledButton
+                      key={`${slot.startTime}-${slot.isLmb ? 'lmb' : 'reg'}`}
+                      onClick={() => handleTimeSelect(slot.startTime)}
+                      className={`${classes.timeSlot} ${
+                        selectedTime === slot.startTime
+                          ? classes.timeSlotSelected
+                          : ''
+                      } ${slot.isLmb ? classes.timeSlotLmb : ''}`}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+                        {slot.isLmb && <span>🔥</span>}
+                        <span>{slot.startTime} - {slot.endTime}</span>
+                        {slot.isLmb && slot.discountPercent ? (
+                          <span style={{ fontSize: '0.75em', color: '#ea580c', fontWeight: 600 }}>
+                            -{slot.discountPercent}%
+                          </span>
+                        ) : null}
+                      </span>
+                    </UnstyledButton>
+                  );
+                  if (slot.isLmb) {
+                    return (
+                      <Tooltip
+                        key={`${slot.startTime}-lmb`}
+                        label={`Last Minute Booking · ${slot.discountPercent ?? 0}% off · No es reagendable`}
+                        position="top"
+                        withArrow
+                        events={{ hover: true, focus: true, touch: true }}
+                      >
+                        {slotButton}
+                      </Tooltip>
+                    );
+                  }
+                  return slotButton;
+                })}
               </SimpleGrid>
             )}
           </Box>

@@ -28,6 +28,7 @@ export default function AutostylingPage() {
   );
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [selectedLmb, setSelectedLmb] = useState<{ lmbId: string; discountPercent: number } | null>(null);
 
   const [reservaModalOpened, setReservaModalOpened] = useState(false);
   const [selectedService, setSelectedService] = useState<ServiceEntity | null>(
@@ -75,9 +76,14 @@ export default function AutostylingPage() {
     }
   };
 
-  const handleDateTimeSelect = (date: Date, time: string) => {
+  const handleDateTimeSelect = (
+    date: Date,
+    time: string,
+    lmbInfo?: { lmbId: string; discountPercent: number },
+  ) => {
     setSelectedDate(date);
     setSelectedTime(time);
+    setSelectedLmb(lmbInfo ?? null);
 
     if (!currentService || !currentEmployee) return;
 
@@ -202,6 +208,7 @@ export default function AutostylingPage() {
             setSelectedEmployee(null);
             setSelectedDate(null);
             setSelectedTime(null);
+            setSelectedLmb(null);
           }}
           serviceName={selectedService.name}
           service={selectedService}
@@ -210,6 +217,7 @@ export default function AutostylingPage() {
           selectedTime={selectedTime}
           services={services as ServiceEntity[]}
           employees={employees as Employee[]}
+          lmbInfo={selectedLmb ?? undefined}
         />
       )}
 

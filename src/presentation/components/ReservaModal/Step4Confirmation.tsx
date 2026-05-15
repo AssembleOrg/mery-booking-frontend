@@ -27,6 +27,7 @@ interface Step4ConfirmationProps {
   selectedEmployeeId?: string;
   confirmationModalOpened: boolean;
   onConfirmationModalClose: () => void;
+  lmbInfo?: { lmbId: string; discountPercent: number };
   onClientDataCollected: (data: {
     name: string;
     surname: string;
@@ -50,6 +51,7 @@ export function Step4Confirmation({
   selectedEmployeeId,
   confirmationModalOpened,
   onConfirmationModalClose,
+  lmbInfo,
   onClientDataCollected,
 }: Step4ConfirmationProps) {
   // Priorizar selectedEmployeeId de la página, luego selectedOption.employeeId, luego fallbacks
@@ -110,9 +112,32 @@ export function Step4Confirmation({
     return null;
   }
 
+  const discountedPrice = lmbInfo && service
+    ? Math.round(Number(service.price) * (1 - lmbInfo.discountPercent / 100))
+    : null;
+
   return (
     <Box className={classes.stepContainer}>
       <Text className={classes.stepTitle}>Confirma tu reserva</Text>
+
+      {lmbInfo && (
+        <Box
+          style={{
+            background: '#fff1e6',
+            border: '1px solid #ea580c',
+            borderRadius: 8,
+            padding: '12px 14px',
+            marginBottom: 14,
+          }}
+        >
+          <Text size="sm" fw={700} style={{ color: '#9a3412' }}>
+            🔥 Last Minute Booking — {lmbInfo.discountPercent}% OFF
+          </Text>
+          <Text size="xs" style={{ color: '#9a3412', marginTop: 4 }}>
+            Esta es una reserva especial de último momento. <strong>No es reagendable ni cancelable</strong>, y no admite cupones de descuento adicionales.
+          </Text>
+        </Box>
+      )}
 
       <div className={classes.summaryCard}>
         <div className={classes.summaryRow}>
@@ -144,9 +169,23 @@ export function Step4Confirmation({
 
         <div className={classes.summaryRow}>
           <Text className={classes.summaryLabel}>Seña (a pagar ahora):</Text>
-          <Text className={classes.summaryPrice}>
-            AR$ {service ? Number(service.price).toLocaleString('es-AR') : ''}
-          </Text>
+          {discountedPrice !== null && service ? (
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+              <Text
+                size="xs"
+                style={{ textDecoration: 'line-through', color: '#999' }}
+              >
+                AR$ {Number(service.price).toLocaleString('es-AR')}
+              </Text>
+              <Text className={classes.summaryPrice} style={{ color: '#ea580c' }}>
+                AR$ {discountedPrice.toLocaleString('es-AR')}
+              </Text>
+            </div>
+          ) : (
+            <Text className={classes.summaryPrice}>
+              AR$ {service ? Number(service.price).toLocaleString('es-AR') : ''}
+            </Text>
+          )}
         </div>
       </div>
 
@@ -159,6 +198,7 @@ export function Step4Confirmation({
         time={selectedTime}
         location={MOCK_LOCATION}
         serviceId={selectedOption.serviceId}
+        lmbInfo={lmbInfo}
         onConfirm={handleCollectData}
       />
     </Box>

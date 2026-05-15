@@ -32,6 +32,7 @@ interface BookingConfirmationModalProps {
   time: string;
   location: string;
   serviceId?: string;
+  lmbInfo?: { lmbId: string; discountPercent: number };
   onConfirm: (client: Client, couponCode?: string) => void;
 }
 
@@ -61,6 +62,7 @@ export function BookingConfirmationModal({
   time,
   location,
   serviceId,
+  lmbInfo,
   onConfirm,
 }: BookingConfirmationModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -146,7 +148,10 @@ export function BookingConfirmationModal({
     setCouponValidation(null);
   };
 
-  const deposit = service.priceBook;
+  const baseDeposit = service.priceBook;
+  const deposit = lmbInfo
+    ? Math.round(baseDeposit * (1 - lmbInfo.discountPercent / 100))
+    : baseDeposit;
 
   const formatDate = (date: Date) => {
     const day = date.getDate();
@@ -391,8 +396,29 @@ export function BookingConfirmationModal({
               )}
             />
 
-            {/* Coupon Section */}
-            {serviceId && (
+            {/* LMB info — replaces coupon section when slot is Last Minute */}
+            {lmbInfo ? (
+              <Box
+                style={{
+                  background: '#fff1e6',
+                  border: '1px solid #ea580c',
+                  borderRadius: 8,
+                  padding: '12px 14px',
+                }}
+              >
+                <Flex align="center" gap="xs" mb={4}>
+                  <Text size="sm">🔥</Text>
+                  <Text size="sm" fw={700} style={{ color: '#9a3412' }}>
+                    Descuento Last Minute: {lmbInfo.discountPercent}% OFF
+                  </Text>
+                </Flex>
+                <Text size="xs" style={{ color: '#9a3412' }}>
+                  El descuento ya está aplicado automáticamente. No es combinable con cupones.
+                </Text>
+              </Box>
+            ) : (
+            /* Coupon Section */
+            serviceId && (
               <Box className={classes.couponSection}>
                 {couponValidation?.valid ? (
                   <Flex align="center" justify="space-between" gap="sm">
@@ -463,6 +489,7 @@ export function BookingConfirmationModal({
                   </>
                 )}
               </Box>
+            )
             )}
 
             {/* Pricing Summary */}
@@ -471,9 +498,20 @@ export function BookingConfirmationModal({
                 <Text size="sm" fw={400}>
                   Seña:
                 </Text>
-                <Text size="sm" fw={600}>
-                  AR${deposit.toLocaleString('es-AR')}
-                </Text>
+                {lmbInfo ? (
+                  <Flex align="baseline" gap={6}>
+                    <Text size="xs" style={{ textDecoration: 'line-through', color: '#999' }}>
+                      AR${baseDeposit.toLocaleString('es-AR')}
+                    </Text>
+                    <Text size="sm" fw={700} style={{ color: '#ea580c' }}>
+                      AR${deposit.toLocaleString('es-AR')}
+                    </Text>
+                  </Flex>
+                ) : (
+                  <Text size="sm" fw={600}>
+                    AR${deposit.toLocaleString('es-AR')}
+                  </Text>
+                )}
               </Flex>
 
               <Flex justify="space-between" mb="xs">
@@ -483,7 +521,7 @@ export function BookingConfirmationModal({
                     Pagar ahora
                   </Text>
                 </Text>
-                <Text size="sm" fw={600} c="pink.5">
+                <Text size="sm" fw={600} c={lmbInfo ? undefined : 'pink.5'} style={lmbInfo ? { color: '#ea580c' } : undefined}>
                   AR${deposit.toLocaleString('es-AR')}
                 </Text>
               </Flex>

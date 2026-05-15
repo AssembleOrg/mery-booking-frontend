@@ -12,6 +12,7 @@ import { EmployeesManager } from '@/presentation/components/Admin/EmployeesManag
 import { BookingsManager } from '@/presentation/components/Admin/BookingsManager';
 import { ClientsManager } from '@/presentation/components/Admin/ClientsManager';
 import { CouponsManager } from '@/presentation/components/Admin/CouponsManager';
+import { LastMinuteManager } from '@/presentation/components/Admin/LastMinuteManager';
 import classes from './page.module.css';
 
 export default function AdminPage() {
@@ -88,6 +89,9 @@ export default function AdminPage() {
             <Tabs.Tab value="coupons" className={classes.tab}>
               Cupones
             </Tabs.Tab>
+            <Tabs.Tab value="lmb" className={classes.tab}>
+              Last Minute
+            </Tabs.Tab>
           </Tabs.List>
 
           <Box className={classes.tabContent}>
@@ -117,6 +121,10 @@ export default function AdminPage() {
 
             <Tabs.Panel value="coupons">
               {activeTab === 'coupons' && <CouponsManager />}
+            </Tabs.Panel>
+
+            <Tabs.Panel value="lmb">
+              {activeTab === 'lmb' && <LastMinuteManager />}
             </Tabs.Panel>
           </Box>
         </Tabs>

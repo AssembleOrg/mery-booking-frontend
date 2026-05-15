@@ -21,7 +21,7 @@ interface Step3CalendarProps {
   onEmployeeSelect: (id: string) => void;
   selectedDate: Date | null;
   selectedTime: string | null;
-  onSelectDateTime: (date: Date, time: string) => void;
+  onSelectDateTime: (date: Date, time: string, lmbInfo?: { lmbId: string; discountPercent: number }) => void;
   onEmployeeResolved?: (employeeId: string | null) => void;
   onBack: () => void;
   showCalendar: boolean;
