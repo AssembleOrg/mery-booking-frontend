@@ -12,12 +12,15 @@ import {
   Divider,
   Image,
   Loader,
+  Box,
+  Checkbox,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconArrowLeft, IconCreditCard, IconCheck } from '@tabler/icons-react';
 import type { ServiceOption } from '@/infrastructure/types/services';
 import type { Employee } from '@/infrastructure/http/employeeService';
 import type { ServiceEntity } from '@/infrastructure/http/serviceService';
+import { EMPLOYEE_IDS, COMBO_TINTE_OFFER } from '@/config/constants';
 import classes from './ReservaModal.module.css';
 
 const MOCK_LOCATION = 'Mery García Office';
@@ -67,6 +70,7 @@ export function Step5PaymentSummary({
   onBack,
 }: Step5PaymentSummaryProps) {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [includeTinteCombo, setIncludeTinteCombo] = useState(false);
 
   // Priorizar selectedEmployeeId de la página, luego selectedOption.employeeId, luego fallbacks
   const employeeId =
@@ -82,9 +86,19 @@ export function Step5PaymentSummary({
   const service = services.find((s) => s.id === selectedOption.serviceId);
 
   const baseDepositAmount = service ? Number(service.price) : 0;
-  const depositAmount = lmbInfo
+  const serviceDepositAmount = lmbInfo
     ? Math.round(baseDepositAmount * (1 - lmbInfo.discountPercent / 100))
     : baseDepositAmount;
+
+  // Combo: ofrecer tinte de pestañas como addon SOLO si el profesional es Mery
+  // y el servicio base NO es ya tinte de pestañas. LMB aplica solo al servicio
+  // base; el tinte se cobra full.
+  const isMeryProfessional = employeeId === EMPLOYEE_IDS.MERY_GARCIA;
+  const isAlreadyTinteService = service?.id === COMBO_TINTE_OFFER.serviceId;
+  const offerTinteCombo = isMeryProfessional && !isAlreadyTinteService;
+
+  const addonAmount = offerTinteCombo && includeTinteCombo ? COMBO_TINTE_OFFER.price : 0;
+  const depositAmount = serviceDepositAmount + addonAmount;
 
   const formattedDate = useMemo(() => {
     const day = selectedDate.getDate();
@@ -126,6 +140,8 @@ export function Step5PaymentSummary({
           dni: clientData.dni,
           notes: clientData.notes,
           couponCode: couponCode || undefined,
+          addonServiceId: includeTinteCombo ? COMBO_TINTE_OFFER.serviceId : undefined,
+          addonPrice: includeTinteCombo ? COMBO_TINTE_OFFER.price : undefined,
         },
         bookingData: {
           employeeId: employeeId,
@@ -307,6 +323,38 @@ export function Step5PaymentSummary({
           </Stack>
         </Paper>
 
+        {/* Banner combo tinte (solo Mery + servicio !== tinte) */}
+        {offerTinteCombo && (
+          <Paper
+            p="md"
+            radius="md"
+            style={{
+              background: 'linear-gradient(135deg, #f3e8ff 0%, #ede0ff 100%)',
+              border: '1px solid #c4a8e8',
+            }}
+          >
+            <Group align="flex-start" gap="sm" wrap="nowrap">
+              <Checkbox
+                checked={includeTinteCombo}
+                onChange={(e) => setIncludeTinteCombo(e.currentTarget.checked)}
+                color="grape"
+                size="md"
+                styles={{ root: { paddingTop: 2 } }}
+              />
+              <Box style={{ flex: 1 }}>
+                <Text size="sm" fw={700} style={{ color: '#5b21b6' }}>
+                  ¿Te gustaría agregar {COMBO_TINTE_OFFER.serviceName}?
+                </Text>
+                <Text size="xs" mt={2} style={{ color: '#6d3eaa' }}>
+                  Sumá <strong>{COMBO_TINTE_OFFER.serviceName}</strong> a tu reserva
+                  por <strong>AR$ {COMBO_TINTE_OFFER.price.toLocaleString('es-AR')}</strong>.
+                  Se realiza en el mismo turno, sin demoras extra.
+                </Text>
+              </Box>
+            </Group>
+          </Paper>
+        )}
+
         {/* Desglose de Precios */}
         <Paper p="lg" radius="md" withBorder>
           <Stack gap="md">
@@ -343,17 +391,42 @@ export function Step5PaymentSummary({
                     </Text>
                   </Group>
                   <Text size="sm" fw={600} style={{ color: '#ea580c' }}>
-                    − AR$ {(baseDepositAmount - depositAmount).toLocaleString('es-AR')}
+                    − AR$ {(baseDepositAmount - serviceDepositAmount).toLocaleString('es-AR')}
                   </Text>
                 </Group>
               </>
+            )}
+
+            {includeTinteCombo && (
+              <Group justify="space-between">
+                <Group gap={6}>
+                  <Text size="sm">✨</Text>
+                  <Text size="sm" fw={500} style={{ color: '#7c3aed' }}>
+                    + {COMBO_TINTE_OFFER.serviceName} (combo):
+                  </Text>
+                </Group>
+                <Text size="sm" fw={600} style={{ color: '#7c3aed' }}>
+                  AR$ {COMBO_TINTE_OFFER.price.toLocaleString('es-AR')}
+                </Text>
+              </Group>
             )}
 
             <Group justify="space-between">
               <Text size="md" fw={600}>
                 Depósito (Pagar ahora):
               </Text>
-              <Text size="md" fw={700} c={lmbInfo ? undefined : 'pink.5'} style={lmbInfo ? { color: '#ea580c' } : undefined}>
+              <Text
+                size="md"
+                fw={700}
+                c={lmbInfo || includeTinteCombo ? undefined : 'pink.5'}
+                style={
+                  includeTinteCombo
+                    ? { color: '#7c3aed' }
+                    : lmbInfo
+                      ? { color: '#ea580c' }
+                      : undefined
+                }
+              >
                 AR$ {depositAmount.toLocaleString('es-AR')}
               </Text>
             </Group>

@@ -630,10 +630,16 @@ export function BookingsManager() {
     return Boolean((booking as any).lastMinuteBookingId);
   };
 
+  const hasAddon = (booking: BookingResponse): boolean => {
+    return Boolean((booking as any).addonServiceId);
+  };
+
   const bookingPrefix = (booking: BookingResponse): string => {
-    if (hasLmb(booking)) return '🔥 ';
-    if (hasActiveCoupon(booking)) return '🎁 ';
-    return '';
+    let prefix = '';
+    if (hasLmb(booking)) prefix += '🔥 ';
+    if (hasActiveCoupon(booking)) prefix += '🎁 ';
+    if (hasAddon(booking)) prefix += '✨ ';
+    return prefix;
   };
 
   // Calendario mensual
@@ -1492,6 +1498,35 @@ export function BookingsManager() {
             </Box>
 
             <Divider />
+
+            {hasAddon(selectedBooking) && (
+              <>
+                <Box
+                  style={{
+                    background: 'linear-gradient(135deg, #f3e8ff 0%, #ede0ff 100%)',
+                    border: '1px solid #c4a8e8',
+                    borderRadius: 8,
+                    padding: '10px 12px',
+                  }}
+                >
+                  <Group gap="xs" mb={2}>
+                    <Text size="md">✨</Text>
+                    <Text size="sm" fw={700} style={{ color: '#5b21b6' }}>
+                      Combo: {(selectedBooking as any).addonServiceName || 'Tinte de Pestañas'}
+                    </Text>
+                    {typeof (selectedBooking as any).addonPrice === 'number' && (
+                      <Badge color="grape" variant="light" size="md">
+                        +AR$ {((selectedBooking as any).addonPrice as number).toLocaleString('es-AR')}
+                      </Badge>
+                    )}
+                  </Group>
+                  <Text size="xs" style={{ color: '#6d3eaa' }}>
+                    Incluido en el mismo turno, ya cobrado en la seña. Realizar junto al servicio principal.
+                  </Text>
+                </Box>
+                <Divider />
+              </>
+            )}
 
             {hasLmb(selectedBooking) ? (
               <Box>

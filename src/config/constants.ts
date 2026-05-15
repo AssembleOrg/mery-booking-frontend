@@ -21,3 +21,17 @@ export const CATEGORY_PAGE_MAP: Record<string, string> = {
   [CATEGORY_IDS.PARAMEDICAL_TATTOO]: '/paramedical-tattoo',
   [CATEGORY_IDS.EPITESIS_CAP]: '/epitesis-cap',
 };
+
+// IDs de servicios especiales (addons combo)
+export const SERVICE_IDS = {
+  TINTE_PESTANAS: 'b7ef8acb-6f1c-4967-9d14-2a854e4beada',
+} as const;
+
+// Combo offer config: cuando profesional == MERY_GARCIA y el servicio NO es tinte,
+// se ofrece agregar tinte de pestañas como addon (no ocupa slot, se cobra full price)
+export const COMBO_TINTE_OFFER = {
+  serviceId: SERVICE_IDS.TINTE_PESTANAS,
+  serviceName: 'Tinte de Pestañas',
+  price: 30000,
+  durationMin: 30,
+} as const;

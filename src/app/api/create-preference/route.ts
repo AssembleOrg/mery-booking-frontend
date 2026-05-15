@@ -54,6 +54,8 @@ export async function POST(request: NextRequest) {
             phone: clientData.phone,
             dni: clientData.dni,
             couponCode: clientData.couponCode || undefined,
+            addonServiceId: clientData.addonServiceId || undefined,
+            addonPrice: typeof clientData.addonPrice === 'number' ? clientData.addonPrice : undefined,
           },
           expirationMinutes: 15, // 15 minutos para completar el pago
           notes: clientData.notes,

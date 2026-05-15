@@ -89,6 +89,9 @@ export interface BookingResponse {
   couponCode?: string;
   discountPercent?: number;
   lastMinuteBookingId?: string;
+  addonServiceId?: string;
+  addonPrice?: number;
+  addonServiceName?: string;
   rescheduleCount?: number;
   priceDifference?: number;
   client?: {
