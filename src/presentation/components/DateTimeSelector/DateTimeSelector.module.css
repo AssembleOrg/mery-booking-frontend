@@ -128,6 +128,16 @@
   border: 1px solid #eba2a8 !important;
 }
 
+/* Día con Last Minute Booking — fueguito discreto en esquina superior derecha.
+   No usamos ::before/::after porque están ocupados por los dots de disponibilidad.
+   Inline SVG con el emoji como text — funciona en todos los navegadores modernos. */
+.dayHasLmb {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14' font-size='14'>🔥</text></svg>");
+  background-repeat: no-repeat;
+  background-position: top 1px right 1px;
+  background-size: 10px 10px;
+}
+
 .timeSlotsGrid {
   max-width: 100%;
 }
@@ -162,24 +172,6 @@
   color: white;
   font-weight: 600;
   box-shadow: 0 4px 16px rgba(235, 162, 168, 0.35);
-}
-
-.timeSlotLmb {
-  background-color: #fff1e6;
-  border-color: #ea580c;
-  color: #7c2d12;
-}
-
-.timeSlotLmb:hover {
-  background-color: #ffe4cc;
-  border-color: #c2410c;
-}
-
-.timeSlotLmb.timeSlotSelected {
-  background-color: #ea580c;
-  border-color: #ea580c;
-  color: white;
-  box-shadow: 0 4px 16px rgba(234, 88, 12, 0.35);
 }
 
 .timeSlotSelected:hover {

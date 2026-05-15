@@ -112,10 +112,6 @@ export function Step4Confirmation({
     return null;
   }
 
-  const discountedPrice = lmbInfo && service
-    ? Math.round(Number(service.price) * (1 - lmbInfo.discountPercent / 100))
-    : null;
-
   return (
     <Box className={classes.stepContainer}>
       <Text className={classes.stepTitle}>Confirma tu reserva</Text>
@@ -123,18 +119,19 @@ export function Step4Confirmation({
       {lmbInfo && (
         <Box
           style={{
-            background: '#fff1e6',
-            border: '1px solid #ea580c',
+            background: '#fbe8ea',
+            border: '1px solid #660e1b',
             borderRadius: 8,
             padding: '12px 14px',
             marginBottom: 14,
           }}
         >
-          <Text size="sm" fw={700} style={{ color: '#9a3412' }}>
+          <Text size="sm" fw={700} style={{ color: '#660e1b' }}>
             🔥 Last Minute Booking — {lmbInfo.discountPercent}% OFF
           </Text>
-          <Text size="xs" style={{ color: '#9a3412', marginTop: 4 }}>
-            Esta es una reserva especial de último momento. <strong>No es reagendable ni cancelable</strong>, y no admite cupones de descuento adicionales.
+          <Text size="xs" style={{ color: '#660e1b', marginTop: 4 }}>
+            Reserva especial de último momento. <strong>No es reagendable ni cancelable</strong>, y no admite cupones adicionales.
+            Pagás la seña completa ahora; el descuento se ajusta al asistir al turno.
           </Text>
         </Box>
       )}
@@ -168,24 +165,10 @@ export function Step4Confirmation({
         </div>
 
         <div className={classes.summaryRow}>
-          <Text className={classes.summaryLabel}>Seña (a pagar ahora):</Text>
-          {discountedPrice !== null && service ? (
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-              <Text
-                size="xs"
-                style={{ textDecoration: 'line-through', color: '#999' }}
-              >
-                AR$ {Number(service.price).toLocaleString('es-AR')}
-              </Text>
-              <Text className={classes.summaryPrice} style={{ color: '#ea580c' }}>
-                AR$ {discountedPrice.toLocaleString('es-AR')}
-              </Text>
-            </div>
-          ) : (
-            <Text className={classes.summaryPrice}>
-              AR$ {service ? Number(service.price).toLocaleString('es-AR') : ''}
-            </Text>
-          )}
+          <Text className={classes.summaryLabel}>Precio de la seña:</Text>
+          <Text className={classes.summaryPrice}>
+            AR$ {service ? Number(service.price).toLocaleString('es-AR') : ''}
+          </Text>
         </div>
       </div>
 

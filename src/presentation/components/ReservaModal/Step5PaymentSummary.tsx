@@ -85,10 +85,14 @@ export function Step5PaymentSummary({
   const employeeName = employee?.fullName || 'Profesional asignado';
   const service = services.find((s) => s.id === selectedOption.serviceId);
 
+  // La seña que cobramos online es SIEMPRE el precio full del servicio.
+  // El descuento LMB es informativo: recepción ajusta el saldo al asistir al turno.
   const baseDepositAmount = service ? Number(service.price) : 0;
-  const serviceDepositAmount = lmbInfo
-    ? Math.round(baseDepositAmount * (1 - lmbInfo.discountPercent / 100))
-    : baseDepositAmount;
+  const serviceDepositAmount = baseDepositAmount;
+  // Solo informativo, para mostrar lo que se va a descontar en el local
+  const lmbInformativeDiscount = lmbInfo
+    ? Math.round(baseDepositAmount * (lmbInfo.discountPercent / 100))
+    : 0;
 
   // Combo: ofrecer tinte de pestañas como addon SOLO si el profesional es Mery
   // y el servicio base NO es ya tinte de pestañas. LMB aplica solo al servicio
@@ -329,23 +333,23 @@ export function Step5PaymentSummary({
             p="md"
             radius="md"
             style={{
-              background: 'linear-gradient(135deg, #f3e8ff 0%, #ede0ff 100%)',
-              border: '1px solid #c4a8e8',
+              background: '#fbe8ea',
+              border: '1px solid #660e1b',
             }}
           >
             <Group align="flex-start" gap="sm" wrap="nowrap">
               <Checkbox
                 checked={includeTinteCombo}
                 onChange={(e) => setIncludeTinteCombo(e.currentTarget.checked)}
-                color="grape"
+                color="#660e1b"
                 size="md"
                 styles={{ root: { paddingTop: 2 } }}
               />
               <Box style={{ flex: 1 }}>
-                <Text size="sm" fw={700} style={{ color: '#5b21b6' }}>
+                <Text size="sm" fw={700} style={{ color: '#660e1b' }}>
                   ¿Te gustaría agregar {COMBO_TINTE_OFFER.serviceName}?
                 </Text>
-                <Text size="xs" mt={2} style={{ color: '#6d3eaa' }}>
+                <Text size="xs" mt={2} style={{ color: '#660e1b' }}>
                   Sumá <strong>{COMBO_TINTE_OFFER.serviceName}</strong> a tu reserva
                   por <strong>AR$ {COMBO_TINTE_OFFER.price.toLocaleString('es-AR')}</strong>.
                   Se realiza en el mismo turno, sin demoras extra.
@@ -373,39 +377,24 @@ export function Step5PaymentSummary({
               </Group>
             )}
 
-            {lmbInfo && (
-              <>
-                <Group justify="space-between">
-                  <Text size="sm" c="dimmed">
-                    Seña sin descuento:
-                  </Text>
-                  <Text size="sm" style={{ textDecoration: 'line-through', color: '#999' }}>
-                    AR$ {baseDepositAmount.toLocaleString('es-AR')}
-                  </Text>
-                </Group>
-                <Group justify="space-between">
-                  <Group gap={6}>
-                    <Text size="sm">🔥</Text>
-                    <Text size="sm" fw={600} style={{ color: '#ea580c' }}>
-                      Descuento Last Minute ({lmbInfo.discountPercent}%):
-                    </Text>
-                  </Group>
-                  <Text size="sm" fw={600} style={{ color: '#ea580c' }}>
-                    − AR$ {(baseDepositAmount - serviceDepositAmount).toLocaleString('es-AR')}
-                  </Text>
-                </Group>
-              </>
-            )}
+            <Group justify="space-between">
+              <Text size="sm" c="dimmed">
+                Seña del servicio:
+              </Text>
+              <Text size="sm" fw={500}>
+                AR$ {baseDepositAmount.toLocaleString('es-AR')}
+              </Text>
+            </Group>
 
             {includeTinteCombo && (
               <Group justify="space-between">
                 <Group gap={6}>
                   <Text size="sm">✨</Text>
-                  <Text size="sm" fw={500} style={{ color: '#7c3aed' }}>
+                  <Text size="sm" fw={500} style={{ color: '#660e1b' }}>
                     + {COMBO_TINTE_OFFER.serviceName} (combo):
                   </Text>
                 </Group>
-                <Text size="sm" fw={600} style={{ color: '#7c3aed' }}>
+                <Text size="sm" fw={600} style={{ color: '#660e1b' }}>
                   AR$ {COMBO_TINTE_OFFER.price.toLocaleString('es-AR')}
                 </Text>
               </Group>
@@ -413,23 +402,40 @@ export function Step5PaymentSummary({
 
             <Group justify="space-between">
               <Text size="md" fw={600}>
-                Depósito (Pagar ahora):
+                Total a pagar ahora:
               </Text>
               <Text
                 size="md"
                 fw={700}
-                c={lmbInfo || includeTinteCombo ? undefined : 'pink.5'}
-                style={
-                  includeTinteCombo
-                    ? { color: '#7c3aed' }
-                    : lmbInfo
-                      ? { color: '#ea580c' }
-                      : undefined
-                }
+                c={includeTinteCombo ? undefined : 'pink.5'}
+                style={includeTinteCombo ? { color: '#660e1b' } : undefined}
               >
                 AR$ {depositAmount.toLocaleString('es-AR')}
               </Text>
             </Group>
+
+            {lmbInfo && (
+              <Box
+                style={{
+                  background: '#fbe8ea',
+                  border: '1px solid #660e1b',
+                  borderRadius: 8,
+                  padding: '10px 12px',
+                  marginTop: 4,
+                }}
+              >
+                <Group gap={6} mb={2}>
+                  <Text size="sm">🔥</Text>
+                  <Text size="sm" fw={700} style={{ color: '#660e1b' }}>
+                    Last Minute Booking — {lmbInfo.discountPercent}% OFF
+                  </Text>
+                </Group>
+                <Text size="xs" style={{ color: '#660e1b' }}>
+                  Pagás la seña completa ahora (AR$ {baseDepositAmount.toLocaleString('es-AR')}). El descuento de
+                  <strong> AR$ {lmbInformativeDiscount.toLocaleString('es-AR')}</strong> se ajusta en el local al asistir al turno.
+                </Text>
+              </Box>
+            )}
           </Stack>
         </Paper>
 

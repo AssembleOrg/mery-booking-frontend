@@ -219,13 +219,14 @@ export function DateTimeSelector({
             getDayProps={(date) => {
               const level = getAvailabilityLevel(date);
               const availableCount = getAvailabilityInfo(date);
+              const hasLmb = dayHasLmb(date);
 
-              let dayClass = classes.day;
-              if (level === 'full') dayClass = `${classes.day} ${classes.dayFull}`;
-              else if (level === 'limited')
-                dayClass = `${classes.day} ${classes.dayLimited}`;
-              else if (level === 'available')
-                dayClass = `${classes.day} ${classes.dayAvailable}`;
+              const parts: string[] = [classes.day];
+              if (level === 'full') parts.push(classes.dayFull);
+              else if (level === 'limited') parts.push(classes.dayLimited);
+              else if (level === 'available') parts.push(classes.dayAvailable);
+              if (hasLmb) parts.push(classes.dayHasLmb);
+              const dayClass = parts.join(' ');
 
               let title = '';
               if (level === 'disabled') {
@@ -241,33 +242,8 @@ export function DateTimeSelector({
               return {
                 disabled: level === 'disabled' || level === 'full',
                 className: dayClass,
-                title: dayHasLmb(date) ? `${title}${title ? ' · ' : ''}Last Minute disponible` : title,
+                title: hasLmb ? `${title}${title ? ' · ' : ''}Last Minute disponible` : title,
               };
-            }}
-            renderDay={(date) => {
-              const dateStr = typeof date === 'string' ? date : '';
-              const day = dateStr ? Number(dateStr.split('-')[2]) : '';
-              const hasLmb = dateStr ? dayHasLmb(dateStr) : false;
-              return (
-                <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span>{day}</span>
-                  {hasLmb && (
-                    <span
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        right: 1,
-                        fontSize: 9,
-                        lineHeight: 1,
-                        pointerEvents: 'none',
-                      }}
-                      aria-label="Last Minute disponible"
-                    >
-                      🔥
-                    </span>
-                  )}
-                </div>
-              );
             }}
             classNames={{
               day: classes.day,
@@ -334,13 +310,13 @@ export function DateTimeSelector({
                         selectedTime === slot.startTime
                           ? classes.timeSlotSelected
                           : ''
-                      } ${slot.isLmb ? classes.timeSlotLmb : ''}`}
+                      }`}
                     >
                       <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
                         {slot.isLmb && <span>🔥</span>}
                         <span>{slot.startTime} - {slot.endTime}</span>
                         {slot.isLmb && slot.discountPercent ? (
-                          <span style={{ fontSize: '0.75em', color: '#ea580c', fontWeight: 600 }}>
+                          <span style={{ fontSize: '0.75em', color: '#660e1b', fontWeight: 600 }}>
                             -{slot.discountPercent}%
                           </span>
                         ) : null}

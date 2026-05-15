@@ -148,10 +148,9 @@ export function BookingConfirmationModal({
     setCouponValidation(null);
   };
 
-  const baseDeposit = service.priceBook;
-  const deposit = lmbInfo
-    ? Math.round(baseDeposit * (1 - lmbInfo.discountPercent / 100))
-    : baseDeposit;
+  // Form sin aclaraciones de LMB: muestra el precio del servicio (sin descuento).
+  // El desglose con descuento y el cobro final ocurren en Step5.
+  const deposit = service.priceBook;
 
   const formatDate = (date: Date) => {
     const day = date.getDate();
@@ -396,29 +395,8 @@ export function BookingConfirmationModal({
               )}
             />
 
-            {/* LMB info — replaces coupon section when slot is Last Minute */}
-            {lmbInfo ? (
-              <Box
-                style={{
-                  background: '#fff1e6',
-                  border: '1px solid #ea580c',
-                  borderRadius: 8,
-                  padding: '12px 14px',
-                }}
-              >
-                <Flex align="center" gap="xs" mb={4}>
-                  <Text size="sm">🔥</Text>
-                  <Text size="sm" fw={700} style={{ color: '#9a3412' }}>
-                    Descuento Last Minute: {lmbInfo.discountPercent}% OFF
-                  </Text>
-                </Flex>
-                <Text size="xs" style={{ color: '#9a3412' }}>
-                  El descuento ya está aplicado automáticamente. No es combinable con cupones.
-                </Text>
-              </Box>
-            ) : (
-            /* Coupon Section */
-            serviceId && (
+            {/* Sección de cupón: oculta si el slot es LMB (ya tiene su descuento aplicado) */}
+            {!lmbInfo && serviceId && (
               <Box className={classes.couponSection}>
                 {couponValidation?.valid ? (
                   <Flex align="center" justify="space-between" gap="sm">
@@ -489,39 +467,15 @@ export function BookingConfirmationModal({
                   </>
                 )}
               </Box>
-            )
             )}
 
-            {/* Pricing Summary */}
+            {/* Pricing Summary — sin desglose LMB (eso vive en Step5) */}
             <Box className={classes.pricingSummary}>
               <Flex justify="space-between" mb="xs">
                 <Text size="sm" fw={400}>
-                  Seña:
+                  Precio del servicio:
                 </Text>
-                {lmbInfo ? (
-                  <Flex align="baseline" gap={6}>
-                    <Text size="xs" style={{ textDecoration: 'line-through', color: '#999' }}>
-                      AR${baseDeposit.toLocaleString('es-AR')}
-                    </Text>
-                    <Text size="sm" fw={700} style={{ color: '#ea580c' }}>
-                      AR${deposit.toLocaleString('es-AR')}
-                    </Text>
-                  </Flex>
-                ) : (
-                  <Text size="sm" fw={600}>
-                    AR${deposit.toLocaleString('es-AR')}
-                  </Text>
-                )}
-              </Flex>
-
-              <Flex justify="space-between" mb="xs">
-                <Text size="sm" fw={400}>
-                  Depósito{' '}
-                  <Text component="span" fs="italic" c="dimmed">
-                    Pagar ahora
-                  </Text>
-                </Text>
-                <Text size="sm" fw={600} c={lmbInfo ? undefined : 'pink.5'} style={lmbInfo ? { color: '#ea580c' } : undefined}>
+                <Text size="sm" fw={600}>
                   AR${deposit.toLocaleString('es-AR')}
                 </Text>
               </Flex>
