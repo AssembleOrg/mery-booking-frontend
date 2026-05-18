@@ -21,6 +21,7 @@ import type { ServiceOption } from '@/infrastructure/types/services';
 import type { Employee } from '@/infrastructure/http/employeeService';
 import type { ServiceEntity } from '@/infrastructure/http/serviceService';
 import { EMPLOYEE_IDS, COMBO_TINTE_OFFER } from '@/config/constants';
+import { LmbIcon } from '@/presentation/components/LmbIcon/LmbIcon';
 import classes from './ReservaModal.module.css';
 
 const MOCK_LOCATION = 'Mery García Office';
@@ -425,7 +426,7 @@ export function Step5PaymentSummary({
                 }}
               >
                 <Group gap={6} mb={2}>
-                  <Text size="sm">🔥</Text>
+                  <LmbIcon size={16} />
                   <Text size="sm" fw={700} style={{ color: '#660e1b' }}>
                     Last Minute Booking — {lmbInfo.discountPercent}% OFF
                   </Text>

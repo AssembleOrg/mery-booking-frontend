@@ -5,6 +5,7 @@ import { Box, Text } from '@mantine/core';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import { BookingConfirmationModal } from '@/presentation/components';
+import { LmbIcon } from '@/presentation/components/LmbIcon/LmbIcon';
 import { Client } from '@/domain/entities';
 import classes from './ReservaModal.module.css';
 import type { ServiceOption } from '@/infrastructure/types/services';
@@ -127,7 +128,7 @@ export function Step4Confirmation({
           }}
         >
           <Text size="sm" fw={700} style={{ color: '#660e1b' }}>
-            🔥 Last Minute Booking — {lmbInfo.discountPercent}% OFF
+            <LmbIcon size={14} /> Last Minute Booking — {lmbInfo.discountPercent}% OFF
           </Text>
           <Text size="xs" style={{ color: '#660e1b', marginTop: 4 }}>
             Reserva especial de último momento. <strong>No es reagendable ni cancelable</strong>, y no admite cupones adicionales.

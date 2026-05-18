@@ -13,10 +13,11 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import { useAvailability } from '@/presentation/hooks';
+import { LmbIcon } from '@/presentation/components/LmbIcon/LmbIcon';
 import classes from './DateTimeSelector.module.css';
 
 dayjs.locale('es');
@@ -87,6 +88,13 @@ export function DateTimeSelector({
       setSelectedTime(null);
     }
   }, [serviceId, employeeId, preSelectedDate]);
+
+  const slotsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!selectedDate || !slotsRef.current) return;
+    slotsRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [selectedDate]);
 
   // Obtener slots disponibles para la fecha seleccionada
   const availableSlotsForDate = useMemo(() => {
@@ -204,7 +212,7 @@ export function DateTimeSelector({
 
   return (
     <Box className={classes.container}>
-      <Stack gap="xl">
+      <Stack gap="sm">
         <Text ta="center" size="md" fw={300} className={classes.title}>
           Elegí día y horario
         </Text>
@@ -249,7 +257,7 @@ export function DateTimeSelector({
               day: classes.day,
             }}
             style={{ maxWidth: '100%' }}
-            size="sm"
+            size="md"
           />
         </Box>
 
@@ -280,17 +288,14 @@ export function DateTimeSelector({
             <span>Agenda completa</span>
           </div>
           <div className={classes.legendItem}>
-            <span style={{ fontSize: '14px', lineHeight: 1 }}>🔥</span>
+            <LmbIcon size={14} />
             <span>Last Minute Booking</span>
           </div>
         </Box>
 
         {/* Franjas horarias */}
         {selectedDate && (
-          <Box>
-            <Text size="sm" fw={500} mb="md" ta="center" c="gray.7">
-              Horarios disponibles
-            </Text>
+          <Box ref={slotsRef}>
             {availableSlotsForDate.length === 0 ? (
               <Alert>
                 No quedan horarios libres este día. Probá otro.
@@ -313,7 +318,7 @@ export function DateTimeSelector({
                       }`}
                     >
                       <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-                        {slot.isLmb && <span>🔥</span>}
+                        {slot.isLmb && <LmbIcon size={14} />}
                         <span>{slot.startTime} - {slot.endTime}</span>
                         {slot.isLmb && slot.discountPercent ? (
                           <span style={{ fontSize: '0.75em', color: '#660e1b', fontWeight: 600 }}>

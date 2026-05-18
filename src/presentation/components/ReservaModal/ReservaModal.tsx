@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Modal } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { AnimatePresence } from 'framer-motion';
@@ -41,7 +41,14 @@ export function ReservaModal({
   serviceEmployees,
 }: ReservaModalProps) {
   const isMobile = useMediaQuery('(max-width: 767px)');
+  const contentAreaRef = useRef<HTMLDivElement>(null);
   const [currentStep, setCurrentStep] = useState(1);
+
+  useEffect(() => {
+    if (contentAreaRef.current) {
+      contentAreaRef.current.scrollTop = 0;
+    }
+  }, [currentStep]);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [selectedOption, setSelectedOption] = useState<ServiceOption | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -136,7 +143,7 @@ export function ReservaModal({
         <StepIndicator currentStep={currentStep} totalSteps={5} />
 
         {/* Content Area con AnimatePresence para transiciones */}
-        <div className={classes.contentArea}>
+        <div ref={contentAreaRef} className={classes.contentArea}>
           <AnimatePresence mode="wait">
             {currentStep === 1 && (
               <Step1Terms

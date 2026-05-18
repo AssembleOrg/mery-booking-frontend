@@ -29,6 +29,7 @@ import { BookingService, EmployeeService, ServiceService, ClientService, CouponS
 import type { Booking, BookingResponse, Employee, ServiceEntity, Client, ClientSearchResult, PaidStatus } from '@/infrastructure/http';
 import { useCreateBooking, useCreateClient, useAvailability, useRescheduleBooking } from '@/presentation/hooks';
 import { ConfirmationModal } from '@/presentation/components';
+import { LmbIcon } from '@/presentation/components/LmbIcon/LmbIcon';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import classes from './BookingsManager.module.css';
@@ -1532,7 +1533,7 @@ export function BookingsManager() {
               <Box>
                 <Text size="sm" fw={500} c="dimmed" mb={4}>Last Minute Booking</Text>
                 <Group gap="xs">
-                  <Text size="md">🔥</Text>
+                  <LmbIcon size={18} />
                   <Text size="md" fw={600}>Slot LMB</Text>
                   <Badge color="orange" variant="light" size="lg">
                     {selectedBooking.discountPercent}% OFF

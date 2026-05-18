@@ -13,12 +13,13 @@ export interface ServiceBookingFormData {
 
 interface ServiceBookingFormProps {
   onSubmit: (data: ServiceBookingFormData) => void;
-  onChange?: (data: ServiceBookingFormData) => void; // Callback opcional para cambios en tiempo real
-  categoryId?: string; // Opcional: filtrar servicios por categoría
-  employeeFilter?: (employee: { id: string; fullName: string }) => boolean; // Opcional: filtrar empleados
+  onChange?: (data: ServiceBookingFormData) => void;
+  categoryId?: string;
+  employeeFilter?: (employee: { id: string; fullName: string }) => boolean;
+  serviceLabel?: string;
 }
 
-export function ServiceBookingForm({ onSubmit: onSubmitCallback, onChange, categoryId, employeeFilter }: ServiceBookingFormProps) {
+export function ServiceBookingForm({ onSubmit: onSubmitCallback, onChange, categoryId, employeeFilter, serviceLabel = 'Servicio' }: ServiceBookingFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
 
@@ -151,7 +152,7 @@ export function ServiceBookingForm({ onSubmit: onSubmitCallback, onChange, categ
             render={({ field }) => (
               <Box>
                 <Text size="sm" fw={400} mb="xs" c="gray.8" className={classes.fieldLabel}>
-                  * Servicio:
+                  * {serviceLabel}:
                 </Text>
                 <Select
                   {...field}

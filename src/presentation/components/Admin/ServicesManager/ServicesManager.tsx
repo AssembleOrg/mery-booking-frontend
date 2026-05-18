@@ -5,6 +5,7 @@ import { Button, Modal, TextInput, Box, Skeleton, NumberInput, Checkbox, Textare
 import { ServiceService, CategoryService } from '@/infrastructure/http';
 import type { ServiceEntity, CreateServiceDto, Category } from '@/infrastructure/http';
 import { ConfirmationModal } from '@/presentation/components';
+import { LmbIcon } from '@/presentation/components/LmbIcon/LmbIcon';
 import classes from './ServicesManager.module.css';
 
 interface ServiceForm {
@@ -465,7 +466,7 @@ export function ServicesManager() {
             />
 
             <Checkbox
-              label="🔥 Eligible para Last Minute Booking"
+              label={<><LmbIcon size={14} /> Eligible para Last Minute Booking</>}
               description="Si está marcado, este servicio puede asignarse a slots LMB"
               checked={form.isLmbEligible}
               onChange={(e) => setField('isLmbEligible', e.currentTarget.checked)}

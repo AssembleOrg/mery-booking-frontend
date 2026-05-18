@@ -1,6 +1,6 @@
 .container {
   background: rgba(255, 255, 255, 0.98);
-  padding: 2rem 1.5rem;
+  padding: 1.25rem 1.5rem;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(10px);
@@ -18,7 +18,7 @@
 .calendarWrapper {
   display: flex;
   justify-content: center;
-  padding: 1rem 0;
+  padding: 0.25rem 0;
   max-width: 100%;
   overflow: visible;
 }
@@ -128,14 +128,12 @@
   border: 1px solid #eba2a8 !important;
 }
 
-/* Día con Last Minute Booking — fueguito discreto en esquina superior derecha.
-   No usamos ::before/::after porque están ocupados por los dots de disponibilidad.
-   Inline SVG con el emoji como text — funciona en todos los navegadores modernos. */
+/* Día con Last Minute Booking — icono discreto en esquina superior derecha. */
 .dayHasLmb {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14' font-size='14'>🔥</text></svg>");
+  background-image: url('/chama-mery.png');
   background-repeat: no-repeat;
-  background-position: top 1px right 1px;
-  background-size: 10px 10px;
+  background-position: top 2px right 2px;
+  background-size: 14px 14px;
 }
 
 .timeSlotsGrid {
@@ -220,9 +218,9 @@
 /* Leyenda con texto compacto */
 .availabilityLegend {
   display: flex;
-  gap: 14px;
+  gap: 10px;
   align-items: center;
-  padding: 0.25rem 0;
+  padding: 0;
   justify-content: center;
   flex-wrap: wrap;
 }

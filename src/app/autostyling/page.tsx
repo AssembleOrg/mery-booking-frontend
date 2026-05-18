@@ -150,6 +150,7 @@ export default function AutostylingPage() {
                       onSubmit={handleServiceSubmit}
                       onChange={handleServiceSubmit}
                       categoryId={CATEGORY_IDS.AUTOSTYLING}
+                      serviceLabel="Servicio:"
                     />
                     {typeof informationalListPriceArs === 'number' && (
                       <Text mt="md" size="sm" c="dimmed">
