@@ -11,6 +11,7 @@ import {
 } from '@/presentation/components';
 import { EstilismoReservaModal } from '@/presentation/components/EstilismoReservaModal';
 import { useState } from 'react';
+import { useMediaQuery } from '@mantine/hooks';
 import { useServices, useEmployees } from '@/presentation/hooks';
 import type { ServiceEntity, Employee } from '@/infrastructure/http';
 import classes from './page.module.css';
@@ -96,6 +97,24 @@ export default function EstilismoCejasPage() {
     // Abrir modal según tipo de servicio
     setReservaModalOpened(true);
   };
+  const isMobileOrTablet = useMediaQuery('(max-width: 899px)');
+
+  const heroImages = isMobileOrTablet
+    ? [
+        '/images/estilismomobile.webp',
+        '/images/estilismomobile2.webp',
+        '/images/estilismomobile3.webp',
+      ]
+    : [
+        '/images/estilismodesktop.webp',
+        '/images/estilismodesktop2.webp',
+        '/images/estilismodesktop3.webp',
+      ];
+
+  const heroObjectPositions = isMobileOrTablet
+    ? ['center 15%', 'center 30%', 'center 30%']
+    : ['center 15%', 'center 45%', 'center 55%'];
+
   return (
     <>
       <Header />
@@ -103,15 +122,12 @@ export default function EstilismoCejasPage() {
       <Box className={classes.pageWrapper}>
         <Box className={classes.heroSection}>
           <ImageCrossfade
-            images={[
-              '/images/estilismo-cejas.webp',
-              '/images/im.2-op-2-scaled-1.webp',
-            ]}
+            images={heroImages}
             interval={6000}
             transitionDuration={1.0}
             className={classes.heroImage}
             alt="Estilismo de Cejas & Pestañas"
-            objectPosition="center"
+            objectPosition={heroObjectPositions}
           />
           <Box className={classes.heroOverlay} />
           <span className={classes.heroNumber}>01</span>

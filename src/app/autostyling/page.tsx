@@ -11,6 +11,7 @@ import {
 } from '@/presentation/components';
 import { EstilismoReservaModal } from '@/presentation/components/EstilismoReservaModal';
 import { useState } from 'react';
+import { useMediaQuery } from '@mantine/hooks';
 import { useServices, useEmployees } from '@/presentation/hooks';
 import type { ServiceEntity, Employee } from '@/infrastructure/http';
 import classes from './page.module.css';
@@ -92,6 +93,18 @@ export default function AutostylingPage() {
 
     setReservaModalOpened(true);
   };
+  const isMobileOrTablet = useMediaQuery('(max-width: 899px)');
+
+  const heroImages = isMobileOrTablet
+    ? [
+        '/images/autostyling.webp',
+        '/images/autostyling2.webp',
+      ]
+    : [
+        '/images/autostylingdesktop.webp',
+        '/images/autostylingdesktop2.webp',
+      ];
+
   return (
     <>
       <Header />
@@ -99,15 +112,11 @@ export default function AutostylingPage() {
       <Box className={classes.pageWrapper}>
         <Box className={classes.heroSection}>
           <ImageCrossfade
-            images={[
-              '/images/estilismo-cejas.webp',
-              '/images/im.2-op-2-scaled-1.webp',
-            ]}
+            images={heroImages}
             interval={6000}
             transitionDuration={1.0}
             className={classes.heroImage}
             alt="Autostyling"
-            objectPosition="center"
           />
           <Box className={classes.heroOverlay} />
           <span className={classes.heroNumber}>05</span>

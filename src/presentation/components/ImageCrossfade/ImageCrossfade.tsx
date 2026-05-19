@@ -12,7 +12,7 @@ interface ImageCrossfadeProps {
   className?: string;
   alt?: string;
   showIndicators?: boolean;
-  objectPosition?: string;
+  objectPosition?: string | string[];
   sizes?: string;
 }
 
@@ -28,6 +28,13 @@ export function ImageCrossfade({
 }: ImageCrossfadeProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const shouldReduceMotion = useReducedMotion();
+
+  const getObjectPosition = (index: number): string => {
+    if (Array.isArray(objectPosition)) {
+      return objectPosition[index] ?? objectPosition[0] ?? 'center';
+    }
+    return objectPosition;
+  };
 
   useEffect(() => {
     // Si solo hay una imagen o el usuario prefiere menos movimiento, no animar
@@ -53,7 +60,7 @@ export function ImageCrossfade({
             alt={alt}
             fill
             className={classes.image}
-            style={{ objectPosition }}
+            style={{ objectPosition: getObjectPosition(0) }}
             sizes={sizes}
             priority
           />
@@ -86,7 +93,7 @@ export function ImageCrossfade({
             alt={`${alt} ${index + 1}`}
             fill
             className={classes.image}
-            style={{ objectPosition }}
+            style={{ objectPosition: getObjectPosition(index) }}
             sizes={sizes}
             priority={index < 2}
             loading={index < 2 ? 'eager' : 'lazy'}

@@ -142,6 +142,28 @@
   pointer-events: none;
 }
 
+.newBadge {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 2px 7px;
+  background: transparent;
+  border: 1px solid var(--mg-pink);
+  color: var(--mg-pink);
+  font-family: var(--font-din-medium), sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  line-height: 1.6;
+}
+
+@media (prefers-color-scheme: dark) {
+  .logo {
+    filter: brightness(0) invert(1);
+  }
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .menuContainer {

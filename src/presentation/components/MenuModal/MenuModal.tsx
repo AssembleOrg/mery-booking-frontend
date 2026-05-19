@@ -12,11 +12,11 @@ interface MenuModalProps {
   onClose: () => void;
 }
 
-const menuItems = [
+const menuItems: { label: string; href: string; isNew?: boolean }[] = [
   { label: 'INICIO', href: '/' },
   { label: 'COSMETIC TATTOO', href: '/tattoo-cosmetico' },
   { label: 'ESTILISMO DE CEJAS & PESTAÑAS', href: '/estilismo-de-cejas' },
-  { label: 'AUTOSTYLING', href: '/autostyling' },
+  { label: 'AUTOSTYLING', href: '/autostyling', isNew: true },
   { label: 'PARAMEDICAL TATTOO', href: '/paramedical-tattoo' },
   { label: 'EPITESIS CAP', href: '/epitesis-cap' },
   { label: 'CAMBIAR RESERVA', href: '/cambiar-reserva' },
@@ -83,7 +83,10 @@ export function MenuModal({ opened, onClose }: MenuModalProps) {
                 onClick={onClose}
               >
                 <span className={classes.menuNumber}>0{index + 1}</span>
-                <span className={classes.menuLabel}>{item.label}</span>
+                <span className={classes.menuLabel}>
+                  {item.label}
+                  {item.isNew && <span className={classes.newBadge}>NEW</span>}
+                </span>
               </Link>
             </motion.div>
           ))}
