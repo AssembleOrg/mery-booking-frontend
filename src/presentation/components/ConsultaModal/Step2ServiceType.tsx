@@ -42,14 +42,14 @@ const INFO_OPTIONS = [
     waLink: 'https://wa.me/5491128593378?text=-+Hola+chicas%2C+como+est%C3%A1n%3F+Quisiera+consultar+el+Special+Pass+de+Epitesis+CAP',
     waPhone: '+54 9 11 2859-3378',
   },
-  {
-    id: 'dona-tu-molde',
-    label: 'Doná tu molde',
-    description:
-      'Una forma generosa y filantrópica de ayudar a más personas a acceder a reconstrucciones hiperrealistas. Contactate con nosotras para coordinar: ',
-    waLink: 'https://wa.me/5491128593378?text=-+Hola+chicas%2C+como+est%C3%A1n%3F+Quisiera+donar+mi+molde+para+Epitesis+CAP',
-    waPhone: '+54 9 11 2859-3378',
-  },
+  // {
+  //   id: 'dona-tu-molde',
+  //   label: 'Doná tu molde',
+  //   description:
+  //     'Una forma generosa y filantrópica de ayudar a más personas a acceder a reconstrucciones hiperrealistas. Contactate con nosotras para coordinar: ',
+  //   waLink: 'https://wa.me/5491128593378?text=-+Hola+chicas%2C+como+est%C3%A1n%3F+Quisiera+donar+mi+molde+para+Epitesis+CAP',
+  //   waPhone: '+54 9 11 2859-3378',
+  // },
 ];
 
 export default function Step2ServiceType({

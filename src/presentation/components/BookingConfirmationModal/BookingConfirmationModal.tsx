@@ -10,7 +10,6 @@ import {
   Text,
   TextInput,
   Textarea,
-  Image,
   Badge,
   Loader,
   Collapse,
@@ -183,14 +182,7 @@ export function BookingConfirmationModal({
       <Stack gap="xl">
         {/* Service Header */}
         <Box className={classes.serviceHeader}>
-          <Image
-            src={service.image || '/desk.svg'}
-            alt={service.name}
-            width={80}
-            height={80}
-            className={classes.serviceImage}
-          />
-          <Text size="xl" fw={400} ta="center" mt="md">
+          <Text size="xl" fw={400} ta="center">
             {service.name}
           </Text>
         </Box>

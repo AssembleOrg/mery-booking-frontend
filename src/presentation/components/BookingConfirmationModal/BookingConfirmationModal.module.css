@@ -21,15 +21,6 @@
   border-bottom: 1px solid #f0f0f0;
 }
 
-.serviceImage {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: #f9f9f9;
-  padding: 1rem;
-}
-
 .bookingDetails {
   background: #f9f9f9;
   padding: 1rem;
@@ -182,10 +173,6 @@
     padding: 0.75rem;
   }
 
-  .serviceImage {
-    width: 60px;
-    height: 60px;
-  }
 }
 
 @media (max-width: 480px) {

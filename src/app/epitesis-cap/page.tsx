@@ -262,42 +262,41 @@ const epitesisAccordionOptions: ServiceOption[] = [
       </>
     ),
   },
-  {
-    id: 'epitesis-dona-molde',
-    label: 'Epitesis CAP — Doná tu molde',
-    contentType: 'consulta',
-    accordionDescriptionNode: (
-      <>
-        Una forma generosa y filantrópica de ayudar a más personas a acceder a reconstrucciones hiperrealistas, permitiéndonos tomar un molde de tu areola–pezón para formar parte de nuestro <strong>banco de moldes</strong>.{' '}
-        <strong>Contactate con nosotras</strong> para coordinar:{' '}
-        <a
-          href="https://wa.me/5491128593378?text=-+Hola+chicas%2C+como+est%C3%A1n%3F+Quisiera+donar+mi+molde+para+Epitesis+CAP"
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
-          style={{ color: 'inherit', fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: '2px', whiteSpace: 'nowrap' }}
-        >
-          +54 9 11 2859-3378
-        </a>
-
-        {/* PDF download section */}
-        <span className={classes.descriptionModalDownloadSection} style={{ marginTop: 16, display: 'block' }}>
-          <span className={classes.descriptionModalDownloadLabel}>Más información y valores:</span>
-          <span className={classes.descriptionModalActions} style={{ display: 'block' }}>
-            <a
-              href="/descargables/cap-presentacion.pdf"
-              download
-              className={classes.descriptionModalMoreButton}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <IconFileDescription size={13} stroke={1.5} style={{ marginRight: 6, verticalAlign: 'middle', flexShrink: 0 }} />
-              DESCARGAR PDF
-            </a>
-          </span>
-        </span>
-      </>
-    ),
-  },
+  // {
+  //   id: 'epitesis-dona-molde',
+  //   label: 'Epitesis CAP — Doná tu molde',
+  //   contentType: 'consulta',
+  //   accordionDescriptionNode: (
+  //     <>
+  //       Una forma generosa y filantrópica de ayudar a más personas a acceder a reconstrucciones hiperrealistas, permitiéndonos tomar un molde de tu areola–pezón para formar parte de nuestro <strong>banco de moldes</strong>.{' '}
+  //       <strong>Contactate con nosotras</strong> para coordinar:{' '}
+  //       <a
+  //         href="https://wa.me/5491128593378?text=-+Hola+chicas%2C+como+est%C3%A1n%3F+Quisiera+donar+mi+molde+para+Epitesis+CAP"
+  //         target="_blank"
+  //         rel="noopener noreferrer"
+  //         onClick={(e) => e.stopPropagation()}
+  //         style={{ color: 'inherit', fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: '2px', whiteSpace: 'nowrap' }}
+  //       >
+  //         +54 9 11 2859-3378
+  //       </a>
+  //       {/* PDF download section */}
+  //       <span className={classes.descriptionModalDownloadSection} style={{ marginTop: 16, display: 'block' }}>
+  //         <span className={classes.descriptionModalDownloadLabel}>Más información y valores:</span>
+  //         <span className={classes.descriptionModalActions} style={{ display: 'block' }}>
+  //           <a
+  //             href="/descargables/cap-presentacion.pdf"
+  //             download
+  //             className={classes.descriptionModalMoreButton}
+  //             onClick={(e) => e.stopPropagation()}
+  //           >
+  //             <IconFileDescription size={13} stroke={1.5} style={{ marginRight: 6, verticalAlign: 'middle', flexShrink: 0 }} />
+  //             DESCARGAR PDF
+  //           </a>
+  //         </span>
+  //       </span>
+  //     </>
+  //   ),
+  // },
 ];
 
 export default function EpitesisCapPage() {

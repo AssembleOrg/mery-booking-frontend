@@ -63,6 +63,13 @@ const SERVICES = [
   },
   {
     num: '07',
+    name: 'Auto Styling',
+    desc: '\u00A0',
+    image: '',
+    href: '/autostyling',
+  },
+  {
+    num: '08',
     name: 'Epitesis',
     desc: '\u00A0',
     image: '',
