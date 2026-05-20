@@ -2898,7 +2898,7 @@ export default function TattooCosmeticoPage() {
                       </Text>
                       <Text className={classes.serviceTagline}>
                         Cosmetic Tattoo con acabado híper realista. Dura 5-6
-                        meses
+                        meses.
                       </Text>
                       <button
                         type="button"
