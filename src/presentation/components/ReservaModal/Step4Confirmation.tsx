@@ -37,6 +37,8 @@ interface Step4ConfirmationProps {
     dni: string;
     notes?: string;
     couponCode?: string;
+    couponDiscountPercent?: number;
+    couponDiscountTarget?: 'ONLINE' | 'CAJA';
   }) => void;
 }
 
@@ -91,7 +93,12 @@ export function Step4Confirmation({
     };
   }, [employee]);
 
-  const handleCollectData = async (clientData: Client, couponCode?: string) => {
+  const handleCollectData = async (
+    clientData: Client,
+    couponCode?: string,
+    couponDiscountPercent?: number,
+    couponDiscountTarget?: 'ONLINE' | 'CAJA',
+  ) => {
     if (!clientData.dni) {
       return;
     }
@@ -104,6 +111,8 @@ export function Step4Confirmation({
       dni: clientData.dni,
       notes: clientData.notes,
       couponCode,
+      couponDiscountPercent,
+      couponDiscountTarget,
     });
   };
 
@@ -166,7 +175,7 @@ export function Step4Confirmation({
         </div>
 
         <div className={classes.summaryRow}>
-          <Text className={classes.summaryLabel}>Precio de la seña:</Text>
+          <Text className={classes.summaryLabel}>Seña (a pagar ahora):</Text>
           <Text className={classes.summaryPrice}>
             AR$ {service ? Number(service.price).toLocaleString('es-AR') : ''}
           </Text>

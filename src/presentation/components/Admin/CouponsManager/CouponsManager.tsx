@@ -18,6 +18,7 @@ import {
   Center,
   Divider,
   SimpleGrid,
+  Select,
 } from '@mantine/core';
 import {
   IconPencil,
@@ -30,7 +31,7 @@ import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import { useForm, Controller } from 'react-hook-form';
 import { notifications } from '@mantine/notifications';
 import { CouponService, ServiceService } from '@/infrastructure/http';
-import type { Coupon, CreateCouponDto, ServiceEntity } from '@/infrastructure/http';
+import type { Coupon, CreateCouponDto, ServiceEntity, CouponDiscountTarget } from '@/infrastructure/http';
 import { ConfirmationModal } from '@/presentation/components';
 import classes from './CouponsManager.module.css';
 
@@ -49,6 +50,7 @@ function parseLocalDate(dateStr: string): Date {
 interface FormData {
   code: string;
   discountPercent: number;
+  discountTarget: CouponDiscountTarget;
   validFrom: Date | null;
   validTo: Date | null;
   maxUses: number | '';
@@ -74,6 +76,7 @@ export function CouponsManager() {
     defaultValues: {
       code: '',
       discountPercent: 10,
+      discountTarget: 'ONLINE',
       validFrom: null,
       validTo: null,
       maxUses: '',
@@ -149,6 +152,7 @@ export function CouponsManager() {
     reset({
       code: 'mery-10',
       discountPercent: 10,
+      discountTarget: 'ONLINE',
       validFrom: null,
       validTo: null,
       maxUses: '',
@@ -165,6 +169,7 @@ export function CouponsManager() {
     reset({
       code: coupon.code,
       discountPercent: coupon.discountPercent,
+      discountTarget: coupon.discountTarget ?? 'ONLINE',
       validFrom: coupon.validFrom ? parseLocalDate(coupon.validFrom) : null,
       validTo: coupon.validTo ? parseLocalDate(coupon.validTo) : null,
       maxUses: coupon.maxUses ?? '',
@@ -209,6 +214,7 @@ export function CouponsManager() {
       const payload: CreateCouponDto = {
         code: data.code,
         discountPercent: Number(data.discountPercent),
+        discountTarget: data.discountTarget,
         serviceIds: data.serviceIds,
         isActive: data.isActive,
         ...(validFrom && { validFrom }),
@@ -308,6 +314,7 @@ export function CouponsManager() {
               <tr>
                 <th>Código</th>
                 <th>Descuento</th>
+                <th>Aplica</th>
                 <th>Servicios</th>
                 <th>Vigencia</th>
                 <th>Usos</th>
@@ -320,6 +327,15 @@ export function CouponsManager() {
                 <tr key={coupon.id}>
                   <td><strong>{coupon.code}</strong></td>
                   <td><span className={classes.discountBadge}>{coupon.discountPercent}%</span></td>
+                  <td>
+                    <Badge
+                      variant="light"
+                      color={coupon.discountTarget === 'CAJA' ? 'orange' : 'pink'}
+                      size="sm"
+                    >
+                      {coupon.discountTarget === 'CAJA' ? 'Caja' : 'Online'}
+                    </Badge>
+                  </td>
                   <td>
                     {coupon.services.map((s) => (
                       <span key={s.id} className={classes.serviceBadge}>{s.name}</span>
@@ -478,19 +494,36 @@ export function CouponsManager() {
               />
 
               <Controller
-                name="isActive"
+                name="discountTarget"
                 control={control}
                 render={({ field }) => (
-                  <Switch
-                    label="Cupón activo"
-                    description="Si está activo, los clientes podrán usarlo"
-                    checked={field.value}
-                    onChange={field.onChange}
-                    mt="xl"
+                  <Select
+                    label="* Aplica el descuento"
+                    description="Online = descuenta del pago de la seña. Caja = informativo, recepción ajusta el saldo al cobrar en el local."
+                    data={[
+                      { value: 'ONLINE', label: 'Online (descuenta de la seña)' },
+                      { value: 'CAJA', label: 'Caja (recepción ajusta al cobrar)' },
+                    ]}
+                    value={field.value}
+                    onChange={(v) => field.onChange((v as CouponDiscountTarget) || 'ONLINE')}
+                    allowDeselect={false}
                   />
                 )}
               />
             </SimpleGrid>
+
+            <Controller
+              name="isActive"
+              control={control}
+              render={({ field }) => (
+                <Switch
+                  label="Cupón activo"
+                  description="Si está activo, los clientes podrán usarlo"
+                  checked={field.value}
+                  onChange={field.onChange}
+                />
+              )}
+            />
 
             {!validFrom && !validTo && !maxUses && (
               <Text size="xs" c="red">

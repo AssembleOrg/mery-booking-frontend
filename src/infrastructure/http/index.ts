@@ -22,6 +22,6 @@ export type { Service as EmployeeTimeSlotServiceType } from './employeeTimeSlotS
 export type { Booking, BookingStatus, PaidStatus, GetOccupiedTimeSlotsParams, CreateBookingDto, BookingResponse, AvailabilityResponse, RescheduleBookingDto, ReschedulePublicBookingDto } from './bookingService';
 export type { Client, CreateClientDto, UpdateClientDto, CreateClientPublicDto, CreateClientPublicResponse, ClientSearchResult } from './clientService';
 export type { TempReservation, CreateTempReservationDto, LinkPreferenceDto } from './tempReservationService';
-export type { Coupon, CreateCouponDto, UpdateCouponDto, ValidateCouponResponse } from './couponService';
+export type { Coupon, CreateCouponDto, UpdateCouponDto, ValidateCouponResponse, CouponDiscountTarget } from './couponService';
 export type { LastMinuteBooking, CreateLastMinuteBookingDto, UpdateLastMinuteBookingDto, LmbStatus, LmbFilters, PaginatedLmb } from './lastMinuteBookingService';
 

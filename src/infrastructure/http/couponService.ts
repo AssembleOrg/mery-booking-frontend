@@ -3,10 +3,13 @@
 import apiClient from './apiClient';
 import publicApiClient from './publicApiClient';
 
+export type CouponDiscountTarget = 'ONLINE' | 'CAJA';
+
 export interface Coupon {
   id: string;
   code: string;
   discountPercent: number;
+  discountTarget: CouponDiscountTarget;
   validFrom: string | null;
   validTo: string | null;
   maxUses: number | null;
@@ -20,6 +23,7 @@ export interface Coupon {
 export interface CreateCouponDto {
   code?: string;
   discountPercent: number;
+  discountTarget?: CouponDiscountTarget;
   validFrom?: string;
   validTo?: string;
   maxUses?: number;
@@ -30,6 +34,7 @@ export interface CreateCouponDto {
 export interface UpdateCouponDto {
   code?: string;
   discountPercent?: number;
+  discountTarget?: CouponDiscountTarget;
   validFrom?: string | null;
   validTo?: string | null;
   maxUses?: number | null;
@@ -40,6 +45,7 @@ export interface UpdateCouponDto {
 export interface ValidateCouponResponse {
   valid: boolean;
   discountPercent: number;
+  discountTarget?: CouponDiscountTarget;
   couponCode: string;
   message?: string;
 }

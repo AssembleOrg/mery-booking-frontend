@@ -48,6 +48,9 @@ export function EstilismoReservaModal({
     mobile: string;
     dni: string;
     notes?: string;
+    couponCode?: string;
+    couponDiscountPercent?: number;
+    couponDiscountTarget?: 'ONLINE' | 'CAJA';
   } | null>(null);
   const [confirmationModalOpened, setConfirmationModalOpened] = useState(false);
 
@@ -154,6 +157,9 @@ export function EstilismoReservaModal({
                 services={services}
                 selectedEmployeeId={employee.id}
                 informationalListPriceArs={informationalListPriceArs ?? undefined}
+                couponCode={clientData?.couponCode}
+                couponDiscountPercent={clientData?.couponDiscountPercent}
+                couponDiscountTarget={clientData?.couponDiscountTarget}
                 lmbInfo={lmbInfo}
                 onBack={handleStepBack}
               />

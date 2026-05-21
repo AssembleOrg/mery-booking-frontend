@@ -32,7 +32,12 @@ interface BookingConfirmationModalProps {
   location: string;
   serviceId?: string;
   lmbInfo?: { lmbId: string; discountPercent: number };
-  onConfirm: (client: Client, couponCode?: string) => void;
+  onConfirm: (
+    client: Client,
+    couponCode?: string,
+    couponDiscountPercent?: number,
+    couponDiscountTarget?: 'ONLINE' | 'CAJA',
+  ) => void;
 }
 
 interface FormData {
@@ -71,6 +76,7 @@ export function BookingConfirmationModal({
   const [couponValidation, setCouponValidation] = useState<{
     valid: boolean;
     discountPercent: number;
+    discountTarget?: 'ONLINE' | 'CAJA';
     couponCode: string;
     message?: string;
   } | null>(null);
@@ -140,16 +146,25 @@ export function BookingConfirmationModal({
     setIsSubmitting(false);
 
     const appliedCoupon = couponValidation?.valid ? couponValidation.couponCode : undefined;
-    onConfirm(client, appliedCoupon);
+    const appliedDiscount = couponValidation?.valid ? couponValidation.discountPercent : undefined;
+    const appliedTarget = couponValidation?.valid ? couponValidation.discountTarget : undefined;
+    onConfirm(client, appliedCoupon, appliedDiscount, appliedTarget);
     reset();
     setCouponOpen(false);
     setCouponInput('');
     setCouponValidation(null);
   };
 
-  // Form sin aclaraciones de LMB: muestra el precio del servicio (sin descuento).
-  // El desglose con descuento y el cobro final ocurren en Step5.
-  const deposit = service.priceBook;
+  // Form: el cupón ONLINE descuenta del monto. El cupón CAJA es informativo (recepción ajusta).
+  // El LMB también es informativo y no descuenta acá.
+  const baseDeposit = service.priceBook;
+  const couponDiscountsOnline =
+    couponValidation?.valid && couponValidation.discountTarget !== 'CAJA'
+      ? couponValidation.discountPercent
+      : 0;
+  const deposit = couponDiscountsOnline > 0
+    ? Math.round(baseDeposit * (1 - couponDiscountsOnline / 100))
+    : baseDeposit;
 
   const formatDate = (date: Date) => {
     const day = date.getDate();
@@ -461,15 +476,26 @@ export function BookingConfirmationModal({
               </Box>
             )}
 
-            {/* Pricing Summary — sin desglose LMB (eso vive en Step5) */}
+            {/* Pricing Summary — cupón ONLINE descuenta; cupón CAJA y LMB son informativos */}
             <Box className={classes.pricingSummary}>
               <Flex justify="space-between" mb="xs">
                 <Text size="sm" fw={400}>
-                  Precio del servicio:
+                  Precio de la seña:
                 </Text>
-                <Text size="sm" fw={600}>
-                  AR${deposit.toLocaleString('es-AR')}
-                </Text>
+                {couponDiscountsOnline > 0 ? (
+                  <Flex align="baseline" gap={6}>
+                    <Text size="xs" style={{ textDecoration: 'line-through', color: '#999' }}>
+                      AR${baseDeposit.toLocaleString('es-AR')}
+                    </Text>
+                    <Text size="sm" fw={700} c="pink.6">
+                      AR${deposit.toLocaleString('es-AR')}
+                    </Text>
+                  </Flex>
+                ) : (
+                  <Text size="sm" fw={600}>
+                    AR${deposit.toLocaleString('es-AR')}
+                  </Text>
+                )}
               </Flex>
             </Box>
 

@@ -49,6 +49,8 @@ interface Step5PaymentSummaryProps {
   selectedEmployeeId?: string;
   informationalListPriceArs?: number;
   couponCode?: string;
+  couponDiscountPercent?: number;
+  couponDiscountTarget?: 'ONLINE' | 'CAJA';
   lmbInfo?: { lmbId: string; discountPercent: number };
   onBack: () => void;
 }
@@ -67,6 +69,8 @@ export function Step5PaymentSummary({
   selectedEmployeeId,
   informationalListPriceArs,
   couponCode,
+  couponDiscountPercent,
+  couponDiscountTarget,
   lmbInfo,
   onBack,
 }: Step5PaymentSummaryProps) {
@@ -86,14 +90,26 @@ export function Step5PaymentSummary({
   const employeeName = employee?.fullName || 'Profesional asignado';
   const service = services.find((s) => s.id === selectedOption.serviceId);
 
-  // La seña que cobramos online es SIEMPRE el precio full del servicio.
-  // El descuento LMB es informativo: recepción ajusta el saldo al asistir al turno.
+  // Seña base = precio full del servicio.
+  // Cupón ONLINE => descuenta del monto cobrado (MP).
+  // Cupón CAJA / LMB => informativos (recepción ajusta en el local).
   const baseDepositAmount = service ? Number(service.price) : 0;
-  const serviceDepositAmount = baseDepositAmount;
-  // Solo informativo, para mostrar lo que se va a descontar en el local
+  const couponDiscountsOnline =
+    couponCode && couponDiscountPercent && couponDiscountTarget !== 'CAJA'
+      ? couponDiscountPercent
+      : 0;
+  const couponOnlineDiscountAmount = couponDiscountsOnline > 0
+    ? Math.round(baseDepositAmount * (couponDiscountsOnline / 100))
+    : 0;
+  const serviceDepositAmount = baseDepositAmount - couponOnlineDiscountAmount;
+  // Descuentos informativos (no descuentan online, recepción ajusta)
   const lmbInformativeDiscount = lmbInfo
     ? Math.round(baseDepositAmount * (lmbInfo.discountPercent / 100))
     : 0;
+  const couponInformativeDiscount =
+    couponCode && couponDiscountPercent && couponDiscountTarget === 'CAJA'
+      ? Math.round(baseDepositAmount * (couponDiscountPercent / 100))
+      : 0;
 
   // Combo: ofrecer tinte de pestañas como addon SOLO si el profesional es Mery
   // y el servicio base NO es ya tinte de pestañas. LMB aplica solo al servicio
@@ -382,10 +398,35 @@ export function Step5PaymentSummary({
               <Text size="sm" c="dimmed">
                 Seña del servicio:
               </Text>
-              <Text size="sm" fw={500}>
-                AR$ {baseDepositAmount.toLocaleString('es-AR')}
-              </Text>
+              {couponDiscountsOnline > 0 ? (
+                <Group gap={6}>
+                  <Text size="sm" style={{ textDecoration: 'line-through', color: '#999' }}>
+                    AR$ {baseDepositAmount.toLocaleString('es-AR')}
+                  </Text>
+                  <Text size="sm" fw={600} c="pink.6">
+                    AR$ {serviceDepositAmount.toLocaleString('es-AR')}
+                  </Text>
+                </Group>
+              ) : (
+                <Text size="sm" fw={500}>
+                  AR$ {baseDepositAmount.toLocaleString('es-AR')}
+                </Text>
+              )}
             </Group>
+
+            {couponDiscountsOnline > 0 && (
+              <Group justify="space-between">
+                <Group gap={6}>
+                  <Text size="sm">🎁</Text>
+                  <Text size="sm" fw={500} c="pink.6">
+                    Cupón {couponCode} ({couponDiscountsOnline}% OFF):
+                  </Text>
+                </Group>
+                <Text size="sm" fw={600} c="pink.6">
+                  − AR$ {couponOnlineDiscountAmount.toLocaleString('es-AR')}
+                </Text>
+              </Group>
+            )}
 
             {includeTinteCombo && (
               <Group justify="space-between">
@@ -408,7 +449,7 @@ export function Step5PaymentSummary({
               <Text
                 size="md"
                 fw={700}
-                c={includeTinteCombo ? undefined : 'pink.5'}
+                c={includeTinteCombo || couponDiscountsOnline > 0 ? 'pink.6' : 'pink.5'}
                 style={includeTinteCombo ? { color: '#660e1b' } : undefined}
               >
                 AR$ {depositAmount.toLocaleString('es-AR')}
@@ -434,6 +475,29 @@ export function Step5PaymentSummary({
                 <Text size="xs" style={{ color: '#660e1b' }}>
                   Pagás la seña completa ahora (AR$ {baseDepositAmount.toLocaleString('es-AR')}). El descuento de
                   <strong> AR$ {lmbInformativeDiscount.toLocaleString('es-AR')}</strong> se ajusta en el local al asistir al turno.
+                </Text>
+              </Box>
+            )}
+
+            {couponInformativeDiscount > 0 && (
+              <Box
+                style={{
+                  background: '#fbe8ea',
+                  border: '1px solid #660e1b',
+                  borderRadius: 8,
+                  padding: '10px 12px',
+                  marginTop: 4,
+                }}
+              >
+                <Group gap={6} mb={2}>
+                  <Text size="sm">🎁</Text>
+                  <Text size="sm" fw={700} style={{ color: '#660e1b' }}>
+                    Cupón {couponCode} — {couponDiscountPercent}% OFF (en caja)
+                  </Text>
+                </Group>
+                <Text size="xs" style={{ color: '#660e1b' }}>
+                  Pagás la seña completa ahora. El descuento de
+                  <strong> AR$ {couponInformativeDiscount.toLocaleString('es-AR')}</strong> se ajusta en el local al cobrar el saldo.
                 </Text>
               </Box>
             )}

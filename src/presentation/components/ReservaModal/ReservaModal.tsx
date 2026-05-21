@@ -64,6 +64,8 @@ export function ReservaModal({
     dni: string;
     notes?: string;
     couponCode?: string;
+    couponDiscountPercent?: number;
+    couponDiscountTarget?: 'ONLINE' | 'CAJA';
   } | null>(null);
   const [confirmationModalOpened, setConfirmationModalOpened] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
@@ -230,6 +232,8 @@ export function ReservaModal({
                 meryGarciaId={meryGarciaId}
                 selectedEmployeeId={selectedEmployeeId ?? undefined}
                 couponCode={clientData?.couponCode}
+                couponDiscountPercent={clientData?.couponDiscountPercent}
+                couponDiscountTarget={clientData?.couponDiscountTarget}
                 lmbInfo={lmbInfo ?? undefined}
                 onBack={handleStepBack}
               />
