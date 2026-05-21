@@ -19,6 +19,7 @@ import {
   Divider,
   SimpleGrid,
   Select,
+  Fieldset,
 } from '@mantine/core';
 import {
   IconPencil,
@@ -402,142 +403,147 @@ export function CouponsManager() {
         centered={!isMobile}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack gap="md">
-            <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-              <Controller
-                name="discountPercent"
-                control={control}
-                rules={{ required: 'El porcentaje es requerido' }}
-                render={({ field }) => (
-                  <NumberInput
-                    label="* Porcentaje de descuento"
-                    placeholder="20"
-                    min={1}
-                    max={100}
-                    suffix="%"
-                    value={field.value}
-                    onChange={(val) => field.onChange(val)}
-                    error={errors.discountPercent?.message}
+          <Stack gap="lg">
+            <Fieldset legend="Datos del cupón" variant="default">
+              <Stack gap="md">
+                <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
+                  <Controller
+                    name="code"
+                    control={control}
+                    rules={{ required: 'El código es requerido' }}
+                    render={({ field }) => (
+                      <TextInput
+                        label="* Código del cupón"
+                        placeholder="mery-20"
+                        description="Se auto-genera con el %, pero podés personalizarlo"
+                        value={field.value}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setCodeManuallyEdited(true);
+                        }}
+                        error={errors.code?.message}
+                      />
+                    )}
                   />
-                )}
-              />
-
-              <Controller
-                name="code"
-                control={control}
-                rules={{ required: 'El código es requerido' }}
-                render={({ field }) => (
-                  <TextInput
-                    label="* Código del cupón"
-                    placeholder="mery-20"
-                    description="Se auto-genera con el %, pero podés personalizarlo"
-                    value={field.value}
-                    onChange={(e) => {
-                      field.onChange(e);
-                      setCodeManuallyEdited(true);
-                    }}
-                    error={errors.code?.message}
+                  <Controller
+                    name="discountPercent"
+                    control={control}
+                    rules={{ required: 'El porcentaje es requerido' }}
+                    render={({ field }) => (
+                      <NumberInput
+                        label="* Porcentaje de descuento"
+                        placeholder="20"
+                        description="Aplica al precio del servicio elegido"
+                        min={1}
+                        max={100}
+                        suffix="%"
+                        value={field.value}
+                        onChange={(val) => field.onChange(val)}
+                        error={errors.discountPercent?.message}
+                      />
+                    )}
                   />
-                )}
-              />
-            </SimpleGrid>
+                </SimpleGrid>
 
-            <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-              <Controller
-                name="validFrom"
-                control={control}
-                render={({ field }) => (
-                  <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 1 }}>
-                    <DatePickerInput
-                      label="Válido desde"
-                      placeholder="DD/MM/AAAA"
+                <Controller
+                  name="discountTarget"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      label="* Aplica el descuento"
+                      description="Online = descuenta del pago de la seña. Caja = informativo, recepción ajusta el saldo al cobrar en el local."
+                      data={[
+                        { value: 'ONLINE', label: 'Online (descuenta de la seña)' },
+                        { value: 'CAJA', label: 'Caja (recepción ajusta al cobrar)' },
+                      ]}
                       value={field.value}
-                      onChange={field.onChange}
-                      valueFormat="DD/MM/YYYY"
-                      clearable
+                      onChange={(v) => field.onChange((v as CouponDiscountTarget) || 'ONLINE')}
+                      allowDeselect={false}
                     />
-                  </DatesProvider>
-                )}
-              />
-              <Controller
-                name="validTo"
-                control={control}
-                render={({ field }) => (
-                  <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 1 }}>
-                    <DatePickerInput
-                      label="Válido hasta"
-                      placeholder="DD/MM/AAAA"
-                      value={field.value}
-                      onChange={field.onChange}
-                      valueFormat="DD/MM/YYYY"
-                      clearable
-                    />
-                  </DatesProvider>
-                )}
-              />
-            </SimpleGrid>
-
-            <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-              <Controller
-                name="maxUses"
-                control={control}
-                render={({ field }) => (
-                  <NumberInput
-                    label="Cantidad máxima de usos"
-                    description="Dejar vacío para usos ilimitados"
-                    placeholder="50"
-                    min={1}
-                    value={field.value === '' ? '' : field.value}
-                    onChange={(val) => field.onChange(val === '' ? '' : val)}
-                  />
-                )}
-              />
-
-              <Controller
-                name="discountTarget"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    label="* Aplica el descuento"
-                    description="Online = descuenta del pago de la seña. Caja = informativo, recepción ajusta el saldo al cobrar en el local."
-                    data={[
-                      { value: 'ONLINE', label: 'Online (descuenta de la seña)' },
-                      { value: 'CAJA', label: 'Caja (recepción ajusta al cobrar)' },
-                    ]}
-                    value={field.value}
-                    onChange={(v) => field.onChange((v as CouponDiscountTarget) || 'ONLINE')}
-                    allowDeselect={false}
-                  />
-                )}
-              />
-            </SimpleGrid>
-
-            <Controller
-              name="isActive"
-              control={control}
-              render={({ field }) => (
-                <Switch
-                  label="Cupón activo"
-                  description="Si está activo, los clientes podrán usarlo"
-                  checked={field.value}
-                  onChange={field.onChange}
+                  )}
                 />
-              )}
-            />
+              </Stack>
+            </Fieldset>
 
-            {!validFrom && !validTo && !maxUses && (
-              <Text size="xs" c="red">
-                Debe establecer al menos una restricción: fechas de validez o cantidad máxima de usos.
-              </Text>
-            )}
+            <Fieldset legend="Validez y límites" variant="default">
+              <Stack gap="md">
+                <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
+                  <Controller
+                    name="validFrom"
+                    control={control}
+                    render={({ field }) => (
+                      <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 1 }}>
+                        <DatePickerInput
+                          label="Válido desde"
+                          placeholder="DD/MM/AAAA"
+                          value={field.value}
+                          onChange={field.onChange}
+                          valueFormat="DD/MM/YYYY"
+                          clearable
+                        />
+                      </DatesProvider>
+                    )}
+                  />
+                  <Controller
+                    name="validTo"
+                    control={control}
+                    render={({ field }) => (
+                      <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 1 }}>
+                        <DatePickerInput
+                          label="Válido hasta"
+                          placeholder="DD/MM/AAAA"
+                          value={field.value}
+                          onChange={field.onChange}
+                          valueFormat="DD/MM/YYYY"
+                          clearable
+                        />
+                      </DatesProvider>
+                    )}
+                  />
+                </SimpleGrid>
 
-            <Divider />
+                <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
+                  <Controller
+                    name="maxUses"
+                    control={control}
+                    render={({ field }) => (
+                      <NumberInput
+                        label="Cantidad máxima de usos"
+                        description="Vacío = sin límite"
+                        placeholder="50"
+                        min={1}
+                        value={field.value === '' ? '' : field.value}
+                        onChange={(val) => field.onChange(val === '' ? '' : val)}
+                      />
+                    )}
+                  />
 
-            {/* Service selector - same style as TimeSlotsManager */}
-            <Box>
-              <Text size="sm" fw={600} mb="xs">
-                Servicios donde aplica el cupón *
-              </Text>
+                  <Controller
+                    name="isActive"
+                    control={control}
+                    render={({ field }) => (
+                      <Box style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+                        <Switch
+                          label="Cupón activo"
+                          description="Si está activo, los clientes podrán usarlo"
+                          checked={field.value}
+                          onChange={field.onChange}
+                          size="md"
+                        />
+                      </Box>
+                    )}
+                  />
+                </SimpleGrid>
+
+                {!validFrom && !validTo && !maxUses && (
+                  <Text size="xs" c="red">
+                    Debe establecer al menos una restricción: fechas de validez o cantidad máxima de usos.
+                  </Text>
+                )}
+              </Stack>
+            </Fieldset>
+
+            <Fieldset legend="Servicios donde aplica" variant="default">
               <Text size="xs" c="dimmed" mb="sm">
                 Seleccioná los servicios en los que se podrá usar este cupón. Podés buscar por nombre.
               </Text>
@@ -612,9 +618,7 @@ export function CouponsManager() {
                   {selectedServiceIds.length} servicio{selectedServiceIds.length !== 1 ? 's' : ''} seleccionado{selectedServiceIds.length !== 1 ? 's' : ''}
                 </Text>
               )}
-            </Box>
-
-            <Divider />
+            </Fieldset>
 
             <Group justify="flex-end" mt="md">
               <Button variant="default" onClick={handleCloseModal}>Cancelar</Button>
