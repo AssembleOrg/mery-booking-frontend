@@ -11,6 +11,7 @@ import classes from './ReservaModal.module.css';
 import type { ServiceOption } from '@/infrastructure/types/services';
 import type { Employee } from '@/infrastructure/http/employeeService';
 import type { ServiceEntity } from '@/infrastructure/http/serviceService';
+import { CATEGORY_IDS } from '@/config/constants';
 
 dayjs.locale('es');
 
@@ -175,7 +176,9 @@ export function Step4Confirmation({
         </div>
 
         <div className={classes.summaryRow}>
-          <Text className={classes.summaryLabel}>Seña (a pagar ahora):</Text>
+          <Text className={classes.summaryLabel}>
+            {service?.categoryId === CATEGORY_IDS.AUTOSTYLING ? 'Total (a pagar ahora):' : 'Seña (a pagar ahora):'}
+          </Text>
           <Text className={classes.summaryPrice}>
             AR$ {service ? Number(service.price).toLocaleString('es-AR') : ''}
           </Text>
@@ -191,6 +194,7 @@ export function Step4Confirmation({
         time={selectedTime}
         location={MOCK_LOCATION}
         serviceId={selectedOption.serviceId}
+        isAutostyling={service?.categoryId === CATEGORY_IDS.AUTOSTYLING}
         lmbInfo={lmbInfo}
         onConfirm={handleCollectData}
       />

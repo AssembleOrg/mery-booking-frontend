@@ -31,6 +31,7 @@ interface BookingConfirmationModalProps {
   time: string;
   location: string;
   serviceId?: string;
+  isAutostyling?: boolean;
   lmbInfo?: { lmbId: string; discountPercent: number };
   onConfirm: (
     client: Client,
@@ -66,9 +67,11 @@ export function BookingConfirmationModal({
   time,
   location,
   serviceId,
+  isAutostyling = false,
   lmbInfo,
   onConfirm,
 }: BookingConfirmationModalProps) {
+  const amountLabel = isAutostyling ? 'Total' : 'Precio de la seña';
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [couponOpen, setCouponOpen] = useState(false);
   const [couponInput, setCouponInput] = useState('');
@@ -480,7 +483,7 @@ export function BookingConfirmationModal({
             <Box className={classes.pricingSummary}>
               <Flex justify="space-between" mb="xs">
                 <Text size="sm" fw={400}>
-                  Precio de la seña:
+                  {amountLabel}:
                 </Text>
                 {couponDiscountsOnline > 0 ? (
                   <Flex align="baseline" gap={6}>

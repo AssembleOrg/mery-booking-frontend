@@ -20,7 +20,7 @@ import { IconArrowLeft, IconCreditCard, IconCheck } from '@tabler/icons-react';
 import type { ServiceOption } from '@/infrastructure/types/services';
 import type { Employee } from '@/infrastructure/http/employeeService';
 import type { ServiceEntity } from '@/infrastructure/http/serviceService';
-import { EMPLOYEE_IDS, COMBO_TINTE_OFFER } from '@/config/constants';
+import { EMPLOYEE_IDS, COMBO_TINTE_OFFER, CATEGORY_IDS } from '@/config/constants';
 import { LmbIcon } from '@/presentation/components/LmbIcon/LmbIcon';
 import classes from './ReservaModal.module.css';
 
@@ -89,6 +89,12 @@ export function Step5PaymentSummary({
   const employee = employees.find((e) => e.id === employeeId);
   const employeeName = employee?.fullName || 'Profesional asignado';
   const service = services.find((s) => s.id === selectedOption.serviceId);
+
+  // Autostyling: se cobra el TOTAL de una vez, no es una seña.
+  // Cambiamos los labels para reflejar eso.
+  const isAutostyling = service?.categoryId === CATEGORY_IDS.AUTOSTYLING;
+  const amountLabel = isAutostyling ? 'Total' : 'Seña';
+  const totalLabel = isAutostyling ? 'Total a pagar ahora' : 'Total a pagar ahora';
 
   // Seña base = precio full del servicio.
   // Cupón ONLINE => descuenta del monto cobrado (MP).
@@ -396,7 +402,7 @@ export function Step5PaymentSummary({
 
             <Group justify="space-between">
               <Text size="sm" c="dimmed">
-                Seña del servicio:
+                {amountLabel} del servicio:
               </Text>
               {couponDiscountsOnline > 0 ? (
                 <Group gap={6}>
@@ -473,7 +479,7 @@ export function Step5PaymentSummary({
                   </Text>
                 </Group>
                 <Text size="xs" style={{ color: '#660e1b' }}>
-                  Pagás la seña completa ahora (AR$ {baseDepositAmount.toLocaleString('es-AR')}). El descuento de
+                  Pagás el {amountLabel.toLowerCase()} completo ahora (AR$ {baseDepositAmount.toLocaleString('es-AR')}). El descuento de
                   <strong> AR$ {lmbInformativeDiscount.toLocaleString('es-AR')}</strong> se ajusta en el local al asistir al turno.
                 </Text>
               </Box>
@@ -496,7 +502,7 @@ export function Step5PaymentSummary({
                   </Text>
                 </Group>
                 <Text size="xs" style={{ color: '#660e1b' }}>
-                  Pagás la seña completa ahora. El descuento de
+                  Pagás el {amountLabel.toLowerCase()} completo ahora. El descuento de
                   <strong> AR$ {couponInformativeDiscount.toLocaleString('es-AR')}</strong> se ajusta en el local al cobrar el saldo.
                 </Text>
               </Box>
