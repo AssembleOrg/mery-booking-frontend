@@ -149,7 +149,7 @@ export interface RescheduleBookingDto {
 }
 
 export interface ReschedulePublicBookingDto extends RescheduleBookingDto {
-  dni: string; // requerido en el flujo público
+  dni?: string; // opcional: ya no se valida contra la reserva
 }
 
 export interface UpdateBookingDto {
@@ -255,16 +255,15 @@ export class BookingService {
     return response.data.data;
   }
 
-  // Buscar reserva por código + DNI (público)
-  static async getByCode(bookingCode: string, dni: string): Promise<BookingResponse> {
+  // Buscar reserva por código (público) - el DNI ya no es requerido
+  static async getByCode(bookingCode: string): Promise<BookingResponse> {
     const response = await apiClient.get<BackendResponse<BookingResponse>>(
-      `${this.BASE_PATH}/public/${bookingCode}`,
-      { params: { dni } }
+      `${this.BASE_PATH}/public/${bookingCode}`
     );
     return response.data.data;
   }
 
-  // Reagendar reserva (público) - requiere DNI + cutoff por categoría (default 48hs)
+  // Reagendar reserva (público) - cutoff por categoría (default 48hs)
   static async reschedulePublic(bookingCode: string, data: ReschedulePublicBookingDto): Promise<BookingResponse> {
     const response = await apiClient.patch<BackendResponse<BookingResponse>>(
       `${this.BASE_PATH}/public/${bookingCode}/reschedule`,

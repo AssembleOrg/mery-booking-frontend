@@ -42,7 +42,6 @@ export default function CambiarReservaPage() {
 
   // ── Auth ──
   const [bookingCode, setBookingCode] = useState('');
-  const [dni, setDni] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [errorModalOpen, setErrorModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -130,13 +129,13 @@ export default function CambiarReservaPage() {
   // ── Handlers ──
 
   const handleSearch = async () => {
-    if (!bookingCode.trim() || !dni.trim()) {
-      notifications.show({ title: 'Datos incompletos', message: 'Ingresá código y DNI', color: 'red' });
+    if (!bookingCode.trim()) {
+      notifications.show({ title: 'Datos incompletos', message: 'Ingresá el código de reserva', color: 'red' });
       return;
     }
     setIsSearching(true);
     try {
-      const result = await BookingService.getByCode(bookingCode.trim().toUpperCase(), dni.trim());
+      const result = await BookingService.getByCode(bookingCode.trim().toUpperCase());
       // Las reservas Last Minute no son reagendables — corte temprano
       if (result.lastMinuteBookingId) {
         setErrorMessage(
@@ -148,7 +147,7 @@ export default function CambiarReservaPage() {
       setBooking(result);
       setCurrentStep(2);
     } catch (err: any) {
-      const msg = err?.response?.data?.message || 'Reserva no encontrada. Verificá el código y DNI.';
+      const msg = err?.response?.data?.message || 'Reserva no encontrada. Verificá el código.';
       setErrorMessage(msg);
       setErrorModalOpen(true);
     } finally {
@@ -175,7 +174,6 @@ export default function CambiarReservaPage() {
         startTime: selectedTime,
         employeeId: selectedEmployeeId,
         serviceId: selectedServiceId,
-        dni: dni.trim(),
       });
       setCurrentStep(6);
     } catch (err: any) {
@@ -238,7 +236,7 @@ export default function CambiarReservaPage() {
                   <div className={classes.stepHeader}>
                     <h2 className={classes.stepTitle}>Verificá tu reserva</h2>
                     <p className={classes.stepSubtitle}>
-                      Ingresá el código de tu reserva y tu DNI para continuar.
+                      Ingresá el código de tu reserva para continuar.
                     </p>
                   </div>
 
@@ -254,20 +252,6 @@ export default function CambiarReservaPage() {
                         maxLength={6}
                         className={`${classes.input} ${classes.inputCode}`}
                         autoComplete="off"
-                      />
-                    </div>
-                    <div className={classes.field}>
-                      <label className={classes.label}>DNI del titular</label>
-                      <input
-                        type="text"
-                        placeholder="Ej: 12345678"
-                        value={dni}
-                        onChange={(e) => setDni(e.target.value.replace(/\s/g, ''))}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                        maxLength={20}
-                        className={classes.input}
-                        autoComplete="off"
-                        inputMode="numeric"
                       />
                     </div>
                   </div>

@@ -30,7 +30,6 @@ type Step = 'search' | 'form' | 'success';
 export function PublicRescheduleBooking() {
   const [step, setStep] = useState<Step>('search');
   const [bookingCode, setBookingCode] = useState('');
-  const [dni, setDni] = useState('');
   const [foundBooking, setFoundBooking] = useState<BookingResponse | null>(null);
   const [services, setServices] = useState<ServiceEntity[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -158,19 +157,9 @@ export function PublicRescheduleBooking() {
       return;
     }
 
-    if (!dni.trim()) {
-      notifications.show({
-        title: 'Falta el DNI',
-        message: 'Ingresá tu DNI para verificar tu identidad',
-        color: 'red',
-      });
-      return;
-    }
-
     try {
       const booking = await getBookingByCodeMutation.mutateAsync({
         bookingCode: bookingCode.trim().toUpperCase(),
-        dni: dni.trim(),
       });
       setFoundBooking(booking);
 
@@ -225,7 +214,6 @@ export function PublicRescheduleBooking() {
           startTime: data.startTime,
           employeeId: data.employeeId,
           serviceId: data.serviceId,
-          dni: dni.trim(),
         },
       });
 
@@ -243,7 +231,6 @@ export function PublicRescheduleBooking() {
   const handleReset = () => {
     setStep('search');
     setBookingCode('');
-    setDni('');
     setFoundBooking(null);
     setServices([]);
     setEmployees([]);
@@ -273,7 +260,7 @@ export function PublicRescheduleBooking() {
           ¿Necesitás <em>cambiar</em> tu turno?
         </h2>
         <p className={classes.subtitle}>
-          Ingresá tu código de reserva y DNI. Vas a poder elegir un nuevo profesional,
+          Ingresá tu código de reserva. Vas a poder elegir un nuevo profesional,
           fecha y horario sin tener que pasar por nosotros.
         </p>
       </header>
@@ -298,25 +285,6 @@ export function PublicRescheduleBooking() {
                 maxLength={6}
                 className={`${classes.input} ${classes.inputCode}`}
                 autoComplete="off"
-              />
-            </div>
-            <div className={classes.field}>
-              <label className={classes.label} htmlFor="reschedule-dni">
-                DNI del titular
-              </label>
-              <input
-                id="reschedule-dni"
-                type="text"
-                placeholder="Ej: 12345678"
-                value={dni}
-                onChange={(e) => setDni(e.target.value.replace(/\s/g, ''))}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleSearch();
-                }}
-                maxLength={20}
-                className={classes.input}
-                autoComplete="off"
-                inputMode="numeric"
               />
             </div>
           </div>

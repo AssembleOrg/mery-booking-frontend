@@ -88,9 +88,9 @@ export function useRescheduleBookingPublic() {
 }
 
 export function useGetBookingByCode() {
-  return useMutation<BookingResponse, Error, { bookingCode: string; dni: string }>({
-    mutationFn: async ({ bookingCode, dni }) => {
-      return await BookingService.getByCode(bookingCode, dni);
+  return useMutation<BookingResponse, Error, { bookingCode: string }>({
+    mutationFn: async ({ bookingCode }) => {
+      return await BookingService.getByCode(bookingCode);
     },
     onError: (error: any) => {
       const errorMessage = error.response?.data?.message || error.message || 'Error al buscar la reserva';
