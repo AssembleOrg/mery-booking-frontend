@@ -1,5 +1,5 @@
 import { Header, WelcomeSection, Footer } from '@/presentation/components';
-import EpitesisPromoMayo from '@/presentation/components/EpitesisPromoMayo/EpitesisPromoMayo';
+// import EpitesisPromoMayo from '@/presentation/components/EpitesisPromoMayo/EpitesisPromoMayo';
 
 export default function Home() {
   return (
@@ -7,7 +7,7 @@ export default function Home() {
       <Header />
       <WelcomeSection />
       <Footer />
-      <EpitesisPromoMayo />
+      {/* <EpitesisPromoMayo /> */}
     </>
   );
 }
