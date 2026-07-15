@@ -1,5 +1,5 @@
 /* ================================
-   MASTERCLASS AUTOSTYLING - FLYER
+   MASTERCLASS JULERIAQUE - FLYER
    ================================ */
 
 .content {
@@ -7,9 +7,9 @@
   overflow: hidden;
   background: transparent;
   box-shadow: none;
-  /* Ancho del modal en desktop: flyer horizontal más grande */
-  width: min(92vw, 1200px);
-  max-width: min(92vw, 1200px);
+  /* Ancho del modal en desktop: flyer vertical */
+  width: min(92vw, 520px);
+  max-width: min(92vw, 520px);
 }
 
 /* En mobile el modal va en fullScreen (ver .tsx): Mantine controla el ancho/alto
@@ -19,28 +19,34 @@
   padding: 0;
 }
 
-/* Wrapper que mantiene el ratio del flyer y ancla el botón invisible */
+/* Wrapper: centra el flyer y acota su alto. NO lleva el ratio. */
 .flyerWrapper {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
+  max-height: 85vh;
+  margin: 0 auto;
   overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
   background: #000;
 }
 
-/* Desktop: flyer horizontal 16:9 */
-.flyerDesktop {
-  aspect-ratio: 16 / 9;
-}
-
-/* Mobile: flyer vertical (dimensiones reales de flyer-mobile.png: 941 x 1672) */
-.flyerMobile {
-  aspect-ratio: 941 / 1672;
+/* Frame: mantiene el ratio real de juleriaque-mobile.jpg (1080x1350) y ancla
+   el botón invisible. Al tener el mismo ratio que la imagen, los % del link
+   coinciden con el flyer en cualquier viewport (incluido fullScreen mobile). */
+.flyerFrame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .flyerImage {
-  object-fit: contain;
+  object-fit: fill;
 }
 
 /* Botón de cerrar (X) flotante sobre la imagen */
@@ -80,53 +86,28 @@
   box-shadow: 0 0 0 3px var(--mg-pink, #eba2a8);
 }
 
-/* Botón invisible sobre "Reservá tu clase aquí…" */
+/* Botón invisible sobre "REGISTRATE" (abajo a la izquierda del flyer) */
 .reservaLink {
   position: absolute;
+  top: 88.5%;
+  left: 6%;
+  width: 22%;
+  height: 4.5%;
   border-radius: 6px;
   display: block;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
   /* Para calibrar visualmente, descomentar: */
   /* background: rgba(239, 68, 68, 0.3); */
 }
 
-/* Coordenadas en % — desktop (texto inferior-derecha) */
-.reservaDesktop {
-  top: 65%;
-  left: 66%;
-  width: 30%;
-  height: 15%;
-}
-
-/* Coordenadas en % — mobile (texto centrado abajo) */
-.reservaMobile {
-  top: 82%;
-  left: 25%;
-  width: 50%;
-  height: 8%;
-}
-
-/* Mostrar/ocultar según viewport */
-.showDesktop {
-  display: block;
-}
-.showMobile {
-  display: none;
-}
-
 @media (max-width: 767px) {
-  .showDesktop {
-    display: none;
-  }
-  .showMobile {
-    display: block;
-  }
-
-  /* fullScreen: el content ya es 100dvh/100vw. El wrapper lo llena y la imagen
-     se muestra COMPLETA con object-fit: contain, centrada, sin barras negras. */
-  .flyerMobile {
+  /* fullScreen: el content ya es 100dvh/100vw. El wrapper lo llena y centra al
+     frame, que entra completo (max-height: 100%) manteniendo su ratio 4/5. */
+  .flyerWrapper {
     width: 100%;
     height: 100dvh;
-    aspect-ratio: auto;
+    max-height: none;
     border-radius: 0;
     box-shadow: none;
     background: transparent;

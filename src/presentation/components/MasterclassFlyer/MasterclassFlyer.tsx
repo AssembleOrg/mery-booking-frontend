@@ -7,9 +7,9 @@ import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import classes from './MasterclassFlyer.module.css';
 
-const STORAGE_KEY = 'masterclass-flyer-v1';
+const STORAGE_KEY = 'juleriaque-flyer-v1';
 const OPEN_DELAY_MS = 800;
-const RESERVA_URL = 'https://merygarcia.com.ar/f/masterclass-autostyling';
+const RESERVA_URL = 'https://eventos.juleriaque.com.ar/evento/601';
 
 function CloseIcon() {
   return (
@@ -64,23 +64,34 @@ export default function MasterclassFlyer() {
           : { transition: 'fade', duration: 300 }
       }
       classNames={{ content: classes.content, body: classes.body }}
-      aria-label="Master Class de Autostyling"
+      aria-label="Masterclass Anastasia Beverly Hills por Mery García en Juleriaque"
     >
       <motion.div
         initial={shouldReduceMotion ? {} : { opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.35, ease: [0.43, 0.13, 0.23, 0.96] }}
       >
-        {/* Desktop: flyer horizontal 16:9 */}
-        <div className={`${classes.flyerWrapper} ${classes.flyerDesktop} ${classes.showDesktop}`}>
-          <Image
-            src="/form/flyer-evento.jpg"
-            alt="Invitación a la Master Class de Autostyling de Mery García"
-            fill
-            priority
-            sizes="880px"
-            className={classes.flyerImage}
-          />
+        <div className={classes.flyerWrapper}>
+          {/* El frame mantiene el ratio exacto de la imagen: es lo que ancla
+              el link para que coincida con el flyer en cualquier viewport. */}
+          <div className={classes.flyerFrame}>
+            <Image
+              src="/form/juleriaque-mobile.jpg"
+              alt="Masterclass Anastasia Beverly Hills por Mery García en Juleriaque"
+              fill
+              priority
+              sizes="(max-width: 767px) 100vw, 520px"
+              className={classes.flyerImage}
+            />
+            <a
+              href={RESERVA_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Registrate en la Masterclass"
+              onClick={handleClose}
+              className={classes.reservaLink}
+            />
+          </div>
           <button
             type="button"
             onClick={handleClose}
@@ -89,42 +100,6 @@ export default function MasterclassFlyer() {
           >
             <CloseIcon />
           </button>
-          <a
-            href={RESERVA_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Reservá tu clase en la Master Class de Autostyling"
-            onClick={handleClose}
-            className={`${classes.reservaLink} ${classes.reservaDesktop}`}
-          />
-        </div>
-
-        {/* Mobile: flyer vertical */}
-        <div className={`${classes.flyerWrapper} ${classes.flyerMobile} ${classes.showMobile}`}>
-          <Image
-            src="/form/flyer-mobile.png"
-            alt="Invitación a la Master Class de Autostyling de Mery García"
-            fill
-            priority
-            sizes="100vw"
-            className={classes.flyerImage}
-          />
-          <button
-            type="button"
-            onClick={handleClose}
-            aria-label="Cerrar"
-            className={classes.closeButton}
-          >
-            <CloseIcon />
-          </button>
-          <a
-            href={RESERVA_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Reservá tu clase en la Master Class de Autostyling"
-            onClick={handleClose}
-            className={`${classes.reservaLink} ${classes.reservaMobile}`}
-          />
         </div>
       </motion.div>
     </Modal>
