@@ -94,6 +94,10 @@ export function Step5PaymentSummary({
   // Cambiamos los labels para reflejar eso.
   const isAutostyling = service?.categoryId === CATEGORY_IDS.AUTOSTYLING;
   const amountLabel = isAutostyling ? 'Total' : 'Seña';
+  // Frase concordada en género para "pagás X completo/a ahora"
+  const paidNowPhrase = isAutostyling
+    ? 'Pagás el total completo ahora.'
+    : 'Pagás la seña completa ahora.';
   const totalLabel = isAutostyling ? 'Total a pagar ahora' : 'Total a pagar ahora';
 
   // Seña base = precio full del servicio.
@@ -112,10 +116,11 @@ export function Step5PaymentSummary({
   const lmbInformativeDiscount = lmbInfo
     ? Math.round(baseDepositAmount * (lmbInfo.discountPercent / 100))
     : 0;
-  const couponInformativeDiscount =
-    couponCode && couponDiscountPercent && couponDiscountTarget === 'CAJA'
-      ? Math.round(baseDepositAmount * (couponDiscountPercent / 100))
-      : 0;
+  // Cupón CAJA => descuento informativo. NO mostramos monto en pesos: los precios
+  // de servicio están en USD, así que un monto en ARS calculado sobre la seña
+  // sería engañoso. Mostramos solo el porcentaje que recepción aplica en caja.
+  const hasCouponInformativeDiscount =
+    !!couponCode && !!couponDiscountPercent && couponDiscountTarget === 'CAJA';
 
   // Combo: ofrecer tinte de pestañas como addon SOLO si el profesional es Mery
   // y el servicio base NO es ya tinte de pestañas. LMB aplica solo al servicio
@@ -485,7 +490,7 @@ export function Step5PaymentSummary({
               </Box>
             )}
 
-            {couponInformativeDiscount > 0 && (
+            {hasCouponInformativeDiscount && (
               <Box
                 style={{
                   background: '#fbe8ea',
@@ -502,8 +507,8 @@ export function Step5PaymentSummary({
                   </Text>
                 </Group>
                 <Text size="xs" style={{ color: '#660e1b' }}>
-                  Pagás el {amountLabel.toLowerCase()} completo ahora. El descuento de
-                  <strong> AR$ {couponInformativeDiscount.toLocaleString('es-AR')}</strong> se ajusta en el local al cobrar el saldo.
+                  {paidNowPhrase} Se te descontará un
+                  <strong> {couponDiscountPercent}%</strong> al cobrar el saldo en caja, en recepción.
                 </Text>
               </Box>
             )}

@@ -26,7 +26,7 @@ import { DatePickerInput, DateValue, DatesProvider } from '@mantine/dates';
 import { useForm, Controller } from 'react-hook-form';
 import { notifications } from '@mantine/notifications';
 import { BookingService, EmployeeService, ServiceService, ClientService, CouponService } from '@/infrastructure/http';
-import type { Booking, BookingResponse, Employee, ServiceEntity, Client, ClientSearchResult, PaidStatus } from '@/infrastructure/http';
+import type { Booking, BookingResponse, Employee, ServiceEntity, Client, ClientSearchResult, PaidStatus, Coupon } from '@/infrastructure/http';
 import { useCreateBooking, useCreateClient, useAvailability, useRescheduleBooking } from '@/presentation/hooks';
 import { ConfirmationModal } from '@/presentation/components';
 import { LmbIcon } from '@/presentation/components/LmbIcon/LmbIcon';
@@ -85,6 +85,10 @@ export function BookingsManager() {
   const [couponInput, setCouponInput] = useState('');
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [showCouponInput, setShowCouponInput] = useState(false);
+  // Lista de cupones cargada una vez para resolver el discountTarget (CAJA vs
+  // ONLINE) de cada reserva. BookingResponse no expone discountTarget, así que
+  // lo resolvemos por couponCode contra esta lista.
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
   // For create booking modal coupon
   const [createCouponInput, setCreateCouponInput] = useState('');
   const [createCouponValidation, setCreateCouponValidation] = useState<{
@@ -489,9 +493,10 @@ export function BookingsManager() {
   const initializeData = async () => {
     try {
       setIsLoading(true);
-      const [employeesResponse, servicesResponse] = await Promise.all([
+      const [employeesResponse, servicesResponse, couponsResponse] = await Promise.all([
         EmployeeService.getAll(),
         ServiceService.getAllWithoutPagination(),
+        CouponService.getAll().catch(() => [] as Coupon[]),
       ]);
 
       if (employeesResponse?.data && Array.isArray(employeesResponse.data)) {
@@ -500,6 +505,10 @@ export function BookingsManager() {
 
       if (Array.isArray(servicesResponse)) {
         setServices(servicesResponse);
+      }
+
+      if (Array.isArray(couponsResponse)) {
+        setCoupons(couponsResponse);
       }
     } catch (error) {
       console.error('Error initializing data:', error);
@@ -625,6 +634,25 @@ export function BookingsManager() {
 
   const hasActiveCoupon = (booking: BookingResponse): boolean => {
     return Boolean(booking.couponCode?.trim());
+  };
+
+  // Resuelve el discountTarget del cupón de una reserva contra la lista de
+  // cupones cargada. Devuelve undefined si no hay cupón o no se encuentra.
+  const getCouponTarget = (
+    booking: BookingResponse,
+  ): 'ONLINE' | 'CAJA' | undefined => {
+    const code = booking.couponCode?.trim();
+    if (!code) return undefined;
+    const match = coupons.find(
+      (c) => c.code.toLowerCase() === code.toLowerCase(),
+    );
+    return match?.discountTarget;
+  };
+
+  // Un cupón CAJA es informativo: recepción debe aplicar el descuento en el
+  // local. El descuento NO está reflejado en la seña cobrada online.
+  const isCajaCoupon = (booking: BookingResponse): boolean => {
+    return getCouponTarget(booking) === 'CAJA';
   };
 
   const hasLmb = (booking: BookingResponse): boolean => {
@@ -1472,7 +1500,8 @@ export function BookingsManager() {
               <Text size="xs" c="dimmed">
                 Duración: {selectedBooking.service?.duration || 0} minutos
               </Text>
-              {selectedBooking.couponCode && selectedBooking.discountPercent ? (
+              {selectedBooking.couponCode && selectedBooking.discountPercent && !isCajaCoupon(selectedBooking) ? (
+                // Cupón ONLINE: el descuento ya está aplicado en lo cobrado.
                 <Group gap="xs" align="center">
                   <Text size="xs" c="dimmed" td="line-through">
                     ${selectedBooking.service?.price || '0'}
@@ -1485,6 +1514,8 @@ export function BookingsManager() {
                   </Badge>
                 </Group>
               ) : (
+                // Cupón CAJA o sin cupón: precio full. El descuento CAJA se
+                // aplica en el local, NO está reflejado acá.
                 <Text size="xs" c="dimmed">
                   Precio: ${selectedBooking.service?.price || '0'}
                 </Text>
@@ -1574,13 +1605,35 @@ export function BookingsManager() {
               </Group>
 
               {selectedBooking.couponCode ? (
-                <Group gap="xs">
-                  <Text size="md">🎁</Text>
-                  <Text size="md" fw={600}>{selectedBooking.couponCode}</Text>
-                  <Badge color="grape" variant="light" size="lg">
-                    {selectedBooking.discountPercent}% OFF
-                  </Badge>
-                </Group>
+                <Stack gap={6}>
+                  <Group gap="xs">
+                    <Text size="md">🎁</Text>
+                    <Text size="md" fw={600}>{selectedBooking.couponCode}</Text>
+                    <Badge color="grape" variant="light" size="lg">
+                      {selectedBooking.discountPercent}% OFF
+                    </Badge>
+                    {isCajaCoupon(selectedBooking) && (
+                      <Badge color="red" variant="filled" size="lg">
+                        APLICAR EN CAJA
+                      </Badge>
+                    )}
+                  </Group>
+                  {isCajaCoupon(selectedBooking) && (
+                    <Box
+                      style={{
+                        background: '#fbe8ea',
+                        border: '1px solid #660e1b',
+                        borderRadius: 8,
+                        padding: '8px 10px',
+                      }}
+                    >
+                      <Text size="xs" fw={600} style={{ color: '#660e1b' }}>
+                        ⚠️ Descuento NO aplicado online. Descontá un{' '}
+                        {selectedBooking.discountPercent}% del saldo al cobrar en recepción.
+                      </Text>
+                    </Box>
+                  )}
+                </Stack>
               ) : selectedBooking.status !== 'CANCELLED' ? (
                 <>
                   {!showCouponInput ? (
