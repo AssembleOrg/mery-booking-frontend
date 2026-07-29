@@ -1,0 +1,121 @@
+/* ================================
+   MASTERCLASS JULERIAQUE - FLYER
+   ================================ */
+
+.content {
+  border-radius: 12px;
+  overflow: hidden;
+  background: transparent;
+  box-shadow: none;
+  /* Ancho del modal en desktop: flyer vertical */
+  width: min(92vw, 520px);
+  max-width: min(92vw, 520px);
+}
+
+/* En mobile el modal va en fullScreen (ver .tsx): Mantine controla el ancho/alto
+   del content (100vw/100dvh), así que no hace falta override de ancho acá. */
+
+.body {
+  padding: 0;
+}
+
+/* Wrapper: centra el flyer y acota su alto. NO lleva el ratio. */
+.flyerWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-height: 85vh;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  background: #000;
+}
+
+/* Frame: mantiene el ratio real de juleriaque-mobile.jpg (1080x1350) y ancla
+   el botón invisible. Al tener el mismo ratio que la imagen, los % del link
+   coinciden con el flyer en cualquier viewport (incluido fullScreen mobile). */
+.flyerFrame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.flyerImage {
+  object-fit: fill;
+}
+
+/* Botón de cerrar (X) flotante sobre la imagen */
+.closeButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.closeButton:hover {
+  background: rgba(0, 0, 0, 0.55);
+  transform: scale(1.05);
+}
+
+.closeButton:active {
+  transform: scale(0.95);
+}
+
+.closeButton:focus-visible {
+  box-shadow: 0 0 0 3px var(--mg-pink, #eba2a8);
+}
+
+/* Botón invisible sobre "REGISTRATE" (abajo a la izquierda del flyer) */
+.reservaLink {
+  position: absolute;
+  top: 88.5%;
+  left: 6%;
+  width: 22%;
+  height: 4.5%;
+  border-radius: 6px;
+  display: block;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  /* Para calibrar visualmente, descomentar: */
+  /* background: rgba(239, 68, 68, 0.3); */
+}
+
+@media (max-width: 767px) {
+  /* fullScreen: el content ya es 100dvh/100vw. El wrapper lo llena y centra al
+     frame, que entra completo (max-height: 100%) manteniendo su ratio 4/5. */
+  .flyerWrapper {
+    width: 100%;
+    height: 100dvh;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  /* Respetar el notch/safe-area en mobile */
+  .closeButton {
+    top: calc(12px + env(safe-area-inset-top, 0px));
+    right: calc(12px + env(safe-area-inset-right, 0px));
+  }
+}
