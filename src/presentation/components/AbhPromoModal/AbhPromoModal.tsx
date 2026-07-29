@@ -118,11 +118,16 @@ export default function AbhPromoModal() {
             </span>
           </button>
 
+          {/*
+            Abre en pestaña nueva y deja el modal abierto a propósito: si el
+            visitante no copió el código antes de irse, al volver lo sigue
+            teniendo a mano. Además lo copiamos al pasar a la tienda.
+          */}
           <a
             href={SHOP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={handleClose}
+            onClick={handleCopy}
             className={classes.btnPrimary}
           >
             Ver productos
