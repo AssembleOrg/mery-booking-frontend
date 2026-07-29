@@ -1,0 +1,196 @@
+/* ================================
+   PROMO ANASTASIA BEVERLY HILLS
+   10% OFF en Juleriaque
+   ================================ */
+
+.content {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.body {
+  padding: 0;
+}
+
+/* Ancla de posicionamiento para el botón de cerrar y el lockup. */
+.wrapper {
+  position: relative;
+}
+
+/* Panel superior con la marca */
+.brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 170px;
+  padding: 0 40px;
+  background: var(--mg-pink-light);
+}
+
+.logo {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  object-fit: contain;
+}
+
+.lockup {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #660e1b;
+  color: var(--mg-pink-light);
+  font-family: var(--font-stack-ui);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 28px 32px;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .inner {
+    padding: 24px 22px;
+  }
+}
+
+.title {
+  font-family: var(--font-stack-title);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #660e1b;
+  margin: 0;
+}
+
+.subtitle {
+  font-family: var(--font-stack-body);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--mg-gray);
+  margin: 0;
+}
+
+.validity {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--mg-pink-light);
+  font-family: var(--font-stack-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: #660e1b;
+}
+
+.code {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 10px;
+  background: #f7eaec;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.code:hover {
+  background: #f2dee1;
+}
+
+.codeValue {
+  font-family: var(--font-stack-ui);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #660e1b;
+}
+
+.codeAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-stack-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: #660e1b;
+}
+
+.btnPrimary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 999px;
+  background: #660e1b;
+  color: var(--mg-white);
+  font-family: var(--font-stack-ui);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.btnPrimary:hover {
+  opacity: 0.9;
+}
+
+.arrow {
+  color: var(--mg-pink);
+}
+
+.btnGhost {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: var(--font-stack-ui);
+  font-size: 12px;
+  color: var(--mg-gray);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.btnGhost:hover {
+  color: var(--mg-dark);
+}
+
+.close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--mg-white);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.close:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
