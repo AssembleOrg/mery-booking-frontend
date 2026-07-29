@@ -7,7 +7,7 @@ export default function Home() {
       <Header />
       <WelcomeSection />
       <Footer />
-      <EpitesisPromoMayo />
+      {/* <EpitesisPromoMayo /> */}
     </>
   );
 }
