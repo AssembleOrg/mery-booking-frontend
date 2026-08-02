@@ -265,6 +265,7 @@ export function CategoriesManager() {
                   max={720}
                   step={1}
                   allowDecimal={false}
+                  allowNegative={false}
                   value={field.value}
                   onChange={(val) =>
                     field.onChange(typeof val === 'number' ? val : Number(val) || 0)

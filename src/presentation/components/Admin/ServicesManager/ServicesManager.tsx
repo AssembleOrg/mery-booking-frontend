@@ -437,44 +437,48 @@ export function ServicesManager() {
                 value={form.duration}
                 onChange={(value) => setField('duration', value)}
                 min={1}
+                allowNegative={false}
+                allowDecimal={false}
                 error={formErrors.duration}
-                style={{ flex: 1 }}
               />
 
               <NumberInput
                 label="Seña (AR$)"
-                description="Monto a pagar ahora (siempre en ARS)"
-                placeholder="5000"
+                placeholder="40000"
                 value={form.price}
                 onChange={(value) => setField('price', value)}
                 min={0}
+                allowNegative={false}
+                thousandSeparator="."
+                decimalSeparator=","
                 decimalScale={2}
                 error={formErrors.price}
-                style={{ flex: 1 }}
               />
             </Box>
 
             <Box className={classes.formRow}>
               <NumberInput
                 label="Precio de lista"
-                description="Informativo (opcional)"
                 placeholder="88000"
                 value={form.listPrice}
                 onChange={(value) => setField('listPrice', value)}
                 min={0}
+                allowNegative={false}
+                thousandSeparator="."
+                decimalSeparator=","
                 decimalScale={2}
-                style={{ flex: 1 }}
               />
 
               <NumberInput
                 label="Precio efectivo"
-                description="Con descuento (opcional)"
                 placeholder="70000"
                 value={form.effectivePrice}
                 onChange={(value) => setField('effectivePrice', value)}
                 min={0}
+                allowNegative={false}
+                thousandSeparator="."
+                decimalSeparator=","
                 decimalScale={2}
-                style={{ flex: 1 }}
               />
 
               <Select
@@ -485,7 +489,6 @@ export function ServicesManager() {
                 ]}
                 value={form.listCurrency}
                 onChange={(value) => setField('listCurrency', (value as 'ARS' | 'USD') ?? 'ARS')}
-                style={{ flex: 1 }}
               />
             </Box>
 
@@ -496,8 +499,9 @@ export function ServicesManager() {
                 value={form.minQuantity}
                 onChange={(value) => setField('minQuantity', value)}
                 min={1}
+                allowNegative={false}
+                allowDecimal={false}
                 error={formErrors.minQuantity}
-                style={{ flex: 1 }}
               />
 
               <NumberInput
@@ -506,8 +510,9 @@ export function ServicesManager() {
                 value={form.maxQuantity}
                 onChange={(value) => setField('maxQuantity', value)}
                 min={1}
+                allowNegative={false}
+                allowDecimal={false}
                 error={formErrors.maxQuantity}
-                style={{ flex: 1 }}
               />
             </Box>
 

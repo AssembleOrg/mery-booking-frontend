@@ -1244,6 +1244,8 @@ export function TimeSlotsManager() {
                     placeholder="9"
                     min={0}
                     max={23}
+                    allowNegative={false}
+                    allowDecimal={false}
                     error={errors.startTime?.message}
                     style={{ flex: 1 }}
                   />
@@ -1265,6 +1267,8 @@ export function TimeSlotsManager() {
                     placeholder="10"
                     min={0}
                     max={23}
+                    allowNegative={false}
+                    allowDecimal={false}
                     error={errors.endTime?.message}
                     style={{ flex: 1 }}
                   />
@@ -1530,6 +1534,8 @@ export function TimeSlotsManager() {
                     placeholder="12"
                     min={0}
                     max={23}
+                    allowNegative={false}
+                    allowDecimal={false}
                     error={errorsBlocked.startTime?.message}
                     style={{ flex: 1 }}
                   />
@@ -1551,6 +1557,8 @@ export function TimeSlotsManager() {
                     placeholder="13"
                     min={0}
                     max={23}
+                    allowNegative={false}
+                    allowDecimal={false}
                     error={errorsBlocked.endTime?.message}
                     style={{ flex: 1 }}
                   />

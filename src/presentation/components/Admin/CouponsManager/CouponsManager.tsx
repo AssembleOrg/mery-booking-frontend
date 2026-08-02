@@ -436,6 +436,8 @@ export function CouponsManager() {
                         description="Aplica al precio del servicio elegido"
                         min={1}
                         max={100}
+                        allowNegative={false}
+                        allowDecimal={false}
                         suffix="%"
                         value={field.value}
                         onChange={(val) => field.onChange(val)}
@@ -512,6 +514,8 @@ export function CouponsManager() {
                         description="Vacío = sin límite"
                         placeholder="50"
                         min={1}
+                        allowNegative={false}
+                        allowDecimal={false}
                         value={field.value === '' ? '' : field.value}
                         onChange={(val) => field.onChange(val === '' ? '' : val)}
                       />

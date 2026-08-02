@@ -91,14 +91,10 @@
 }
 
 .formRow {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.formRow > * {
-  flex: 1 1 160px;
-  min-width: 150px;
+  align-items: start;
 }
 
 .modalActions {
@@ -249,13 +245,7 @@
   }
 
   .formRow {
-    flex-direction: column;
-  }
-
-  .formRow > * {
-    flex: 0 0 auto;
-    width: 100%;
-    min-width: 0;
+    grid-template-columns: 1fr;
   }
 
   .modalActions {

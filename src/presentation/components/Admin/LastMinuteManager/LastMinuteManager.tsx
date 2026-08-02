@@ -516,6 +516,8 @@ export function LastMinuteManager() {
                     placeholder="20"
                     min={1}
                     max={100}
+                    allowNegative={false}
+                    allowDecimal={false}
                     suffix="%"
                     value={field.value}
                     onChange={(val) => field.onChange(val)}
