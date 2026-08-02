@@ -10,6 +10,8 @@ export { ClientService } from './clientService';
 export { TempReservationService } from './tempReservationService';
 export { CouponService } from './couponService';
 export { LastMinuteBookingService } from './lastMinuteBookingService';
+export { GoogleMeetService } from './googleMeetService';
+export type { CreateMeetInviteDto, MeetInviteResult } from './googleMeetService';
 export { ProblemReportService } from './problemReportService';
 export type { LoginCredentials, AuthResponse } from './authService';
 export type { CreateProblemReportDto, ProblemReportResponse } from './problemReportService';

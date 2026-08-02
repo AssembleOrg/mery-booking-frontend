@@ -13,6 +13,7 @@ import { BookingsManager } from '@/presentation/components/Admin/BookingsManager
 import { ClientsManager } from '@/presentation/components/Admin/ClientsManager';
 import { CouponsManager } from '@/presentation/components/Admin/CouponsManager';
 import { LastMinuteManager } from '@/presentation/components/Admin/LastMinuteManager';
+import { MeetManager } from '@/presentation/components/Admin/MeetManager';
 import classes from './page.module.css';
 
 export default function AdminPage() {
@@ -92,6 +93,9 @@ export default function AdminPage() {
             <Tabs.Tab value="lmb" className={classes.tab}>
               Last Minute
             </Tabs.Tab>
+            <Tabs.Tab value="meet" className={classes.tab}>
+              Meet
+            </Tabs.Tab>
           </Tabs.List>
 
           <Box className={classes.tabContent}>
@@ -125,6 +129,10 @@ export default function AdminPage() {
 
             <Tabs.Panel value="lmb">
               {activeTab === 'lmb' && <LastMinuteManager />}
+            </Tabs.Panel>
+
+            <Tabs.Panel value="meet">
+              {activeTab === 'meet' && <MeetManager />}
             </Tabs.Panel>
           </Box>
         </Tabs>
