@@ -32,6 +32,7 @@ import { Client } from '@/domain/entities';
 import dayjs from 'dayjs';
 import classes from './page.module.css';
 import { CATEGORY_IDS } from '@/config/constants';
+import { backendPriceStrings } from '@/config/priceFormat';
 
 interface ServiceOption {
   id: string;
@@ -821,6 +822,7 @@ export default function ParamedicalTattooPage() {
           employeeId: resolvedEmployeeId,
           serviceDuration: consultaService?.duration || option.serviceDuration,
           servicePrice: consultaService?.price,
+          ...backendPriceStrings(consultaService, option.depositValue != null),
         };
       }
 
@@ -848,6 +850,7 @@ export default function ParamedicalTattooPage() {
             : undefined,
           serviceDuration: service?.duration || option.serviceDuration,
           servicePrice: service?.price,
+          ...backendPriceStrings(service, option.depositValue != null),
         };
       }
 
@@ -1034,7 +1037,7 @@ export default function ParamedicalTattooPage() {
                        Seleccioná la opción deseada para más información.
                     </Text>
                     <ServiceAccordion
-                      options={nanoScalpOptions}
+                      options={nanoScalpOptionsWithIds}
                       staffConsultasId={staffConsultasId}
                       meryGarciaId={meryGarciaId}
                       services={services as ServiceEntity[]}
@@ -1108,7 +1111,7 @@ export default function ParamedicalTattooPage() {
                        Seleccioná la opción deseada para más información.
                     </Text>
                     <ServiceAccordion
-                      options={areolaOptions}
+                      options={areolaOptionsWithIds}
                       staffConsultasId={staffConsultasId}
                       meryGarciaId={meryGarciaId}
                       services={services as ServiceEntity[]}
@@ -1167,7 +1170,7 @@ export default function ParamedicalTattooPage() {
                        Seleccioná la opción deseada para más información.
                     </Text>
                     <ServiceAccordion
-                      options={scarCamouflageOptions}
+                      options={scarCamouflageOptionsWithIds}
                       staffConsultasId={staffConsultasId}
                       meryGarciaId={meryGarciaId}
                       services={services as ServiceEntity[]}

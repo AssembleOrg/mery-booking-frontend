@@ -61,7 +61,7 @@ export default function AutostylingPage() {
     : null;
 
   const informationalListPriceArs = currentService
-    ? getEstilismoListPriceArs(currentService.name)
+    ? (currentService.listPrice ?? getEstilismoListPriceArs(currentService.name))
     : null;
 
   const handleServiceSubmit = (data: ServiceBookingData) => {

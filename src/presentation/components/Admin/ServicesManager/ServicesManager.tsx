@@ -6,6 +6,7 @@ import { ServiceService, CategoryService } from '@/infrastructure/http';
 import type { ServiceEntity, CreateServiceDto, Category } from '@/infrastructure/http';
 import { ConfirmationModal } from '@/presentation/components';
 import { LmbIcon } from '@/presentation/components/LmbIcon/LmbIcon';
+import { formatPrice } from '@/config/priceFormat';
 import classes from './ServicesManager.module.css';
 
 interface ServiceForm {
@@ -16,6 +17,9 @@ interface ServiceForm {
   isLmbEligible: boolean;
   duration: number | string;
   price: number | string;
+  listPrice: number | string;
+  effectivePrice: number | string;
+  listCurrency: 'ARS' | 'USD';
   minQuantity: number | string;
   maxQuantity: number | string;
   urlImage: string;
@@ -29,6 +33,9 @@ const DEFAULT_FORM: ServiceForm = {
   isLmbEligible: false,
   duration: 60,
   price: 0,
+  listPrice: '',
+  effectivePrice: '',
+  listCurrency: 'ARS',
   minQuantity: 1,
   maxQuantity: 1,
   urlImage: '',
@@ -162,6 +169,9 @@ export function ServicesManager() {
       isLmbEligible: service.isLmbEligible ?? false,
       duration: service.duration,
       price: service.price,
+      listPrice: service.listPrice ?? '',
+      effectivePrice: service.effectivePrice ?? '',
+      listCurrency: service.listCurrency ?? 'ARS',
       minQuantity: service.minQuantity,
       maxQuantity: service.maxQuantity,
       urlImage: service.urlImage || '',
@@ -202,6 +212,9 @@ export function ServicesManager() {
         isLmbEligible: form.isLmbEligible,
         duration: Number(form.duration),
         price: Number(form.price),
+        listPrice: form.listPrice === '' ? undefined : Number(form.listPrice),
+        effectivePrice: form.effectivePrice === '' ? undefined : Number(form.effectivePrice),
+        listCurrency: form.listCurrency,
         minQuantity: Number(form.minQuantity),
         maxQuantity: Number(form.maxQuantity),
         urlImage: form.urlImage || undefined,
@@ -261,6 +274,7 @@ export function ServicesManager() {
           </td>
           <td className={classes.tableCell}><Skeleton height={20} width={80} /></td>
           <td className={classes.tableCell}><Skeleton height={20} width={100} /></td>
+          <td className={classes.tableCell}><Skeleton height={20} width={100} /></td>
           <td className={classes.tableCell}>
             <Group gap="xs">
               <Skeleton height={28} width={70} />
@@ -308,7 +322,8 @@ export function ServicesManager() {
               <tr>
                 <th>Nombre del Servicio</th>
                 <th>Duración</th>
-                <th>Precio</th>
+                <th>Precio de lista</th>
+                <th>Seña</th>
                 <th className={classes.actionsHeader}>Acciones</th>
               </tr>
             </thead>
@@ -317,7 +332,7 @@ export function ServicesManager() {
                 renderSkeletonRows()
               ) : services.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className={classes.emptyCell}>
+                  <td colSpan={5} className={classes.emptyCell}>
                     {selectedCategoryId
                       ? 'No hay servicios para esta categoría'
                       : 'No hay servicios creados'}
@@ -341,6 +356,11 @@ export function ServicesManager() {
                     </td>
                     <td className={classes.tableCell}>
                       {service.duration} min
+                    </td>
+                    <td className={classes.tableCell}>
+                      {service.listPrice != null
+                        ? formatPrice(service.listPrice, service.listCurrency ?? 'ARS')
+                        : '—'}
                     </td>
                     <td className={classes.tableCell}>
                       ${service.price.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -419,13 +439,49 @@ export function ServicesManager() {
               />
 
               <NumberInput
-                label="Precio (AR$)"
+                label="Seña (AR$)"
+                description="Monto a pagar ahora (siempre en ARS)"
                 placeholder="5000"
                 value={form.price}
                 onChange={(value) => setField('price', value)}
                 min={0}
                 decimalScale={2}
                 error={formErrors.price}
+                style={{ flex: 1 }}
+              />
+            </Box>
+
+            <Box className={classes.formRow}>
+              <NumberInput
+                label="Precio de lista"
+                description="Informativo (opcional)"
+                placeholder="88000"
+                value={form.listPrice}
+                onChange={(value) => setField('listPrice', value)}
+                min={0}
+                decimalScale={2}
+                style={{ flex: 1 }}
+              />
+
+              <NumberInput
+                label="Precio efectivo"
+                description="Con descuento (opcional)"
+                placeholder="70000"
+                value={form.effectivePrice}
+                onChange={(value) => setField('effectivePrice', value)}
+                min={0}
+                decimalScale={2}
+                style={{ flex: 1 }}
+              />
+
+              <Select
+                label="Moneda lista/efectivo"
+                data={[
+                  { value: 'ARS', label: 'AR$ (ARS)' },
+                  { value: 'USD', label: 'U$S (USD)' },
+                ]}
+                value={form.listCurrency}
+                onChange={(value) => setField('listCurrency', (value as 'ARS' | 'USD') ?? 'ARS')}
                 style={{ flex: 1 }}
               />
             </Box>

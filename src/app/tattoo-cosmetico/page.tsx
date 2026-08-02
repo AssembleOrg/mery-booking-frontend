@@ -42,6 +42,7 @@ import { Client } from '@/domain/entities';
 import dayjs from 'dayjs';
 import classes from './page.module.css';
 import { EMPLOYEE_IDS, CATEGORY_IDS } from '@/config/constants';
+import { backendPriceStrings } from '@/config/priceFormat';
 
 interface ServiceOption {
   id: string;
@@ -1950,6 +1951,7 @@ export default function TattooCosmeticoPage() {
           employeeId: resolvedEmployeeId,
           serviceDuration: consultaService?.duration || 60,
           servicePrice: consultaService?.price,
+          ...backendPriceStrings(consultaService, option.depositValue != null),
         };
       }
 
@@ -1997,6 +1999,7 @@ export default function TattooCosmeticoPage() {
               : undefined,
             serviceDuration: lastMinuteService?.duration || 60,
             servicePrice: lastMinuteService?.price,
+            ...backendPriceStrings(lastMinuteService, option.depositValue != null),
           };
         }
 
@@ -2048,7 +2051,36 @@ export default function TattooCosmeticoPage() {
               : undefined,
             serviceDuration: maintenanceService?.duration || 60,
             servicePrice: maintenanceService?.price,
+            ...backendPriceStrings(maintenanceService, option.depositValue != null),
           };
+        }
+
+        // Retoque: resolver su PROPIO service (existe en la DB) en vez de caer a la
+        // 1ª sesión. Antes el retoque reservaba/cobraba el service de 1ª sesión (bug).
+        if (option.contentType === 'retoque-calendario') {
+          const retoqueKeyName: Record<string, string> = {
+            nanoblading: 'nanoblading',
+            'lip-blush': 'lip blush',
+            'lashes-line': 'lashes line',
+          };
+          const kn = retoqueKeyName[serviceKey];
+          const retoqueService = kn
+            ? allServices.find((s) => {
+                const n = s.name.toLowerCase();
+                return s.showOnSite && n.includes(kn) && n.includes('retoque');
+              })
+            : undefined;
+          if (retoqueService) {
+            return {
+              ...optionWithKey,
+              serviceId: retoqueService.id,
+              employeeId: serviceEmployees.get(retoqueService.id)?.[0]?.id,
+              serviceDuration: retoqueService.duration,
+              servicePrice: retoqueService.price,
+              ...backendPriceStrings(retoqueService, option.depositValue != null),
+            };
+          }
+          // Sin row de retoque: cae al genérico (comportamiento actual).
         }
 
         return {
@@ -2059,6 +2091,11 @@ export default function TattooCosmeticoPage() {
             : undefined,
           serviceDuration: service?.duration,
           servicePrice: service?.price,
+          // Sólo la 1ª sesión resuelve a `service` (mappedServices = 1° Sesión).
+          // El retoque ya se resolvió arriba con su propio row.
+          ...(option.contentType === 'sesion-calendario'
+            ? backendPriceStrings(service, option.depositValue != null)
+            : {}),
         };
       }
 

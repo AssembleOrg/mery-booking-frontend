@@ -1,6 +1,8 @@
 import apiClient from './apiClient';
 import publicApiClient from './publicApiClient';
 
+export type PriceCurrency = 'ARS' | 'USD';
+
 export interface ServiceEntity {
   id: string;
   name: string;
@@ -9,7 +11,10 @@ export interface ServiceEntity {
   showOnSite: boolean;
   isLmbEligible?: boolean;
   duration: number;
-  price: number;
+  price: number; // Seña (a pagar ahora) — siempre ARS
+  listPrice: number | null; // Precio de lista (informativo)
+  effectivePrice: number | null; // Precio efectivo / con descuento (informativo)
+  listCurrency: PriceCurrency; // Moneda de listPrice/effectivePrice
   minQuantity: number;
   maxQuantity: number;
   urlImage: string | null;
@@ -29,6 +34,9 @@ export interface CreateServiceDto {
   showOnSite: boolean;
   duration: number;
   price: number;
+  listPrice?: number;
+  effectivePrice?: number;
+  listCurrency?: PriceCurrency;
   minQuantity: number;
   maxQuantity: number;
   urlImage?: string;
@@ -42,6 +50,9 @@ export interface UpdateServiceDto {
   isLmbEligible?: boolean;
   duration?: number;
   price?: number;
+  listPrice?: number;
+  effectivePrice?: number;
+  listCurrency?: PriceCurrency;
   minQuantity?: number;
   maxQuantity?: number;
   urlImage?: string;
@@ -63,7 +74,10 @@ export interface PublicServiceResponse {
   categoryId: string;
   showOnSite: boolean;
   duration: number;
-  price: number;
+  price: number; // Seña (a pagar ahora) — siempre ARS
+  listPrice: number | null; // Precio de lista (informativo)
+  effectivePrice: number | null; // Precio efectivo / con descuento (informativo)
+  listCurrency: PriceCurrency; // Moneda de listPrice/effectivePrice
   minQuantity: number;
   maxQuantity: number;
   urlImage: string | null;

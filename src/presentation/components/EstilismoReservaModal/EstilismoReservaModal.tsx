@@ -66,8 +66,9 @@ export function EstilismoReservaModal({
   }), [service, employee]);
 
   const informationalListPriceArs = useMemo(() => {
-    return getEstilismoListPriceArs(service.name);
-  }, [service.name]);
+    // Fuente de verdad: precio de lista del backend. Fallback al hardcode legacy.
+    return service.listPrice ?? getEstilismoListPriceArs(service.name);
+  }, [service.listPrice, service.name]);
 
   const handleClose = () => {
     setCurrentStep(1);
