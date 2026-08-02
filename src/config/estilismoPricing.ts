@@ -3,17 +3,17 @@ export function getEstilismoListPriceArs(serviceName: string): number | null {
   const plusCount = (name.match(/\+/g) ?? []).length;
   const serviceCount = plusCount > 0 ? plusCount + 1 : 1;
 
-  if (serviceCount === 2) return 88000;
-  if (serviceCount === 3) return 132000;
+  if (serviceCount === 2) return 100000;
+  if (serviceCount === 3) return 150000;
 
-  if (name.includes('lash refill')) return 36000;
-  if (name.includes('tinte de cejas')) return 36000;
+  if (name.includes('lash refill')) return 42000;
+  if (name.includes('tinte de cejas')) return 42000;
   if (name.includes('tinte de pestañas') || name.includes('tinte de pestanas'))
-    return 36000;
+    return 42000;
 
-  if (name.includes('laminado')) return 44000;
-  if (name.includes('modelado')) return 44000;
-  if (name.includes('refill')) return 44000;
+  if (name.includes('laminado')) return 50000;
+  if (name.includes('modelado')) return 50000;
+  if (name.includes('refill')) return 50000;
 
   return null;
 }
