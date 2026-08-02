@@ -31,6 +31,7 @@ import {
   UnstyledButton,
   Tabs,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import { useForm, Controller } from 'react-hook-form';
 import { notifications } from '@mantine/notifications';
@@ -96,6 +97,7 @@ interface BlockedFormData {
 }
 
 export function TimeSlotsManager() {
+  const isMobile = useMediaQuery('(max-width: 767px)');
   const [activeTab, setActiveTab] = useState<string>('timeslots');
   
   // Estados para timeslots regulares
@@ -1141,7 +1143,8 @@ export function TimeSlotsManager() {
               ? 'Copiar Franja Horaria' 
               : 'Nueva Franja Horaria'
         }
-        centered
+        centered={!isMobile}
+        fullScreen={isMobile}
         size="lg"
         classNames={{
           title: classes.modalTitle,
@@ -1426,7 +1429,8 @@ export function TimeSlotsManager() {
               ? 'Copiar Bloqueo'
               : 'Nuevo Bloqueo'
         }
-        centered
+        centered={!isMobile}
+        fullScreen={isMobile}
         size="lg"
         classNames={{
           title: classes.modalTitle,

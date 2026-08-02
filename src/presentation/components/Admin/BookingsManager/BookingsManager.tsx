@@ -22,6 +22,7 @@ import {
   Textarea,
   Loader,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { DatePickerInput, DateValue, DatesProvider } from '@mantine/dates';
 import { useForm, Controller } from 'react-hook-form';
 import { notifications } from '@mantine/notifications';
@@ -40,6 +41,7 @@ type ViewMode = 'calendar' | 'list';
 type CalendarView = 'today' | 'week' | 'month';
 
 export function BookingsManager() {
+  const isMobile = useMediaQuery('(max-width: 767px)');
   const [bookings, setBookings] = useState<BookingResponse[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [services, setServices] = useState<ServiceEntity[]>([]);
@@ -1415,6 +1417,8 @@ export function BookingsManager() {
           day: 'numeric'
         })}` : 'Reservas del día'}
         size="lg"
+        centered={!isMobile}
+        fullScreen={isMobile}
       >
         {selectedDate && (
           <Stack gap="md">
@@ -1469,6 +1473,8 @@ export function BookingsManager() {
         }}
         title="Detalles de la Reserva"
         size="lg"
+        centered={!isMobile}
+        fullScreen={isMobile}
       >
         {selectedBooking && (
           <Stack gap="md">
@@ -1864,6 +1870,8 @@ export function BookingsManager() {
         }}
         title="Crear Reserva Manual"
         size="lg"
+        centered={!isMobile}
+        fullScreen={isMobile}
       >
         <form onSubmit={handleCreateBookingSubmit(onSubmitCreateBooking)}>
           <Stack gap="md">
@@ -2115,6 +2123,8 @@ export function BookingsManager() {
         }}
         title="Reagendar Reserva"
         size="lg"
+        centered={!isMobile}
+        fullScreen={isMobile}
       >
         <form onSubmit={handleRescheduleSubmit(onSubmitReschedule)}>
           <Stack gap="md">

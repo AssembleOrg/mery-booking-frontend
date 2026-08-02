@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Button, Modal, TextInput, NumberInput, Box, Skeleton, Group, Text } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { Controller } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { CategoryService } from '@/infrastructure/http';
@@ -17,6 +18,7 @@ interface FormData {
 const DEFAULT_RESCHEDULE_CUTOFF_HOURS = 48;
 
 export function CategoriesManager() {
+  const isMobile = useMediaQuery('(max-width: 767px)');
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -225,7 +227,8 @@ export function CategoriesManager() {
         opened={isModalOpen}
         onClose={handleCloseModal}
         title={editingCategory ? 'Editar Categoría' : 'Nueva Categoría'}
-        centered
+        centered={!isMobile}
+        fullScreen={isMobile}
         classNames={{
           title: classes.modalTitle,
         }}

@@ -13,6 +13,7 @@ import {
   Text,
   Stack,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { useForm } from 'react-hook-form';
 import { notifications } from '@mantine/notifications';
 import { EmployeeService, ServiceService, CategoryService } from '@/infrastructure/http';
@@ -27,6 +28,7 @@ interface EmployeeFormData {
 }
 
 export function EmployeesManager() {
+  const isMobile = useMediaQuery('(max-width: 767px)');
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [allServices, setAllServices] = useState<ServiceEntity[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -377,7 +379,8 @@ export function EmployeesManager() {
             <span>Configurar Servicios: {selectedEmployee?.fullName || ''}</span>
           </div>
         }
-        centered
+        centered={!isMobile}
+        fullScreen={isMobile}
         size="90%"
         styles={{
           body: {
@@ -531,7 +534,8 @@ export function EmployeesManager() {
             </span>
           </div>
         }
-        centered
+        centered={!isMobile}
+        fullScreen={isMobile}
         size="md"
         classNames={{
           title: classes.modalTitle,

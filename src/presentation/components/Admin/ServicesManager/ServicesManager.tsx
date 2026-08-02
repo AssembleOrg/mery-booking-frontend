@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { Button, Modal, TextInput, Box, Skeleton, NumberInput, Checkbox, Textarea, Select, Group } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { ServiceService, CategoryService } from '@/infrastructure/http';
 import type { ServiceEntity, CreateServiceDto, Category } from '@/infrastructure/http';
 import { ConfirmationModal } from '@/presentation/components';
@@ -65,6 +66,7 @@ export function ServicesManager() {
 
   const [form, setForm] = useState<ServiceForm>(DEFAULT_FORM);
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof ServiceForm, string>>>({});
+  const isMobile = useMediaQuery('(max-width: 767px)');
 
   const setField = <K extends keyof ServiceForm>(key: K, value: ServiceForm[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -394,8 +396,9 @@ export function ServicesManager() {
         opened={isModalOpen}
         onClose={handleCloseModal}
         title={editingService ? 'Editar Servicio' : 'Nuevo Servicio'}
-        centered
-        size="lg"
+        centered={!isMobile}
+        fullScreen={isMobile}
+        size={720}
         classNames={{
           title: classes.modalTitle,
         }}

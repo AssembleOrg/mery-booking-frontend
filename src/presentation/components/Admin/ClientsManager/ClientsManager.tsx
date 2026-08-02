@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Button, Modal, TextInput, Box, Skeleton, Group, Stack, Pagination } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { useForm } from 'react-hook-form';
 import { ClientService } from '@/infrastructure/http';
 import type { Client } from '@/infrastructure/http';
@@ -27,6 +28,7 @@ const formatDate = (dateStr: string | null | undefined): string => {
 };
 
 export function ClientsManager() {
+  const isMobile = useMediaQuery('(max-width: 767px)');
   const [clients, setClients] = useState<Client[]>([]);
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -268,7 +270,8 @@ export function ClientsManager() {
         opened={isModalOpen}
         onClose={handleCloseModal}
         title={editingClient ? 'Editar Cliente' : 'Nuevo Cliente'}
-        centered
+        centered={!isMobile}
+        fullScreen={isMobile}
         classNames={{ title: classes.modalTitle }}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
