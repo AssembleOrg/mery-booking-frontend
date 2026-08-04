@@ -10,18 +10,20 @@ import {
   IconCheck,
   IconArrowUpRight,
   IconCalendar,
+  IconBrandInstagram,
 } from '@tabler/icons-react';
 import classes from './AbhPromoModal.module.css';
 
-const STORAGE_KEY = 'abh-promo-2026';
+const STORAGE_KEY = 'abh-promo-2026-v2';
 const OPEN_DELAY_MS = 800;
 
 const CODE = 'ABHXMERYGARCIA';
 const SHOP_URL = 'https://www.juleriaque.com.ar/s?q=anastasia';
+const IG_URL =
+  'https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MDc4MzI0Mzc3NjgxOTY3?story_media_id=3948588968534108469';
 
-// Pieza de campaña. Trae el sello de marca impreso, por eso no se superpone
-// ningún badge encima.
-const IMAGE_SRC = '/abh-promo.jpg';
+const IMAGE_SRC = '/form/anastasia.jpg';
+const LOGO_SRC = '/form/mery_garcia_brow_artist_rosa_transparente.png';
 
 export default function AbhPromoModal() {
   const [opened, setOpened] = useState(false);
@@ -64,6 +66,7 @@ export default function AbhPromoModal() {
           ? { duration: 0 }
           : { transition: 'fade', duration: 300 }
       }
+      overlayProps={{ backgroundOpacity: 0.6, blur: 3 }}
       classNames={{ content: classes.content, body: classes.body }}
     >
       <motion.div
@@ -81,18 +84,37 @@ export default function AbhPromoModal() {
           <IconX size={16} />
         </button>
 
-        <Image
-          src={IMAGE_SRC}
-          alt="Anastasia Beverly Hills"
-          width={692}
-          height={500}
-          priority
-          className={classes.photo}
-        />
+        {/* Sin overlay: la foto va limpia. Por eso el logo (blanco/rosa) baja
+            al panel oscuro, que es donde tiene contraste. */}
+        <div className={classes.photoFrame}>
+          <Image
+            src={IMAGE_SRC}
+            alt="Productos Anastasia Beverly Hills"
+            fill
+            priority
+            sizes="(max-width: 480px) 320px, 420px"
+            className={classes.photo}
+          />
+        </div>
 
         <Box className={classes.inner}>
+          <Image
+            src={LOGO_SRC}
+            alt="Mery García Brow Artist"
+            width={260}
+            height={60}
+            className={classes.logo}
+          />
+
+          <Text component="span" className={classes.eyebrow}>
+            <span className={classes.eyebrowBrand}>Anastasia</span>
+            <span className={classes.eyebrowCross}>×</span>
+            <span className={classes.eyebrowMery}>Mery García</span>
+          </Text>
+
           <Text component="h2" className={classes.title}>
-            10% OFF en toda la línea
+            <span className={classes.titleAccent}>10% OFF</span> en toda la
+            línea
           </Text>
 
           <Text className={classes.subtitle}>
@@ -131,7 +153,27 @@ export default function AbhPromoModal() {
             className={classes.btnPrimary}
           >
             Ver productos
-            <IconArrowUpRight size={16} className={classes.arrow} />
+            <IconArrowUpRight size={16} />
+          </a>
+
+          <span className={classes.divider} />
+
+          {/* También deja el modal abierto: el código sigue a mano al volver. */}
+          <a
+            href={IG_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={classes.igCta}
+          >
+            <span className={classes.igIcon}>
+              <IconBrandInstagram size={16} />
+            </span>
+            <span className={classes.igText}>
+              Conocé los productos <strong>FAV</strong> de nuestra{' '}
+              <strong className={classes.igAccent}>BrowBoss</strong> y cómo
+              combinarlos
+            </span>
+            <IconArrowUpRight size={16} className={classes.igArrow} />
           </a>
 
           <button

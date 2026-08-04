@@ -3,25 +3,38 @@
    10% OFF en Juleriaque
    ================================ */
 
+/* Mantine pinta la card blanca por defecto: hay que sobreescribirla. */
 .content {
-  border-radius: 16px;
+  background: #1a1a1a;
+  border-radius: 20px;
   overflow: hidden;
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
 }
 
 .body {
   padding: 0;
 }
 
-/* Ancla de posicionamiento para el botón de cerrar y el lockup. */
+/* El scroll vive acá y no en .content porque el botón de cerrar es sticky:
+   necesita que su ancestro scrolleable sea el mismo que lo contiene.
+   En pantallas cortas la card scrollea por dentro en vez de desbordar. */
 .wrapper {
   position: relative;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  max-height: calc(100dvh - 2rem);
 }
 
-/* Pieza de campaña, a sangre en el tope de la card */
-.photo {
-  display: block;
+.photoFrame {
+  position: relative;
   width: 100%;
-  height: auto;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.photo {
+  object-fit: cover;
+  object-position: center;
 }
 
 .inner {
@@ -29,14 +42,48 @@
   flex-direction: column;
   align-items: center;
   gap: 14px;
-  padding: 28px 32px;
+  padding: 24px 32px 28px;
   text-align: center;
 }
 
-@media (max-width: 480px) {
-  .inner {
-    padding: 24px 22px;
-  }
+.logo {
+  width: 160px;
+  height: auto;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  font-family: var(--font-stack-ui);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.eyebrow::before,
+.eyebrow::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Co-branding: la marca invitada en blanco, la casa en rosa. */
+.eyebrowBrand {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.eyebrowCross {
+  margin: 0 -6px;
+  color: rgba(235, 162, 168, 0.6);
+}
+
+.eyebrowMery {
+  color: var(--mg-pink);
 }
 
 .title {
@@ -44,15 +91,19 @@
   font-size: 24px;
   font-weight: 700;
   line-height: 1.2;
-  color: #660e1b;
+  color: var(--mg-white);
   margin: 0;
+}
+
+.titleAccent {
+  color: var(--mg-pink);
 }
 
 .subtitle {
   font-family: var(--font-stack-body);
   font-size: 14px;
   line-height: 1.6;
-  color: var(--mg-gray);
+  color: rgba(255, 255, 255, 0.7);
   margin: 0;
 }
 
@@ -61,12 +112,13 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
-  background: var(--mg-pink-light);
+  background: rgba(255, 255, 255, 0.08);
   font-family: var(--font-stack-ui);
   font-size: 12px;
   font-weight: 600;
-  color: #660e1b;
+  color: var(--mg-pink);
 }
 
 .code {
@@ -76,15 +128,16 @@
   gap: 12px;
   width: 100%;
   padding: 12px 16px;
-  border: none;
-  border-radius: 10px;
-  background: #f7eaec;
+  border: 1px dashed rgba(235, 162, 168, 0.4);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .code:hover {
-  background: #f2dee1;
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(235, 162, 168, 0.7);
 }
 
 .codeValue {
@@ -92,17 +145,18 @@
   font-size: 18px;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: #660e1b;
+  color: var(--mg-pink);
 }
 
 .codeAction {
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 6px;
   font-family: var(--font-stack-ui);
   font-size: 13px;
   font-weight: 600;
-  color: #660e1b;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .btnPrimary {
@@ -113,21 +167,87 @@
   width: 100%;
   padding: 14px 20px;
   border-radius: 999px;
-  background: #660e1b;
-  color: var(--mg-white);
+  background: var(--mg-pink);
+  color: #1a1a1a;
   font-family: var(--font-stack-ui);
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
-  transition: opacity 0.2s ease;
+  transition: background 0.2s ease;
 }
 
 .btnPrimary:hover {
-  opacity: 0.9;
+  background: var(--mg-pink-lighter);
 }
 
-.arrow {
+.divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* CTA al highlight de Instagram con los productos favoritos. */
+.igCta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  text-align: left;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.igCta:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(235, 162, 168, 0.4);
+}
+
+.igIcon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    var(--mg-pink),
+    var(--mg-pink-lighter)
+  );
+  color: #1a1a1a;
+}
+
+.igText {
+  flex: 1;
+  font-family: var(--font-stack-body);
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.igText strong {
+  font-weight: 600;
+  color: var(--mg-white);
+}
+
+/* Después de .igText strong a propósito: misma especificidad, gana este. */
+.igText strong.igAccent {
   color: var(--mg-pink);
+}
+
+.igArrow {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.igCta:hover .igArrow {
+  color: var(--mg-pink);
+  transform: translate(2px, -2px);
 }
 
 .btnGhost {
@@ -136,33 +256,99 @@
   padding: 0;
   font-family: var(--font-stack-ui);
   font-size: 12px;
-  color: var(--mg-gray);
+  color: rgba(255, 255, 255, 0.45);
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .btnGhost:hover {
-  color: var(--mg-dark);
+  color: rgba(255, 255, 255, 0.8);
 }
 
+/* sticky, no absolute: la card scrollea y el cerrar tiene que quedar. */
 .close {
-  position: absolute;
+  position: sticky;
   top: 12px;
-  right: 12px;
   z-index: 5;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0 12px -32px auto;
   width: 32px;
   height: 32px;
   border: none;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.3);
   color: var(--mg-white);
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
 .close:hover {
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Mobile: achicado ~25% para que la card entre sin desbordar. */
+@media (max-width: 480px) {
+  .inner {
+    gap: 10px;
+    padding: 16px 20px 20px;
+  }
+
+  .logo {
+    width: 130px;
+  }
+
+  .eyebrow {
+    gap: 8px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .code {
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .codeValue {
+    font-size: 16px;
+  }
+
+  .codeAction {
+    font-size: 12px;
+  }
+
+  .btnPrimary {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .igCta {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .igIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .igText {
+    font-size: 12px;
+  }
+}
+
+/* Desde tablet la foto respira más. */
+@media (min-width: 481px) {
+  .photoFrame {
+    aspect-ratio: 4 / 3;
+  }
 }
