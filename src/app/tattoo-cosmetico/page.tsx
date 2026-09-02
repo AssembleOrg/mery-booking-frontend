@@ -1004,9 +1004,9 @@ const nanobladingOptions: ServiceOption[] = [
     label: 'Consulta Obligatoria SIN trabajo previo (*)',
     contentType: 'consulta-sin-trabajo',
     description:
-      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio.',
+      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio. Incluye un servicio a recomendar por la estilista',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'AR$ 50.000.-',
+    priceValue: 'AR$ 80.000.-',
     footerNote:
       '(*) Espacio para que conozcas nuestro modo de trabajo, técnica y cuidados que deberás cumplir. Dibujamos los resultados que buscamos y saldamos todas tus dudas.',
     footerNote2: 'Sin consulta previa no podremos brindarte un servicio MG.',
@@ -1016,11 +1016,11 @@ const nanobladingOptions: ServiceOption[] = [
     label: 'Consulta Obligatoria CON trabajo previo (*)',
     contentType: 'consulta-con-trabajo',
     description:
-      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio.',
+      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio. Incluye un servicio a recomendar por la estilista',
     extraDescription:
       'Se considera trabajo previo a cualquier servicio de cosmetic tattoo en cejas que no haya sido realizado por MG & Staff.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'AR$ 50.000.-',
+    priceValue: 'AR$ 80.000.-',
     footerNote:
       '(*) Espacio para que conozcas nuestro modo de trabajo, técnica y cuidados que deberás cumplir. Dibujamos los resultados que buscamos y saldamos todas tus dudas.',
     footerNote2: 'Sin consulta previa no podremos brindarte un servicio MG.',
@@ -1312,9 +1312,9 @@ const camouflageOptions: ServiceOption[] = [
     label: 'Consulta Obligatoria SIN trabajo previo (*)',
     contentType: 'consulta-sin-trabajo',
     description:
-      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio.',
+      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio. Incluye un servicio a recomendar por la estilista',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'AR$ 50.000.-',
+    priceValue: 'AR$ 80.000.-',
     footerNote:
       '(*) Espacio para que conozcas nuestro modo de trabajo, técnica y cuidados que deberás cumplir. Evaluamos el trabajo previo a corregir y planificamos el proceso de camuflaje.',
     footerNote2: 'Sin consulta previa no podremos brindarte un servicio MG.',
@@ -1324,11 +1324,11 @@ const camouflageOptions: ServiceOption[] = [
     label: 'Consulta Obligatoria CON trabajo previo (*)',
     contentType: 'consulta-con-trabajo',
     description:
-      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio.',
+      'Te recordamos que la consulta es OBLIGATORIA. En caso de concurrir sin haberla realizado, NO podrás realizarte el servicio. Incluye un servicio a recomendar por la estilista',
     extraDescription:
       'Se considera trabajo previo a cualquier servicio de dermopigmentación, microblading o tatuaje cosmético en cejas que no haya sido realizado por MG & Staff.',
     priceLabel: 'Precio de lista del servicio:',
-    priceValue: 'AR$ 50.000.-',
+    priceValue: 'AR$ 80.000.-',
     footerNote:
       '(*) Espacio para que conozcas nuestro modo de trabajo, técnica y cuidados que deberás cumplir. Evaluamos el trabajo previo a corregir y planificamos el proceso de camuflaje.',
     footerNote2: 'Sin consulta previa no podremos brindarte un servicio MG.',
