@@ -30,6 +30,7 @@ interface ServiceOption {
   label: string;
   contentType: AccordionContentType;
   description?: string;
+  consultaNote?: string;
   priceLabel?: string;
   priceValue?: string;
   priceEffective?: string;
@@ -175,6 +176,9 @@ const EPITESIS_DESCRIPTION_BLOCKS: DescriptionBlock[] = [
   },
 ];
 
+const EPITESIS_CONSULTA_NOTE =
+  'Por favor asistí a tu consulta sin corpiño para no replicar marcas de piel en tu Molde. Te esperamos 💕';
+
 // Static service options array (solo las que van al flujo de booking)
 const epitesisCapOptions: ServiceOption[] = [
   {
@@ -182,6 +186,7 @@ const epitesisCapOptions: ServiceOption[] = [
     label: 'Entrega de Epítesis',
     contentType: 'consulta',
     description: 'Agendá la entrega de tu epítesis personalizada.',
+    consultaNote: EPITESIS_CONSULTA_NOTE,
     priceValue: 'AR$ 150.000.-',
     serviceName: 'Entrega de Epítesis',
     serviceDuration: 60,
@@ -192,6 +197,7 @@ const epitesisCapOptions: ServiceOption[] = [
     contentType: 'consulta',
     description:
       'Consulta inicial de manera informativa, donde nos conoceremos y analizaremos tu caso. (Incluye charla informativa, toma de medidas, molde y registro fotográfico).',
+    consultaNote: EPITESIS_CONSULTA_NOTE,
     accordionDescription:
       'La consulta es el primer paso para conocernos, evaluar tu caso y la zona de aplique de la pieza. También, realizamos un registro fotográfico, toma de medidas y un molde negativo customizado.\n\n' +
       'Una vez encargada la producción de las piezas, los tiempos regulares de realización de las mismas es de 72 hs hábiles.\n\n',

@@ -14,7 +14,7 @@ import {
 } from '@tabler/icons-react';
 import classes from './AbhPromoModal.module.css';
 
-const STORAGE_KEY = 'abh-promo-2026-v2';
+const STORAGE_KEY = 'abh-promo-2026-v3';
 const OPEN_DELAY_MS = 800;
 
 const CODE = 'ABHXMERYGARCIA';
@@ -124,7 +124,7 @@ export default function AbhPromoModal() {
 
           <Text component="span" className={classes.validity}>
             <IconCalendar size={14} />
-            Hasta el 1 de septiembre
+            Hasta el 30 de septiembre
           </Text>
 
           <button

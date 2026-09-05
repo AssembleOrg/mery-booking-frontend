@@ -18,6 +18,7 @@ export interface ServiceOption {
   label: string;
   contentType: AccordionContentType;
   description?: string;
+  consultaNote?: string; // Aviso en negrita debajo de la descripción en el ConsultaModal
   extraDescription?: string;
   priceLabel?: string;
   priceValue?: string;

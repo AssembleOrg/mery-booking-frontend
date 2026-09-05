@@ -56,6 +56,11 @@ export default function Step2ConsultaType({
                       {option.description}
                     </Text>
                   )}
+                  {option.consultaNote && (
+                    <Text className={classes.consultaOptionDescription} fw={700}>
+                      {option.consultaNote}
+                    </Text>
+                  )}
                 </div>
               }
             />
