@@ -16,7 +16,7 @@ export { ProblemReportService } from './problemReportService';
 export type { LoginCredentials, AuthResponse } from './authService';
 export type { CreateProblemReportDto, ProblemReportResponse } from './problemReportService';
 export type { Category, CreateCategoryDto, UpdateCategoryDto } from './categoryService';
-export type { ServiceEntity, CreateServiceDto, UpdateServiceDto, PublicServiceResponse } from './serviceService';
+export type { ServiceEntity, CreateServiceDto, UpdateServiceDto, PublicServiceResponse, PublicServiceEmployee } from './serviceService';
 export type { Employee, CreateEmployeeDto, UpdateEmployeeDto, WorkingDay, DayOff } from './employeeService';
 export type { EmployeeTimeSlot, CreateEmployeeTimeSlotDto, UpdateEmployeeTimeSlotDto, DayOfWeek } from './employeeTimeSlotService';
 export type { BlockedTimeSlot, CreateBlockedTimeSlotDto, UpdateBlockedTimeSlotDto } from './blockedTimeSlotService';

@@ -16,12 +16,12 @@ import {
 } from '@/presentation/hooks';
 import {
   CategoryService,
-  EmployeeService,
   type ServiceEntity,
   type Employee,
 } from '@/infrastructure/http';
 import type { AccordionContentType } from '@/infrastructure/types/services';
 import { useAuth } from '@/presentation/contexts';
+import { resolveServiceEmployees } from '@/presentation/lib/serviceEmployees';
 import classes from './page.module.css';
 import { CATEGORY_IDS } from '@/config/constants';
 
@@ -354,22 +354,13 @@ export default function EpitesisCapPage() {
     const visibleServices = services.filter((s) => s.showOnSite);
     if (visibleServices.length === 0) return;
 
-    const resolveServiceEmployees = async () => {
-      const newMap = new Map<string, Employee[]>();
-      await Promise.all(
-        visibleServices.map(async (service) => {
-          try {
-            const assigned = await EmployeeService.getAllPublic(epitesisCategoryId, service.id);
-            if (assigned.length > 0) newMap.set(service.id, assigned as Employee[]);
-          } catch (error) {
-            console.error(`Error resolviendo empleados para servicio ${service.name}:`, error);
-          }
-        })
-      );
-      setServiceEmployees(newMap);
+    let cancelled = false;
+    resolveServiceEmployees(services, epitesisCategoryId).then((map) => {
+      if (!cancelled) setServiceEmployees(map);
+    });
+    return () => {
+      cancelled = true;
     };
-
-    resolveServiceEmployees();
   }, [services, epitesisCategoryId]);
 
   const scrollToSection = (sectionId: string) => {

@@ -31,13 +31,13 @@ import {
 } from '@/presentation/hooks';
 import {
   CategoryService,
-  EmployeeService,
   type Category,
   type ServiceEntity,
   type Employee,
 } from '@/infrastructure/http';
 import type { AccordionContentType } from '@/infrastructure/types/services';
 import { useAuth } from '@/presentation/contexts';
+import { resolveServiceEmployees } from '@/presentation/lib/serviceEmployees';
 import { Client } from '@/domain/entities';
 import dayjs from 'dayjs';
 import classes from './page.module.css';
@@ -1733,27 +1733,13 @@ export default function TattooCosmeticoPage() {
     const visibleServices = services.filter((s) => s.showOnSite);
     if (visibleServices.length === 0) return;
 
-    const resolveServiceEmployees = async () => {
-      const newMap = new Map<string, Employee[]>();
-      await Promise.all(
-        visibleServices.map(async (service) => {
-          try {
-            const assigned = await EmployeeService.getAllPublic(
-              cosmeticTattooCategoryId,
-              service.id
-            );
-            if (assigned.length > 0) {
-              newMap.set(service.id, assigned as Employee[]);
-            }
-          } catch (error) {
-            console.error(`Error resolviendo empleados para servicio ${service.name}:`, error);
-          }
-        })
-      );
-      setServiceEmployees(newMap);
+    let cancelled = false;
+    resolveServiceEmployees(services, cosmeticTattooCategoryId).then((map) => {
+      if (!cancelled) setServiceEmployees(map);
+    });
+    return () => {
+      cancelled = true;
     };
-
-    resolveServiceEmployees();
   }, [services, cosmeticTattooCategoryId]);
 
   const scrollToSection = (sectionId: string) => {

@@ -24,7 +24,9 @@ export function useEmployees(categoryId?: string, serviceId?: string) {
       return response.data;
     },
     staleTime: 1000 * 60 * 10,
-    enabled: isAuthenticated || true,
+    // Sin auth, /employees/public exige categoryId + serviceId (sino 400).
+    // No disparar la request si no tenemos ambos: antes se hacía y fallaba siempre.
+    enabled: isAuthenticated || !!(categoryId && serviceId),
   });
 }
 

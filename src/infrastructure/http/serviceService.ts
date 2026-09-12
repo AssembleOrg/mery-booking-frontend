@@ -66,6 +66,12 @@ interface BackendResponse<T> {
   timestamp: string;
 }
 
+// Empleado habilitado para un servicio (subset público: solo id y nombre)
+export interface PublicServiceEmployee {
+  id: string;
+  fullName: string;
+}
+
 // Tipo para respuesta pública - ahora incluye todos los campos necesarios
 export interface PublicServiceResponse {
   id: string;
@@ -83,6 +89,8 @@ export interface PublicServiceResponse {
   urlImage: string | null;
   createdAt: string;
   updatedAt: string;
+  // Empleados habilitados (viene embebido desde el backend; opcional por compat con versiones viejas)
+  employees?: PublicServiceEmployee[];
 }
 
 export class ServiceService {
