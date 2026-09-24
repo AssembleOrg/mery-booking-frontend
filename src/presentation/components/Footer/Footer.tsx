@@ -174,7 +174,7 @@ export function Footer() {
             <div className={classes.pistechBar}>
               <span className={classes.pistechText}>Un producto de</span>
               <a
-                href="https://wa.me/5491138207230?text=Hola%2C%20me%20interesan%20los%20servicios%20de%20Pistech.%20Puedo%20tener%20mas%20info%3F"
+                href="https://pistech.com.ar"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={classes.pistechLink}
@@ -326,7 +326,7 @@ export function Footer() {
             <div className={classes.pistechBar}>
               <span className={classes.pistechText}>Un producto de</span>
               <a
-                href="https://wa.me/5491138207230?text=Hola%2C%20me%20interesan%20los%20servicios%20de%20Pistech.%20Puedo%20tener%20mas%20info%3F"
+                href="https://pistech.com.ar"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={classes.pistechLink}
