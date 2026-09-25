@@ -1489,6 +1489,15 @@ export function BookingsManager() {
             <Divider />
 
             <Box>
+              <Text size="sm" fw={500} c="dimmed">Código de Reserva</Text>
+              <Text size="md" fw={700} style={{ letterSpacing: 2, userSelect: 'all' }}>
+                {selectedBooking.bookingCode || '—'}
+              </Text>
+            </Box>
+
+            <Divider />
+
+            <Box>
               <Text size="sm" fw={500} c="dimmed">Fecha y Hora</Text>
               <Text size="md">
                 {formatDateString(getBookingDate(selectedBooking))}
