@@ -423,7 +423,7 @@ export default function EpitesisCapPage() {
                         Prótesis de areola pezon hiperrealista. Complejo areola–pezón post mastectomía.
                       </Text>
                       <a
-                        href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE3OTUwNTgzNDg3MDk1MDEw?story_media_id=3846893448464467008"
+                        href="https://www.instagram.com/reels/DV-H8RRjMDT/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className={classes.igPill}
