@@ -38,7 +38,7 @@ const INFO_OPTIONS = [
     id: 'special-pass',
     label: 'Special Pass',
     description:
-      'Pensado especialmente para clientas que nos visitan desde el interior o el exterior del país. Se trata de disponibilidades exclusivas con horarios y honorarios diferenciales. Podés consultarnos valores y tiempo de entrega para la realización de las piezas el mismo día o en el plazo de 24 hs, escribiendo al ',
+      'Un servicio exclusivo pensado para quienes necesitan resolver su pieza con celeridad, 100% customizado por Mery García, incluye consulta personalizada, toma de medidas, molde y todo lo necesario para crear tu pieza hiper realista cuidando cada detalle y manteniendo la esencia de nuestro trabajo. Precio de lista: U$S 450.- / Efectivo: U$S 400.- Consultas al ',
     waLink: 'https://wa.me/5491128593378?text=-+Hola+chicas%2C+como+est%C3%A1n%3F+Quisiera+consultar+el+Special+Pass+de+Epitesis+CAP',
     waPhone: '+54 9 11 2859-3378',
   },
