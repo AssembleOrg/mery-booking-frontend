@@ -7,9 +7,10 @@ import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import classes from './MasterclassFlyer.module.css';
 
-const STORAGE_KEY = 'juleriaque-flyer-v1';
+const STORAGE_KEY = 'jornada-cancer-mama-flyer-v1';
 const OPEN_DELAY_MS = 800;
-const RESERVA_URL = 'https://eventos.juleriaque.com.ar/evento/601';
+const FLYER_ALT =
+  'Jornada de concientización sobre el cáncer de mama — 27 de octubre, 8 a 13 hs, Aula Magna del Hospital Materno Infantil de Tigre. Participación especial de Mery García en Epítesis.';
 
 function CloseIcon() {
   return (
@@ -64,7 +65,7 @@ export default function MasterclassFlyer() {
           : { transition: 'fade', duration: 300 }
       }
       classNames={{ content: classes.content, body: classes.body }}
-      aria-label="Masterclass Anastasia Beverly Hills por Mery García en Juleriaque"
+      aria-label="Jornada de concientización sobre el cáncer de mama"
     >
       <motion.div
         initial={shouldReduceMotion ? {} : { opacity: 0, scale: 0.96 }}
@@ -72,34 +73,25 @@ export default function MasterclassFlyer() {
         transition={{ duration: 0.35, ease: [0.43, 0.13, 0.23, 0.96] }}
       >
         <div className={classes.flyerWrapper}>
-          {/* El frame mantiene el ratio exacto de la imagen: es lo que ancla
-              el link para que coincida con el flyer en cualquier viewport. */}
+          {/* El frame mantiene el ratio exacto de la imagen. */}
           <div className={classes.flyerFrame}>
             <Image
-              src="/form/juleriaque-mobile.jpg"
-              alt="Masterclass Anastasia Beverly Hills por Mery García en Juleriaque"
+              src="/flyermery-jornada.webp"
+              alt={FLYER_ALT}
               fill
               priority
               sizes="(max-width: 767px) 100vw, 520px"
               className={classes.flyerImage}
             />
-            <a
-              href={RESERVA_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Registrate en la Masterclass"
+            <button
+              type="button"
               onClick={handleClose}
-              className={classes.reservaLink}
-            />
+              aria-label="Cerrar"
+              className={classes.closeButton}
+            >
+              <CloseIcon />
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={handleClose}
-            aria-label="Cerrar"
-            className={classes.closeButton}
-          >
-            <CloseIcon />
-          </button>
         </div>
       </motion.div>
     </Modal>
