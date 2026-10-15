@@ -294,7 +294,7 @@ const epitesisAccordionOptions: ServiceOption[] = [
   //         <span className={classes.descriptionModalDownloadLabel}>Más información y valores:</span>
   //         <span className={classes.descriptionModalActions} style={{ display: 'block' }}>
   //           <a
-  //             href="/descargables/cap-presentacion.pdf"
+  //             href="/descargables/CAP%20INFO%20Y%20VALORES.pdf"
   //             download
   //             className={classes.descriptionModalMoreButton}
   //             onClick={(e) => e.stopPropagation()}
@@ -493,7 +493,7 @@ export default function EpitesisCapPage() {
           <span className={classes.descriptionModalDownloadLabel}>Más información y valores:</span>
           <div className={classes.descriptionModalActions}>
             <a
-              href="/descargables/cap-presentacion.pdf"
+              href="/descargables/CAP%20INFO%20Y%20VALORES.pdf"
               download
               className={classes.descriptionModalMoreButton}
             >
