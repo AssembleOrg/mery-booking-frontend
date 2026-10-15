@@ -3,6 +3,15 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  async redirects() {
+    return [
+      {
+        source: "/descargables/cap-presentacion.pdf",
+        destination: "/descargables/CAP%20INFO%20Y%20VALORES.pdf",
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {
